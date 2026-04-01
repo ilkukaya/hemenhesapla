@@ -1,0 +1,187 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Enflasyon hesaplama neden önemlidir?",
+    answer: "Enflasyon hesaplama, paranızın gelecekteki satın alma gücünü anlamanızı sağlar. Tasarruflarınızın veya yatırımlarınızın enflasyona karşı gerçek değerini koruyup korumadığını görmenizi mümkün kılar. Örneğin yıllık %60 enflasyon ortamında bankada %40 faizle para tutmak, paranızın satın alma gücünü düşürmek demektir. Bu hesaplama sayesinde hangi yatırım araçlarının reel getiri sağladığını kolayca karşılaştırabilirsiniz.",
+  },
+  {
+    question: "Gelecek değer ile bugünkü değer arasındaki fark nedir?",
+    answer: "Gelecek değer, belirli bir enflasyon oranında belirli süre sonra aynı miktarda paranın nominal olarak ne kadar edeceğini gösterir. Bugünkü değer (satın alma gücü) ise tam tersini hesaplar: gelecekte aynı yaşam standardını sürdürmek için bugünkü para birimiyle ne kadar paraya ihtiyaç duyacağınızı gösterir. Yatırım kararlarında her ikisi de kritik öneme sahiptir.",
+  },
+  {
+    question: "Türkiye'de ortalama enflasyon oranı nedir?",
+    answer: "Türkiye'de enflasyon oranı yıldan yıla önemli ölçüde değişkenlik göstermektedir. 2021-2023 döneminde yüksek enflasyon yaşanmış, TÜFE bazında yıllık oranlar %20 ile %85 arasında seyretmiştir. Uzun vadeli planlamalar için ortalama bir oran kullanmak yerine TÜİK'in açıkladığı güncel TÜFE verilerini takip etmek daha sağlıklı sonuçlar verir. Hesaplama aracımızda güncel oranı girerek kendi tahminlerinizi yapabilirsiniz.",
+  },
+];
+
+const meta = {
+  title: "Enflasyon Hesaplama — Paranızın Gerçek Değeri",
+  description: "Enflasyonun paranızın satın alma gücüne etkisini hesaplayın. Gelecek değer ve reel değer kaybını anında öğrenin.",
+  category: "finans",
+  slug: "enflasyon-hesaplama",
+  keywords: ["enflasyon hesaplama", "satın alma gücü", "paranın değeri", "TÜFE hesaplama", "reel değer hesaplama", "enflasyon etkisi"],
+  dateModified: "2026-04-01",
+  relatedCalcs: ["kira-artis-hesaplama", "bilesik-faiz-hesaplama", "yatirim-getiri-hesaplama"],
+  faq,
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
+    <CalcInput
+      id="tutar"
+      label="Tutar"
+      type="number"
+      suffix="₺"
+      placeholder="10000"
+      step={100}
+      min={1}
+      helpText="Hesaplamak istediğiniz para miktarı"
+    />
+    <CalcInput
+      id="enflasyonOrani"
+      label="Yıllık Enflasyon Oranı"
+      type="number"
+      suffix="%"
+      placeholder="60.00"
+      step={0.01}
+      min={0.01}
+      helpText="Beklenen ya da gerçekleşen yıllık enflasyon oranı"
+    />
+    <CalcInput
+      id="yilSayisi"
+      label="Süre"
+      type="number"
+      suffix="yıl"
+      placeholder="5"
+      step={1}
+      min={1}
+      max={50}
+      helpText="Kaç yıl sonrasını hesaplamak istiyorsunuz?"
+    />
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <span class="calc-result-label">Gelecek Nominal Değer</span>
+      <span class="calc-result-value" id="gelecek-deger">—</span>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Satın Alma Gücü Kaybı</span>
+        <span class="calc-detail-value" id="guc-kaybi">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Gerçek Değer (Bugünkü Para ile)</span>
+        <span class="calc-detail-value" id="gercek-deger">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <section class="calc-content">
+    <h2>Enflasyon Hesaplama Nasıl Yapılır?</h2>
+    <p>
+      Enflasyon, mal ve hizmetlerin fiyatlarının zaman içinde artmasıyla ortaya çıkan ekonomik bir olgudur. Bu artış, paranın satın alma gücünü olumsuz yönde etkiler; yani belirli bir miktarda parayla bugün alabildiğiniz ürün ya da hizmet miktarı, enflasyon ortamında gelecekte azalır. Enflasyon hesaplama aracı, bu değer kaybını somut rakamlarla görmenizi sağlar.
+    </p>
+    <p>
+      Türkiye'de enflasyon, Türkiye İstatistik Kurumu (TÜİK) tarafından aylık olarak açıklanan Tüketici Fiyat Endeksi (TÜFE) ile ölçülmektedir. Yüksek enflasyon dönemlerinde tasarruf hesabında tutulan paranın reel değeri hızla düşebilir. Bu nedenle hangi yatırım araçlarının enflasyona karşı korunaklı olduğunu anlamak büyük önem taşımaktadır.
+    </p>
+    <p>
+      Enflasyon hesaplayıcımız iki farklı sonucu hesaplar: birincisi, belirli bir tutar ve enflasyon oranına göre paranın gelecekteki nominal değeri; ikincisi ise gelecekte aynı satın alma gücünü elde etmek için bugünkü para birimiyle ne kadar paraya ihtiyaç duyulduğudur. Bu hesaplamalar sayesinde emeklilik planlaması, uzun vadeli yatırım kararları ve birikim hedefleri için daha gerçekçi projeksiyonlar yapabilirsiniz.
+    </p>
+    <h3>Enflasyon Hesaplama Formülü</h3>
+    <p>
+      Enflasyon etkisini hesaplamak için bileşik büyüme formülü kullanılır:
+    </p>
+    <p>
+      <strong>Gelecek Değer = Tutar × (1 + Enflasyon Oranı / 100) ^ Yıl Sayısı</strong>
+    </p>
+    <p>
+      <strong>Bugünkü Satın Alma Gücü = Tutar / (1 + Enflasyon Oranı / 100) ^ Yıl Sayısı</strong>
+    </p>
+    <p>
+      Örneğin bugün 10.000 TL'niz var ve yıllık enflasyon %60 ise 5 yıl sonra aynı yaşam standardını korumak için 10.000 × (1,60)^5 = yaklaşık 104.858 TL'ye ihtiyaç duyarsınız. Satın alma gücü kaybı ise 94.858 TL olarak hesaplanır.
+    </p>
+    <h3>Dikkat Edilmesi Gerekenler</h3>
+    <p>
+      Enflasyon hesaplamalarında kullanılan oran, gelecekteki gerçek enflasyona ilişkin bir tahmindir. Geçmiş enflasyon verileri gelecek için kesin bir gösterge değildir; dolayısıyla farklı senaryolar için birkaç farklı oran deneyin. Ayrıca hesaplayıcımız genel enflasyon üzerinden çalışır; bazı ürün kategorilerinde (sağlık, eğitim, gıda gibi) sektörel enflasyon genel enflasyondan farklılık gösterebilir. Uzun vadeli finansal planlamanızda bir finans uzmanından destek almanız tavsiye edilir.
+    </p>
+    <h3>Sıkça Sorulan Sorular</h3>
+    {faq.map((item) => (
+      <div class="faq-item">
+        <h4>{item.question}</h4>
+        <p>{item.answer}</p>
+      </div>
+    ))}
+  </section>
+</CalcLayout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+    const resultArea = document.getElementById('calc-result');
+
+    function debounce(fn: (...args: unknown[]) => void, delay = 150) {
+      let timer: ReturnType<typeof setTimeout>;
+      return (...args: unknown[]) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), delay); };
+    }
+
+    function formatTL(num: number) {
+      return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
+    }
+
+    const debouncedCalc = debounce(calculate);
+    inputs.forEach(i => {
+      i.addEventListener('input', debouncedCalc);
+      i.addEventListener('change', debouncedCalc);
+    });
+
+    function calculate() {
+      const tutar = parseFloat((document.getElementById('tutar') as HTMLInputElement).value);
+      const enflasyonOrani = parseFloat((document.getElementById('enflasyonOrani') as HTMLInputElement).value);
+      const yilSayisi = parseInt((document.getElementById('yilSayisi') as HTMLInputElement).value);
+
+      if (!tutar || !enflasyonOrani || !yilSayisi || tutar <= 0 || enflasyonOrani <= 0 || yilSayisi < 1) {
+        if (resultArea) resultArea.classList.add('hidden');
+        return;
+      }
+
+      const carpan = Math.pow(1 + enflasyonOrani / 100, yilSayisi);
+      const gelecekDeger = tutar * carpan;
+      const gercekDeger = tutar / carpan;
+      const gucKaybi = tutar - gercekDeger;
+
+      (document.getElementById('gelecek-deger') as HTMLElement).textContent = formatTL(gelecekDeger);
+      (document.getElementById('guc-kaybi') as HTMLElement).textContent = formatTL(gucKaybi);
+      (document.getElementById('gercek-deger') as HTMLElement).textContent = formatTL(gercekDeger);
+
+      if (resultArea) resultArea.classList.remove('hidden');
+      updateURL();
+    }
+
+    function updateURL() {
+      const params = new URLSearchParams();
+      inputs.forEach(i => {
+        const el = i as HTMLInputElement;
+        if (el.value && el.id) params.set(el.id, el.value);
+      });
+      history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+    }
+
+    function loadFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      let hasParams = false;
+      inputs.forEach(i => {
+        const el = i as HTMLInputElement;
+        if (el.id && params.has(el.id)) { el.value = params.get(el.id)!; hasParams = true; }
+      });
+      if (hasParams) calculate();
+    }
+
+    loadFromURL();
+  });
+</script>

@@ -1,0 +1,181 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcSelect from '../../components/calculator/CalcSelect.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "İhbar tazminatı kime ödenir?",
+    answer: "İhbar tazminatı, iş sözleşmesini yasal ihbar süresine uymadan fesheden tarafa karşı diğer tarafa ödenir. İşveren, ihbar süresine uymadan işçiyi çıkardığında ihbar tazminatı ödemek zorundadır. Aynı şekilde işçi de ihbar süresine uymadan işten ayrılırsa işverene ihbar tazminatı ödemekle yükümlüdür. Tazminat, ihbar süresine karşılık gelen brüt ücret tutarında hesaplanır.",
+  },
+  {
+    question: "İhbar süresi çalışma süresine göre nasıl belirlenir?",
+    answer: "4857 sayılı İş Kanunu'nun 17. maddesine göre ihbar süreleri şu şekilde belirlenmiştir: 6 aydan az çalışanlarda 2 hafta (14 gün), 6 ay ile 1,5 yıl arasında çalışanlarda 4 hafta (28 gün), 1,5 yıl ile 3 yıl arasında çalışanlarda 6 hafta (42 gün), 3 yıldan fazla çalışanlarda 8 hafta (56 gün). Bu süreler asgari süreler olup taraflarca artırılabilir ancak azaltılamaz.",
+  },
+  {
+    question: "İhbar tazminatı vergi ve SGK'ya tabi midir?",
+    answer: "İhbar tazminatı gelir vergisi stopajına tabidir; brüt tutar üzerinden gelir vergisi kesilerek net tutar ödenir. SGK primi ise ihbar tazminatından kesilmez; yani ihbar tazminatı SGK primi matrahına dahil edilmez. Bu nedenle hesaplanan tutar brüt ihbar tazminatıdır. Elinize geçecek net tutarı bulmak için gelir vergisi dilimlerinizi de göz önünde bulundurmanız gerekmektedir.",
+  },
+];
+
+const meta = {
+  title: "İhbar Tazminatı Hesaplama 2026",
+  description: "Çalışma sürenize ve günlük brüt maaşınıza göre ihbar tazminatınızı hesaplayın. İhbar süreleri ve tazminat tutarını anında öğrenin.",
+  category: "finans",
+  slug: "ihbar-tazminati-hesaplama",
+  keywords: ["ihbar tazminatı hesaplama", "ihbar süresi", "ihbar tazminatı 2026", "işten çıkarılma ihbar", "iş kanunu ihbar"],
+  dateModified: "2026-04-01",
+  relatedCalcs: ["kidem-tazminati-hesaplama", "net-brut-maas-hesaplama", "gelir-vergisi-hesaplama"],
+  faq,
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
+    <CalcSelect
+      id="calismaSuresi"
+      label="Çalışma Süresi"
+      options={[
+        { value: "6aydan-az", label: "6 aydan az" },
+        { value: "6ay-1.5yil", label: "6 ay - 1.5 yıl" },
+        { value: "1.5yil-3yil", label: "1.5 - 3 yıl" },
+        { value: "3yil-ustu", label: "3 yıl üstü" },
+      ]}
+      helpText="İş yerinizde toplam çalışma sürenizi seçin"
+    />
+    <CalcInput
+      id="gunlukBrutMaas"
+      label="Günlük Brüt Maaş"
+      type="number"
+      suffix="₺"
+      placeholder="1000"
+      step={1}
+      min={0}
+      helpText="Aylık brüt maaşınızı 30'a bölünüz"
+    />
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <span class="calc-result-label">İhbar Tazminatı</span>
+      <span class="calc-result-value" id="ihbar-tazminati">—</span>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">İhbar Süresi</span>
+        <span class="calc-detail-value" id="ihbar-suresi">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">İhbar Süresi (Gün)</span>
+        <span class="calc-detail-value" id="ihbar-gun">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <section class="calc-content">
+    <h2>İhbar Tazminatı Hesaplama Nasıl Yapılır?</h2>
+    <p>
+      İhbar tazminatı, iş sözleşmesini kanunda öngörülen ihbar sürelerine uymaksızın fesheden tarafın karşı tarafa ödemek zorunda olduğu tazminattır. 4857 sayılı İş Kanunu'nun 17. maddesi kapsamında düzenlenen bu tazminat, iş güvencesinin önemli bir parçasını oluşturmaktadır. İşveren tarafından yapılan haksız ve habersiz işten çıkarmalarda işçinin bu haktan yararlanma hakkı doğmaktadır.
+    </p>
+    <p>
+      İhbar tazminatının hesaplanabilmesi için iki temel bilgiye ihtiyaç duyulmaktadır: çalışma süresi ve günlük brüt maaş. Çalışma süresi, kanunda belirlenen ihbar sürelerini doğrudan etkilerken, günlük brüt maaş da tazminat tutarının hesaplanmasında esas alınan değerdir. Günlük brüt maaşı bulmak için aylık brüt maaşınızı 30'a bölmeniz gerekmektedir.
+    </p>
+    <p>
+      Hesaplayıcımız, 4857 sayılı İş Kanunu'nda belirlenen güncel ihbar sürelerini ve yasal formülleri kullanarak tazminat tutarını otomatik olarak hesaplamaktadır. Sonuçlar tahmini nitelikte olup, kesin tutar için iş hukuku uzmanına danışmanız önerilir.
+    </p>
+    <h3>İhbar Tazminatı Formülü</h3>
+    <p>
+      İhbar tazminatı hesaplama formülü şu şekildedir:
+    </p>
+    <p>
+      <strong>İhbar Tazminatı = İhbar Süresi (Gün) × Günlük Brüt Maaş</strong>
+    </p>
+    <p>
+      Çalışma sürelerine göre belirlenen ihbar süreleri: 6 aydan az çalışmada 2 hafta (14 gün), 6 ay ile 1,5 yıl arasında 4 hafta (28 gün), 1,5 ile 3 yıl arasında 6 hafta (42 gün), 3 yıldan fazla çalışmada ise 8 hafta (56 gün)dür. Aylık brüt maaşı 30'a bölerek günlük brüt maaş bulunur.
+    </p>
+    <h3>Dikkat Edilmesi Gerekenler</h3>
+    <p>
+      İhbar tazminatının hesaplanmasında kullanılacak ücret, sadece temel ücret değil; yol, yemek, yakacak gibi düzenli yapılan yan ödemelerin de dahil edildiği brüt ücrettir. İhbar tazminatı, SGK prim matrahına dahil edilmez ancak gelir vergisi stopajına tabidir. İş sözleşmesinde kanunda öngörülen sürelerden daha uzun bir ihbar süresi kararlaştırılmışsa bu süre esas alınır; kanuni sürelerin altında bir süre kararlaştırılamaz. Ayrıca işveren, ihbar tazminatı ödemek yerine ihbar süresini çalıştırma yolunu da seçebilir.
+    </p>
+    <h3>Sıkça Sorulan Sorular</h3>
+    {faq.map((item) => (
+      <div class="faq-item">
+        <h4>{item.question}</h4>
+        <p>{item.answer}</p>
+      </div>
+    ))}
+  </section>
+</CalcLayout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+    const resultArea = document.getElementById('calc-result');
+
+    function debounce(fn: (...args: unknown[]) => void, delay = 150) {
+      let timer: ReturnType<typeof setTimeout>;
+      return (...args: unknown[]) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), delay); };
+    }
+
+    function formatTL(num: number) {
+      return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
+    }
+
+    const debouncedCalc = debounce(calculate);
+    inputs.forEach(i => {
+      i.addEventListener('input', debouncedCalc);
+      i.addEventListener('change', debouncedCalc);
+    });
+
+    function calculate() {
+      const calismaSuresi = (document.getElementById('calismaSuresi') as HTMLSelectElement).value;
+      const gunlukBrutMaas = parseFloat((document.getElementById('gunlukBrutMaas') as HTMLInputElement).value);
+
+      if (!calismaSuresi || !gunlukBrutMaas || gunlukBrutMaas <= 0) {
+        if (resultArea) resultArea.classList.add('hidden');
+        return;
+      }
+
+      const sureler: Record<string, { hafta: number; gun: number; label: string }> = {
+        '6aydan-az':   { hafta: 2, gun: 14, label: '2 Hafta' },
+        '6ay-1.5yil':  { hafta: 4, gun: 28, label: '4 Hafta' },
+        '1.5yil-3yil': { hafta: 6, gun: 42, label: '6 Hafta' },
+        '3yil-ustu':   { hafta: 8, gun: 56, label: '8 Hafta' },
+      };
+
+      const sure = sureler[calismaSuresi];
+      if (!sure) return;
+
+      const tazminat = sure.gun * gunlukBrutMaas;
+
+      (document.getElementById('ihbar-tazminati') as HTMLElement).textContent = formatTL(tazminat);
+      (document.getElementById('ihbar-suresi') as HTMLElement).textContent = sure.label;
+      (document.getElementById('ihbar-gun') as HTMLElement).textContent = `${sure.gun} gün`;
+
+      if (resultArea) resultArea.classList.remove('hidden');
+      updateURL();
+    }
+
+    function updateURL() {
+      const params = new URLSearchParams();
+      inputs.forEach(i => {
+        const el = i as HTMLInputElement;
+        if (el.value && el.id) params.set(el.id, el.value);
+      });
+      history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+    }
+
+    function loadFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      let hasParams = false;
+      inputs.forEach(i => {
+        const el = i as HTMLInputElement;
+        if (el.id && params.has(el.id)) { el.value = params.get(el.id)!; hasParams = true; }
+      });
+      if (hasParams) calculate();
+    }
+
+    loadFromURL();
+  });
+</script>

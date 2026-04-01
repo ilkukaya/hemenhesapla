@@ -1,0 +1,203 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcSelect from '../../components/calculator/CalcSelect.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Dairenin alanı nasıl hesaplanır?",
+    answer: "Daire alanı π × r² formülüyle hesaplanır. Burada r yarıçaptır. Örneğin yarıçapı 5 cm olan bir dairenin alanı 3,14159 × 5² = 78,54 cm² olur."
+  },
+  {
+    question: "Üçgenin alanını bulmak için ne kullanılır?",
+    answer: "Üçgenin alanı ½ × taban × yükseklik formülüyle bulunur. Örneğin tabanı 8 m ve yüksekliği 6 m olan bir üçgenin alanı ½ × 8 × 6 = 24 m² olur."
+  },
+  {
+    question: "Kare ile dikdörtgenin alanı arasındaki fark nedir?",
+    answer: "Karenin dört kenarı eşit olduğundan alan = kenar² formülü kullanılır. Dikdörtgende ise iki farklı kenar uzunluğu olduğundan alan = en × boy formülü kullanılır. Tüm kareler dikdörtgendir ama tüm dikdörtgenler kare değildir."
+  }
+];
+
+const meta = {
+  title: "Alan Hesaplama",
+  description: "Kare, dikdörtgen, daire ve üçgen için alan hesaplama aracı. Şekli seçin, ölçüleri girin; alanı ve çevreyi anında öğrenin.",
+  category: "matematik",
+  slug: "alan-hesaplama",
+  keywords: ["alan hesaplama", "kare alan", "dikdörtgen alan", "daire alan", "üçgen alan", "geometri hesaplama"],
+  dateModified: "2026-04-01",
+  relatedCalcs: ["hacim-hesaplama", "yuzde-hesaplama", "oran-hesaplama"],
+  faq,
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
+    <CalcSelect
+      id="sekil"
+      label="Şekil"
+      options={[
+        { value: "kare", label: "Kare" },
+        { value: "dikdortgen", label: "Dikdörtgen" },
+        { value: "daire", label: "Daire" },
+        { value: "ucgen", label: "Üçgen" },
+      ]}
+      value="kare"
+    />
+    <CalcInput id="boyut1" label="Kenar (a)" type="number" placeholder="Örn: 5" suffix="m" min={0} />
+    <div id="boyut2-wrapper">
+      <CalcInput id="boyut2" label="Boy (b)" type="number" placeholder="Örn: 8" suffix="m" min={0} />
+    </div>
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">Alan</p>
+      <p class="calc-result-value" id="sonuc-alan">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Alan</span>
+        <span class="calc-detail-value" id="d-alan">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Çevre</span>
+        <span class="calc-detail-value" id="d-cevre">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <section class="calc-content">
+    <h2>Alan Hesaplama Nedir?</h2>
+    <p>
+      Alan hesaplama, geometrik şekillerin kapladığı yüzey miktarını bulmak için kullanılan matematiksel bir işlemdir. Kare metre (m²), santimetre kare (cm²) gibi birimlerle ifade edilen alan, günlük hayatta ev satın alırken, boya veya fayans hesaplarken, bahçe düzenlemesi yaparken ve pek çok mühendislik uygulamasında kullanılır.
+    </p>
+    <p>
+      Bu araç sayesinde en sık kullanılan dört geometrik şeklin — kare, dikdörtgen, daire ve üçgen — alan hesaplarını kolayca yapabilirsiniz. Şekli seçip ölçüleri girdiğinizde hem alan hem de çevre değeri anında hesaplanır.
+    </p>
+    <h3>Alan Formülleri</h3>
+    <p>
+      <strong>Kare:</strong> Alan = a² (kenar uzunluğunun karesi). Çevre = 4 × a.<br />
+      <strong>Dikdörtgen:</strong> Alan = en × boy. Çevre = 2 × (en + boy).<br />
+      <strong>Daire:</strong> Alan = π × r² (yarıçap karesinin π ile çarpımı). Çevre (çap) = 2 × π × r.<br />
+      <strong>Üçgen:</strong> Alan = ½ × taban × yükseklik. Çevre hesabı için üç kenar gerekir.
+    </p>
+    <h3>Pratik Kullanım Örnekleri</h3>
+    <p>
+      Bir oda döşemesi için kaç m² parke gerektiğini bulmak, duvarları boyamak için yüzey alanı hesabı yapmak veya dairesel bir havuzun yüzey alanını öğrenmek gibi durumlarda bu hesaplayıcıyı kullanabilirsiniz. Örneğin 4 m × 5 m boyutlarındaki bir odanın alanı 20 m²'dir; 10 m²'lik kapı ve pencere alanı çıkarıldığında boyalanacak alan 10 m² kalır.
+    </p>
+    <h3>Dikkat Edilmesi Gerekenler</h3>
+    <p>
+      Tüm ölçümlerin aynı birimde girilmesi gerekir. Farklı birimler kullanıyorsanız (örneğin biri metre, diğeri santimetre) önce dönüşüm yapın. Daire için yarıçap değeri (çapın yarısı) girilmelidir; çap değerini giriyorsanız 2'ye bölün.
+    </p>
+    <h3>Sıkça Sorulan Sorular</h3>
+    {faq.map((item) => (
+      <div class="faq-item">
+        <h4>{item.question}</h4>
+        <p>{item.answer}</p>
+      </div>
+    ))}
+  </section>
+</CalcLayout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('calc-form');
+    const inputs = form.querySelectorAll('input, select');
+    const resultArea = document.getElementById('calc-result');
+
+    function debounce(fn, delay = 150) {
+      let timer;
+      return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), delay); };
+    }
+
+    function formatNumber(num, dec = 2) {
+      return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: dec, maximumFractionDigits: dec }).format(num);
+    }
+
+    const sekilEl = document.getElementById('sekil');
+    const boyut1El = document.getElementById('boyut1');
+    const boyut2El = document.getElementById('boyut2');
+    const boyut2Wrapper = document.getElementById('boyut2-wrapper');
+    const boyut1Label = boyut1El?.closest('.calc-input-group')?.querySelector('.calc-label');
+    const boyut2Label = boyut2El?.closest('.calc-input-group')?.querySelector('.calc-label');
+
+    function updateLabels() {
+      const sekil = sekilEl?.value;
+      if (sekil === 'kare') {
+        if (boyut1Label) boyut1Label.textContent = 'Kenar (a)';
+        if (boyut2Wrapper) boyut2Wrapper.style.display = 'none';
+      } else if (sekil === 'dikdortgen') {
+        if (boyut1Label) boyut1Label.textContent = 'En (a)';
+        if (boyut2Label) boyut2Label.textContent = 'Boy (b)';
+        if (boyut2Wrapper) boyut2Wrapper.style.display = '';
+      } else if (sekil === 'daire') {
+        if (boyut1Label) boyut1Label.textContent = 'Yarıçap (r)';
+        if (boyut2Wrapper) boyut2Wrapper.style.display = 'none';
+      } else if (sekil === 'ucgen') {
+        if (boyut1Label) boyut1Label.textContent = 'Taban';
+        if (boyut2Label) boyut2Label.textContent = 'Yükseklik';
+        if (boyut2Wrapper) boyut2Wrapper.style.display = '';
+      }
+    }
+
+    sekilEl?.addEventListener('change', () => { updateLabels(); calculate(); });
+    updateLabels();
+
+    const debouncedCalc = debounce(calculate);
+    inputs.forEach(input => {
+      input.addEventListener('input', debouncedCalc);
+      input.addEventListener('change', debouncedCalc);
+    });
+
+    function calculate() {
+      const sekil = sekilEl?.value;
+      const b1 = parseFloat(boyut1El?.value);
+      const b2 = parseFloat(boyut2El?.value);
+      const PI = Math.PI;
+
+      let alan = NaN, cevre = NaN;
+
+      if (sekil === 'kare' && !isNaN(b1)) {
+        alan = b1 * b1;
+        cevre = 4 * b1;
+      } else if (sekil === 'dikdortgen' && !isNaN(b1) && !isNaN(b2)) {
+        alan = b1 * b2;
+        cevre = 2 * (b1 + b2);
+      } else if (sekil === 'daire' && !isNaN(b1)) {
+        alan = PI * b1 * b1;
+        cevre = 2 * PI * b1;
+      } else if (sekil === 'ucgen' && !isNaN(b1) && !isNaN(b2)) {
+        alan = 0.5 * b1 * b2;
+        cevre = NaN;
+      }
+
+      if (isNaN(alan)) {
+        if (resultArea) resultArea.classList.add('hidden');
+        return;
+      }
+
+      document.getElementById('sonuc-alan').textContent = formatNumber(alan) + ' m²';
+      document.getElementById('d-alan').textContent = formatNumber(alan) + ' m²';
+      document.getElementById('d-cevre').textContent = isNaN(cevre) ? 'Kenar bilgisi gerekli' : formatNumber(cevre) + ' m';
+
+      if (resultArea) resultArea.classList.remove('hidden');
+      updateURL();
+    }
+
+    function updateURL() {
+      const params = new URLSearchParams();
+      inputs.forEach(input => { if (input.value && input.id) params.set(input.id, input.value); });
+      history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+    }
+
+    function loadFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      let h = false;
+      inputs.forEach(input => { if (input.id && params.has(input.id)) { input.value = params.get(input.id); h = true; } });
+      if (h) { updateLabels(); calculate(); }
+    }
+
+    loadFromURL();
+  });
+</script>

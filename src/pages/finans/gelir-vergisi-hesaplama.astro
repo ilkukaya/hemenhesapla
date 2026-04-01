@@ -1,0 +1,205 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Gelir vergisi dilimleri nasıl uygulanır?",
+    answer: "Gelir vergisi kümülatif (artan oranlı) dilim sistemiyle hesaplanır. Her dilim yalnızca o dilime isabet eden gelir tutarına uygulanır. Örneğin 2026'da yıllık 200.000 TL geliri olan biri; ilk 158.000 TL için %15, kalan 42.000 TL için %20 oranında vergi öder. Tüm gelir en yüksek dilim oranına tabi tutulmaz.",
+  },
+  {
+    question: "Ortalama (efektif) vergi oranı nedir?",
+    answer: "Ortalama vergi oranı, ödenen toplam verginin toplam gelire bölünmesiyle bulunan yüzde değeridir. Marjinal oran (en üst dilim oranı) ile karıştırılmamalıdır. Örneğin 500.000 TL yıllık gelir için hesaplanan toplam vergi 80.000 TL ise ortalama oran %16'dır; ancak marjinal oran %27'dir. Vergi yükünün gerçek ağırlığını anlamak için ortalama orana bakılmalıdır.",
+  },
+  {
+    question: "2026 gelir vergisi dilimleri nelerdir?",
+    answer: "2026 yılı için geçerli gelir vergisi dilimleri şu şekildedir: 0–158.000 TL arası %15, 158.001–330.000 TL arası %20, 330.001–800.000 TL arası %27, 800.001–4.300.000 TL arası %35, 4.300.001 TL ve üzeri %40. Bu tutarlar yıllık geliri kapsamakta olup her yıl yeniden değerleme katsayısıyla güncellenmektedir.",
+  },
+];
+
+const meta = {
+  title: "Gelir Vergisi Hesaplama 2026",
+  description: "2026 yılı gelir vergisi dilimlerine göre yıllık vergi tutarınızı ve efektif vergi oranınızı hesaplayın. Ücretsiz gelir vergisi hesaplama aracı.",
+  category: "finans",
+  slug: "gelir-vergisi-hesaplama",
+  keywords: ["gelir vergisi hesaplama", "vergi dilimi hesaplama", "2026 gelir vergisi", "efektif vergi oranı", "yıllık vergi hesaplama"],
+  dateModified: "2026-04-01",
+  relatedCalcs: ["net-brut-maas-hesaplama", "stopaj-hesaplama", "kidem-tazminati-hesaplama"],
+  faq,
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
+    <CalcInput
+      id="yillikGelir"
+      label="Yıllık Gelir"
+      type="number"
+      suffix="₺"
+      placeholder="300000"
+      step={1000}
+      min={0}
+    />
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <span class="calc-result-label">Toplam Vergi</span>
+      <span class="calc-result-value" id="toplam-vergi">—</span>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">1. Dilim Vergisi (%15, 0–158.000 ₺)</span>
+        <span class="calc-detail-value" id="dilim1">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">2. Dilim Vergisi (%20, 158–330K ₺)</span>
+        <span class="calc-detail-value" id="dilim2">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">3. Dilim Vergisi (%27, 330–800K ₺)</span>
+        <span class="calc-detail-value" id="dilim3">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">4. Dilim Vergisi (%35, 800K–4.3M ₺)</span>
+        <span class="calc-detail-value" id="dilim4">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">5. Dilim Vergisi (%40, 4.3M+ ₺)</span>
+        <span class="calc-detail-value" id="dilim5">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Ortalama Vergi Oranı</span>
+        <span class="calc-detail-value" id="ortalama-oran">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <section class="calc-content">
+    <h2>Gelir Vergisi Hesaplama Nasıl Yapılır?</h2>
+    <p>
+      Türkiye'de gelir vergisi, artan oranlı dilim sistemiyle hesaplanır. Yani geliriniz yükseldikçe yalnızca üst dilimlere giren kısım daha yüksek oranda vergilendirilir; tüm geliriniz en yüksek orana tabi tutulmaz. Bu nedenle beyan ettiğiniz yıllık geliri 5 ayrı dilime bölerek her dilim için ayrı ayrı vergi hesaplamak ve bunları toplamak doğru sonucu verir.
+    </p>
+    <h3>2026 Yılı Gelir Vergisi Dilimleri</h3>
+    <p>
+      Hesap aracımız aşağıdaki 2026 yılı dilimlerini kullanmaktadır:
+    </p>
+    <ul>
+      <li><strong>0 – 158.000 TL:</strong> %15</li>
+      <li><strong>158.001 – 330.000 TL:</strong> %20</li>
+      <li><strong>330.001 – 800.000 TL:</strong> %27</li>
+      <li><strong>800.001 – 4.300.000 TL:</strong> %35</li>
+      <li><strong>4.300.001 TL ve üzeri:</strong> %40</li>
+    </ul>
+    <h3>Efektif (Ortalama) Vergi Oranı</h3>
+    <p>
+      Ortalama vergi oranı, toplam ödenen verginin toplam gelire bölünmesiyle hesaplanır. Bu oran, gerçek vergi yükünüzü gösterir ve genellikle en üst dilim oranının (marjinal oran) çok altındadır. Örneğin yıllık 600.000 TL gelir için efektif oran %20–22 civarında olabilirken marjinal oran %27'dir.
+    </p>
+    <h3>Dikkat Edilmesi Gerekenler</h3>
+    <p>
+      Bu hesaplama, safi gelir üzerinden yapılmaktadır. Ücret geliri, kira geliri, serbest meslek kazancı gibi farklı gelir türlerinde indirilebilir giderler, bağış ve özel gider indirimleri matrahı düşürebilir. Çalışan ücretleri için yıl içinde işveren tarafından kesilen gelir vergisi stopajı yıllık beyannamede mahsup edilir. Vergi hesaplamanızı mutlaka bir mali müşavire teyit ettirmeniz önerilir.
+    </p>
+    <h3>Sıkça Sorulan Sorular</h3>
+    {faq.map((item) => (
+      <div class="faq-item">
+        <h4>{item.question}</h4>
+        <p>{item.answer}</p>
+      </div>
+    ))}
+  </section>
+</CalcLayout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+    const resultArea = document.getElementById('calc-result');
+
+    function debounce(fn: (...args: unknown[]) => void, delay = 150) {
+      let timer: ReturnType<typeof setTimeout>;
+      return (...args: unknown[]) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), delay); };
+    }
+
+    function formatTL(num: number) {
+      return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
+    }
+
+    function formatNumber(num: number, dec = 2) {
+      return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: dec, maximumFractionDigits: dec }).format(num);
+    }
+
+    const debouncedCalc = debounce(calculate);
+    inputs.forEach(input => {
+      input.addEventListener('input', debouncedCalc);
+      input.addEventListener('change', debouncedCalc);
+    });
+
+    function calculate() {
+      const yillikGelir = parseFloat((document.getElementById('yillikGelir') as HTMLInputElement).value);
+
+      if (!yillikGelir || yillikGelir <= 0) {
+        if (resultArea) resultArea.classList.add('hidden');
+        return;
+      }
+
+      // 2026 tax brackets
+      const dilimler = [
+        { limit: 158000, oran: 0.15 },
+        { limit: 330000, oran: 0.20 },
+        { limit: 800000, oran: 0.27 },
+        { limit: 4300000, oran: 0.35 },
+        { limit: Infinity, oran: 0.40 },
+      ];
+
+      let kalan = yillikGelir;
+      let oncekiLimit = 0;
+      const dilimVergileri: number[] = [];
+
+      for (const dilim of dilimler) {
+        if (kalan <= 0) {
+          dilimVergileri.push(0);
+          continue;
+        }
+        const dilimGelir = Math.min(kalan, dilim.limit - oncekiLimit);
+        dilimVergileri.push(dilimGelir * dilim.oran);
+        kalan -= dilimGelir;
+        oncekiLimit = dilim.limit;
+      }
+
+      const toplamVergi = dilimVergileri.reduce((a, b) => a + b, 0);
+      const ortalamaOran = (toplamVergi / yillikGelir) * 100;
+
+      (document.getElementById('toplam-vergi') as HTMLElement).textContent = formatTL(toplamVergi);
+      (document.getElementById('dilim1') as HTMLElement).textContent = formatTL(dilimVergileri[0]);
+      (document.getElementById('dilim2') as HTMLElement).textContent = formatTL(dilimVergileri[1]);
+      (document.getElementById('dilim3') as HTMLElement).textContent = formatTL(dilimVergileri[2]);
+      (document.getElementById('dilim4') as HTMLElement).textContent = formatTL(dilimVergileri[3]);
+      (document.getElementById('dilim5') as HTMLElement).textContent = formatTL(dilimVergileri[4]);
+      (document.getElementById('ortalama-oran') as HTMLElement).textContent = `%${formatNumber(ortalamaOran)}`;
+
+      if (resultArea) resultArea.classList.remove('hidden');
+      updateURL();
+    }
+
+    function updateURL() {
+      const params = new URLSearchParams();
+      inputs.forEach(input => {
+        const el = input as HTMLInputElement;
+        if (el.value && el.id) params.set(el.id, el.value);
+      });
+      history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+    }
+
+    function loadFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      let hasParams = false;
+      inputs.forEach(input => {
+        const el = input as HTMLInputElement;
+        if (el.id && params.has(el.id)) { el.value = params.get(el.id)!; hasParams = true; }
+      });
+      if (hasParams) calculate();
+    }
+
+    loadFromURL();
+  });
+</script>

@@ -1,0 +1,158 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Karekök nasıl hesaplanır?",
+    answer: "Bir sayının karekökü, kendisiyle çarpıldığında o sayıyı veren değerdir. Örneğin 25'in karekökü 5'tir çünkü 5 × 5 = 25 eder. Matematiksel gösterimi √25 = 5 şeklindedir. Negatif sayıların gerçek karekökü bulunmaz; yalnızca sıfır ve pozitif sayıların karekökü hesaplanabilir."
+  },
+  {
+    question: "Küp kök ile karekök arasındaki fark nedir?",
+    answer: "Karekök (√), bir sayının kendisiyle bir kez çarpılmasıyla elde edilecek değeri bulurken; küp kök (³√), bir sayının kendisiyle iki kez çarpılmasıyla elde edilecek değeri bulur. Örneğin 27'nin küp kökü 3'tür çünkü 3 × 3 × 3 = 27 eder. Küp kök negatif sayılar için de tanımlıdır."
+  },
+  {
+    question: "Tam karekök olmayan sayıların karekökü nasıl bulunur?",
+    answer: "Tam kare olmayan sayıların karekökü irrasyonel bir sayıdır. Örneğin 2'nin karekökü yaklaşık 1,41421356… şeklinde sonsuza uzanan ondalıklı bir sayıdır. Bu hesaplamaları elle yapmak güç olduğundan hesap makinesi veya bu araç gibi online hesaplayıcılar kullanılır."
+  }
+];
+
+const meta = {
+  title: "Karekök Hesaplama",
+  description: "Karekök hesaplama aracı ile bir sayının karekökünü, küp kökünü ve karesini anında hesaplayın. √x, ³√x ve x² formülleriyle hızlı matematiksel hesaplama.",
+  category: "matematik",
+  slug: "karekok-hesaplama",
+  keywords: ["karekök hesaplama", "karekök hesaplayıcı", "kök hesaplama", "küp kök", "karekök formülü"],
+  dateModified: "2026-04-01",
+  relatedCalcs: ["uslu-sayi-hesaplama", "ortalama-hesaplama"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
+    <div class="calc-inputs">
+      <CalcInput
+        id="sayi"
+        label="Sayı"
+        type="number"
+        placeholder="Örn: 144"
+        min={0}
+        step="any"
+        helpText="Karekökünü hesaplamak istediğiniz sayıyı girin (0 veya pozitif)"
+      />
+    </div>
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">Karekök (√x)</p>
+      <p class="calc-result-value" id="sonuc-karekok">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Karekök √x</span>
+        <span class="calc-detail-value" id="detail-karekok">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Küp Kök ³√x</span>
+        <span class="calc-detail-value" id="detail-kupkok">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Kare x²</span>
+        <span class="calc-detail-value" id="detail-kare">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <section class="calc-content">
+    <h2>Karekök Hesaplama Nedir?</h2>
+    <p>
+      Karekök, bir sayının kendisiyle çarpıldığında o sayıyı veren değer olarak tanımlanır. Matematiksel sembol olarak √ (radikal işareti) kullanılır. Örneğin √36 = 6 ifadesi, 6 × 6 = 36 olduğu için doğrudur. Karekök hesaplama, cebir, geometri, fizik ve mühendislik gibi pek çok alanda sıkça kullanılan temel bir matematiksel işlemdir.
+    </p>
+    <p>
+      Günlük hayatta karekök hesabına en sık ihtiyaç duyulan alanlardan biri inşaat ve mimarlıktır. Bir karenin kenar uzunluğunu bulmak, dik üçgenin hipotenüsünü hesaplamak ya da bir dairenin yarıçapını alanından türetmek için karekök formüllerine başvurulur. Aynı zamanda istatistikte standart sapma hesaplamaları da varyansın kareköküne dayanır.
+    </p>
+    <p>
+      Karekök hesaplama aracımız; girdiğiniz sayı için karekök (√x), küp kök (³√x) ve kare (x²) değerlerini eş zamanlı olarak göstermektedir. Bu sayede tek bir ekranda birden fazla üs ve kök işlemini hızlıca yapabilirsiniz.
+    </p>
+
+    <h3>Karekök Formülü</h3>
+    <p>
+      Karekök işleminin temel formülü şu şekilde ifade edilir: Eğer y² = x ise √x = y. Yani bir sayının karekökü, karesi o sayıya eşit olan pozitif değerdir. Küp kök için ise y³ = x ise ³√x = y tanımı geçerlidir. Kare işlemi ise bunların tersidir: x² = x × x.
+    </p>
+    <p>
+      Tam kare sayılar için karekök sonucu tam sayı çıkar: √1=1, √4=2, √9=3, √16=4, √25=5, √36=6, √49=7, √64=8, √81=9, √100=10. Diğer sayılar için sonuç ondalıklı irrasyonel sayı olur.
+    </p>
+
+    <h3>Dikkat Edilmesi Gerekenler</h3>
+    <p>
+      Karekök hesaplamasında dikkat edilmesi gereken en önemli nokta, negatif sayıların gerçek sayılar kümesinde karekökunün tanımsız olduğudur. Yalnızca sıfır ve pozitif sayıların karekökü hesaplanabilir. Negatif sayıların karekökü, karmaşık sayılar alanına girer ve "i" sanal birimi ile ifade edilir. Bu araç yalnızca 0 ve üzeri değerler için doğru sonuç verir.
+    </p>
+    <p>
+      Ayrıca çok büyük sayılarda sonuçlar bilimsel gösterimde çıkabilir. Hesap sonuçlarını uygulamalarda kullanırken doğru basamak sayısına yuvarlama yapmayı unutmayın.
+    </p>
+
+    <h3>Sıkça Sorulan Sorular</h3>
+    {faq.map((item) => (
+      <div class="faq-item">
+        <h4>{item.question}</h4>
+        <p>{item.answer}</p>
+      </div>
+    ))}
+  </section>
+</CalcLayout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+    const resultArea = document.getElementById('calc-result');
+
+    function debounce(fn, d = 150) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), d); }; }
+    function formatNumber(n, d = 6) {
+      const rounded = parseFloat(n.toFixed(d));
+      return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 0, maximumFractionDigits: d }).format(rounded);
+    }
+
+    const dc = debounce(calculate);
+    inputs.forEach(i => { i.addEventListener('input', dc); i.addEventListener('change', dc); });
+
+    function calculate() {
+      const sayiEl = document.getElementById('sayi');
+      const sayi = parseFloat(sayiEl.value);
+
+      if (isNaN(sayi) || sayi < 0) {
+        if (resultArea) resultArea.classList.add('hidden');
+        return;
+      }
+
+      const karekok = Math.sqrt(sayi);
+      const kupkok = Math.cbrt(sayi);
+      const kare = sayi * sayi;
+
+      document.getElementById('sonuc-karekok').textContent = formatNumber(karekok);
+      document.getElementById('detail-karekok').textContent = `√${sayi} = ${formatNumber(karekok)}`;
+      document.getElementById('detail-kupkok').textContent = `³√${sayi} = ${formatNumber(kupkok)}`;
+      document.getElementById('detail-kare').textContent = `${sayi}² = ${formatNumber(kare, 0)}`;
+
+      if (resultArea) resultArea.classList.remove('hidden');
+      updateURL();
+    }
+
+    function updateURL() {
+      const p = new URLSearchParams();
+      inputs.forEach(i => { if (i.value && i.id) p.set(i.id, i.value); });
+      history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
+    }
+
+    function loadFromURL() {
+      const p = new URLSearchParams(window.location.search);
+      let h = false;
+      inputs.forEach(i => { if (i.id && p.has(i.id)) { i.value = p.get(i.id); h = true; } });
+      if (h) calculate();
+    }
+
+    loadFromURL();
+  });
+</script>

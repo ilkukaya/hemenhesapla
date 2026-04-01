@@ -1,0 +1,163 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Üslü sayı nasıl hesaplanır?",
+    answer: "Üslü sayı, bir tabanın belirtilen kez kendisiyle çarpılması işlemidir. aⁿ ifadesinde 'a' taban, 'n' ise üs olarak adlandırılır. Örneğin 2⁵ = 2 × 2 × 2 × 2 × 2 = 32 eder. Üs 0 olduğunda sıfırdan farklı her sayının sonucu 1'dir (a⁰ = 1). Üs negatif olduğunda ise 1/aⁿ hesaplanır."
+  },
+  {
+    question: "Negatif üs ne anlama gelir?",
+    answer: "Negatif üs, sayının tersinin pozitif üssünü almak anlamına gelir. Yani a⁻ⁿ = 1/aⁿ formülüyle ifade edilir. Örneğin 2⁻³ = 1/2³ = 1/8 = 0,125 olur. Negatif üsler özellikle bilimsel gösterimde çok küçük sayıları ifade etmek için kullanılır."
+  },
+  {
+    question: "Üslü sayılarla çarpma işlemi nasıl yapılır?",
+    answer: "Aynı tabana sahip üslü sayıları çarparken üsler toplanır: aᵐ × aⁿ = aᵐ⁺ⁿ. Örneğin 2³ × 2⁴ = 2⁷ = 128 eder. Bölmede ise üsler çıkarılır: aᵐ ÷ aⁿ = aᵐ⁻ⁿ. Farklı tabanlı üslü sayılarda bu kısaltma uygulanamaz; her biri ayrı hesaplanmalıdır."
+  }
+];
+
+const meta = {
+  title: "Üslü Sayı Hesaplama",
+  description: "Üslü sayı hesaplama aracı ile herhangi bir tabanın istediğiniz üssünü anında hesaplayın. aⁿ formülü ile kuvvet hesaplama, negatif ve ondalıklı üsler dahil.",
+  category: "matematik",
+  slug: "uslu-sayi-hesaplama",
+  keywords: ["üslü sayı hesaplama", "kuvvet hesaplama", "taban üs hesaplama", "üs alma", "matematiksel kuvvet"],
+  dateModified: "2026-04-01",
+  relatedCalcs: ["karekok-hesaplama", "ortalama-hesaplama"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
+    <div class="calc-inputs">
+      <CalcInput
+        id="taban"
+        label="Taban (a)"
+        type="number"
+        placeholder="Örn: 5"
+        step="any"
+        helpText="Üssünü almak istediğiniz tabanı girin"
+      />
+      <CalcInput
+        id="us"
+        label="Üs (n)"
+        type="number"
+        placeholder="Örn: 4"
+        step={1}
+        helpText="Kaçıncı kuvveti alınacağını girin (negatif değer de girebilirsiniz)"
+      />
+    </div>
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">Sonuç (aⁿ)</p>
+      <p class="calc-result-value" id="sonuc-ana">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">İfade</span>
+        <span class="calc-detail-value" id="detail-ifade">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Sonuç</span>
+        <span class="calc-detail-value" id="detail-sonuc">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Logaritma (log₁₀)</span>
+        <span class="calc-detail-value" id="detail-log">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <section class="calc-content">
+    <h2>Üslü Sayı Hesaplama Nedir?</h2>
+    <p>
+      Üslü sayı (kuvvet alma), bir sayının belirli sayıda kendisiyle çarpılması işlemidir. Matematiksel notasyonda aⁿ biçiminde yazılır; burada "a" taban, "n" ise üs adını alır. Örneğin 3⁴ ifadesi, 3 sayısının 4 kez kendisiyle çarpılması anlamına gelir: 3 × 3 × 3 × 3 = 81. Üslü sayılar matematik, fizik, kimya, bilgisayar bilimi ve ekonomide son derece yaygın kullanıma sahiptir.
+    </p>
+    <p>
+      Bilimsel hesaplamalarda çok büyük ya da çok küçük sayıları ifade etmek için 10'un kuvvetleri kullanılır. Örneğin ışık hızı yaklaşık 3 × 10⁸ m/s, bir elektronun kütlesi ise yaklaşık 9,1 × 10⁻³¹ kg olarak ifade edilir. Bu tür notasyonlar üslü sayı kavramının ne denli merkezi bir öneme sahip olduğunu göstermektedir.
+    </p>
+    <p>
+      Finans alanında da bileşik faiz hesaplamalarında üslü sayılar kullanılır. A = P × (1 + r)ⁿ formülündeki (1 + r)ⁿ terimi, yatırımın n yıl sonundaki büyüme faktörünü verir. Bu nedenle üslü sayıları doğru hesaplayabilmek yatırım planlaması açısından büyük önem taşır.
+    </p>
+
+    <h3>Formül</h3>
+    <p>
+      Temel formül: aⁿ = a × a × a × … × a (n kez). Özel durumlar: a⁰ = 1 (a ≠ 0), a¹ = a, a⁻ⁿ = 1/aⁿ. Ondalıklı üsler için: aˣ = e^(x × ln a) biçiminde hesaplanır. Bu araç Math.pow(taban, us) fonksiyonunu kullanarak tüm gerçek üs değerleri için hesaplama yapar.
+    </p>
+
+    <h3>Dikkat Edilmesi Gerekenler</h3>
+    <p>
+      Üs hesaplamasında bazı özel durumlar vardır: 0⁰ matematiksel olarak tartışmalıdır ve çoğu uygulamada 1 olarak kabul edilir. Negatif bir tabanın ondalıklı üssü karmaşık sayı sonucu verebilir ve bu araçta NaN olarak görünebilir. Çok büyük sayılarda JavaScript'in kayan nokta sınırları nedeniyle Infinity (sonsuz) sonucu görülebilir. Pratik hesaplamalar için makul büyüklükte taban ve üs değerleri kullanınız.
+    </p>
+
+    <h3>Sıkça Sorulan Sorular</h3>
+    {faq.map((item) => (
+      <div class="faq-item">
+        <h4>{item.question}</h4>
+        <p>{item.answer}</p>
+      </div>
+    ))}
+  </section>
+</CalcLayout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+    const resultArea = document.getElementById('calc-result');
+
+    function debounce(fn, d = 150) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), d); }; }
+    function formatNumber(n, d = 6) {
+      if (!isFinite(n)) return String(n);
+      return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 0, maximumFractionDigits: d }).format(n);
+    }
+
+    const dc = debounce(calculate);
+    inputs.forEach(i => { i.addEventListener('input', dc); i.addEventListener('change', dc); });
+
+    function superscript(n) {
+      const map = { '0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','-':'⁻','.':'·' };
+      return String(n).split('').map(c => map[c] || c).join('');
+    }
+
+    function calculate() {
+      const taban = parseFloat(document.getElementById('taban').value);
+      const us = parseFloat(document.getElementById('us').value);
+
+      if (isNaN(taban) || isNaN(us)) {
+        if (resultArea) resultArea.classList.add('hidden');
+        return;
+      }
+
+      const sonuc = Math.pow(taban, us);
+      const logVal = sonuc > 0 ? Math.log10(sonuc) : NaN;
+
+      document.getElementById('sonuc-ana').textContent = formatNumber(sonuc);
+      document.getElementById('detail-ifade').textContent = `${taban}${superscript(us)}`;
+      document.getElementById('detail-sonuc').textContent = `${taban}${superscript(us)} = ${formatNumber(sonuc)}`;
+      document.getElementById('detail-log').textContent = isNaN(logVal) ? 'Tanımsız' : formatNumber(logVal);
+
+      if (resultArea) resultArea.classList.remove('hidden');
+      updateURL();
+    }
+
+    function updateURL() {
+      const p = new URLSearchParams();
+      inputs.forEach(i => { if (i.value && i.id) p.set(i.id, i.value); });
+      history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
+    }
+
+    function loadFromURL() {
+      const p = new URLSearchParams(window.location.search);
+      let h = false;
+      inputs.forEach(i => { if (i.id && p.has(i.id)) { i.value = p.get(i.id); h = true; } });
+      if (h) calculate();
+    }
+
+    loadFromURL();
+  });
+</script>

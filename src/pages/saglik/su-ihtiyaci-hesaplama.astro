@@ -1,0 +1,162 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Günlük su ihtiyacı nasıl hesaplanır?",
+    answer: "Günlük su ihtiyacı hesaplamasında en yaygın kullanılan yöntem, vücut ağırlığını 0,033 ile çarpmaktır. Örneğin 70 kg olan bir kişinin günlük su ihtiyacı 70 × 0,033 = 2,31 litredir. Bu miktar bireyden bireye değişebilir; egzersiz yoğunluğu, hava sıcaklığı ve genel sağlık durumu ihtiyacı artırabilir."
+  },
+  {
+    question: "Günde kaç bardak su içmeliyim?",
+    answer: "Standart bir bardak 200 mL olarak kabul edildiğinde, 70 kg için hesaplanan 2,31 litre yaklaşık 11-12 bardağa karşılık gelir. Araçta sonuç ekranında litre cinsinden değerin yanı sıra bardak sayısı da otomatik olarak hesaplanmaktadır. Dünya Sağlık Örgütü ortalama yetişkin için günde 8 bardak suyu minimum önermektedir."
+  },
+  {
+    question: "Egzersiz yapıyorsam su ihtiyacım artar mı?",
+    answer: "Evet, terleme yoluyla kaybedilen sıvı miktarı egzersiz sırasında önemli ölçüde artar. Orta yoğunlukta 1 saatlik egzersiz için ek 500-750 mL su tüketimi önerilir. Yaz aylarında veya sıcak ortamlarda çalışıyorsanız bu miktarı daha da artırmalısınız. Sporcular ve ağır işte çalışanlar için temel hesabın üzerine günde en az 1 litre ek su alınması tavsiye edilir."
+  }
+];
+
+const meta = {
+  title: "Su İhtiyacı Hesaplama",
+  description: "Vücut ağırlığınıza göre günlük su ihtiyacınızı hesaplayın. Kaç litre su içmeniz gerektiğini ve bardak cinsinden miktarı anında öğrenin.",
+  category: "saglik",
+  slug: "su-ihtiyaci-hesaplama",
+  keywords: ["su ihtiyacı hesaplama", "günlük su ihtiyacı", "kaç litre su içmeliyim", "su hesaplayıcı", "günlük su miktarı"],
+  dateModified: "2026-04-01",
+  relatedCalcs: ["kalori-hesaplama", "vucut-kitle-indeksi"],
+  faq,
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" novalidate>
+    <div class="calc-inputs">
+      <CalcInput
+        id="kilo"
+        label="Vücut Ağırlığı"
+        type="number"
+        placeholder="Örn: 70"
+        suffix="kg"
+        min={30}
+        max={200}
+        step={0.1}
+        helpText="Kilonuzu kilogram cinsinden girin"
+      />
+    </div>
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">Günlük Su İhtiyacı</p>
+      <p class="calc-result-value" id="result-litre">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Bardak Sayısı (200 mL)</span>
+        <span class="calc-detail-value" id="result-bardak">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Mililitre Cinsinden</span>
+        <span class="calc-detail-value" id="result-ml">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const resultArea = document.getElementById('calc-result');
+
+      function debounce(fn, delay = 150) {
+        let timer;
+        return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), delay); };
+      }
+
+      function formatNumber(num, dec = 0) {
+        return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: dec, maximumFractionDigits: dec }).format(num);
+      }
+
+      const debouncedCalc = debounce(calculate);
+      inputs.forEach(input => {
+        input.addEventListener('input', debouncedCalc);
+        input.addEventListener('change', debouncedCalc);
+      });
+
+      function calculate() {
+        const kilo = parseFloat(document.getElementById('kilo').value);
+
+        if (isNaN(kilo) || kilo < 30 || kilo > 200) {
+          if (resultArea) resultArea.classList.add('hidden');
+          return;
+        }
+
+        const litre = kilo * 0.033;
+        const ml = litre * 1000;
+        const bardak = litre / 0.2;
+
+        document.getElementById('result-litre').textContent = formatNumber(litre, 2) + ' litre';
+        document.getElementById('result-bardak').textContent = formatNumber(bardak, 1) + ' bardak';
+        document.getElementById('result-ml').textContent = formatNumber(ml, 0) + ' mL';
+
+        if (resultArea) resultArea.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const params = new URLSearchParams();
+        inputs.forEach(input => { if (input.value && input.id) params.set(input.id, input.value); });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+      }
+
+      function loadFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        let h = false;
+        inputs.forEach(input => { if (input.id && params.has(input.id)) { input.value = params.get(input.id); h = true; } });
+        if (h) calculate();
+      }
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>Su İhtiyacı Nasıl Hesaplanır?</h2>
+    <p>
+      Su, yaşam için vazgeçilmez bir kaynaktır. İnsan vücudunun yaklaşık yüzde altmışı sudan oluşmakta olup hücre fonksiyonları, sindirim, ısı düzenlemesi ve toksin atımı gibi kritik süreçler yeterli su tüketimiyle doğrudan ilişkilidir. Günlük su ihtiyacının doğru hesaplanması, sağlıklı bir yaşamın temel taşlarından birini oluşturur.
+    </p>
+    <p>
+      En yaygın kabul gören hesaplama yöntemi, vücut ağırlığını 0,033 ile çarpmaktır. Bu formüle göre 60 kg olan bir kişi günde 1,98 litre, 80 kg olan bir kişi ise 2,64 litre su tüketmelidir. Bu değer, iklim koşulları, aktivite düzeyi ve bireysel metabolizma farklılıklarına göre artış gösterebilir.
+    </p>
+
+    <h3>Formül</h3>
+    <p>
+      <strong>Günlük Su İhtiyacı (litre) = Vücut Ağırlığı (kg) × 0,033</strong>
+    </p>
+    <p>
+      Bardak cinsinden hesaplamak için sonucu 0,2'ye bölmeniz yeterlidir (1 bardak = 200 mL). Örneğin 75 kg için: 75 × 0,033 = 2,475 litre → 2,475 ÷ 0,2 ≈ 12,4 bardak.
+    </p>
+
+    <h3>Su İhtiyacını Etkileyen Faktörler</h3>
+    <p>
+      Temel formül genel bir rehber sunar; ancak gerçek su ihtiyacı birçok faktöre göre farklılık gösterebilir. Yüksek sıcaklıkta çalışma veya yoğun egzersiz, terlemeyi artırarak sıvı kaybını hızlandırır. Hamilelik ve emzirme dönemlerinde günlük su ihtiyacı belirgin biçimde artar. Öte yandan çay, kahve ve meyve gibi sıvı içeren besinler de günlük su ihtiyacının bir kısmını karşılayabilir.
+    </p>
+    <p>
+      Susuzluk hissinin başlaması su eksikliğinin uyarı işareti olarak görülse de bu his gecikebilir; özellikle yaşlılarda susuzluk hissi körelebilmektedir. Bu nedenle düzenli aralıklarla su içme alışkanlığı edinmek, susama hissini beklemekten daha sağlıklıdır.
+    </p>
+
+    <h3>Dikkat Edilmesi Gerekenler</h3>
+    <p>
+      Gereğinden fazla su tüketimi de zararlı olabilir. Hiponatremi adı verilen bu durumda kandaki sodyum düzeyi tehlikeli ölçüde düşer. Böbrek hastalığı olanların veya belirli ilaçlar kullananların günlük su tüketimi konusunda doktorlarına danışması önerilir. Araçtaki sonuç genel popülasyon için bir başlangıç noktası sunar; sağlık durumunuza özgü net bir öneri için bir uzman görüşü alınmalıdır.
+    </p>
+
+    <h3>Sıkça Sorulan Sorular</h3>
+    {faq.map(item => (
+      <details>
+        <summary><strong>{item.question}</strong></summary>
+        <p>{item.answer}</p>
+      </details>
+    ))}
+  </section>
+</CalcLayout>

@@ -1,0 +1,170 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Gebelik haftası nasıl hesaplanır?",
+    answer: "Gebelik haftası, son adet tarihinizin ilk gününden itibaren geçen gün sayısının 7'ye bölünmesiyle hesaplanır. Gebeliğin toplam süresi ortalama 40 haftadır (280 gün). Ovülasyon genellikle son adet sonrası 14. günde gerçekleşse de hesaplama pratiklik açısından son adet tarihinden başlatılır."
+  },
+  {
+    question: "Tahmini doğum tarihi nasıl bulunur?",
+    answer: "Tahmini doğum tarihi için en yaygın kullanılan yöntem Naegele kuralıdır: Son adet tarihine 280 gün (40 hafta) eklenir. Ultrason ölçümleri de doğum tarihini tahmin etmek için güvenilir bir yöntemdir ve genellikle ilk trimesterde yapılan ölçüm en isabetli sonucu verir."
+  },
+  {
+    question: "Gebelik haftaları nasıl gruplara ayrılır?",
+    answer: "Gebelik üç trimestere ayrılır: Birinci trimester 1-13. haftalar (organların oluşumu), ikinci trimester 14-27. haftalar (bebek büyümesi ve hareketleri), üçüncü trimester ise 28-40. haftalar (son gelişim ve doğuma hazırlık). Her trimesterde farklı gelişimsel süreçler ve kontrol gereksinimleri söz konusudur."
+  }
+];
+
+const meta = {
+  title: "Gebelik Haftası Hesaplama",
+  description: "Son adet tarihinizi girerek kaçıncı gebelik haftasında olduğunuzu ve tahmini doğum tarihinizi hesaplayın.",
+  category: "saglik",
+  slug: "gebelik-haftasi-hesaplama",
+  keywords: ["gebelik haftası hesaplama", "kaçıncı haftadayım", "tahmini doğum tarihi", "gebelik hesaplama", "hamilelik haftası"],
+  dateModified: "2026-04-01",
+  relatedCalcs: ["dogum-tarihi-hesaplama", "ideal-kilo-hesaplama"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form">
+    <CalcInput
+      id="sonAdetTarihi"
+      label="Son Adet Tarihi (İlk Günü)"
+      type="date"
+      helpText="Son adetinizin başladığı ilk günü seçin"
+    />
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">Gebelik Haftası</p>
+      <p class="calc-result-value" id="gebelik-haftasi">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Tahmini Doğum Tarihi</span>
+        <span class="calc-detail-value" id="dogum-tarihi">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Doğuma Kalan Gün</span>
+        <span class="calc-detail-value" id="kalan-gun">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Trimester</span>
+        <span class="calc-detail-value" id="trimester">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const resultArea = document.getElementById('calc-result');
+
+      function debounce(fn, delay = 150) {
+        let timer;
+        return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), delay); };
+      }
+
+      function formatDate(date) {
+        return date.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
+      }
+
+      function formatNumber(num, dec = 0) {
+        return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: dec, maximumFractionDigits: dec }).format(num);
+      }
+
+      const debouncedCalc = debounce(calculate);
+      inputs.forEach(input => {
+        input.addEventListener('input', debouncedCalc);
+        input.addEventListener('change', debouncedCalc);
+      });
+
+      function calculate() {
+        const sonAdetStr = document.getElementById('sonAdetTarihi').value;
+        if (!sonAdetStr) {
+          if (resultArea) resultArea.classList.add('hidden');
+          return;
+        }
+
+        const sonAdet = new Date(sonAdetStr);
+        const bugun = new Date();
+        bugun.setHours(0, 0, 0, 0);
+        sonAdet.setHours(0, 0, 0, 0);
+
+        if (sonAdet > bugun) {
+          if (resultArea) resultArea.classList.add('hidden');
+          return;
+        }
+
+        const msPerGun = 1000 * 60 * 60 * 24;
+        const gecenGun = Math.floor((bugun - sonAdet) / msPerGun);
+        const haftaSayisi = Math.floor(gecenGun / 7);
+        const gunKaligi = gecenGun % 7;
+
+        const dogumTarihi = new Date(sonAdet.getTime() + 280 * msPerGun);
+        const kalanGun = Math.max(0, Math.floor((dogumTarihi - bugun) / msPerGun));
+
+        let trimesterMetin;
+        if (haftaSayisi <= 13) trimesterMetin = '1. Trimester (1-13. hafta)';
+        else if (haftaSayisi <= 27) trimesterMetin = '2. Trimester (14-27. hafta)';
+        else trimesterMetin = '3. Trimester (28-40. hafta)';
+
+        document.getElementById('gebelik-haftasi').textContent = `${formatNumber(haftaSayisi)} hafta ${formatNumber(gunKaligi)} gün`;
+        document.getElementById('dogum-tarihi').textContent = formatDate(dogumTarihi);
+        document.getElementById('kalan-gun').textContent = kalanGun > 0 ? `${formatNumber(kalanGun)} gün` : 'Doğum tarihi geçti';
+        document.getElementById('trimester').textContent = trimesterMetin;
+
+        if (resultArea) resultArea.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const params = new URLSearchParams();
+        inputs.forEach(input => { if (input.value && input.id) params.set(input.id, input.value); });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+      }
+
+      function loadFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        let h = false;
+        inputs.forEach(input => { if (input.id && params.has(input.id)) { input.value = params.get(input.id); h = true; } });
+        if (h) calculate();
+      }
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>Gebelik Haftası Nasıl Hesaplanır?</h2>
+    <p>
+      Gebelik haftası hesaplama, anne adaylarının hamilelik sürecini takip etmelerinin en temel yollarından biridir. Gebeliğin kaçıncı haftasında olunduğunu bilmek; doktor kontrollerini planlamak, bebeğin gelişim aşamalarını takip etmek ve tahmini doğum tarihini öğrenmek açısından büyük önem taşır. Bu hesap makinesi, son adet tarihinizin ilk gününden bugüne kadar geçen süreyi haftalar ve günler olarak hesaplar.
+    </p>
+    <p>
+      Gebelik süreci ortalama <strong>40 hafta (280 gün)</strong> olarak kabul edilir. Tıbbi hesaplamalarda gebelik başlangıcı olarak son adet tarihinin ilk günü esas alınır; bu tarihten itibaren geçen her 7 gün bir gebelik haftasına karşılık gelir. Ultrason ölçümleri bazen gebelik haftasını birkaç gün ileri veya geri alabilir; bu nedenle takip eden kontrollerde doktorunuzun belirlediği hafta bilgisini esas almanız önerilir.
+    </p>
+    <h3>Formül</h3>
+    <p>
+      <strong>Gebelik Haftası = Bugün − Son Adet Tarihi (gün) ÷ 7</strong><br />
+      <strong>Tahmini Doğum Tarihi = Son Adet Tarihi + 280 gün</strong><br />
+      Bu yöntem Naegele kuralı olarak bilinir ve dünya genelinde standart obstetrik pratikte kullanılmaktadır.
+    </p>
+    <h3>Dikkat Edilmesi Gerekenler</h3>
+    <p>
+      Tahmini doğum tarihi bir öngörüdür; bebeklerin yalnızca yaklaşık yüzde beşi tam olarak hesaplanan günde doğar. Gebeliklerin büyük çoğunluğu 38 ile 42. haftalar arasında tamamlanır. Düzensiz adet döngüsü olan annelerde son adet tarihine dayalı hesaplama yanıltıcı olabilir; bu durumlarda ilk trimester ultrason ölçümü daha güvenilir sonuç verir. Gebelikle ilgili tüm sağlık kararlarınızda mutlaka bir kadın doğum uzmanına danışınız.
+    </p>
+    <h3>Sıkça Sorulan Sorular</h3>
+    {faq.map(item => (
+      <details>
+        <summary><strong>{item.question}</strong></summary>
+        <p>{item.answer}</p>
+      </details>
+    ))}
+  </section>
+</CalcLayout>

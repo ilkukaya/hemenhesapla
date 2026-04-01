@@ -1,0 +1,193 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Kıdem tazminatı tavan tutarı nedir?",
+    answer: "Kıdem tazminatı tavanı her yıl güncellenmektedir. 2026 yılı için kıdem tazminatı tavanı 35.058,58 TL olarak belirlenmiştir. Bu tavan, işçinin son brüt maaşının tavan tutarını aşması halinde tazminat hesaplamasında tavan tutarının esas alınacağı anlamına gelir. Örneğin brüt maaşınız 40.000 TL ise her tam çalışma yılı için 35.058,58 TL üzerinden hesaplama yapılır.",
+  },
+  {
+    question: "Kıdem tazminatı hangi durumlarda ödenir?",
+    answer: "Kıdem tazminatına hak kazanmak için işçinin en az 1 yıl çalışmış olması gerekir. İşveren tarafından haksız fesih, askerlik veya evlilik nedeniyle istifa (kadın işçi için), emeklilik, ölüm, muvazzaf askerlik hizmeti nedeniyle işten ayrılma gibi durumlarda kıdem tazminatı ödenir. İşçinin kendi isteğiyle istifa etmesi durumunda kıdem tazminatı ödenmez.",
+  },
+  {
+    question: "Kıdem tazminatı nasıl hesaplanır, kısmi yıllar dahil edilir mi?",
+    answer: "Kıdem tazminatı, çalışılan her tam yıl için bir aylık brüt maaş tutarında ödenir. Tam yılı aşan kısmi süreler ise gün bazında oransal olarak hesaplanır. Örneğin 3 yıl 6 ay 15 gün çalışan bir işçi için 3 tam yıl + (6 ay 15 gün / 365) oransal hesaplama uygulanır. Gün sayısı 365 güne bölünüp tam yıl sayısına eklenerek toplam çalışma süresi bulunur.",
+  },
+];
+
+const meta = {
+  title: "Kıdem Tazminatı Hesaplama 2026",
+  description: "Çalışma sürenize ve brüt maaşınıza göre kıdem tazminatınızı hesaplayın. 2026 tavan tutarı dahil kıdem tazminatı hesaplama aracı.",
+  category: "finans",
+  slug: "kidem-tazminati-hesaplama",
+  keywords: ["kıdem tazminatı hesaplama", "kıdem tazminatı 2026", "kıdem tazminatı tavan", "işten çıkarılma tazminat", "iş tazminatı hesaplama"],
+  dateModified: "2026-04-01",
+  relatedCalcs: ["ihbar-tazminati-hesaplama", "net-brut-maas-hesaplama", "gelir-vergisi-hesaplama"],
+  faq,
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
+    <CalcInput
+      id="iseBaslamaTarihi"
+      label="İşe Başlama Tarihi"
+      type="date"
+    />
+    <CalcInput
+      id="isCikisTarihi"
+      label="İşten Çıkış Tarihi"
+      type="date"
+    />
+    <CalcInput
+      id="sonBrutMaas"
+      label="Son Brüt Maaş"
+      type="number"
+      suffix="₺"
+      placeholder="25000"
+      step={100}
+      min={0}
+    />
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <span class="calc-result-label">Kıdem Tazminatı</span>
+      <span class="calc-result-value" id="kidem-tazminati">—</span>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Çalışma Süresi</span>
+        <span class="calc-detail-value" id="calisma-suresi">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Hesaplamada Kullanılan Maaş</span>
+        <span class="calc-detail-value" id="hesap-maas">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Tavan Uygulandı mı?</span>
+        <span class="calc-detail-value" id="tavan-bilgi">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <section class="calc-content">
+    <h2>Kıdem Tazminatı Hesaplama Nasıl Yapılır?</h2>
+    <p>
+      Kıdem tazminatı, iş sözleşmesi belirli koşullar altında sona eren işçilere işveren tarafından ödenen yasal bir haktır. 4857 sayılı İş Kanunu kapsamında değerlendirilen bu tazminat, işçinin kıdemine ve son brüt maaşına bağlı olarak hesaplanır. İşe başlama ve çıkış tarihlerini ile brüt maaşınızı girerek hak ettiğiniz tutarı anında öğrenebilirsiniz.
+    </p>
+    <h3>Kıdem Tazminatı Formülü</h3>
+    <p>
+      Temel hesaplama şu şekilde yapılır:
+    </p>
+    <p>
+      <strong>Kıdem Tazminatı = Çalışma Süresi (Yıl) × Son Brüt Maaş</strong>
+    </p>
+    <p>
+      Tam yılı aşan kısmi süreler gün bazında oransal hesaplanır. Brüt maaş 2026 tavanı olan 35.058,58 TL'yi aşıyorsa hesaplamada tavan tutar esas alınır.
+    </p>
+    <h3>Hangi Ödemeler Brüt Maaşa Dahildir?</h3>
+    <p>
+      Kıdem tazminatı hesaplamasında sadece aylık temel ücret değil, düzenli ödenen yol, yemek, yakacak yardımı, konut yardımı gibi sosyal yardımlar da brüt maaşa dahil edilir. Süreklilik arz etmeyen primler ve ikramiyeler genellikle kıdem tazminatı matrahına dahil edilmez. Bu nedenle "son brüt maaş" kavramını geniş yorumlamak ve tüm sabit eklerin toplamını girmek daha doğru bir hesaplama sağlar.
+    </p>
+    <h3>Dikkat Edilmesi Gerekenler</h3>
+    <p>
+      Kıdem tazminatına hak kazanmak için en az 1 tam yıl çalışmış olmak gerekmektedir. 1 yılın altındaki çalışmalar kıdem tazminatı hakkı doğurmaz. Ayrıca kendi isteğiyle işten ayrılan (istifa eden) işçiler kıdem tazminatı alamaz; ancak emeklilik, evlilik (kadın işçi) veya askerlik nedeniyle ayrılanlar bu haktan yararlanabilir. Hesaplama tahmini niteliktedir; kesin tutar için iş hukuku uzmanına danışmanız önerilir.
+    </p>
+    <h3>Sıkça Sorulan Sorular</h3>
+    {faq.map((item) => (
+      <div class="faq-item">
+        <h4>{item.question}</h4>
+        <p>{item.answer}</p>
+      </div>
+    ))}
+  </section>
+</CalcLayout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+    const resultArea = document.getElementById('calc-result');
+
+    const TAVAN = 35058.58;
+
+    function debounce(fn: (...args: unknown[]) => void, delay = 150) {
+      let timer: ReturnType<typeof setTimeout>;
+      return (...args: unknown[]) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), delay); };
+    }
+
+    function formatTL(num: number) {
+      return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
+    }
+
+    const debouncedCalc = debounce(calculate);
+    inputs.forEach(input => {
+      input.addEventListener('input', debouncedCalc);
+      input.addEventListener('change', debouncedCalc);
+    });
+
+    function calculate() {
+      const baslamaTarihi = (document.getElementById('iseBaslamaTarihi') as HTMLInputElement).value;
+      const cikisTarihi = (document.getElementById('isCikisTarihi') as HTMLInputElement).value;
+      const brutMaas = parseFloat((document.getElementById('sonBrutMaas') as HTMLInputElement).value);
+
+      if (!baslamaTarihi || !cikisTarihi || !brutMaas || brutMaas <= 0) {
+        if (resultArea) resultArea.classList.add('hidden');
+        return;
+      }
+
+      const baslama = new Date(baslamaTarihi);
+      const cikis = new Date(cikisTarihi);
+
+      if (cikis <= baslama) {
+        if (resultArea) resultArea.classList.add('hidden');
+        return;
+      }
+
+      const toplamGun = Math.floor((cikis.getTime() - baslama.getTime()) / (1000 * 60 * 60 * 24));
+      const toplamYil = toplamGun / 365;
+
+      const yil = Math.floor(toplamYil);
+      const kalanGun = toplamGun - (yil * 365);
+      const kalanAy = Math.floor(kalanGun / 30);
+      const kalanGunKalan = kalanGun - (kalanAy * 30);
+
+      const tavanUygulandi = brutMaas > TAVAN;
+      const hesapMaas = tavanUygulandi ? TAVAN : brutMaas;
+
+      const kidemTazminati = toplamYil * hesapMaas;
+
+      (document.getElementById('kidem-tazminati') as HTMLElement).textContent = formatTL(kidemTazminati);
+      (document.getElementById('calisma-suresi') as HTMLElement).textContent = `${yil} yıl ${kalanAy} ay ${kalanGunKalan} gün`;
+      (document.getElementById('hesap-maas') as HTMLElement).textContent = formatTL(hesapMaas);
+      (document.getElementById('tavan-bilgi') as HTMLElement).textContent = tavanUygulandi ? `Evet (Tavan: ${formatTL(TAVAN)})` : 'Hayır';
+
+      if (resultArea) resultArea.classList.remove('hidden');
+      updateURL();
+    }
+
+    function updateURL() {
+      const params = new URLSearchParams();
+      inputs.forEach(input => {
+        const el = input as HTMLInputElement;
+        if (el.value && el.id) params.set(el.id, el.value);
+      });
+      history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+    }
+
+    function loadFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      let hasParams = false;
+      inputs.forEach(input => {
+        const el = input as HTMLInputElement;
+        if (el.id && params.has(el.id)) { el.value = params.get(el.id)!; hasParams = true; }
+      });
+      if (hasParams) calculate();
+    }
+
+    loadFromURL();
+  });
+</script>

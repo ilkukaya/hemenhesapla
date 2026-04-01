@@ -1,0 +1,171 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Oran sadeleştirme nasıl yapılır?",
+    answer: "Bir A:B oranını sadeleştirmek için A ve B'nin en büyük ortak bölenine (EBOB) bölünmesi gerekir. Örneğin 12:8 oranında EBOB=4 olduğundan 12÷4 : 8÷4 = 3:2 sadeleştirilmiş orandır."
+  },
+  {
+    question: "Oran ile orantı arasındaki fark nedir?",
+    answer: "Oran, iki büyüklüğün birbirine bölümünü ifade eder (A:B). Orantı ise iki oranın birbirine eşit olduğunu gösterir (A/B = C/D). Orantı, bilinmeyen bir değeri bulmak için kullanılır."
+  },
+  {
+    question: "Oran hesaplama günlük hayatta nerede kullanılır?",
+    answer: "Oran hesaplama; yemek tariflerinde malzeme ölçüsü ayarlamak, harita ölçekleri hesaplamak, karışım hazırlamak, para birimi dönüşümü ve istatistik analizlerinde sıkça kullanılır."
+  }
+];
+
+const meta = {
+  title: "Oran Hesaplama",
+  description: "İki sayı arasındaki oranı kolayca hesaplayın. Sadeleştirilmiş oran, yüzde değerleri ve A:B gösterimi ile detaylı sonuçlar alın.",
+  category: "matematik",
+  slug: "oran-hesaplama",
+  keywords: ["oran hesaplama", "oran sadeleştirme", "EBOB hesaplama", "oran yüzde", "A:B oranı", "orantı hesaplama"],
+  dateModified: "2026-04-01",
+  relatedCalcs: ["yuzde-hesaplama", "alan-hesaplama", "ortalama-hesaplama"],
+  faq,
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
+    <CalcInput id="sayiA" label="A Sayısı" type="number" placeholder="Örn: 12" min={0} helpText="Oranın pay kısmına girilecek sayı" />
+    <CalcInput id="sayiB" label="B Sayısı" type="number" placeholder="Örn: 8" min={0} helpText="Oranın payda kısmına girilecek sayı" />
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">Oran</p>
+      <p class="calc-result-value" id="sonuc-oran">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Sadeleştirilmiş Oran</span>
+        <span class="calc-detail-value" id="d-sade">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">A'nın Yüzdesi</span>
+        <span class="calc-detail-value" id="d-yuzdeA">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">B'nin Yüzdesi</span>
+        <span class="calc-detail-value" id="d-yuzdeB">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Ondalık Değer (A/B)</span>
+        <span class="calc-detail-value" id="d-ondalik">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <section class="calc-content">
+    <h2>Oran Hesaplama Nedir?</h2>
+    <p>
+      Oran, iki büyüklüğün birbiriyle karşılaştırılmasını ifade eden matematiksel bir kavramdır. A:B şeklinde gösterilen bir oran, A'nın B'ye oranını temsil eder. Günlük hayatta yemek tariflerinden inşaat projelerine, finansal analizlerden coğrafya haritalarına kadar pek çok alanda oran hesaplaması yapılmaktadır.
+    </p>
+    <p>
+      Bu araç sayesinde girdiğiniz iki sayı arasındaki oranı otomatik olarak hesaplayabilir, sadeleştirilmiş hâlini görebilir ve her iki değerin toplam içindeki yüzde payını öğrenebilirsiniz. İki sayıyı girmek yeterlidir; hesaplayıcı tüm detayları sizin için çıkarır.
+    </p>
+    <h3>Oran Sadeleştirme Formülü</h3>
+    <p>
+      Bir A:B oranı, A ve B'nin <strong>En Büyük Ortak Böleni (EBOB)</strong> kullanılarak sadeleştirilir. Formül şu şekildedir:<br />
+      Sadeleştirilmiş oran = (A ÷ EBOB) : (B ÷ EBOB)<br />
+      Örneğin A=15, B=10 ise EBOB=5, sadeleştirilmiş oran = 3:2 olur.
+    </p>
+    <h3>Yüzde Değerleri</h3>
+    <p>
+      A:B oranında A'nın toplam içindeki yüzdesi = A ÷ (A+B) × 100 şeklinde, B'nin yüzdesi ise = B ÷ (A+B) × 100 şeklinde hesaplanır. Bu değerler özellikle pasta grafik oluşturmak veya pazar payı analizi yapmak gibi durumlarda kullanışlıdır.
+    </p>
+    <h3>Pratik Kullanım Örnekleri</h3>
+    <p>
+      <strong>Yemek tarifi:</strong> 6 kişilik bir tarif 4 kişilik yapılacaksa tüm malzeme miktarları 4:6 = 2:3 oranıyla düzenlenir.<br />
+      <strong>Harita ölçeği:</strong> 1:50.000 ölçekli haritada 1 cm gerçekte 50.000 cm = 500 m'ye karşılık gelir.<br />
+      <strong>Karışım:</strong> Çimento-kum-su karışımında 1:2:0,5 oranı sıkça kullanılır.
+    </p>
+    <h3>Dikkat Edilmesi Gerekenler</h3>
+    <p>
+      Oran hesaplamalarında her iki sayının da sıfırdan farklı olması gerekir. B değeri 0 girilirse bölme tanımsız olur. Ayrıca negatif sayılarla oran hesaplanabilir ancak yüzde yorumlaması anlamsız hale gelebilir; bu araç pozitif sayılar için optimize edilmiştir.
+    </p>
+    <h3>Sıkça Sorulan Sorular</h3>
+    {faq.map((item) => (
+      <div class="faq-item">
+        <h4>{item.question}</h4>
+        <p>{item.answer}</p>
+      </div>
+    ))}
+  </section>
+</CalcLayout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+    const resultArea = document.getElementById('calc-result');
+
+    function debounce(fn, delay = 150) {
+      let timer;
+      return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), delay); };
+    }
+
+    function formatNumber(num, dec = 2) {
+      return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: dec, maximumFractionDigits: dec }).format(num);
+    }
+
+    function gcd(a, b) {
+      a = Math.abs(Math.round(a));
+      b = Math.abs(Math.round(b));
+      while (b) { let t = b; b = a % b; a = t; }
+      return a;
+    }
+
+    const debouncedCalc = debounce(calculate);
+    inputs.forEach(input => {
+      input.addEventListener('input', debouncedCalc);
+      input.addEventListener('change', debouncedCalc);
+    });
+
+    function calculate() {
+      const a = parseFloat(document.getElementById('sayiA').value);
+      const b = parseFloat(document.getElementById('sayiB').value);
+
+      if (isNaN(a) || isNaN(b) || b === 0) {
+        if (resultArea) resultArea.classList.add('hidden');
+        return;
+      }
+
+      const divisor = gcd(a, b);
+      const sadeA = Math.round(a / divisor);
+      const sadeB = Math.round(b / divisor);
+      const toplam = a + b;
+      const yuzdeA = (a / toplam) * 100;
+      const yuzdeB = (b / toplam) * 100;
+      const ondalik = a / b;
+
+      document.getElementById('sonuc-oran').textContent = `${formatNumber(a, 0)}:${formatNumber(b, 0)}`;
+      document.getElementById('d-sade').textContent = `${sadeA}:${sadeB}`;
+      document.getElementById('d-yuzdeA').textContent = formatNumber(yuzdeA) + '%';
+      document.getElementById('d-yuzdeB').textContent = formatNumber(yuzdeB) + '%';
+      document.getElementById('d-ondalik').textContent = formatNumber(ondalik, 4);
+
+      if (resultArea) resultArea.classList.remove('hidden');
+      updateURL();
+    }
+
+    function updateURL() {
+      const params = new URLSearchParams();
+      inputs.forEach(input => { if (input.value && input.id) params.set(input.id, input.value); });
+      history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+    }
+
+    function loadFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      let h = false;
+      inputs.forEach(input => { if (input.id && params.has(input.id)) { input.value = params.get(input.id); h = true; } });
+      if (h) calculate();
+    }
+
+    loadFromURL();
+  });
+</script>
