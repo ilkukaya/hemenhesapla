@@ -1,0 +1,208 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Fayans hesabında fire payı ne kadar olmalıdır?",
+    answer: "Standart dikdörtgen alanlarda %10 fire payı yeterlidir. Köşegen döşeme, karmaşık oda şekilleri veya küçük fayans boyutlarında %15-20 fire payı bırakmanız önerilir. Mermer veya doğal taş döşemelerde desenlerin eşleştirilmesi gerektiğinden fire %20-30'a kadar çıkabilir. İleride kırık fayans ihtimaline karşı 3-5 adet fazladan almanız tavsiye edilir."
+  },
+  {
+    question: "Kaç adet fayans bir paket oluşturur?",
+    answer: "Fayans paket içerikleri üreticiye ve fayans boyutuna göre değişir. 30×30 cm fayanslar genellikle 11-12 adet/paket, 60×60 cm fayanslar ise 4-6 adet/paket olarak satılır. Paketin kaç m² kapsadığı genellikle ambalaj üzerinde belirtilir. Hesaplamada toplam m² cinsinden sipariş vermeniz paket sayısını doğrudan belirlemenizi kolaylaştırır."
+  },
+  {
+    question: "Fayans döşemeden önce ne kadar ölçüm yapılmalıdır?",
+    answer: "Alanı doğru ölçmek için uzun bir şerit metre kullanın ve her duvarı en az iki farklı noktadan ölçün. Girintiler, çıkıntılar, kolonlar ve nişler varsa bunları ayrıca hesaba katın. Düzensiz alanlarda alanı basit dikdörtgenlere bölüp her parçayı ayrı hesaplamak ve sonuçları toplamak daha sağlıklı bir yöntemdir."
+  }
+];
+
+const meta = {
+  title: "Fayans Hesaplama",
+  description: "Zemin veya duvar kaplaması için gereken fayans adedini hesaplayın. Alan boyutu ve fayans boyutuna göre fire dahil fayans hesaplayıcı.",
+  category: "insaat",
+  slug: "fayans-hesaplama",
+  keywords: ["fayans hesaplama", "kaç fayans lazım", "fayans adet hesaplama", "seramik hesaplama", "fayans hesaplayıcı"],
+  dateModified: "2026-04-01",
+  relatedCalcs: ["parke-hesaplama", "boya-hesaplama"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
+    <div class="calc-inputs">
+      <CalcInput
+        id="alanEn"
+        label="Alan Eni"
+        type="number"
+        placeholder="Örn: 4"
+        suffix="m"
+        min={0.1}
+        step={0.1}
+        helpText="Döşenecek alanın en ölçüsü (metre)"
+      />
+      <CalcInput
+        id="alanBoy"
+        label="Alan Boyu"
+        type="number"
+        placeholder="Örn: 5"
+        suffix="m"
+        min={0.1}
+        step={0.1}
+        helpText="Döşenecek alanın boy ölçüsü (metre)"
+      />
+      <CalcInput
+        id="fayansEn"
+        label="Fayans Eni"
+        type="number"
+        placeholder="30"
+        suffix="cm"
+        min={1}
+        step={1}
+        value={30}
+        helpText="Tek fayansın en ölçüsü (santimetre)"
+      />
+      <CalcInput
+        id="fayansBoy"
+        label="Fayans Boyu"
+        type="number"
+        placeholder="30"
+        suffix="cm"
+        min={1}
+        step={1}
+        value={30}
+        helpText="Tek fayansın boy ölçüsü (santimetre)"
+      />
+      <CalcInput
+        id="fire"
+        label="Fire Payı"
+        type="number"
+        placeholder="10"
+        suffix="%"
+        min={0}
+        max={50}
+        step={1}
+        value={10}
+        helpText="Kesim ve kırılma için eklenen fire yüzdesi (önerilen: %10)"
+      />
+    </div>
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">Gereken Fayans</p>
+      <p class="calc-result-value" id="sonuc-fayans">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Gereken Fayans (fire dahil)</span>
+        <span class="calc-detail-value" id="detail-fayans">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Döşeme Alanı</span>
+        <span class="calc-detail-value" id="detail-alan">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Tek Fayans Alanı</span>
+        <span class="calc-detail-value" id="detail-fayansalan">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Fire Eklenmeden</span>
+        <span class="calc-detail-value" id="detail-firesiz">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <section class="calc-content">
+    <h2>Fayans Hesaplama Nasıl Yapılır?</h2>
+    <p>
+      Banyo, mutfak veya zemin döşemesi için kaç adet fayans satın almanız gerektiğini önceden bilmek hem bütçenizi korumanıza hem de proje sürecini aksatmadan tamamlamanıza yardımcı olur. Yetersiz fayans alımı döşeme sırasında renge uyumsuz parti ile karşılaşma riskini doğururken; gereğinden fazla alım gereksiz maliyet yaratır.
+    </p>
+    <p>
+      Fayans hesaplaması iki temel adımdan oluşur: önce toplam döşeme alanı (m²) hesaplanır, ardından tek bir fayansın alanına (m²) bölünür. Bu işlem bize net fayans adedini verir. Fire payı eklenerek gerçek ihtiyaç ortaya çıkar. Örneğin 4m × 5m = 20 m² alana 30×30 cm (0,09 m²) fayans döşenecekse: 20 / 0,09 ≈ 223 adet net ihtiyaç; %10 fire eklenince 246 adet olur.
+    </p>
+    <p>
+      Fire payı, fayans döşeme sürecinde kaçınılmaz olarak meydana gelen kesim kayıplarını, kırık parçaları ve hatalı döşeme ihtimallerini karşılamak amacıyla hesaba katılır. Düz dikdörtgen alanlarda %10 fire standart kabul edilirken, köşegen (diyagonal) döşemede %15-20, karmaşık şekilli alanlarda ise %20-25'e kadar çıkabilir. Proje bittikten sonra birkaç fayans yedekte bırakmak, ileride oluşabilecek kırılma veya çatlama durumunda renk uyumu sağlayabilmek açısından son derece önemlidir.
+    </p>
+    <p>
+      Fayanslar genellikle m² veya adet cinsinden satılmaktadır. Paket başına düşen m² değeri ambalaj üzerinde belirtilir. Bu araç size adet bazında ihtiyacı gösterir; böylece aldığınız paketin kaç m² kapsadığını bilerek alışverişinizi planlayabilirsiniz.
+    </p>
+
+    <h3>Formül</h3>
+    <p>
+      Alan = Alan Eni × Alan Boyu. Fayans Alanı = Fayans Eni (cm) × Fayans Boyu (cm) / 10.000. Net Adet = ⌈Alan / Fayans Alanı⌉. Fire Dahil Adet = ⌈Net Adet × (1 + Fire % / 100)⌉.
+    </p>
+
+    <h3>Dikkat Edilmesi Gerekenler</h3>
+    <p>
+      Hesaplama düzgün dikdörtgen alanlar için optimize edilmiştir. Düzensiz alanlarda alanı parçalara bölüp ayrı hesaplayın. Derz genişliği bu hesaba dahil değildir; ince derz (1-2 mm) için fark ihmal edilebilir düzeydeyken geniş derz (5+ mm) bazı durumda fayans adedini azaltabilir. Büyük formatlı fayanslar (60×120 cm ve üzeri) için fire oranını %15'e çıkarmanız önerilir.
+    </p>
+
+    <h3>Sıkça Sorulan Sorular</h3>
+    {faq.map((item) => (
+      <div class="faq-item">
+        <h4>{item.question}</h4>
+        <p>{item.answer}</p>
+      </div>
+    ))}
+  </section>
+</CalcLayout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+    const resultArea = document.getElementById('calc-result');
+
+    function debounce(fn, d = 150) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), d); }; }
+    function formatNumber(n, d = 2) {
+      return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 0, maximumFractionDigits: d }).format(n);
+    }
+
+    const dc = debounce(calculate);
+    inputs.forEach(i => { i.addEventListener('input', dc); i.addEventListener('change', dc); });
+
+    function calculate() {
+      const alanEn = parseFloat((document.getElementById('alanEn')).value);
+      const alanBoy = parseFloat((document.getElementById('alanBoy')).value);
+      const fayansEn = parseFloat((document.getElementById('fayansEn')).value);
+      const fayansBoy = parseFloat((document.getElementById('fayansBoy')).value);
+      const fire = parseFloat((document.getElementById('fire')).value) || 0;
+
+      if (isNaN(alanEn) || isNaN(alanBoy) || isNaN(fayansEn) || isNaN(fayansBoy) || alanEn <= 0 || alanBoy <= 0 || fayansEn <= 0 || fayansBoy <= 0) {
+        if (resultArea) resultArea.classList.add('hidden');
+        return;
+      }
+
+      const alan = alanEn * alanBoy;
+      const fayansAlani = (fayansEn * fayansBoy) / 10000;
+      const netAdet = Math.ceil(alan / fayansAlani);
+      const fireDahil = Math.ceil(netAdet * (1 + fire / 100));
+
+      document.getElementById('sonuc-fayans').textContent = `${fireDahil} adet`;
+      document.getElementById('detail-fayans').textContent = `${fireDahil} adet`;
+      document.getElementById('detail-alan').textContent = `${formatNumber(alan)} m²`;
+      document.getElementById('detail-fayansalan').textContent = `${formatNumber(fayansAlani, 4)} m²`;
+      document.getElementById('detail-firesiz').textContent = `${netAdet} adet`;
+
+      if (resultArea) resultArea.classList.remove('hidden');
+      updateURL();
+    }
+
+    function updateURL() {
+      const p = new URLSearchParams();
+      inputs.forEach(i => { if (i.value && i.id) p.set(i.id, i.value); });
+      history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
+    }
+
+    function loadFromURL() {
+      const p = new URLSearchParams(window.location.search);
+      let h = false;
+      inputs.forEach(i => { if (i.id && p.has(i.id)) { i.value = p.get(i.id); h = true; } });
+      if (h) calculate();
+    }
+
+    loadFromURL();
+  });
+</script>

@@ -1,0 +1,188 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Sigara içmenin toplam maliyeti nasıl hesaplanır?",
+    answer: "Sigara maliyetini hesaplamak için günlük içilen sigara sayısını 20'ye bölüp (bir paketteki sigara adedi) paket fiyatıyla çarparsınız, ardından 365 ile yıl sayısını çarparak toplam maliyete ulaşırsınız. Formül: Toplam Maliyet = (Günlük Sigara ÷ 20) × Paket Fiyatı × 365 × Yıl Sayısı. Bu hesap makinesi yıllık, aylık ve günlük maliyeti de gösterir."
+  },
+  {
+    question: "Sigarayı bırakmak ne kadar para tasarrufu sağlar?",
+    answer: "Günde bir paket sigara içen ve paketi 80 TL olan bir kişi yılda yaklaşık 29.200 TL harcamaktadır. 10 yılda bu rakam 292.000 TL'ye ulaşır. Üstelik bu hesap enflasyon ve sigara fiyatı artışlarını içermemektedir. Sigarayı bıraktığınızda biriken para; tatil, yatırım veya sağlık harcamaları gibi alanlarda değerlendirilebilir."
+  },
+  {
+    question: "Sigaranın sağlık maliyetleri ne kadardır?",
+    answer: "Sigaranın maddi maliyeti yalnızca paket bedeliyle sınırlı değildir. Sigara içiciler daha sık hastalanır, daha yüksek sağlık sigortası primleri öder ve kanser, kalp hastalığı, KOAH gibi kronik hastalıklara bağlı tedavi masraflarıyla yüzleşebilir. Araştırmalar, sigara içicilerin ömür boyu sağlık harcamalarının sigara içmeyenlere kıyasla çok daha yüksek olduğunu ortaya koymaktadır."
+  }
+];
+
+const meta = {
+  title: "Sigara Maliyeti Hesaplama",
+  description: "Sigaraya ne kadar para harcadığınızı hesaplayın. Günlük, aylık ve yıllık sigara maliyetinizi öğrenin; sigarayı bıraksaydınız ne kadar para biriktirebileceğinizi görün.",
+  category: "saglik",
+  slug: "sigara-maliyeti-hesaplama",
+  keywords: ["sigara maliyeti", "sigara harcaması hesaplama", "sigarayı bırakma tasarruf", "yıllık sigara masrafı", "sigara fiyatı hesaplama"],
+  dateModified: "2026-04-01",
+  relatedCalcs: ["tasarruf-hesaplama", "kalori-hesaplama"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form">
+    <CalcInput
+      id="gunlukSigara"
+      label="Günlük Sigara Adedi"
+      type="number"
+      suffix="adet"
+      placeholder="10"
+      min={1}
+      max={200}
+      step={1}
+      value={10}
+    />
+    <CalcInput
+      id="paketFiyati"
+      label="Paket Fiyatı"
+      type="number"
+      prefix="₺"
+      placeholder="70"
+      min={1}
+      step={0.5}
+      helpText="Satın aldığınız sigara markasının güncel fiyatı"
+    />
+    <CalcInput
+      id="yilSayisi"
+      label="Kaç Yıldır İçiyorsunuz?"
+      type="number"
+      suffix="yıl"
+      placeholder="10"
+      min={1}
+      max={80}
+      step={1}
+      value={10}
+    />
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">Toplam Sigara Harcaması</p>
+      <p class="calc-result-value" id="toplam-maliyet">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Yıllık Maliyet</span>
+        <span class="calc-detail-value" id="d-yillik">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Aylık Maliyet</span>
+        <span class="calc-detail-value" id="d-aylik">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Günlük Maliyet</span>
+        <span class="calc-detail-value" id="d-gunluk">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Toplam İçilen Sigara</span>
+        <span class="calc-detail-value" id="d-adet">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const resultArea = document.getElementById('calc-result');
+
+      function debounce(fn, delay = 150) {
+        let t;
+        return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), delay); };
+      }
+
+      function formatTL(n) {
+        return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+      }
+
+      function formatNumber(n, d = 0) {
+        return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: d, maximumFractionDigits: d }).format(n);
+      }
+
+      const dc = debounce(calculate);
+      inputs.forEach(i => { i.addEventListener('input', dc); i.addEventListener('change', dc); });
+
+      function calculate() {
+        const gunlukSigara = parseFloat(document.getElementById('gunlukSigara').value);
+        const paketFiyati = parseFloat(document.getElementById('paketFiyati').value);
+        const yilSayisi = parseFloat(document.getElementById('yilSayisi').value);
+
+        if (isNaN(gunlukSigara) || isNaN(paketFiyati) || isNaN(yilSayisi) || gunlukSigara <= 0 || paketFiyati <= 0 || yilSayisi <= 0) {
+          if (resultArea) resultArea.classList.add('hidden');
+          return;
+        }
+
+        const gunlukMaliyet = (gunlukSigara / 20) * paketFiyati;
+        const aylikMaliyet = gunlukMaliyet * 30.44;
+        const yillikMaliyet = gunlukMaliyet * 365;
+        const toplamMaliyet = yillikMaliyet * yilSayisi;
+        const toplamSigara = gunlukSigara * 365 * yilSayisi;
+
+        document.getElementById('toplam-maliyet').textContent = formatTL(toplamMaliyet);
+        document.getElementById('d-yillik').textContent = formatTL(yillikMaliyet);
+        document.getElementById('d-aylik').textContent = formatTL(aylikMaliyet);
+        document.getElementById('d-gunluk').textContent = formatTL(gunlukMaliyet);
+        document.getElementById('d-adet').textContent = formatNumber(toplamSigara) + ' adet';
+
+        if (resultArea) resultArea.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const p = new URLSearchParams();
+        inputs.forEach(i => { if (i.value && i.id) p.set(i.id, i.value); });
+        history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
+      }
+
+      function loadFromURL() {
+        const p = new URLSearchParams(window.location.search);
+        let h = false;
+        inputs.forEach(i => { if (i.id && p.has(i.id)) { i.value = p.get(i.id); h = true; } });
+        if (h) calculate();
+      }
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>Sigara Maliyeti Hesaplama Nasıl Yapılır?</h2>
+    <p>
+      Sigara içmenin maddi boyutu, sağlık etkilerinin gölgesinde kalsa da aslında son derece çarpıcı bir tablo ortaya koymaktadır. Türkiye'de sigara fiyatları son yıllarda önemli ölçüde artmış olup günde bir paket sigara içen birinin yıllık harcaması binlerce liraya ulaşmaktadır. Bu hesap makinesi, hem bireysel sigara içme alışkanlıklarınızın toplam maliyetini görmenizi hem de sigarayı bırakırsanız ne kadar tasarruf edebileceğinizi anlamanızı sağlar.
+    </p>
+    <p>
+      Türkiye'de ortalama bir sigara paketi yaklaşık 70–90 TL arasında satılmaktadır; ancak bu fiyatlar markalara ve satış noktalarına göre değişmektedir. Günde 10–20 adet sigara içen birinin aylık sigara harcaması kolaylıkla 1.000 TL'yi geçebilmektedir. Yıllar içinde biriken bu maliyet, tatil, yatırım veya eğitim gibi alanlarda son derece değerli bir kaynak oluşturabilirdi.
+    </p>
+
+    <h3>Formül</h3>
+    <p>
+      <strong>Toplam Maliyet = (Günlük Sigara ÷ 20) × Paket Fiyatı × 365 × Yıl Sayısı</strong>
+    </p>
+    <p>
+      Bir pakette 20 adet sigara bulunduğu varsayılmaktadır. Günlük içilen sigara sayısını 20'ye bölerek günlük paket tüketimi bulunur, ardından paket fiyatıyla çarpılarak günlük maliyet hesaplanır. 365 ile çarpılarak yıllık maliyet, yıl sayısıyla çarpılarak toplam maliyet elde edilir.
+    </p>
+
+    <h3>Dikkat Edilmesi Gerekenler</h3>
+    <p>
+      Bu hesaplama yalnızca satın alma maliyetini içermektedir. Sigaranın gerçek toplam maliyeti; artan sağlık sigortası primleri, diş ve ağız bakım harcamaları, kıyafet ve ev temizleme masrafları, azalan iş verimliliği ve potansiyel tedavi giderleri dahil edildiğinde çok daha yüksektir. Sigarayı bırakmak için Türkiye'de Sigara Bırakma Poliklinikleri'nden ve ALO 171 Sigara Bırakma Hattı'ndan ücretsiz destek alabilirsiniz.
+    </p>
+
+    <h3>Sıkça Sorulan Sorular</h3>
+    {faq.map(item => (
+      <details>
+        <summary><strong>{item.question}</strong></summary>
+        <p>{item.answer}</p>
+      </details>
+    ))}
+  </section>
+</CalcLayout>
