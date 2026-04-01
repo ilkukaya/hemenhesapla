@@ -8,76 +8,22 @@
       "description": "Kredi, vergi, maaş, yatırım ve faiz hesaplayıcıları",
       "shortDescription": "Kredi, vergi ve maaş hesapla",
       "calculators": [
-        {
-          "slug": "kredi-hesaplama",
-          "title": "Kredi Hesaplama",
-          "description": "Kredi tutarı, faiz oranı ve vadeye göre aylık taksit hesaplayın",
-          "icon": "🏦",
-          "popular": true
-        },
-        {
-          "slug": "kdv-hesaplama",
-          "title": "KDV Hesaplama",
-          "description": "KDV dahil/hariç fiyat ve KDV tutarını hesaplayın",
-          "icon": "🧾",
-          "popular": true
-        },
-        {
-          "slug": "net-brut-maas-hesaplama",
-          "title": "Net/Brüt Maaş Hesaplama",
-          "description": "Brüt maaştan net maaşı veya net maaştan brüt maaşı hesaplayın",
-          "icon": "💵",
-          "popular": true
-        },
-        {
-          "slug": "stopaj-hesaplama",
-          "title": "Stopaj Hesaplama",
-          "description": "Brüt tutardan stopaj ve net tutarı hesaplayın",
-          "icon": "📋",
-          "popular": false
-        },
-        {
-          "slug": "gelir-vergisi-hesaplama",
-          "title": "Gelir Vergisi Hesaplama",
-          "description": "Yıllık gelir vergisi tutarını dilim bazlı hesaplayın",
-          "icon": "🏛️",
-          "popular": false
-        },
-        {
-          "slug": "kidem-tazminati-hesaplama",
-          "title": "Kıdem Tazminatı Hesaplama",
-          "description": "Çalışma süresine göre kıdem tazminatını hesaplayın",
-          "icon": "📅",
-          "popular": false
-        },
-        {
-          "slug": "mevduat-faizi-hesaplama",
-          "title": "Mevduat Faizi Hesaplama",
-          "description": "Vadeli mevduat faiz getirisini ve stopaj sonrası net kazancı hesaplayın",
-          "icon": "🏧",
-          "popular": false
-        },
-        {
-          "slug": "doviz-cevirici",
-          "title": "Döviz Çevirici",
-          "description": "Güncel TCMB kurlarıyla döviz çevirme hesaplayıcısı",
-          "icon": "💱",
-          "popular": true
-        },
-        {
-          "slug": "kira-artis-hesaplama",
-          "title": "Kira Artış Hesaplama",
-          "description": "TÜFE oranına göre yasal kira artışını hesaplayın",
-          "icon": "🏠",
-          "popular": true
-        },
-        {
-          "slug": "enflasyon-hesaplama",
-          "title": "Enflasyon Hesaplama",
-          "description": "Paranızın satın alma gücündeki değişimi hesaplayın",
-          "icon": "📈",
-          "popular": false
-        }
+        { "slug": "kredi-hesaplama", "title": "Kredi Hesaplama", "description": "Kredi tutarı, faiz oranı ve vadeye göre aylık taksit hesaplayın", "icon": "🏦", "popular": true },
+        { "slug": "konut-kredisi-hesaplama", "title": "Konut Kredisi Hesaplama", "description": "Konut kredisi taksit, toplam ödeme ve faiz tutarını hesaplayın", "icon": "🏠", "popular": true },
+        { "slug": "tasit-kredisi-hesaplama", "title": "Taşıt Kredisi Hesaplama", "description": "Taşıt kredisi aylık taksit ve toplam ödeme tutarını hesaplayın", "icon": "🚗", "popular": false },
+        { "slug": "mevduat-faizi-hesaplama", "title": "Mevduat Faizi Hesaplama", "description": "Vadeli mevduat faiz getirisini ve stopaj sonrası net kazancı hesaplayın", "icon": "🏧", "popular": false },
+        { "slug": "kdv-hesaplama", "title": "KDV Hesaplama", "description": "KDV dahil/hariç fiyat ve KDV tutarını hesaplayın", "icon": "🧾", "popular": true },
+        { "slug": "gelir-vergisi-hesaplama", "title": "Gelir Vergisi Hesaplama", "description": "Yıllık gelir vergisi tutarını dilim bazlı hesaplayın", "icon": "🏛️", "popular": false },
+        { "slug": "net-brut-maas-hesaplama", "title": "Net/Brüt Maaş Hesaplama", "description": "Brüt maaştan net maaşı veya net maaştan brüt maaşı hesaplayın", "icon": "💵", "popular": true },
+        { "slug": "stopaj-hesaplama", "title": "Stopaj Hesaplama", "description": "Brüt tutardan stopaj ve net tutarı hesaplayın", "icon": "📋", "popular": false },
+        { "slug": "kidem-tazminati-hesaplama", "title": "Kıdem Tazminatı Hesaplama", "description": "Çalışma süresine göre kıdem tazminatını hesaplayın", "icon": "📅", "popular": false },
+        { "slug": "ihbar-tazminati-hesaplama", "title": "İhbar Tazminatı Hesaplama", "description": "Çalışma süresine göre ihbar tazminatı süresini ve tutarını hesaplayın", "icon": "📌", "popular": false },
+        { "slug": "kira-artis-hesaplama", "title": "Kira Artış Hesaplama", "description": "TÜFE oranına göre yasal kira artışını hesaplayın", "icon": "🏠", "popular": true },
+        { "slug": "enflasyon-hesaplama", "title": "Enflasyon Hesaplama", "description": "Paranızın satın alma gücündeki değişimi hesaplayın", "icon": "📈", "popular": false },
+        { "slug": "doviz-cevirici", "title": "Döviz Çevirici", "description": "Güncel kurlarla döviz çevirme hesaplayıcısı", "icon": "💱", "popular": true },
+        { "slug": "altin-hesaplama", "title": "Altın Hesaplama", "description": "Gram, çeyrek ve tam altın fiyatlarını hesaplayın", "icon": "🥇", "popular": false },
+        { "slug": "bilesik-faiz-hesaplama", "title": "Bileşik Faiz Hesaplama", "description": "Bileşik faiz ile yatırımınızın büyümesini hesaplayın", "icon": "📊", "popular": false },
+        { "slug": "yatirim-getiri-hesaplama", "title": "Yatırım Getiri Hesaplama", "description": "Yatırımınızın getirisini ve kar oranını hesaplayın", "icon": "💹", "popular": false }
       ]
     },
     {
@@ -88,48 +34,16 @@
       "description": "Vücut kitle indeksi, kalori, ideal kilo ve sağlık hesaplayıcıları",
       "shortDescription": "BMI, kalori ve ideal kilo hesapla",
       "calculators": [
-        {
-          "slug": "vucut-kitle-indeksi",
-          "title": "Vücut Kitle İndeksi (BMI)",
-          "description": "Boy ve kilonuza göre vücut kitle indeksinizi hesaplayın",
-          "icon": "⚖️",
-          "popular": true
-        },
-        {
-          "slug": "kalori-hesaplama",
-          "title": "Kalori Hesaplama",
-          "description": "Günlük kalori ihtiyacınızı yaş, boy, kilo ve aktiviteye göre hesaplayın",
-          "icon": "🔥",
-          "popular": true
-        },
-        {
-          "slug": "ideal-kilo-hesaplama",
-          "title": "İdeal Kilo Hesaplama",
-          "description": "Boy ve cinsiyetinize göre ideal kilonuzu hesaplayın",
-          "icon": "🎯",
-          "popular": true
-        },
-        {
-          "slug": "su-ihtiyaci-hesaplama",
-          "title": "Su İhtiyacı Hesaplama",
-          "description": "Günlük su ihtiyacınızı kilonuza göre hesaplayın",
-          "icon": "💧",
-          "popular": false
-        },
-        {
-          "slug": "gebelik-haftasi-hesaplama",
-          "title": "Gebelik Haftası Hesaplama",
-          "description": "Son adet tarihine göre gebelik haftanızı hesaplayın",
-          "icon": "🤰",
-          "popular": false
-        },
-        {
-          "slug": "baz-metabolizma-hizi",
-          "title": "Bazal Metabolizma Hızı",
-          "description": "Vücudunuzun dinlenme halinde yaktığı kaloriyi hesaplayın",
-          "icon": "⚡",
-          "popular": false
-        }
+        { "slug": "vucut-kitle-indeksi", "title": "Vücut Kitle İndeksi (BMI)", "description": "Boy ve kilonuza göre vücut kitle indeksinizi hesaplayın", "icon": "⚖️", "popular": true },
+        { "slug": "kalori-hesaplama", "title": "Kalori Hesaplama", "description": "Günlük kalori ihtiyacınızı yaş, boy, kilo ve aktiviteye göre hesaplayın", "icon": "🔥", "popular": true },
+        { "slug": "ideal-kilo-hesaplama", "title": "İdeal Kilo Hesaplama", "description": "Boy ve cinsiyetinize göre ideal kilonuzu hesaplayın", "icon": "🎯", "popular": true },
+        { "slug": "su-ihtiyaci-hesaplama", "title": "Su İhtiyacı Hesaplama", "description": "Günlük su ihtiyacınızı kilonuza göre hesaplayın", "icon": "💧", "popular": false },
+        { "slug": "gebelik-haftasi-hesaplama", "title": "Gebelik Haftası Hesaplama", "description": "Son adet tarihine göre gebelik haftanızı hesaplayın", "icon": "🤰", "popular": false },
+        { "slug": "baz-metabolizma-hizi", "title": "Bazal Metabolizma Hızı", "description": "Vücudunuzun dinlenme halinde yaktığı kaloriyi hesaplayın", "icon": "⚡", "popular": false },
+        { "slug": "yag-orani-hesaplama", "title": "Vücut Yağ Oranı Hesaplama", "description": "Vücut ölçülerinize göre yağ oranınızı hesaplayın", "icon": "📏", "popular": false },
+        { "slug": "protein-ihtiyaci-hesaplama", "title": "Protein İhtiyacı Hesaplama", "description": "Günlük protein ihtiyacınızı kilo ve aktiviteye göre hesaplayın", "icon": "🥩", "popular": false },
+        { "slug": "dogum-tarihi-hesaplama", "title": "Doğum Tarihi Hesaplama", "description": "Tahmini doğum tarihini son adet tarihine göre hesaplayın", "icon": "👶", "popular": false },
+        { "slug": "sigara-maliyeti-hesaplama", "title": "Sigara Maliyeti Hesaplama", "description": "Sigara içmenin yıllık ve ömür boyu maliyetini hesaplayın", "icon": "🚭", "popular": false }
       ]
     },
     {
@@ -140,41 +54,15 @@
       "description": "Yaş, tarih, fatura ve günlük ihtiyaç hesaplayıcıları",
       "shortDescription": "Yaş, tarih ve fatura hesapla",
       "calculators": [
-        {
-          "slug": "yas-hesaplama",
-          "title": "Yaş Hesaplama",
-          "description": "Doğum tarihinize göre tam yaşınızı yıl, ay ve gün olarak hesaplayın",
-          "icon": "🎂",
-          "popular": true
-        },
-        {
-          "slug": "gun-hesaplama",
-          "title": "Gün Hesaplama",
-          "description": "İki tarih arasındaki gün farkını hesaplayın",
-          "icon": "📅",
-          "popular": true
-        },
-        {
-          "slug": "elektrik-faturasi-hesaplama",
-          "title": "Elektrik Faturası Hesaplama",
-          "description": "Tüketiminize göre elektrik fatura tutarını hesaplayın",
-          "icon": "⚡",
-          "popular": false
-        },
-        {
-          "slug": "dogalgaz-faturasi-hesaplama",
-          "title": "Doğalgaz Faturası Hesaplama",
-          "description": "Tüketiminize göre doğalgaz fatura tutarını hesaplayın",
-          "icon": "🔥",
-          "popular": false
-        },
-        {
-          "slug": "yakit-maliyeti-hesaplama",
-          "title": "Yakıt Maliyeti Hesaplama",
-          "description": "Mesafe ve yakıt tüketimine göre yolculuk maliyetini hesaplayın",
-          "icon": "⛽",
-          "popular": false
-        }
+        { "slug": "yas-hesaplama", "title": "Yaş Hesaplama", "description": "Doğum tarihinize göre tam yaşınızı yıl, ay ve gün olarak hesaplayın", "icon": "🎂", "popular": true },
+        { "slug": "gun-hesaplama", "title": "Gün Hesaplama", "description": "İki tarih arasındaki gün farkını hesaplayın", "icon": "📅", "popular": true },
+        { "slug": "elektrik-faturasi-hesaplama", "title": "Elektrik Faturası Hesaplama", "description": "Tüketiminize göre elektrik fatura tutarını hesaplayın", "icon": "⚡", "popular": false },
+        { "slug": "dogalgaz-faturasi-hesaplama", "title": "Doğalgaz Faturası Hesaplama", "description": "Tüketiminize göre doğalgaz fatura tutarını hesaplayın", "icon": "🔥", "popular": false },
+        { "slug": "yakit-maliyeti-hesaplama", "title": "Yakıt Maliyeti Hesaplama", "description": "Mesafe ve yakıt tüketimine göre yolculuk maliyetini hesaplayın", "icon": "⛽", "popular": false },
+        { "slug": "bahsis-hesaplama", "title": "Bahşiş Hesaplama", "description": "Hesap tutarına göre bahşiş miktarını hesaplayın", "icon": "💰", "popular": false },
+        { "slug": "tasarruf-hesaplama", "title": "Tasarruf Hesaplama", "description": "Aylık birikim ile hedefinize ne zaman ulaşacağınızı hesaplayın", "icon": "🐷", "popular": false },
+        { "slug": "emeklilik-hesaplama", "title": "Emeklilik Hesaplama", "description": "Emekliliğinize kaç yıl kaldığını hesaplayın", "icon": "👴", "popular": false },
+        { "slug": "askerlik-hesaplama", "title": "Askerlik Hesaplama", "description": "Askerlik tarihine kalan gün sayısını hesaplayın", "icon": "🎖️", "popular": false }
       ]
     },
     {
@@ -185,20 +73,10 @@
       "description": "Boya, fayans, beton, parke ve inşaat malzemesi hesaplayıcıları",
       "shortDescription": "Boya, fayans ve malzeme hesapla",
       "calculators": [
-        {
-          "slug": "boya-hesaplama",
-          "title": "Boya Hesaplama",
-          "description": "Oda boyutlarına göre gereken boya miktarını hesaplayın",
-          "icon": "🎨",
-          "popular": false
-        },
-        {
-          "slug": "fayans-hesaplama",
-          "title": "Fayans Hesaplama",
-          "description": "Alan ölçüsüne göre gereken fayans miktarını hesaplayın",
-          "icon": "🧱",
-          "popular": false
-        }
+        { "slug": "boya-hesaplama", "title": "Boya Hesaplama", "description": "Oda boyutlarına göre gereken boya miktarını hesaplayın", "icon": "🎨", "popular": false },
+        { "slug": "fayans-hesaplama", "title": "Fayans Hesaplama", "description": "Alan ölçüsüne göre gereken fayans miktarını hesaplayın", "icon": "🧱", "popular": false },
+        { "slug": "beton-hesaplama", "title": "Beton Hesaplama", "description": "İhtiyacınız olan beton miktarını metreküp olarak hesaplayın", "icon": "🏗️", "popular": false },
+        { "slug": "parke-hesaplama", "title": "Parke Hesaplama", "description": "Oda alanına göre gereken parke miktarını hesaplayın", "icon": "🪵", "popular": false }
       ]
     },
     {
@@ -209,13 +87,14 @@
       "description": "Yüzde, alan, hacim, oran ve temel matematik hesaplayıcıları",
       "shortDescription": "Yüzde, alan ve hacim hesapla",
       "calculators": [
-        {
-          "slug": "yuzde-hesaplama",
-          "title": "Yüzde Hesaplama",
-          "description": "Yüzde hesaplama, yüzde ekleme/çıkarma ve yüzde farkı hesaplayın",
-          "icon": "%",
-          "popular": true
-        }
+        { "slug": "yuzde-hesaplama", "title": "Yüzde Hesaplama", "description": "Yüzde hesaplama, yüzde ekleme/çıkarma ve yüzde farkı hesaplayın", "icon": "%", "popular": true },
+        { "slug": "alan-hesaplama", "title": "Alan Hesaplama", "description": "Daire, kare, dikdörtgen ve üçgen alanını hesaplayın", "icon": "📐", "popular": false },
+        { "slug": "hacim-hesaplama", "title": "Hacim Hesaplama", "description": "Küp, silindir, küre ve dikdörtgenler prizması hacmini hesaplayın", "icon": "📦", "popular": false },
+        { "slug": "oran-hesaplama", "title": "Oran Hesaplama", "description": "İki sayı arasındaki oranı ve orantıyı hesaplayın", "icon": "⚖️", "popular": false },
+        { "slug": "karekok-hesaplama", "title": "Karekök Hesaplama", "description": "Bir sayının karekökünü hesaplayın", "icon": "√", "popular": false },
+        { "slug": "uslu-sayi-hesaplama", "title": "Üslü Sayı Hesaplama", "description": "Üslü sayıları (x üzeri n) hesaplayın", "icon": "ⁿ", "popular": false },
+        { "slug": "ortalama-hesaplama", "title": "Ortalama Hesaplama", "description": "Sayı grubunun ortalamasını hesaplayın", "icon": "📊", "popular": false },
+        { "slug": "standart-sapma-hesaplama", "title": "Standart Sapma Hesaplama", "description": "Veri setinin standart sapmasını hesaplayın", "icon": "σ", "popular": false }
       ]
     },
     {
@@ -225,7 +104,10 @@
       "icon": "🎓",
       "description": "Not ortalaması, YKS puanı, KPSS ve sınav hesaplayıcıları",
       "shortDescription": "Not ortalaması ve puan hesapla",
-      "calculators": []
+      "calculators": [
+        { "slug": "not-ortalamasi-hesaplama", "title": "Not Ortalaması Hesaplama", "description": "Ders notlarınızın ağırlıklı ortalamasını hesaplayın", "icon": "📝", "popular": false },
+        { "slug": "yks-puan-hesaplama", "title": "YKS Puan Hesaplama", "description": "YKS TYT ve AYT puan türlerinizi tahmini hesaplayın", "icon": "🎯", "popular": false }
+      ]
     },
     {
       "name": "Dönüşüm",
@@ -234,7 +116,11 @@
       "icon": "🔄",
       "description": "Uzunluk, ağırlık, sıcaklık ve birim dönüşüm araçları",
       "shortDescription": "Birim dönüştürme araçları",
-      "calculators": []
+      "calculators": [
+        { "slug": "uzunluk-donusturucu", "title": "Uzunluk Dönüştürücü", "description": "Metre, cm, inç, feet ve diğer uzunluk birimlerini dönüştürün", "icon": "📏", "popular": false },
+        { "slug": "agirlik-donusturucu", "title": "Ağırlık Dönüştürücü", "description": "Kilogram, gram, pound ve diğer ağırlık birimlerini dönüştürün", "icon": "⚖️", "popular": false },
+        { "slug": "sicaklik-donusturucu", "title": "Sıcaklık Dönüştürücü", "description": "Celsius, Fahrenheit ve Kelvin arasında dönüşüm yapın", "icon": "🌡️", "popular": false }
+      ]
     }
   ]
 }
