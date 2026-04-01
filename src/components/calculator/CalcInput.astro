@@ -1,0 +1,53 @@
+---
+interface Props {
+  id: string;
+  label: string;
+  type?: 'number' | 'text' | 'date';
+  placeholder?: string;
+  suffix?: string;
+  prefix?: string;
+  min?: number;
+  max?: number;
+  step?: number | string;
+  value?: string | number;
+  required?: boolean;
+  helpText?: string;
+}
+
+const {
+  id,
+  label,
+  type = 'number',
+  placeholder = '',
+  suffix,
+  prefix,
+  min,
+  max,
+  step = type === 'number' ? 'any' : undefined,
+  value,
+  required = true,
+  helpText,
+} = Astro.props;
+---
+
+<div class="calc-input-group">
+  <label for={id} class="calc-label">{label}</label>
+  <div class="calc-input-wrapper">
+    {prefix && <span class="calc-input-prefix">{prefix}</span>}
+    <input
+      id={id}
+      type={type}
+      placeholder={placeholder}
+      min={min}
+      max={max}
+      step={step}
+      value={value}
+      required={required}
+      class="calc-input"
+      inputmode={type === 'number' ? 'decimal' : undefined}
+      autocomplete="off"
+    />
+    {suffix && <span class="calc-input-suffix">{suffix}</span>}
+  </div>
+  {helpText && <p class="calc-help-text">{helpText}</p>}
+</div>

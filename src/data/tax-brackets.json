@@ -1,0 +1,43 @@
+{
+  "year": 2026,
+  "lastUpdate": "2026-01-01",
+  "source": "GİB (Gelir İdaresi Başkanlığı)",
+  "brackets": [
+    {
+      "min": 0,
+      "max": 158000,
+      "rate": 15,
+      "description": "158.000 TL'ye kadar"
+    },
+    {
+      "min": 158000,
+      "max": 330000,
+      "rate": 20,
+      "description": "158.000 - 330.000 TL arası"
+    },
+    {
+      "min": 330000,
+      "max": 800000,
+      "rate": 27,
+      "description": "330.000 - 800.000 TL arası"
+    },
+    {
+      "min": 800000,
+      "max": 4300000,
+      "rate": 35,
+      "description": "800.000 - 4.300.000 TL arası"
+    },
+    {
+      "min": 4300000,
+      "max": null,
+      "rate": 40,
+      "description": "4.300.000 TL üzeri"
+    }
+  ],
+  "cumulativeTax": [
+    { "bracket": 1, "cumulative": 23700 },
+    { "bracket": 2, "cumulative": 58100 },
+    { "bracket": 3, "cumulative": 185000 },
+    { "bracket": 4, "cumulative": 1410000 }
+  ]
+}

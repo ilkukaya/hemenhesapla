@@ -1,0 +1,39 @@
+---
+import { generateBreadcrumbSchema } from '../../utils/seo';
+
+interface BreadcrumbItem {
+  label: string;
+  href: string;
+}
+
+interface Props {
+  items: BreadcrumbItem[];
+}
+
+const { items } = Astro.props;
+const siteURL = 'https://hemenhesapla.net';
+
+const schemaItems = items.map((item) => ({
+  name: item.label,
+  url: new URL(item.href, siteURL).href,
+}));
+
+const schema = generateBreadcrumbSchema(schemaItems);
+---
+
+<nav aria-label="Breadcrumb" class="mb-4">
+  <ol class="flex flex-wrap items-center gap-1 text-sm text-[var(--color-text-muted)]">
+    {items.map((item, index) => (
+      <li class="flex items-center gap-1">
+        {index > 0 && <span class="mx-1">›</span>}
+        {index === items.length - 1 ? (
+          <span class="text-[var(--color-text-secondary)] font-medium">{item.label}</span>
+        ) : (
+          <a href={item.href} class="hover:text-[var(--color-primary)] transition-colors">{item.label}</a>
+        )}
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />

@@ -1,0 +1,231 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Vücut kitle indeksi (VKİ) nasıl hesaplanır?",
+    answer: "VKİ hesaplamak için kişinin kilosunu (kg), boyunun metre cinsinden karesine bölmek gerekir. Formül: VKİ = Kilo (kg) ÷ Boy² (m²). Örneğin 70 kg ağırlığında ve 175 cm boyunda bir kişinin VKİ değeri: 70 ÷ (1,75 × 1,75) = 70 ÷ 3,0625 ≈ 22,9 olur."
+  },
+  {
+    question: "Normal VKİ değeri kaç olmalıdır?",
+    answer: "Dünya Sağlık Örgütü'ne (DSÖ) göre VKİ sınıflandırması şu şekildedir: 18,5'in altı zayıf, 18,5–24,9 arası normal kilolu, 25–29,9 arası fazla kilolu ve 30 ile üzeri obez olarak değerlendirilir. En sağlıklı VKİ aralığı 18,5–24,9 olarak kabul edilmektedir."
+  },
+  {
+    question: "VKİ her zaman sağlık durumunu doğru yansıtır mı?",
+    answer: "VKİ tek başına yeterli bir ölçüt değildir; kas kütlesi yüksek sporcularda VKİ fazla kilolu veya obez sınırına girebilir, ancak bu kişiler sağlıklı olabilir. Yaş, cinsiyet, etnik köken ve kas-yağ oranı gibi faktörler göz önüne alınarak bel çevresi ölçümü ve bel-kalça oranı gibi ek değerlendirmeler yapılmalıdır."
+  }
+];
+
+const meta = {
+  title: "Vücut Kitle İndeksi Hesaplama",
+  description: "VKİ (Vücut Kitle İndeksi) hesaplama aracı ile boy ve kilonuza göre BMI değerinizi ve sağlık kategorinizi anında öğrenin. Zayıf, normal, fazla kilolu ve obez sınır değerleri.",
+  category: "saglik",
+  slug: "vucut-kitle-indeksi",
+  keywords: ["vücut kitle indeksi", "VKİ hesaplama", "BMI hesaplama", "kilo hesaplama", "ideal kilo", "obezite hesaplama"],
+  dateModified: "2026-04-01",
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" novalidate>
+    <div class="calc-inputs">
+      <CalcInput
+        id="boy"
+        label="Boy"
+        type="number"
+        placeholder="Örn: 175"
+        suffix="cm"
+        min={100}
+        max={250}
+        step={1}
+        helpText="Boyunuzu santimetre cinsinden girin"
+      />
+      <CalcInput
+        id="kilo"
+        label="Kilo"
+        type="number"
+        placeholder="Örn: 70"
+        suffix="kg"
+        min={30}
+        max={300}
+        step={0.1}
+        helpText="Kilonuzu kilogram cinsinden girin"
+      />
+    </div>
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">Vücut Kitle İndeksi</p>
+      <p class="calc-result-value" id="vki-deger">—</p>
+      <p id="vki-kategori" style="font-size: 1.1rem; font-weight: 600; margin-top: 0.25rem;"></p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Boy</span>
+        <span class="calc-detail-value" id="sonuc-boy">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Kilo</span>
+        <span class="calc-detail-value" id="sonuc-kilo">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Kategori</span>
+        <span class="calc-detail-value" id="sonuc-kategori">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const resultArea = document.getElementById('calc-result');
+
+      function debounce(fn, delay = 150) {
+        let timer;
+        return (...args) => {
+          clearTimeout(timer);
+          timer = setTimeout(() => fn(...args), delay);
+        };
+      }
+
+      function formatNumber(num, decimals = 0) {
+        return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }).format(num);
+      }
+
+      const debouncedCalc = debounce(calculate);
+      inputs.forEach(input => {
+        input.addEventListener('input', debouncedCalc);
+        input.addEventListener('change', debouncedCalc);
+      });
+
+      function calculate() {
+        const boyEl = document.getElementById('boy');
+        const kiloEl = document.getElementById('kilo');
+
+        const boy = parseFloat(boyEl.value);
+        const kilo = parseFloat(kiloEl.value);
+
+        if (isNaN(boy) || isNaN(kilo) || boy <= 0 || kilo <= 0) {
+          if (resultArea) resultArea.classList.add('hidden');
+          return;
+        }
+
+        const boyMetre = boy / 100;
+        const vki = kilo / (boyMetre * boyMetre);
+
+        let kategori = '';
+        let renk = '';
+        if (vki < 18.5) {
+          kategori = 'Zayıf';
+          renk = '#2563eb';
+        } else if (vki < 25) {
+          kategori = 'Normal';
+          renk = '#16a34a';
+        } else if (vki < 30) {
+          kategori = 'Fazla Kilolu';
+          renk = '#ea580c';
+        } else {
+          kategori = 'Obez';
+          renk = '#dc2626';
+        }
+
+        const vkiDegerEl = document.getElementById('vki-deger');
+        const vkiKategoriEl = document.getElementById('vki-kategori');
+        const sonucBoyEl = document.getElementById('sonuc-boy');
+        const sonucKiloEl = document.getElementById('sonuc-kilo');
+        const sonucKategoriEl = document.getElementById('sonuc-kategori');
+
+        if (vkiDegerEl) vkiDegerEl.textContent = formatNumber(vki, 1);
+        if (vkiKategoriEl) {
+          vkiKategoriEl.textContent = kategori;
+          vkiKategoriEl.style.color = renk;
+        }
+        if (sonucBoyEl) sonucBoyEl.textContent = `${formatNumber(boy)} cm`;
+        if (sonucKiloEl) sonucKiloEl.textContent = `${formatNumber(kilo, 1)} kg`;
+        if (sonucKategoriEl) {
+          sonucKategoriEl.textContent = kategori;
+          sonucKategoriEl.style.color = renk;
+        }
+
+        if (resultArea) resultArea.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const params = new URLSearchParams();
+        inputs.forEach(input => {
+          if (input.value && input.value !== '' && input.id) {
+            params.set(input.id, input.value);
+          }
+        });
+        const newURL = `${window.location.pathname}?${params.toString()}`;
+        history.replaceState(null, '', newURL);
+      }
+
+      function loadFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        let hasParams = false;
+        inputs.forEach(input => {
+          if (input.id && params.has(input.id)) {
+            input.value = params.get(input.id);
+            hasParams = true;
+          }
+        });
+        if (hasParams) calculate();
+      }
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>Vücut Kitle İndeksi (VKİ) Nedir?</h2>
+    <p>
+      Vücut Kitle İndeksi (VKİ), İngilizce adıyla Body Mass Index (BMI), bir kişinin boy ve kilosuna dayanarak vücut ağırlığının sağlıklı bir aralıkta olup olmadığını gösteren basit bir ölçüm yöntemidir. 19. yüzyılda Belçikalı istatistikçi Adolphe Quetelet tarafından geliştirilen bu indeks, günümüzde Dünya Sağlık Örgütü (DSÖ) ve sağlık kuruluşları tarafından yaygın biçimde kullanılmaktadır.
+    </p>
+
+    <h2>VKİ Nasıl Hesaplanır?</h2>
+    <p>
+      VKİ hesaplama formülü oldukça basittir:
+    </p>
+    <p>
+      <strong>VKİ = Kilo (kg) ÷ Boy² (m²)</strong>
+    </p>
+    <p>
+      Örnek olarak 68 kg ağırlığında ve 170 cm boyunda bir kişinin VKİ değerini hesaplayalım: Boy metreye çevrilir (1,70 m), ardından karesine bölünür: 68 ÷ (1,70 × 1,70) = 68 ÷ 2,89 ≈ 23,5. Bu değer normal kilolu aralığa karşılık gelir.
+    </p>
+
+    <h2>VKİ Değerleri ve Sağlık Kategorileri</h2>
+    <p>
+      Dünya Sağlık Örgütü'nün belirlediği VKİ sınıflandırması yetişkinler için şu şekildedir:
+    </p>
+    <ul>
+      <li><strong>18,5'in altı – Zayıf:</strong> Yetersiz beslenme, kemik erimesi ve bağışıklık sistemi zayıflığı riski taşıyabilir.</li>
+      <li><strong>18,5 – 24,9 – Normal kilolu:</strong> Genel olarak en sağlıklı aralık kabul edilir. Kronik hastalık riski bu grupta en düşüktür.</li>
+      <li><strong>25 – 29,9 – Fazla kilolu:</strong> Yüksek tansiyon, tip 2 diyabet ve kalp hastalığı riski artmaya başlar.</li>
+      <li><strong>30 ve üzeri – Obez:</strong> Ciddi sağlık sorunları açısından risk önemli ölçüde yükselir. Tıbbi müdahale önerilir.</li>
+    </ul>
+
+    <h2>VKİ'nin Sınırlılıkları</h2>
+    <p>
+      VKİ pratik bir ön değerlendirme aracı olsa da bazı sınırlamaları bulunmaktadır. Kas kütlesi yüksek olan sporcular, yağ oranı düşük olmalarına karşın yüksek VKİ değerine sahip olabilirler. Öte yandan yaşlılarda kas kütlesi azaldığından normal VKİ değeri yanıltıcı olabilir. Bu nedenle sağlık değerlendirmesinde VKİ'nin yanı sıra bel çevresi ölçümü, bel-kalça oranı ve vücut yağ yüzdesi gibi ek göstergeler de dikkate alınmalıdır.
+    </p>
+
+    <h2>İdeal Kiloya Nasıl Ulaşılır?</h2>
+    <p>
+      VKİ değerinizi normal aralıkta tutmak ya da bu aralığa taşımak için beslenme düzeninizi ve fiziksel aktivite alışkanlıklarınızı gözden geçirmeniz önerilir. Günde en az 30 dakika orta yoğunlukta egzersiz yapmak ve dengeli beslenme programı uygulamak, uzun vadede sağlıklı bir kilo yönetimi sağlar. Kilo sorunlarınız için bir diyetisyen veya doktora başvurmanız en doğru adımdır.
+    </p>
+
+    <h2>Sıkça Sorulan Sorular</h2>
+    {faq.map(item => (
+      <details>
+        <summary><strong>{item.question}</strong></summary>
+        <p>{item.answer}</p>
+      </details>
+    ))}
+  </section>
+</CalcLayout>

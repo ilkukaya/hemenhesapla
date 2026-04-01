@@ -1,0 +1,43 @@
+{
+  "year": 2026,
+  "period": "Ocak - Haziran 2026",
+  "lastUpdate": "2026-01-01",
+  "source": "ÇSGB (Çalışma ve Sosyal Güvenlik Bakanlığı)",
+  "grossMonthly": 22104.67,
+  "dailyGross": 737.49,
+  "deductions": {
+    "sgkWorker": {
+      "rate": 14,
+      "description": "SGK İşçi Payı (%14)"
+    },
+    "unemploymentWorker": {
+      "rate": 1,
+      "description": "İşsizlik Sigortası İşçi Payı (%1)"
+    },
+    "stampTax": {
+      "rate": 0.759,
+      "description": "Damga Vergisi (%0,759)"
+    },
+    "sgkEmployer": {
+      "rate": 20.5,
+      "description": "SGK İşveren Payı (%20,5)"
+    },
+    "unemploymentEmployer": {
+      "rate": 2,
+      "description": "İşsizlik Sigortası İşveren Payı (%2)"
+    }
+  },
+  "sgkCeiling": {
+    "daily": 5765.40,
+    "monthly": 172962.00,
+    "description": "SGK Tavan Ücreti (2026)"
+  },
+  "agi": {
+    "single": 0,
+    "description": "2026'da AGİ kaldırıldı, asgari ücret gelir vergisinden istisna"
+  },
+  "incomeTaxExemption": {
+    "amount": 22104.67,
+    "description": "Asgari ücrete kadar olan kısım gelir vergisinden istisna (2026)"
+  }
+}

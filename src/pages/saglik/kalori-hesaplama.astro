@@ -1,0 +1,223 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcSelect from '../../components/calculator/CalcSelect.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Günlük kalori ihtiyacı nasıl hesaplanır?",
+    answer: "Günlük kalori ihtiyacı, önce bazal metabolizma hızı (BMR) hesaplanarak bulunur. BMR, vücudun tamamen dinlenme halinde harcadığı kalori miktarıdır. Ardından BMR, aktivite seviyesine göre belirlenen bir katsayıyla çarpılarak toplam günlük enerji harcaması (TDEE) elde edilir. Bu hesaplama için yaygın olarak Harris-Benedict formülü kullanılmaktadır."
+  },
+  {
+    question: "Kilo vermek için günde kaç kalori yemek gerekir?",
+    answer: "Genel kural olarak günlük kalori ihtiyacınızdan 500 kalori eksik tüketirseniz haftada yaklaşık 0,5 kg verirsiniz. Bu hesap makinesi size bu değeri otomatik olarak göstermektedir. Ancak kalori kısıtlamasının çok fazla olmamasına dikkat edilmeli; kadınlar günde 1200, erkekler ise 1500 kalorinin altına düşmemelidir."
+  },
+  {
+    question: "Harris-Benedict formülü nedir?",
+    answer: "Harris-Benedict formülü, kişinin cinsiyeti, yaşı, boyu ve kilosuna göre bazal metabolizma hızını (BMR) hesaplayan bilimsel bir denklemdir. Erkekler için: BMR = 88,362 + (13,397 × kilo) + (4,799 × boy) − (5,677 × yaş). Kadınlar için: BMR = 447,593 + (9,247 × kilo) + (3,098 × boy) − (4,330 × yaş). Bulunan BMR değeri aktivite katsayısıyla çarpılarak gerçek günlük kalori ihtiyacı hesaplanır."
+  }
+];
+
+const meta = {
+  title: "Kalori Hesaplama",
+  description: "Günlük kalori ihtiyacınızı Harris-Benedict formülüyle hesaplayın. Kilo vermek, korumak veya almak için gereken kalori miktarını öğrenin.",
+  category: "saglik",
+  slug: "kalori-hesaplama",
+  keywords: ["kalori hesaplama", "günlük kalori ihtiyacı", "BMR hesaplama", "TDEE hesaplama", "kilo verme kalori", "Harris-Benedict"],
+  dateModified: "2026-04-01",
+  relatedCalcs: ["ideal-kilo-hesaplama", "vucut-kitle-indeksi-hesaplama"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form">
+    <CalcSelect
+      id="cinsiyet"
+      label="Cinsiyet"
+      options={[
+        { value: "erkek", label: "Erkek" },
+        { value: "kadin", label: "Kadın" }
+      ]}
+      value="erkek"
+    />
+    <CalcInput
+      id="yas"
+      label="Yaş"
+      type="number"
+      suffix="yaş"
+      placeholder="30"
+      min={15}
+      max={100}
+      step={1}
+    />
+    <CalcInput
+      id="boy"
+      label="Boy"
+      type="number"
+      suffix="cm"
+      placeholder="175"
+      min={100}
+      max={250}
+      step={1}
+    />
+    <CalcInput
+      id="kilo"
+      label="Kilo"
+      type="number"
+      suffix="kg"
+      placeholder="70"
+      min={30}
+      max={300}
+      step={0.1}
+    />
+    <CalcSelect
+      id="aktivite"
+      label="Aktivite Seviyesi"
+      options={[
+        { value: "1.2", label: "Hareketsiz (masa başı)" },
+        { value: "1.375", label: "Hafif aktif (haftada 1-3 gün)" },
+        { value: "1.55", label: "Orta aktif (haftada 3-5 gün)" },
+        { value: "1.725", label: "Çok aktif (haftada 6-7 gün)" },
+        { value: "1.9", label: "Ekstra aktif (günde 2 kez)" }
+      ]}
+      value="1.55"
+    />
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">Günlük Kalori İhtiyacı</p>
+      <p class="calc-result-value" id="tdee">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Kilo vermek için (−500 kcal)</span>
+        <span class="calc-detail-value" id="kilo-ver">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Kilo almak için (+500 kcal)</span>
+        <span class="calc-detail-value" id="kilo-al">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Bazal Metabolizma Hızı (BMR)</span>
+        <span class="calc-detail-value" id="bmr">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const resultArea = document.getElementById('calc-result');
+
+      function debounce(fn: (...args: unknown[]) => void, delay = 150) {
+        let timer: ReturnType<typeof setTimeout>;
+        return (...args: unknown[]) => {
+          clearTimeout(timer);
+          timer = setTimeout(() => fn(...args), delay);
+        };
+      }
+
+      function formatNumber(num: number, dec = 0) {
+        return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: dec, maximumFractionDigits: dec }).format(num);
+      }
+
+      const debouncedCalc = debounce(calculate);
+      inputs.forEach(input => {
+        input.addEventListener('input', debouncedCalc);
+        input.addEventListener('change', debouncedCalc);
+      });
+
+      function calculate() {
+        const cinsiyet = (document.getElementById('cinsiyet') as HTMLSelectElement).value;
+        const yas = parseFloat((document.getElementById('yas') as HTMLInputElement).value);
+        const boy = parseFloat((document.getElementById('boy') as HTMLInputElement).value);
+        const kilo = parseFloat((document.getElementById('kilo') as HTMLInputElement).value);
+        const aktivite = parseFloat((document.getElementById('aktivite') as HTMLSelectElement).value);
+
+        if (!yas || !boy || !kilo || isNaN(aktivite)) return;
+        if (yas <= 0 || boy <= 0 || kilo <= 0) return;
+
+        let bmr: number;
+        if (cinsiyet === 'erkek') {
+          bmr = 88.362 + (13.397 * kilo) + (4.799 * boy) - (5.677 * yas);
+        } else {
+          bmr = 447.593 + (9.247 * kilo) + (3.098 * boy) - (4.330 * yas);
+        }
+
+        const tdee = bmr * aktivite;
+
+        (document.getElementById('tdee') as HTMLElement).textContent = formatNumber(tdee, 0) + ' kcal';
+        (document.getElementById('kilo-ver') as HTMLElement).textContent = formatNumber(tdee - 500, 0) + ' kcal';
+        (document.getElementById('kilo-al') as HTMLElement).textContent = formatNumber(tdee + 500, 0) + ' kcal';
+        (document.getElementById('bmr') as HTMLElement).textContent = formatNumber(bmr, 0) + ' kcal';
+
+        if (resultArea) resultArea.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const params = new URLSearchParams();
+        inputs.forEach(input => {
+          const el = input as HTMLInputElement;
+          if (el.value && el.value !== '' && el.id) {
+            params.set(el.id, el.value);
+          }
+        });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+      }
+
+      function loadFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        let hasParams = false;
+        inputs.forEach(input => {
+          const el = input as HTMLInputElement;
+          if (el.id && params.has(el.id)) {
+            el.value = params.get(el.id)!;
+            hasParams = true;
+          }
+        });
+        if (hasParams) calculate();
+      }
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>Kalori Hesaplama Nedir?</h2>
+    <p>
+      Kalori, besinlerin içerdiği enerji miktarını ifade eden bir ölçü birimidir. Vücudumuz her an; nefes almak, dolaşım, sindirim ve hareket gibi işlevleri sürdürmek için enerjiye ihtiyaç duyar. Günlük kalori ihtiyacını doğru hesaplamak; sağlıklı kilo koruma, kilo verme ya da kilo alma hedeflerine ulaşmanın temel adımıdır.
+    </p>
+    <h2>Harris-Benedict Formülü ile BMR Hesaplama</h2>
+    <p>
+      Bu hesap makinesi, bilim dünyasında yaygın kabul gören <strong>Harris-Benedict formülü</strong>nü kullanmaktadır. Formül, kişinin cinsiyeti, yaşı, boyu ve kilosunu dikkate alarak <em>Bazal Metabolizma Hızı'nı (BMR)</em> hesaplar. BMR; vücudun tamamen istirahat halindeyken, yani hiçbir aktivite yapılmadan harcadığı kalori miktarıdır.
+    </p>
+    <ul>
+      <li><strong>Erkekler:</strong> BMR = 88,362 + (13,397 × kilo) + (4,799 × boy) − (5,677 × yaş)</li>
+      <li><strong>Kadınlar:</strong> BMR = 447,593 + (9,247 × kilo) + (3,098 × boy) − (4,330 × yaş)</li>
+    </ul>
+    <h2>TDEE Nedir?</h2>
+    <p>
+      BMR değeri yalnızca dinlenme halindeki enerji gereksinimini gösterir. Gerçek günlük kalori ihtiyacınızı öğrenmek için BMR, fiziksel aktivite düzeyinize göre bir katsayıyla çarpılır. Bu sonuca <strong>Toplam Günlük Enerji Harcaması (TDEE)</strong> adı verilir. Masa başı çalışan biri için katsayı 1,2 iken, günde iki kez antrenman yapan biri için bu değer 1,9'a çıkabilmektedir.
+    </p>
+    <h2>Kilo Vermek veya Almak İçin Kalori Ayarı</h2>
+    <p>
+      Kilo vermek istiyorsanız TDEE değerinizden günlük 500 kalori eksik tüketmeyi hedefleyebilirsiniz; bu yaklaşık haftada 0,5 kg kayba karşılık gelir. Kilo almak için ise TDEE'ye 500 kalori ekleyerek günlük fazla alım oluşturabilirsiniz. Bu değerler genel bir rehber niteliği taşısa da bireysel metabolizma farklılıkları, hormonal durum ve sağlık koşulları sonuçları değiştirebilir. Kesin bir diyet programı için bir diyetisyen veya doktordan destek almanızı öneririz.
+    </p>
+    <h2>Aktivite Seviyesi Seçimi</h2>
+    <p>
+      Aktivite seviyenizi doğru seçmek, sonucun isabetliliği açısından kritik öneme sahiptir. Haftalık egzersiz sıklığınızı ve yoğunluğunu dürüstçe değerlendirin. Çoğu insan aktivitesini olduğundan fazla tahmin etme eğiliminde olduğundan, şüphe durumunda bir alt kademeden başlamanız daha sağlıklı bir hedef belirlemenizi sağlar.
+    </p>
+
+    <h2>Sık Sorulan Sorular</h2>
+    {faq.map(item => (
+      <details>
+        <summary><strong>{item.question}</strong></summary>
+        <p>{item.answer}</p>
+      </details>
+    ))}
+  </section>
+</CalcLayout>

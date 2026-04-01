@@ -1,0 +1,223 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcSelect from '../../components/calculator/CalcSelect.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "KDV nedir ve nasıl hesaplanır?",
+    answer: "KDV (Katma Değer Vergisi), mal ve hizmetlerin satışı üzerinden alınan dolaylı bir vergidir. KDV tutarı, matrah (KDV hariç fiyat) ile KDV oranının çarpılmasıyla bulunur. Örneğin 1.000 TL matrah üzerinden %20 KDV hesaplandığında KDV tutarı 200 TL, KDV dahil fiyat ise 1.200 TL olur."
+  },
+  {
+    question: "KDV dahil fiyattan KDV hariç fiyat nasıl bulunur?",
+    answer: "KDV dahil fiyattan KDV hariç (matrah) fiyatı bulmak için şu formül kullanılır: Matrah = KDV Dahil Fiyat ÷ (1 + KDV Oranı / 100). Örneğin %20 KDV dahil 1.200 TL'lik bir ürünün matrahı 1.200 ÷ 1,20 = 1.000 TL'dir."
+  },
+  {
+    question: "Türkiye'de KDV oranları kaçtır?",
+    answer: "Türkiye'de temel KDV oranları şunlardır: %1 (bazı gıda maddeleri, konut teslimleri), %10 (işlenmiş gıda, ilaç, sinema, bazı hizmetler) ve %20 (genel oran; elektronik, beyaz eşya, tekstil vb. pek çok ürün). 2023 yılında yapılan düzenlemeyle standart oran %18'den %20'ye yükseltilmiştir."
+  }
+];
+
+const meta = {
+  title: "KDV Hesaplama",
+  description: "KDV hesaplama aracı ile KDV tutarını, KDV dahil ve KDV hariç fiyatları anında hesaplayın. %1, %10 ve %20 KDV oranları için ücretsiz KDV hesaplayıcı.",
+  category: "finans",
+  slug: "kdv-hesaplama",
+  keywords: ["KDV hesaplama", "KDV hesaplayıcı", "katma değer vergisi", "KDV dahil fiyat", "KDV hariç fiyat", "vergi hesaplama"],
+  dateModified: "2026-04-01",
+  relatedCalcs: ["kredi-hesaplama", "net-brut-maas-hesaplama"],
+  faq
+};
+
+const kdvOranlari = [
+  { value: "1", label: "%1" },
+  { value: "10", label: "%10" },
+  { value: "20", label: "%20" }
+];
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" novalidate>
+    <div class="calc-inputs">
+      <CalcInput
+        id="tutar"
+        label="Tutar"
+        type="number"
+        placeholder="Örn: 1000"
+        suffix="₺"
+        min={0}
+        step={0.01}
+        helpText="KDV hesaplamak istediğiniz tutarı girin"
+      />
+      <CalcSelect
+        id="kdvOrani"
+        label="KDV Oranı"
+        options={kdvOranlari}
+        value="20"
+        helpText="Uygulanacak KDV oranını seçin"
+      />
+    </div>
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">KDV Tutarı</p>
+      <p class="calc-result-value" id="kdv-tutari">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">KDV Hariç Fiyat (Matrah)</span>
+        <span class="calc-detail-value" id="kdv-haric">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">KDV Dahil Fiyat</span>
+        <span class="calc-detail-value" id="kdv-dahil">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Uygulanan Oran</span>
+        <span class="calc-detail-value" id="kdv-oran">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const resultArea = document.getElementById('calc-result');
+
+      function debounce(fn, delay = 150) {
+        let timer;
+        return (...args) => {
+          clearTimeout(timer);
+          timer = setTimeout(() => fn(...args), delay);
+        };
+      }
+
+      function formatTL(num) {
+        return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
+      }
+
+      function formatNumber(num, decimals = 0) {
+        return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }).format(num);
+      }
+
+      const debouncedCalc = debounce(calculate);
+      inputs.forEach(input => {
+        input.addEventListener('input', debouncedCalc);
+        input.addEventListener('change', debouncedCalc);
+      });
+
+      function calculate() {
+        const tutarEl = document.getElementById('tutar');
+        const kdvOraniEl = document.getElementById('kdvOrani');
+
+        const tutar = parseFloat(tutarEl.value);
+        const oran = parseFloat(kdvOraniEl.value);
+
+        if (isNaN(tutar) || tutar <= 0) {
+          if (resultArea) resultArea.classList.add('hidden');
+          return;
+        }
+
+        // Girilen tutar KDV hariç (matrah) kabul edilir
+        const kdvTutari = tutar * oran / 100;
+        const kdvDahilFiyat = tutar + kdvTutari;
+        // KDV dahil fiyattan KDV hariç hesabı
+        const kdvHaricFiyat = tutar / (1 + oran / 100);
+
+        document.getElementById('kdv-tutari').textContent = formatTL(kdvTutari);
+        document.getElementById('kdv-haric').textContent = formatTL(tutar);
+        document.getElementById('kdv-dahil').textContent = formatTL(kdvDahilFiyat);
+        document.getElementById('kdv-oran').textContent = `%${formatNumber(oran)}`;
+
+        if (resultArea) resultArea.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const params = new URLSearchParams();
+        inputs.forEach(input => {
+          if (input.value && input.value !== '' && input.id) {
+            params.set(input.id, input.value);
+          }
+        });
+        const newURL = `${window.location.pathname}?${params.toString()}`;
+        history.replaceState(null, '', newURL);
+      }
+
+      function loadFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        let hasParams = false;
+        inputs.forEach(input => {
+          if (input.id && params.has(input.id)) {
+            input.value = params.get(input.id);
+            hasParams = true;
+          }
+        });
+        if (hasParams) calculate();
+      }
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>KDV Hesaplama Nedir?</h2>
+    <p>
+      KDV (Katma Değer Vergisi), Türkiye'de mal ve hizmetlerin üretiminden tüketimine kadar geçen her aşamada yaratılan katma değer üzerinden alınan dolaylı bir vergidir. Üretici, toptancı, perakendeci gibi tedarik zincirinin her halkasında uygulanan bu vergi, nihai olarak tüketici tarafından ödenir. KDV hesaplama aracımız sayesinde girdiğiniz tutara karşılık gelen KDV miktarını, KDV dahil ve KDV hariç fiyatları anında öğrenebilirsiniz.
+    </p>
+
+    <h2>KDV Nasıl Hesaplanır?</h2>
+    <p>
+      KDV hesaplamasında iki temel yöntem kullanılmaktadır:
+    </p>
+    <ul>
+      <li>
+        <strong>KDV hariç fiyattan KDV dahil fiyata ulaşmak:</strong>
+        KDV Tutarı = Matrah × KDV Oranı ÷ 100 formülüyle KDV tutarı bulunur; ardından matrah ile toplanarak KDV dahil fiyat elde edilir.
+      </li>
+      <li>
+        <strong>KDV dahil fiyattan matraha ulaşmak:</strong>
+        Matrah = KDV Dahil Fiyat ÷ (1 + KDV Oranı ÷ 100) formülü kullanılır. Örneğin %20 KDV dahil 1.200 TL için matrah = 1.200 ÷ 1,20 = 1.000 TL olur.
+      </li>
+    </ul>
+
+    <h2>Türkiye'deki KDV Oranları</h2>
+    <p>
+      Türkiye'de uygulanan KDV oranları ürün ve hizmet türüne göre farklılık göstermektedir:
+    </p>
+    <ul>
+      <li>
+        <strong>%1 KDV:</strong> Bazı temel gıda maddeleri (ekmek, taze meyve-sebze), tarımsal gübre ve ilaçlar, konut teslimleri (belirli koşullarda) gibi ürünlere uygulanır.
+      </li>
+      <li>
+        <strong>%10 KDV:</strong> İşlenmiş gıda ürünleri, ilaçlar, sinema ve tiyatro biletleri, bazı tarımsal ürünler ile hizmetler bu oran kapsamındadır.
+      </li>
+      <li>
+        <strong>%20 KDV:</strong> Genel KDV oranıdır; elektronik ürünler, beyaz eşya, tekstil, mobilya, otomobil ve pek çok hizmet bu oran üzerinden vergilendirilir. 2023 yılında yapılan yasal düzenlemeyle standart oran %18'den %20'ye çıkarılmıştır.
+      </li>
+    </ul>
+
+    <h2>KDV Hesaplama Örneği</h2>
+    <p>
+      <strong>Örnek 1 – %20 KDV Hesabı:</strong> Bir yazılım şirketi, müşterisine 5.000 TL + KDV tutarında fatura kesiyor. %20 KDV tutarı = 5.000 × 20 ÷ 100 = 1.000 TL. KDV dahil toplam fatura tutarı = 5.000 + 1.000 = 6.000 TL olur.
+    </p>
+    <p>
+      <strong>Örnek 2 – KDV Dahil Fiyattan Matrah Bulma:</strong> Markette etiket fiyatı 236 TL olan bir ürünün %18 KDV hariç matrahı = 236 ÷ 1,18 = 200 TL olur. KDV tutarı ise 236 − 200 = 36 TL'dir.
+    </p>
+
+    <h2>KDV'nin İşletmeler İçin Önemi</h2>
+    <p>
+      KDV mükellefiyeti olan işletmeler, müşterilerinden tahsil ettikleri KDV'yi devlete ödemek, kendi satın almalarında ödedikleri KDV'yi ise indirim konusu yapmak zorundadır. Bu süreçte hatalı KDV hesaplaması vergi cezalarına yol açabileceğinden doğru hesaplama büyük önem taşır. Muhasebeciler, serbest meslek sahipleri ve küçük işletme sahipleri için KDV hesaplama aracımız günlük iş akışını önemli ölçüde kolaylaştırır.
+    </p>
+
+    <h2>Sıkça Sorulan Sorular</h2>
+    {faq.map(item => (
+      <details>
+        <summary><strong>{item.question}</strong></summary>
+        <p>{item.answer}</p>
+      </details>
+    ))}
+  </section>
+</CalcLayout>

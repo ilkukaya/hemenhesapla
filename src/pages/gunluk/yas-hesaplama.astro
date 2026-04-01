@@ -1,0 +1,214 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Yaş hesaplama nasıl yapılır?",
+    answer: "Yaş hesaplamak için doğum tarihi ile bugünün tarihi arasındaki fark yıl, ay ve gün olarak hesaplanır. Tam yaş için doğum günü henüz geçmediyse bir önceki yaşta olduğunuz göz önüne alınır. Örneğin bugün 1 Nisan 2026 ise ve doğum tarihiniz 15 Haziran 1995 ise henüz 30 yaşındasınızdır; doğum gününüzde 31 olacaksınız."
+  },
+  {
+    question: "Sonraki doğum günüm kaç gün sonra?",
+    answer: "Sonraki doğum gününüze kalan gün sayısını hesaplamak için bu yılki doğum günü tarihini bulur ve bugünün tarihinden çıkarırsınız. Eğer bu yılki doğum gününüz geçtiyse gelecek yılın doğum günü tarihi baz alınır. Araçta doğum tarihinizi girdiğinizde bu hesaplama otomatik olarak yapılır."
+  },
+  {
+    question: "Kaç gün yaşadım?",
+    answer: "Kaç gün yaşadığınızı bulmak için doğum tarihinizden bugüne kadar geçen toplam gün sayısını hesaplamak gerekir. Bu hesaplamada artık yıllar da dikkate alınır; artık yılda Şubat 29 gün çektiğinden toplam gün sayısı normal yıllara kıyasla 1 gün fazla olur."
+  }
+];
+
+const meta = {
+  title: "Yaş Hesaplama",
+  description: "Doğum tarihinizi girerek kaç yaşında olduğunuzu, tam yaşınızı yıl ay gün olarak ve toplam yaşadığınız gün sayısını anında hesaplayın.",
+  category: "gunluk",
+  slug: "yas-hesaplama",
+  keywords: ["yaş hesaplama", "kaç yaşındayım", "yaş hesaplayıcı", "doğum günü hesaplama", "toplam gün hesaplama"],
+  dateModified: "2026-04-01",
+  relatedCalcs: ["gun-hesaplama"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" novalidate>
+    <div class="calc-inputs">
+      <CalcInput
+        id="dogumTarihi"
+        label="Doğum Tarihi"
+        type="date"
+        helpText="Doğum tarihinizi seçin"
+      />
+    </div>
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">Yaşınız</p>
+      <p class="calc-result-value" id="yas-ana">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Toplam Yaşanan Gün</span>
+        <span class="calc-detail-value" id="toplam-gun">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Sonraki Doğum Gününe Kalan</span>
+        <span class="calc-detail-value" id="kalan-gun">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const resultArea = document.getElementById('calc-result');
+
+      function debounce(fn, delay = 150) {
+        let timer;
+        return (...args) => {
+          clearTimeout(timer);
+          timer = setTimeout(() => fn(...args), delay);
+        };
+      }
+
+      function formatNumber(num, decimals = 0) {
+        return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }).format(num);
+      }
+
+      const debouncedCalc = debounce(calculate);
+      inputs.forEach(input => {
+        input.addEventListener('input', debouncedCalc);
+        input.addEventListener('change', debouncedCalc);
+      });
+
+      function calculate() {
+        const dogumTarihiEl = document.getElementById('dogumTarihi');
+        const dogumStr = dogumTarihiEl.value;
+
+        if (!dogumStr) {
+          if (resultArea) resultArea.classList.add('hidden');
+          return;
+        }
+
+        const dogum = new Date(dogumStr);
+        const bugun = new Date();
+        bugun.setHours(0, 0, 0, 0);
+
+        if (dogum >= bugun) {
+          if (resultArea) resultArea.classList.add('hidden');
+          return;
+        }
+
+        // Exact age
+        let yil = bugun.getFullYear() - dogum.getFullYear();
+        let ay = bugun.getMonth() - dogum.getMonth();
+        let gun = bugun.getDate() - dogum.getDate();
+
+        if (gun < 0) {
+          ay -= 1;
+          const oncekiAy = new Date(bugun.getFullYear(), bugun.getMonth(), 0);
+          gun += oncekiAy.getDate();
+        }
+        if (ay < 0) {
+          yil -= 1;
+          ay += 12;
+        }
+
+        // Total days lived
+        const msPerGun = 1000 * 60 * 60 * 24;
+        const toplamGun = Math.floor((bugun - dogum) / msPerGun);
+
+        // Days until next birthday
+        let sonrakiDogumGunu = new Date(bugun.getFullYear(), dogum.getMonth(), dogum.getDate());
+        if (sonrakiDogumGunu <= bugun) {
+          sonrakiDogumGunu = new Date(bugun.getFullYear() + 1, dogum.getMonth(), dogum.getDate());
+        }
+        const kalanGun = Math.ceil((sonrakiDogumGunu - bugun) / msPerGun);
+
+        const yasAnaEl = document.getElementById('yas-ana');
+        const toplamGunEl = document.getElementById('toplam-gun');
+        const kalanGunEl = document.getElementById('kalan-gun');
+
+        if (yasAnaEl) yasAnaEl.textContent = `${formatNumber(yil)} Yıl, ${formatNumber(ay)} Ay, ${formatNumber(gun)} Gün`;
+        if (toplamGunEl) toplamGunEl.textContent = `${formatNumber(toplamGun)} gün`;
+        if (kalanGunEl) kalanGunEl.textContent = kalanGun === 0 ? 'Bugün doğum günün!' : `${formatNumber(kalanGun)} gün`;
+
+        if (resultArea) resultArea.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const params = new URLSearchParams();
+        inputs.forEach(input => {
+          if (input.value && input.value !== '' && input.id) {
+            params.set(input.id, input.value);
+          }
+        });
+        const newURL = `${window.location.pathname}?${params.toString()}`;
+        history.replaceState(null, '', newURL);
+      }
+
+      function loadFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        let hasParams = false;
+        inputs.forEach(input => {
+          if (input.id && params.has(input.id)) {
+            input.value = params.get(input.id);
+            hasParams = true;
+          }
+        });
+        if (hasParams) calculate();
+      }
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>Yaş Hesaplama Nedir?</h2>
+    <p>
+      Yaş hesaplama, bir kişinin doğum tarihi ile belirli bir tarih (genellikle bugün) arasındaki farkı yıl, ay ve gün olarak hesaplama işlemidir. Günlük yaşamda pasaport başvuruları, sigorta işlemleri, emeklilik planlaması ve sağlık kontrollerinde yaş hesaplama önem taşır. Araçımız sayesinde doğum tarihinizi girerek tam yaşınızı, toplam yaşadığınız gün sayısını ve sonraki doğum gününüze kaç gün kaldığını anında öğrenebilirsiniz.
+    </p>
+
+    <h2>Yaş Nasıl Hesaplanır?</h2>
+    <p>
+      Yaş hesaplamasında dikkat edilmesi gereken birkaç nokta vardır. Tam yaş, doğum günü geçene kadar bir önceki yılın değerini korur. Örneğin 15 Haziran 1990 doğumlu biri için bugün 1 Nisan 2026 ise kişi henüz 35 yaşındadır; 15 Haziran 2026'da 36 olacaktır.
+    </p>
+    <p>
+      Ay ve gün hesaplamasında da dikkatli olmak gerekir. Eğer mevcut ayın günü doğum gününden küçükse bir ay geriye gidilir ve o ayın toplam gün sayısı eklenir. Bu yöntem, artık yılları ve farklı uzunluktaki ayları doğru şekilde hesaba katar.
+    </p>
+
+    <h2>Toplam Yaşanan Gün Sayısı</h2>
+    <p>
+      İnsan ömrü gün cinsinden ifade edildiğinde oldukça anlamlı bir perspektif sunar. 30 yaşındaki bir kişi yaklaşık 10.950 gün, 50 yaşındaki biri ise yaklaşık 18.250 gün yaşamıştır (artık yıllar dahil). Toplam gün sayısı hesaplanırken artık yılların Şubat ayına eklenen 1 gün de dikkate alınır. Bu bilgi; kişisel gelişim takibi, motivasyon ve yaşam hedefleri için ilham verici bir veri olabilir.
+    </p>
+
+    <h2>Sonraki Doğum Gününüze Kalan Süre</h2>
+    <p>
+      Bu yılki doğum gününüzü geçtiyseniz, sonraki doğum gününüze kalan gün sayısı bir sonraki yıla göre hesaplanır. Bu bilgi; sürpriz partisi planlayan yakınlar, doğum günü hediyesi almayı düşünen arkadaşlar ya da doğum gününde özel bir hedef koymak isteyenler için son derece pratiktir.
+    </p>
+
+    <h2>Yaş Hesaplamanın Kullanım Alanları</h2>
+    <ul>
+      <li><strong>Resmi işlemler:</strong> Nüfus müdürlüğü, emniyet, hastane kayıt işlemlerinde doğru yaş bilgisi gereklidir.</li>
+      <li><strong>Sigorta ve emeklilik:</strong> SGK işlemlerinde prim günü ve yaş birlikte değerlendirilir; doğru yaş bilgisi emeklilik hesabı için kritiktir.</li>
+      <li><strong>Sağlık takibi:</strong> Doktorlar hastanın yaşına göre ilaç dozu, tarama testleri ve risk değerlendirmesi yapar.</li>
+      <li><strong>Eğitim ve sınav:</strong> Kamu sınavlarında üst yaş sınırı hesaplamaları için doğru yaş bilgisi zorunludur.</li>
+      <li><strong>Spor ve aktivite:</strong> Bazı sporlar ve yarışmalar belirli yaş gruplarına yönelik düzenlenmektedir; doğru yaş kategorisi seçimi için kesin hesaplama gerekir.</li>
+    </ul>
+
+    <h2>Artık Yıllar ve Özel Durumlar</h2>
+    <p>
+      29 Şubat'ta doğan kişiler, artık yıl olmayan yıllarda doğum günlerini resmi olarak 1 Mart'ta kutlarlar. Yaş hesaplama aracımız bu özel durumu otomatik olarak ele alır. Ayrıca farklı ülkelerde yaş hesaplama yöntemleri farklılık gösterebilir; Güney Kore'de doğduğunuz anda 1 yaşında sayılırsınız ancak Türkiye'de uluslararası standart olan sıfırdan başlayan yaş sistemi kullanılmaktadır.
+    </p>
+
+    <h2>Sıkça Sorulan Sorular</h2>
+    {faq.map(item => (
+      <details>
+        <summary><strong>{item.question}</strong></summary>
+        <p>{item.answer}</p>
+      </details>
+    ))}
+  </section>
+</CalcLayout>

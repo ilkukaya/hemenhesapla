@@ -1,0 +1,91 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Breadcrumb from '../components/layout/Breadcrumb.astro';
+import Sidebar from '../components/layout/Sidebar.astro';
+import SchemaMarkup from '../components/seo/SchemaMarkup.astro';
+import type { FAQItem } from '../utils/seo';
+import categoriesData from '../data/categories.json';
+
+interface Props {
+  meta: {
+    title: string;
+    description: string;
+    category: string;
+    slug: string;
+    keywords?: string[];
+    dateModified?: string;
+    relatedCalcs?: string[];
+    faq?: FAQItem[];
+  };
+}
+
+const { meta } = Astro.props;
+
+const category = categoriesData.categories.find(c => c.slug === meta.category);
+const categoryName = category?.name || meta.category;
+
+const categoryAppMap: Record<string, string> = {
+  finans: 'FinanceApplication',
+  saglik: 'HealthApplication',
+  gunluk: 'UtilitiesApplication',
+  insaat: 'UtilitiesApplication',
+  matematik: 'EducationalApplication',
+  egitim: 'EducationalApplication',
+  donusum: 'UtilitiesApplication',
+};
+
+const breadcrumbItems = [
+  { label: 'Ana Sayfa', href: '/' },
+  { label: categoryName, href: `/${meta.category}/` },
+  { label: meta.title.split('|')[0].trim(), href: `/${meta.category}/${meta.slug}/` },
+];
+
+const pageTitle = `${meta.title} | Hemen Hesapla`;
+---
+
+<BaseLayout title={pageTitle} description={meta.description}>
+  <Fragment slot="head">
+    <SchemaMarkup
+      type="WebApplication"
+      name={meta.title}
+      description={meta.description}
+      category={categoryAppMap[meta.category] || 'UtilitiesApplication'}
+      url={`https://hemenhesapla.net/${meta.category}/${meta.slug}/`}
+    />
+    {meta.faq && meta.faq.length > 0 && (
+      <SchemaMarkup type="FAQPage" faqs={meta.faq} />
+    )}
+  </Fragment>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+    <Breadcrumb items={breadcrumbItems} />
+
+    <div class="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-8">
+      <!-- Main Content -->
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-[var(--font-heading)] font-extrabold text-[var(--color-text)] mb-2">
+          {meta.title.split('|')[0].trim()}
+        </h1>
+        <p class="text-[var(--color-text-secondary)] mb-6">{meta.description}</p>
+
+        <slot />
+
+        <noscript>
+          <div class="noscript-warning">
+            <p>Bu hesaplayici JavaScript gerektirir. Lutfen tarayicinizda JavaScript'i etkinlestirin.</p>
+          </div>
+        </noscript>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="hidden lg:block">
+        <Sidebar categorySlug={meta.category} currentSlug={meta.slug} />
+      </div>
+    </div>
+
+    <!-- Mobile Sidebar -->
+    <div class="lg:hidden mt-8">
+      <Sidebar categorySlug={meta.category} currentSlug={meta.slug} />
+    </div>
+  </div>
+</BaseLayout>

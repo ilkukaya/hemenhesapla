@@ -1,0 +1,132 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CalcCard from '../components/calculator/CalcCard.astro';
+import categoriesData from '../data/categories.json';
+
+const categories = categoriesData.categories;
+const popularCalcs = categories.flatMap(cat =>
+  cat.calculators
+    .filter(c => c.popular)
+    .map(c => ({ ...c, categorySlug: cat.slug, categoryColor: cat.color }))
+);
+
+const allCalcs = categories.flatMap(cat =>
+  cat.calculators.map(c => ({ ...c, categorySlug: cat.slug, categoryColor: cat.color }))
+);
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Hemen Hesapla',
+  url: 'https://hemenhesapla.net',
+  description: "Türkiye'nin en kapsamlı online hesaplayıcı platformu",
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: 'https://hemenhesapla.net/?q={search_term_string}',
+    'query-input': 'required name=search_term_string',
+  },
+};
+---
+
+<BaseLayout
+  title="Hemen Hesapla | Türkiye'nin Online Hesaplayıcı Platformu"
+  description="Kredi, vergi, maaş, sağlık, matematik ve daha fazlası — hızlı, güvenilir ve ücretsiz online hesaplama araçları. Anında sonuç alın."
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+  </Fragment>
+
+  <!-- Hero -->
+  <section class="bg-gradient-to-b from-[var(--color-primary-dark)] to-[var(--color-primary)] text-white py-16 sm:py-20">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+      <h1 class="font-[var(--font-heading)] font-extrabold text-3xl sm:text-4xl lg:text-5xl mb-4">
+        Hemen <span class="text-[var(--color-accent)]">Hesapla</span>
+      </h1>
+      <p class="text-white/70 text-lg sm:text-xl mb-8 max-w-2xl mx-auto">
+        Kredi, vergi, maaş, sağlık ve daha fazlası — ihtiyacınız olan hesaplamayı anında yapın.
+      </p>
+
+      <!-- Search -->
+      <div class="max-w-xl mx-auto relative">
+        <input
+          id="search-input"
+          type="text"
+          placeholder="Hesaplayıcı ara... (örn: kredi, kalori, KDV)"
+          class="w-full px-5 py-3.5 rounded-xl text-[var(--color-text)] bg-white shadow-lg text-base outline-none placeholder:text-[var(--color-text-muted)]"
+          autocomplete="off"
+        />
+        <svg class="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--color-text-muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <!-- Kategoriler -->
+    <section class="py-12">
+      <h2 class="font-[var(--font-heading)] font-bold text-xl sm:text-2xl text-[var(--color-text)] mb-6">Kategoriler</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        {categories.map((cat) => (
+          <a
+            href={`/${cat.slug}/`}
+            class="group flex flex-col items-center gap-2 p-5 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl hover:shadow-md hover:border-transparent transition-all duration-200"
+            style={`--cat-color: ${cat.color}`}
+          >
+            <span class="text-3xl">{cat.icon}</span>
+            <span class="font-[var(--font-heading)] font-bold text-sm text-[var(--color-text)] group-hover:text-[var(--cat-color)] transition-colors">{cat.name}</span>
+            <span class="text-xs text-[var(--color-text-muted)] text-center">{cat.shortDescription}</span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- Popüler Hesaplayıcılar -->
+    <section class="pb-12">
+      <h2 class="font-[var(--font-heading)] font-bold text-xl sm:text-2xl text-[var(--color-text)] mb-6">Popüler Hesaplayıcılar</h2>
+      <div id="calc-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {popularCalcs.map((calc) => (
+          <CalcCard
+            title={calc.title}
+            description={calc.description}
+            href={`/${calc.categorySlug}/${calc.slug}/`}
+            icon={calc.icon}
+            categoryColor={calc.categoryColor}
+          />
+        ))}
+      </div>
+    </section>
+
+    <!-- Tüm Hesaplayıcılar -->
+    <section class="pb-12">
+      <h2 class="font-[var(--font-heading)] font-bold text-xl sm:text-2xl text-[var(--color-text)] mb-6">Tüm Hesaplayıcılar</h2>
+      <div id="all-calc-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {allCalcs.map((calc) => (
+          <CalcCard
+            title={calc.title}
+            description={calc.description}
+            href={`/${calc.categorySlug}/${calc.slug}/`}
+            icon={calc.icon}
+            categoryColor={calc.categoryColor}
+          />
+        ))}
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<script>
+  const searchInput = document.getElementById('search-input') as HTMLInputElement;
+  const calcCards = document.querySelectorAll('.calc-card');
+
+  searchInput?.addEventListener('input', (e) => {
+    const query = (e.target as HTMLInputElement).value.toLowerCase().trim();
+
+    calcCards.forEach((card) => {
+      const title = card.getAttribute('data-title')?.toLowerCase() || '';
+      const desc = card.getAttribute('data-description')?.toLowerCase() || '';
+      const match = title.includes(query) || desc.includes(query);
+      (card as HTMLElement).style.display = match || query === '' ? '' : 'none';
+    });
+  });
+</script>

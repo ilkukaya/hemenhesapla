@@ -1,0 +1,6 @@
+---
+import CategoryLayout from '../../layouts/CategoryLayout.astro';
+import categoriesData from '../../data/categories.json';
+const cat = categoriesData.categories.find(c => c.slug === 'saglik')!;
+---
+<CategoryLayout name={cat.name} slug={cat.slug} color={cat.color} icon={cat.icon} description={cat.description} calculators={cat.calculators} />

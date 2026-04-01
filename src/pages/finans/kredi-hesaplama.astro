@@ -1,0 +1,190 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Kredi taksit hesaplama nasıl yapılır?",
+    answer: "Kredi taksiti, anüite formülü ile hesaplanır: Aylık Taksit = Anapara × (Aylık Faiz Oranı × (1 + Aylık Faiz Oranı)^Vade) / ((1 + Aylık Faiz Oranı)^Vade - 1). Bu formülde aylık faiz oranı, yıllık faiz oranının 12'ye bölünmesiyle bulunur."
+  },
+  {
+    question: "Toplam faiz nasıl hesaplanır?",
+    answer: "Toplam faiz; (Aylık Taksit × Vade) - Kredi Anaparası formülüyle bulunur. Yani tüm ödemelerin toplamından ana para çıkarıldığında ödenen toplam faiz tutarı elde edilir."
+  },
+  {
+    question: "Düşük faizli kredi için neye dikkat edilmeli?",
+    answer: "Kredi faiz oranı yanı sıra dosya masrafı, sigorta bedeli ve diğer ek masrafları da göz önünde bulundurmanız gerekir. Yıllık maliyet oranı (YMO) bu masrafların tamamını yansıttığı için farklı teklifleri karşılaştırırken en doğru ölçüt YMO'dur."
+  }
+];
+
+const meta = {
+  title: "Kredi Hesaplama",
+  description: "Aylık taksit, toplam ödeme ve toplam faizi anında hesaplayın. Konut, taşıt ve ihtiyaç kredisi için ücretsiz kredi hesaplama aracı.",
+  category: "finans",
+  slug: "kredi-hesaplama",
+  keywords: ["kredi hesaplama", "taksit hesaplama", "faiz hesaplama", "konut kredisi", "ihtiyaç kredisi", "taşıt kredisi"],
+  dateModified: "2026-04-01",
+  relatedCalcs: ["kdv-hesaplama", "mevduat-faizi-hesaplama", "net-brut-maas-hesaplama"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form">
+    <CalcInput
+      id="tutar"
+      label="Kredi Tutarı"
+      type="number"
+      suffix="₺"
+      placeholder="100000"
+      step={100}
+      min={1000}
+    />
+    <CalcInput
+      id="faiz"
+      label="Aylık Faiz Oranı"
+      type="number"
+      suffix="%"
+      placeholder="3.50"
+      step={0.01}
+      min={0.01}
+    />
+    <CalcInput
+      id="vade"
+      label="Vade"
+      type="number"
+      suffix="ay"
+      placeholder="36"
+      step={1}
+      min={1}
+      max={360}
+    />
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">Aylık Taksit</p>
+      <p class="calc-result-value" id="aylik-taksit">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Toplam Ödeme</span>
+        <span class="calc-detail-value" id="toplam-odeme">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Toplam Faiz</span>
+        <span class="calc-detail-value" id="toplam-faiz">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const resultArea = document.getElementById('calc-result');
+
+      function debounce(fn, delay = 150) {
+        let timer;
+        return (...args) => {
+          clearTimeout(timer);
+          timer = setTimeout(() => fn(...args), delay);
+        };
+      }
+
+      const debouncedCalc = debounce(calculate);
+      inputs.forEach(input => {
+        input.addEventListener('input', debouncedCalc);
+        input.addEventListener('change', debouncedCalc);
+      });
+
+      function formatTL(num) {
+        return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
+      }
+
+      function calculate() {
+        const tutar = parseFloat((document.getElementById('tutar') as HTMLInputElement).value);
+        const faiz = parseFloat((document.getElementById('faiz') as HTMLInputElement).value);
+        const vade = parseInt((document.getElementById('vade') as HTMLInputElement).value);
+
+        if (!tutar || !faiz || !vade || tutar <= 0 || faiz <= 0 || vade <= 0) return;
+
+        const r = faiz / 100;
+        const pow = Math.pow(1 + r, vade);
+        const aylikTaksit = tutar * r * pow / (pow - 1);
+        const toplamOdeme = aylikTaksit * vade;
+        const toplamFaiz = toplamOdeme - tutar;
+
+        (document.getElementById('aylik-taksit') as HTMLElement).textContent = formatTL(aylikTaksit);
+        (document.getElementById('toplam-odeme') as HTMLElement).textContent = formatTL(toplamOdeme);
+        (document.getElementById('toplam-faiz') as HTMLElement).textContent = formatTL(toplamFaiz);
+
+        if (resultArea) resultArea.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const params = new URLSearchParams();
+        inputs.forEach(input => {
+          const el = input as HTMLInputElement;
+          if (el.value && el.value !== '' && el.id) {
+            params.set(el.id, el.value);
+          }
+        });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+      }
+
+      function loadFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        let hasParams = false;
+        inputs.forEach(input => {
+          const el = input as HTMLInputElement;
+          if (el.id && params.has(el.id)) {
+            el.value = params.get(el.id)!;
+            hasParams = true;
+          }
+        });
+        if (hasParams) calculate();
+      }
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>Kredi Hesaplama Nedir?</h2>
+    <p>
+      Kredi hesaplama, bankadan ya da finansal kuruluştan alınan bir borcun aylık taksit, toplam ödeme ve toplam faiz tutarlarını önceden belirlemeye yarayan finansal bir işlemdir. İhtiyaç kredisi, konut kredisi veya taşıt kredisi almayı düşünüyorsanız, aylık gider planlamanızı doğru yapabilmek için kredi hesaplama aracından yararlanmanız büyük önem taşır.
+    </p>
+    <h2>Kredi Taksiti Nasıl Hesaplanır?</h2>
+    <p>
+      Bankalar aylık sabit taksit tutarını belirlemek için anüite (eşit taksitli ödeme) yöntemini kullanır. Bu yönteme göre:
+    </p>
+    <p>
+      <strong>Aylık Taksit = Anapara × [r × (1 + r)^n] / [(1 + r)^n − 1]</strong>
+    </p>
+    <p>
+      Formülde <em>r</em> aylık faiz oranını (yüzde değerinin 100'e bölümü), <em>n</em> ise toplam vade sayısını (ay) gösterir. Hesaplama aracımız bu formülü otomatik olarak uyguladığından; kredi tutarı, aylık faiz oranı ve vade bilgilerini girmeniz yeterlidir.
+    </p>
+    <h2>Toplam Faiz ve Toplam Ödeme</h2>
+    <p>
+      Toplam ödeme tutarı, aylık taksit ile vade sayısının çarpımıdır. Toplam faiz ise toplam ödemeden anapara çıkarılarak bulunur. Örneğin 100.000 ₺ krediyi %3,5 aylık faizle 36 ay vadeyle çektiğinizde aylık taksitiniz ve ödeyeceğiniz toplam faiz miktarı bu araç sayesinde anında görüntülenir.
+    </p>
+    <h2>Kredi Alırken Dikkat Edilmesi Gerekenler</h2>
+    <p>
+      Bankalar aynı faiz oranını sunsalar da dosya masrafı, hayat sigortası, konut sigortası gibi ek ücretler toplam maliyeti önemli ölçüde artırabilir. Bu nedenle teklifleri karşılaştırırken yalnızca aylık faiz oranına değil, <strong>Yıllık Maliyet Oranı'na (YMO)</strong> da dikkat etmelisiniz. Ayrıca erken ödeme komisyonu koşullarını öğrenmek, kredinin kalan borcunu erken kapatma planlarınızı etkileyebilir.
+    </p>
+    <h2>Kredi Vadesi Seçimi</h2>
+    <p>
+      Vade uzadıkça aylık taksit miktarı düşer; ancak toplam faiz yükü artar. Kısa vadede yüksek taksit ödeyerek toplam maliyeti azaltabilir ya da uzun vadede aylık bütçenizi rahatlayabilirsiniz. Bu denge kişisel finansal hedefinize ve aylık gelir-gider durumunuza göre değişir.
+    </p>
+
+    <h2>Sık Sorulan Sorular</h2>
+    {faq.map(item => (
+      <details>
+        <summary>{item.question}</summary>
+        <p>{item.answer}</p>
+      </details>
+    ))}
+  </section>
+</CalcLayout>

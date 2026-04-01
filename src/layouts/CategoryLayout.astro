@@ -1,0 +1,68 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Breadcrumb from '../components/layout/Breadcrumb.astro';
+import CalcCard from '../components/calculator/CalcCard.astro';
+
+interface Calculator {
+  slug: string;
+  title: string;
+  description: string;
+  icon: string;
+  popular: boolean;
+}
+
+interface Props {
+  name: string;
+  slug: string;
+  color: string;
+  icon: string;
+  description: string;
+  calculators: Calculator[];
+}
+
+const { name, slug, color, icon, description, calculators } = Astro.props;
+
+const breadcrumbItems = [
+  { label: 'Ana Sayfa', href: '/' },
+  { label: name, href: `/${slug}/` },
+];
+
+const pageTitle = `${name} Hesaplayıcıları | Hemen Hesapla`;
+---
+
+<BaseLayout title={pageTitle} description={description}>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+    <Breadcrumb items={breadcrumbItems} />
+
+    <div class="mb-8">
+      <div class="flex items-center gap-3 mb-3">
+        <span class="text-3xl">{icon}</span>
+        <h1 class="text-2xl sm:text-3xl font-[var(--font-heading)] font-extrabold text-[var(--color-text)]">
+          {name} Hesaplayıcıları
+        </h1>
+      </div>
+      <p class="text-[var(--color-text-secondary)] max-w-2xl">{description}</p>
+    </div>
+
+    {calculators.length > 0 ? (
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {calculators.map((calc) => (
+          <CalcCard
+            title={calc.title}
+            description={calc.description}
+            href={`/${slug}/${calc.slug}/`}
+            icon={calc.icon}
+            categoryColor={color}
+          />
+        ))}
+      </div>
+    ) : (
+      <div class="bg-[var(--color-bg)] border border-[var(--color-border)] rounded-xl p-8 text-center">
+        <p class="text-[var(--color-text-muted)] text-lg">Bu kategorideki hesaplayıcılar yakında eklenecek.</p>
+        <a href="/" class="inline-block mt-4 text-[var(--color-primary)] font-semibold hover:underline">
+          ← Ana Sayfaya Dön
+        </a>
+      </div>
+    )}
+  </div>
+</BaseLayout>

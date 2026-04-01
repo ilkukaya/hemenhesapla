@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CalcCard from '../components/calculator/CalcCard.astro';
+import categoriesData from '../data/categories.json';
+
+const popularCalcs = categoriesData.categories.flatMap(cat =>
+  cat.calculators
+    .filter(c => c.popular)
+    .map(c => ({ ...c, categorySlug: cat.slug, categoryColor: cat.color }))
+).slice(0, 6);
+---
+
+<BaseLayout title="Sayfa Bulunamadı | Hemen Hesapla" description="Aradığınız sayfa bulunamadı.">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 py-16 text-center">
+    <p class="text-6xl mb-4">🔍</p>
+    <h1 class="text-2xl sm:text-3xl font-[var(--font-heading)] font-extrabold text-[var(--color-text)] mb-3">
+      Sayfa Bulunamadı
+    </h1>
+    <p class="text-[var(--color-text-secondary)] mb-8 max-w-md mx-auto">
+      Aradığınız sayfa mevcut değil veya taşınmış olabilir.
+      Aşağıdaki popüler hesaplayıcılardan birini deneyebilirsiniz.
+    </p>
+
+    <a href="/" class="btn-primary inline-flex mb-12">
+      ← Ana Sayfaya Dön
+    </a>
+
+    <h2 class="font-[var(--font-heading)] font-bold text-lg text-[var(--color-text)] mb-4 text-left">Popüler Hesaplayıcılar</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {popularCalcs.map((calc) => (
+        <CalcCard
+          title={calc.title}
+          description={calc.description}
+          href={`/${calc.categorySlug}/${calc.slug}/`}
+          icon={calc.icon}
+          categoryColor={calc.categoryColor}
+        />
+      ))}
+    </div>
+  </div>
+</BaseLayout>

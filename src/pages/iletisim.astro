@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="İletişim | Hemen Hesapla" description="hemenhesapla.net ile iletişime geçin. Soru, öneri ve geri bildirimlerinizi bekliyoruz.">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 py-12">
+    <h1 class="text-2xl sm:text-3xl font-[var(--font-heading)] font-extrabold text-[var(--color-text)] mb-8">İletişim</h1>
+
+    <div class="space-y-6 text-[var(--color-text-secondary)] leading-relaxed">
+      <p>
+        Sorularınız, önerileriniz, hata bildirimleriniz veya iş birliği teklifleriniz için
+        bize aşağıdaki yollarla ulaşabilirsiniz.
+      </p>
+
+      <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6 space-y-4">
+        <div>
+          <h2 class="font-[var(--font-heading)] font-bold text-[var(--color-text)] mb-1">E-posta</h2>
+          <p>
+            <a href="mailto:iletisim@hemenhesapla.net" class="text-[var(--color-primary)] hover:underline">
+              iletisim@hemenhesapla.net
+            </a>
+          </p>
+        </div>
+      </div>
+
+      <h2 class="text-lg font-[var(--font-heading)] font-bold text-[var(--color-text)] mt-8">Sık Sorulan Konular</h2>
+
+      <div class="space-y-4">
+        <div class="bg-[var(--color-bg)] rounded-lg p-4">
+          <h3 class="font-semibold text-[var(--color-text)] mb-1">Hesaplayıcılarda hata buldum</h3>
+          <p class="text-sm">Hangi hesaplayıcıda, hangi değerlerle hata oluştuğunu belirterek bize e-posta gönderebilirsiniz. En kısa sürede düzelteceğiz.</p>
+        </div>
+
+        <div class="bg-[var(--color-bg)] rounded-lg p-4">
+          <h3 class="font-semibold text-[var(--color-text)] mb-1">Yeni hesaplayıcı önerim var</h3>
+          <p class="text-sm">Önerilerinizi e-posta ile iletebilirsiniz. İhtiyaç duyulan hesaplayıcıları öncelikli olarak ekliyoruz.</p>
+        </div>
+
+        <div class="bg-[var(--color-bg)] rounded-lg p-4">
+          <h3 class="font-semibold text-[var(--color-text)] mb-1">Reklam ve iş birliği</h3>
+          <p class="text-sm">Reklam ve iş birliği teklifleri için lütfen e-posta ile iletişime geçin.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

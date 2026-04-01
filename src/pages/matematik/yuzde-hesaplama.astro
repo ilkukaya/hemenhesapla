@@ -1,0 +1,209 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Yüzde hesaplama nasıl yapılır?",
+    answer: "Yüzde hesaplamak için temel formül şudur: Sonuç = Sayı × Yüzde / 100. Örneğin 200'ün %25'ini bulmak için 200 × 25 / 100 = 50 hesaplaması yapılır."
+  },
+  {
+    question: "Bir sayıya yüzde eklemek nasıl hesaplanır?",
+    answer: "Bir sayıya yüzde eklemek için şu formül kullanılır: Sonuç = Sayı + (Sayı × Yüzde / 100). Örneğin 500 TL'ye %20 zam yapıldığında 500 + (500 × 20 / 100) = 500 + 100 = 600 TL olur."
+  },
+  {
+    question: "Bir sayıdan yüzde çıkarmak nasıl hesaplanır?",
+    answer: "Bir sayıdan yüzde çıkarmak için şu formül kullanılır: Sonuç = Sayı - (Sayı × Yüzde / 100). Örneğin 800 TL'lik bir üründe %10 indirim yapıldığında 800 - (800 × 10 / 100) = 800 - 80 = 720 TL olur."
+  }
+];
+
+const meta = {
+  title: "Yüzde Hesaplama",
+  description: "Yüzde hesaplama aracı ile bir sayının yüzdesini, yüzde eklenmiş veya çıkarılmış değerini anında hesaplayın. Formül ve örneklerle kolay yüzde hesaplama.",
+  category: "matematik",
+  slug: "yuzde-hesaplama",
+  keywords: ["yüzde hesaplama", "yüzde hesaplayıcı", "yüzde formülü", "yüzde bulma", "oran hesaplama"],
+  dateModified: "2026-04-01",
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" novalidate>
+    <div class="calc-inputs">
+      <CalcInput
+        id="sayi"
+        label="Sayı"
+        type="number"
+        placeholder="Örn: 200"
+        helpText="Yüzdesini hesaplamak istediğiniz sayıyı girin"
+      />
+      <CalcInput
+        id="yuzde"
+        label="Yüzde"
+        type="number"
+        placeholder="Örn: 25"
+        suffix="%"
+        min={0}
+        helpText="Hesaplamak istediğiniz yüzde oranını girin"
+      />
+    </div>
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">Sayının Yüzdesi</p>
+      <p class="calc-result-value" id="sonuc-ana">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">X'in Y%'si</span>
+        <span class="calc-detail-value" id="sonuc-yuzde">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">X'e Y% eklenmiş</span>
+        <span class="calc-detail-value" id="sonuc-ekle">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">X'ten Y% çıkarılmış</span>
+        <span class="calc-detail-value" id="sonuc-cikar">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const resultArea = document.getElementById('calc-result');
+
+      function debounce(fn, delay = 150) {
+        let timer;
+        return (...args) => {
+          clearTimeout(timer);
+          timer = setTimeout(() => fn(...args), delay);
+        };
+      }
+
+      function formatNumber(num, decimals = 2) {
+        return new Intl.NumberFormat('tr-TR', {
+          minimumFractionDigits: decimals,
+          maximumFractionDigits: decimals
+        }).format(num);
+      }
+
+      const debouncedCalc = debounce(calculate);
+      inputs.forEach(input => {
+        input.addEventListener('input', debouncedCalc);
+        input.addEventListener('change', debouncedCalc);
+      });
+
+      function calculate() {
+        const sayiEl = document.getElementById('sayi');
+        const yuzdeEl = document.getElementById('yuzde');
+
+        const sayi = parseFloat(sayiEl.value);
+        const yuzde = parseFloat(yuzdeEl.value);
+
+        if (isNaN(sayi) || isNaN(yuzde)) {
+          if (resultArea) resultArea.classList.add('hidden');
+          return;
+        }
+
+        const yuzdesonuc = sayi * yuzde / 100;
+        const ekle = sayi + yuzdesonuc;
+        const cikar = sayi - yuzdesonuc;
+
+        const anaEl = document.getElementById('sonuc-ana');
+        const yuzdeEl2 = document.getElementById('sonuc-yuzde');
+        const ekleEl = document.getElementById('sonuc-ekle');
+        const cikarEl = document.getElementById('sonuc-cikar');
+
+        if (anaEl) anaEl.textContent = formatNumber(yuzdesonuc);
+        if (yuzdeEl2) yuzdeEl2.textContent = formatNumber(yuzdesonuc);
+        if (ekleEl) ekleEl.textContent = formatNumber(ekle);
+        if (cikarEl) cikarEl.textContent = formatNumber(cikar);
+
+        if (resultArea) resultArea.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const params = new URLSearchParams();
+        inputs.forEach(input => {
+          if (input.value && input.value !== '' && input.id) {
+            params.set(input.id, input.value);
+          }
+        });
+        const newURL = `${window.location.pathname}?${params.toString()}`;
+        history.replaceState(null, '', newURL);
+      }
+
+      function loadFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        let hasParams = false;
+        inputs.forEach(input => {
+          if (input.id && params.has(input.id)) {
+            input.value = params.get(input.id);
+            hasParams = true;
+          }
+        });
+        if (hasParams) calculate();
+      }
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>Yüzde Hesaplama Nedir?</h2>
+    <p>
+      Yüzde (%), bir bütünün yüzde kaçının belirli bir parçaya karşılık geldiğini ifade eden matematiksel bir kavramdır. Günlük hayatımızda alışverişteki indirimlerden vergi hesaplamalarına, sınav notlarından faiz oranlarına kadar pek çok alanda yüzde hesaplaması kullanılmaktadır. Bu araç ile saniyeler içinde doğru ve hızlı yüzde hesapları yapabilirsiniz.
+    </p>
+
+    <h2>Yüzde Hesaplama Formülleri</h2>
+    <p>
+      Yüzde hesaplamada kullanılan temel matematiksel formüller şunlardır:
+    </p>
+    <ul>
+      <li><strong>Bir sayının yüzdesini bulmak:</strong> Sonuç = Sayı × Yüzde ÷ 100</li>
+      <li><strong>Bir sayıya yüzde eklemek:</strong> Sonuç = Sayı × (1 + Yüzde ÷ 100)</li>
+      <li><strong>Bir sayıdan yüzde çıkarmak:</strong> Sonuç = Sayı × (1 − Yüzde ÷ 100)</li>
+    </ul>
+
+    <h2>Yüzde Hesaplama Örnekleri</h2>
+    <p>
+      Günlük hayattan birkaç örnek vererek yüzde hesaplamasını daha iyi anlayalım:
+    </p>
+    <p>
+      <strong>Örnek 1 – İndirim Hesabı:</strong> 1.200 TL değerindeki bir ürün %30 indirime girdiğinde indirim tutarı: 1.200 × 30 ÷ 100 = 360 TL, indirimli fiyat ise 1.200 − 360 = 840 TL olur.
+    </p>
+    <p>
+      <strong>Örnek 2 – Zam Hesabı:</strong> Aylık 15.000 TL maaş alan bir çalışana %25 zam yapıldığında zam tutarı: 15.000 × 25 ÷ 100 = 3.750 TL, yeni maaş ise 15.000 + 3.750 = 18.750 TL olur.
+    </p>
+    <p>
+      <strong>Örnek 3 – Not Hesabı:</strong> 80 soruluk bir sınavda 64 soruyu doğru yanıtlayan öğrencinin başarı yüzdesi: 64 ÷ 80 × 100 = %80 olur.
+    </p>
+
+    <h2>Yüzde Hesaplamanın Kullanım Alanları</h2>
+    <p>
+      Yüzde hesaplama pek çok alanda günlük hayatın vazgeçilmez bir parçasıdır:
+    </p>
+    <ul>
+      <li><strong>Ticaret ve alışveriş:</strong> İndirim, zam, kâr ve zarar oranlarının hesaplanması</li>
+      <li><strong>Finans ve bankacılık:</strong> Faiz oranları, kredi geri ödemeleri, yatırım getirileri</li>
+      <li><strong>Vergi ve muhasebe:</strong> KDV, gelir vergisi, stopaj gibi vergi hesaplamaları</li>
+      <li><strong>Sağlık:</strong> Vücut yağ oranı, kalori hesaplamaları, ilaç dozaj oranları</li>
+      <li><strong>Eğitim:</strong> Sınav başarı yüzdeleri, öğrenci değerlendirme sistemleri</li>
+      <li><strong>İstatistik:</strong> Araştırma sonuçlarının yüzde dağılımları, anket verileri</li>
+    </ul>
+
+    <h2>Sıkça Sorulan Sorular</h2>
+    {faq.map(item => (
+      <details>
+        <summary><strong>{item.question}</strong></summary>
+        <p>{item.answer}</p>
+      </details>
+    ))}
+  </section>
+</CalcLayout>

@@ -1,0 +1,41 @@
+---
+import categoriesData from '../../data/categories.json';
+
+interface Props {
+  categorySlug: string;
+  currentSlug: string;
+}
+
+const { categorySlug, currentSlug } = Astro.props;
+const category = categoriesData.categories.find(c => c.slug === categorySlug);
+const relatedCalcs = category?.calculators.filter(c => c.slug !== currentSlug).slice(0, 5) || [];
+---
+
+<aside class="space-y-6">
+  <!-- İlgili Hesaplayıcılar -->
+  {relatedCalcs.length > 0 && (
+    <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-5">
+      <h3 class="font-[var(--font-heading)] font-bold text-sm uppercase tracking-wider text-[var(--color-text-secondary)] mb-3">
+        İlgili Hesaplayıcılar
+      </h3>
+      <ul class="space-y-2">
+        {relatedCalcs.map((calc) => (
+          <li>
+            <a
+              href={`/${categorySlug}/${calc.slug}/`}
+              class="flex items-center gap-2 px-3 py-2 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] hover:bg-[var(--color-bg)] rounded-lg transition-colors"
+            >
+              <span>{calc.icon}</span>
+              <span>{calc.title}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )}
+
+  <!-- Ad Placeholder -->
+  <div class="bg-[var(--color-bg)] border border-dashed border-[var(--color-border)] rounded-xl p-5 text-center">
+    <p class="text-xs text-[var(--color-text-muted)]">Reklam Alanı</p>
+  </div>
+</aside>

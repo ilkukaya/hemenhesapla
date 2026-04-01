@@ -1,0 +1,26 @@
+---
+interface Option {
+  value: string;
+  label: string;
+}
+
+interface Props {
+  id: string;
+  label: string;
+  options: Option[];
+  value?: string;
+  helpText?: string;
+}
+
+const { id, label, options, value, helpText } = Astro.props;
+---
+
+<div class="calc-input-group">
+  <label for={id} class="calc-label">{label}</label>
+  <select id={id} class="calc-select">
+    {options.map((opt) => (
+      <option value={opt.value} selected={opt.value === value}>{opt.label}</option>
+    ))}
+  </select>
+  {helpText && <p class="calc-help-text">{helpText}</p>}
+</div>

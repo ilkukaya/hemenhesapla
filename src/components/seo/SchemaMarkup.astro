@@ -1,0 +1,25 @@
+---
+import { generateWebApplicationSchema, generateFAQSchema } from '../../utils/seo';
+import type { FAQItem } from '../../utils/seo';
+
+interface Props {
+  type: 'WebApplication' | 'FAQPage';
+  name?: string;
+  description?: string;
+  category?: string;
+  url?: string;
+  faqs?: FAQItem[];
+}
+
+const { type, name, description, category, url, faqs } = Astro.props;
+
+let schema: any;
+
+if (type === 'WebApplication' && name && description && category) {
+  schema = generateWebApplicationSchema(name, description, category, url || Astro.url.href);
+} else if (type === 'FAQPage' && faqs) {
+  schema = generateFAQSchema(faqs);
+}
+---
+
+{schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}

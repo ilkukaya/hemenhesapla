@@ -1,0 +1,243 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Net maaş nasıl hesaplanır?",
+    answer: "Net maaş hesaplanırken brüt maaştan sırasıyla SGK işçi payı (%14), işsizlik sigortası işçi payı (%1), gelir vergisi ve damga vergisi kesintileri düşülür. Asgari ücret istisnası nedeniyle asgari ücrete denk gelen gelir vergisi ve damga vergisi tutarları iadeli hesaplanır. Kalan tutar çalışanın eline geçen net maaşı oluşturur."
+  },
+  {
+    question: "SGK işveren payı nedir?",
+    answer: "İşveren, çalışan için devlete ödediği SGK işveren payı brüt maaşın %20,5'i, işsizlik sigortası işveren payı ise %2'sidir. Bu tutarlar brüt maaşa eklenerek toplam işveren maliyeti bulunur. Yani işverenin bir çalışana brüt maaş dışında ödediği ek maliyet yaklaşık brüt maaşın %22,5'idir."
+  },
+  {
+    question: "Gelir vergisi dilimleri 2026 yılında nasıl uygulanır?",
+    answer: "2026 yılında Türkiye'de yıllık gelir vergisi dilimleri şu şekilde uygulanmaktadır: 158.000 TL'ye kadar %15, 158.001–330.000 TL arası %20, 330.001–800.000 TL arası %27, 800.001–4.300.000 TL arası %35, 4.300.000 TL üzeri %40. Asgari ücrete isabet eden gelir vergisi çalışana iade edildiğinden, fiilen ödenen vergi daha düşük olmaktadır."
+  }
+];
+
+const meta = {
+  title: "Net Brüt Maaş Hesaplama",
+  description: "2026 yılı güncel vergileri ve SGK oranlarıyla brüt maaştan net maaşı, işveren maliyetini ve tüm kesintileri hesaplayın.",
+  category: "finans",
+  slug: "net-brut-maas-hesaplama",
+  keywords: ["net brüt maaş hesaplama", "maaş hesaplama", "SGK kesintisi", "gelir vergisi hesaplama", "işveren maliyeti", "net maaş 2026"],
+  dateModified: "2026-04-01",
+  relatedCalcs: ["kredi-hesaplama", "kdv-hesaplama", "stopaj-hesaplama"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form">
+    <CalcInput
+      id="brutMaas"
+      label="Brüt Maaş"
+      type="number"
+      suffix="₺"
+      placeholder="22104"
+      step={100}
+      min={1000}
+    />
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">Net Maaş</p>
+      <p class="calc-result-value" id="net-maas">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">SGK İşçi Payı (%14)</span>
+        <span class="calc-detail-value" id="sgk-isci">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">İşsizlik Sigortası İşçi (%1)</span>
+        <span class="calc-detail-value" id="issizlik-isci">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Gelir Vergisi</span>
+        <span class="calc-detail-value" id="gelir-vergisi">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Damga Vergisi</span>
+        <span class="calc-detail-value" id="damga-vergisi">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Toplam Kesinti</span>
+        <span class="calc-detail-value" id="toplam-kesinti">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">İşveren SGK Payı (%20,5)</span>
+        <span class="calc-detail-value" id="sgk-isveren">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">İşveren İşsizlik Payı (%2)</span>
+        <span class="calc-detail-value" id="issizlik-isveren">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Toplam İşveren Maliyeti</span>
+        <span class="calc-detail-value" id="toplam-isveren">—</span>
+      </div>
+      <p style="font-size: 0.8rem; color: var(--color-text-muted, #6b7280); margin-top: 0.75rem;">
+        Bu hesaplama 2026 yılı güncel verilerine göre yapılmaktadır.
+      </p>
+    </div>
+  </CalcResult>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const resultArea = document.getElementById('calc-result');
+
+      function debounce(fn: (...args: unknown[]) => void, delay = 150) {
+        let timer: ReturnType<typeof setTimeout>;
+        return (...args: unknown[]) => {
+          clearTimeout(timer);
+          timer = setTimeout(() => fn(...args), delay);
+        };
+      }
+
+      function formatTL(num: number) {
+        return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
+      }
+
+      const debouncedCalc = debounce(calculate);
+      inputs.forEach(input => {
+        input.addEventListener('input', debouncedCalc);
+        input.addEventListener('change', debouncedCalc);
+      });
+
+      function calculateSalary(brutMaas: number) {
+        const sgkTavan = 172962.00;
+        const asgariBrut = 22104.67;
+
+        const sgkMatrah = Math.min(brutMaas, sgkTavan);
+
+        const sgkIsci = sgkMatrah * 0.14;
+        const issizlikIsci = sgkMatrah * 0.01;
+
+        const gvMatrah = brutMaas - sgkIsci - issizlikIsci;
+
+        const asgariSgk = Math.min(asgariBrut, sgkTavan) * 0.14;
+        const asgariIssizlik = Math.min(asgariBrut, sgkTavan) * 0.01;
+        const asgariGvMatrah = asgariBrut - asgariSgk - asgariIssizlik;
+
+        const vergilenecekMatrah = Math.max(gvMatrah - asgariGvMatrah, 0);
+
+        const yillikMatrah = vergilenecekMatrah * 12;
+        let tax = 0;
+        let remaining = yillikMatrah;
+        const brackets = [
+          { limit: 158000, rate: 0.15 },
+          { limit: 330000, rate: 0.20 },
+          { limit: 800000, rate: 0.27 },
+          { limit: 4300000, rate: 0.35 },
+          { limit: Infinity, rate: 0.40 }
+        ];
+        let prevLimit = 0;
+        for (const b of brackets) {
+          if (remaining <= 0) break;
+          const taxable = Math.min(remaining, b.limit - prevLimit);
+          tax += taxable * b.rate;
+          remaining -= taxable;
+          prevLimit = b.limit;
+        }
+        const gelirVergisi = tax / 12;
+
+        const damgaVergisi = brutMaas * 0.00759;
+        const asgariDamga = asgariBrut * 0.00759;
+        const netDamga = Math.max(damgaVergisi - asgariDamga, 0);
+
+        const toplamKesinti = sgkIsci + issizlikIsci + gelirVergisi + netDamga;
+        const netMaas = brutMaas - toplamKesinti;
+
+        const sgkIsveren = sgkMatrah * 0.205;
+        const issizlikIsveren = sgkMatrah * 0.02;
+        const toplamIsveren = brutMaas + sgkIsveren + issizlikIsveren;
+
+        return { sgkIsci, issizlikIsci, gelirVergisi, netDamga, toplamKesinti, netMaas, sgkIsveren, issizlikIsveren, toplamIsveren };
+      }
+
+      function calculate() {
+        const brutMaas = parseFloat((document.getElementById('brutMaas') as HTMLInputElement).value);
+
+        if (!brutMaas || brutMaas <= 0) return;
+
+        const r = calculateSalary(brutMaas);
+
+        (document.getElementById('net-maas') as HTMLElement).textContent = formatTL(r.netMaas);
+        (document.getElementById('sgk-isci') as HTMLElement).textContent = formatTL(r.sgkIsci);
+        (document.getElementById('issizlik-isci') as HTMLElement).textContent = formatTL(r.issizlikIsci);
+        (document.getElementById('gelir-vergisi') as HTMLElement).textContent = formatTL(r.gelirVergisi);
+        (document.getElementById('damga-vergisi') as HTMLElement).textContent = formatTL(r.netDamga);
+        (document.getElementById('toplam-kesinti') as HTMLElement).textContent = formatTL(r.toplamKesinti);
+        (document.getElementById('sgk-isveren') as HTMLElement).textContent = formatTL(r.sgkIsveren);
+        (document.getElementById('issizlik-isveren') as HTMLElement).textContent = formatTL(r.issizlikIsveren);
+        (document.getElementById('toplam-isveren') as HTMLElement).textContent = formatTL(r.toplamIsveren);
+
+        if (resultArea) resultArea.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const params = new URLSearchParams();
+        inputs.forEach(input => {
+          const el = input as HTMLInputElement;
+          if (el.value && el.value !== '' && el.id) {
+            params.set(el.id, el.value);
+          }
+        });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+      }
+
+      function loadFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        let hasParams = false;
+        inputs.forEach(input => {
+          const el = input as HTMLInputElement;
+          if (el.id && params.has(el.id)) {
+            el.value = params.get(el.id)!;
+            hasParams = true;
+          }
+        });
+        if (hasParams) calculate();
+      }
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>Net Brüt Maaş Hesaplama Nedir?</h2>
+    <p>
+      Türkiye'de işverenler çalışanlara brüt maaş üzerinden anlaşır; ancak çalışanın eline geçen tutar olan net maaş, çeşitli yasal kesintiler yapıldıktan sonra belirlenir. Bu kesintiler; SGK işçi payı, işsizlik sigortası işçi payı, gelir vergisi ve damga vergisinden oluşur. 2026 yılı güncel oranlarını ve asgari ücret istisnasını dikkate alan hesap makinemiz, brüt maaştan net maaşa geçiş sürecini şeffaf biçimde ortaya koyar.
+    </p>
+    <h2>SGK ve İşsizlik Sigortası Kesintileri</h2>
+    <p>
+      SGK işçi payı, SGK matrahı üzerinden %14 oranında hesaplanır. İşsizlik sigortası işçi payı ise %1 oranındadır. SGK matrahı; brüt maaş ile SGK tavan ücreti arasındaki düşük olan değerdir. 2026 yılı itibarıyla SGK tavan ücreti <strong>172.962 TL</strong>'dir. Bu tavanın üzerinde kalan brüt maaş kısmı SGK'ya tabi tutulmaz.
+    </p>
+    <h2>Gelir Vergisi ve Asgari Ücret İstisnası</h2>
+    <p>
+      Gelir vergisi, SGK ve işsizlik kesintileri düşüldükten sonra kalan tutara uygulanır. Türkiye'de gelir vergisi dilimli bir yapıya sahiptir; 2026 yılı için %15 ile %40 arasında değişen beş dilim mevcuttur. Bunun yanı sıra <strong>asgari ücret istisnası</strong> uygulaması kapsamında, asgari ücrete isabet eden gelir vergisi ve damga vergisi tutarı çalışana iade edilmektedir. Bu durum özellikle düşük ve orta gelir gruplarını olumlu etkilemektedir.
+    </p>
+    <h2>İşveren Maliyeti</h2>
+    <p>
+      Bir çalışanın toplam maliyeti yalnızca brüt maaştan ibaret değildir. İşveren; brüt maaş üzerine ek olarak SGK işveren payı (%20,5) ve işsizlik sigortası işveren payı (%2) ödemek zorundadır. Bu hesap makinesi toplam işveren maliyetini de ayrıca göstererek işletme bütçe planlamasına destek sağlar.
+    </p>
+    <h2>Hesaplama Örneği</h2>
+    <p>
+      Örneğin aylık 30.000 TL brüt maaş alan bir çalışan için SGK işçi payı 4.200 TL, işsizlik sigortası 300 TL olmak üzere toplam sigorta kesintisi 4.500 TL'dir. Kalan gelir vergisi matrahına uygulanan dilimli vergi ve damga vergisi de hesaplandıktan sonra çalışanın eline geçen net maaş belirlenir. Tüm bu karmaşık hesaplamayı yukarıdaki araç tek tıkla yapmanızı sağlar.
+    </p>
+
+    <h2>Sık Sorulan Sorular</h2>
+    {faq.map(item => (
+      <details>
+        <summary><strong>{item.question}</strong></summary>
+        <p>{item.answer}</p>
+      </details>
+    ))}
+  </section>
+</CalcLayout>

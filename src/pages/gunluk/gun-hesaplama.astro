@@ -1,0 +1,209 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "İki tarih arasındaki gün farkı nasıl hesaplanır?",
+    answer: "İki tarih arasındaki gün farkı, bitiş tarihinin milisaniye cinsinden değerinden başlangıç tarihinin milisaniye değeri çıkarılarak hesaplanır. Elde edilen fark 86.400.000 (bir günün milisaniyesi) ile bölünür. Araçımız artık yılları ve farklı ay uzunluklarını otomatik olarak dikkate alır."
+  },
+  {
+    question: "Gün hesaplama nerelerde kullanılır?",
+    answer: "Gün hesaplama; proje süreleri, sözleşme ve vize geçerlilik süreleri, hamilelik haftası takibi, askerlik geri sayımı, kira ve kefalet sözleşmeleri, ilaç tedavi süreleri ve önemli bir etkinliğe kaç gün kaldığını öğrenmek gibi birçok alanda kullanılır."
+  },
+  {
+    question: "Hafta ve ay hesaplaması nasıl yapılır?",
+    answer: "Hafta sayısı, toplam gün sayısının 7'ye bölünmesiyle elde edilir. Yaklaşık ay sayısı için ise ortalama ay uzunluğu olan 30,44 gün kullanılır; toplam gün sayısı 30,44'e bölünür. Yıl hesabında ise artık yılı da kapsayan 365,25 günlük ortalama yıl uzunluğu kullanılır."
+  }
+];
+
+const meta = {
+  title: "Gün Hesaplama",
+  description: "İki tarih arasındaki gün farkını hesaplayın. Başlangıç ve bitiş tarihlerini girerek gün, hafta, ay ve yıl cinsinden tarih farkını anında öğrenin.",
+  category: "gunluk",
+  slug: "gun-hesaplama",
+  keywords: ["gün hesaplama", "tarih farkı hesaplama", "iki tarih arası gün", "gün sayısı hesaplama", "tarih hesaplayıcı"],
+  dateModified: "2026-04-01",
+  relatedCalcs: ["yas-hesaplama"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" novalidate>
+    <div class="calc-inputs">
+      <CalcInput
+        id="baslangic"
+        label="Başlangıç Tarihi"
+        type="date"
+        helpText="Hesaplamayı başlatmak istediğiniz tarihi seçin"
+      />
+      <CalcInput
+        id="bitis"
+        label="Bitiş Tarihi"
+        type="date"
+        helpText="Hesaplamayı bitirmek istediğiniz tarihi seçin"
+      />
+    </div>
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">Gün Farkı</p>
+      <p class="calc-result-value" id="gun-ana">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Hafta</span>
+        <span class="calc-detail-value" id="sonuc-hafta">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Ay (yaklaşık)</span>
+        <span class="calc-detail-value" id="sonuc-ay">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Yıl (yaklaşık)</span>
+        <span class="calc-detail-value" id="sonuc-yil">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const resultArea = document.getElementById('calc-result');
+
+      function debounce(fn, delay = 150) {
+        let timer;
+        return (...args) => {
+          clearTimeout(timer);
+          timer = setTimeout(() => fn(...args), delay);
+        };
+      }
+
+      function formatNumber(num, decimals = 0) {
+        return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }).format(num);
+      }
+
+      const debouncedCalc = debounce(calculate);
+      inputs.forEach(input => {
+        input.addEventListener('input', debouncedCalc);
+        input.addEventListener('change', debouncedCalc);
+      });
+
+      function calculate() {
+        const baslangicEl = document.getElementById('baslangic');
+        const bitisEl = document.getElementById('bitis');
+
+        const baslangicStr = baslangicEl.value;
+        const bitisStr = bitisEl.value;
+
+        if (!baslangicStr || !bitisStr) {
+          if (resultArea) resultArea.classList.add('hidden');
+          return;
+        }
+
+        const baslangic = new Date(baslangicStr);
+        const bitis = new Date(bitisStr);
+
+        const msPerGun = 1000 * 60 * 60 * 24;
+        const diffMs = Math.abs(bitis - baslangic);
+        const toplamGun = Math.round(diffMs / msPerGun);
+
+        const hafta = Math.floor(toplamGun / 7);
+        const kalanGun = toplamGun % 7;
+        const yaklasikAy = toplamGun / 30.44;
+        const yaklasikYil = toplamGun / 365.25;
+
+        const gunAnaEl = document.getElementById('gun-ana');
+        const sonucHaftaEl = document.getElementById('sonuc-hafta');
+        const sonucAyEl = document.getElementById('sonuc-ay');
+        const sonucYilEl = document.getElementById('sonuc-yil');
+
+        if (gunAnaEl) gunAnaEl.textContent = `${formatNumber(toplamGun)} Gün`;
+        if (sonucHaftaEl) sonucHaftaEl.textContent = kalanGun > 0
+          ? `${formatNumber(hafta)} hafta, ${formatNumber(kalanGun)} gün`
+          : `${formatNumber(hafta)} hafta`;
+        if (sonucAyEl) sonucAyEl.textContent = `${formatNumber(yaklasikAy, 1)} ay`;
+        if (sonucYilEl) sonucYilEl.textContent = `${formatNumber(yaklasikYil, 2)} yıl`;
+
+        if (resultArea) resultArea.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const params = new URLSearchParams();
+        inputs.forEach(input => {
+          if (input.value && input.value !== '' && input.id) {
+            params.set(input.id, input.value);
+          }
+        });
+        const newURL = `${window.location.pathname}?${params.toString()}`;
+        history.replaceState(null, '', newURL);
+      }
+
+      function loadFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        let hasParams = false;
+        inputs.forEach(input => {
+          if (input.id && params.has(input.id)) {
+            input.value = params.get(input.id);
+            hasParams = true;
+          }
+        });
+        if (hasParams) calculate();
+      }
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>Gün Hesaplama Nedir?</h2>
+    <p>
+      Gün hesaplama, iki tarih arasındaki süreyi gün, hafta, ay ve yıl cinsinden hesaplayan pratik bir araçtır. Günlük yaşamda pek çok durumda iki tarih arasındaki farkı bilmemiz gerekir: bir projenin kaç gün sürdüğünü hesaplamak, sözleşme bitiş tarihini takip etmek, vize geçerlilik süresini kontrol etmek ya da önemli bir etkinliğe kaç gün kaldığını öğrenmek bunların başında gelir. Başlangıç ve bitiş tarihlerini girerek tüm bu bilgilere anında ulaşabilirsiniz.
+    </p>
+
+    <h2>Gün Farkı Nasıl Hesaplanır?</h2>
+    <p>
+      Tarih farkı hesaplamanın matematiksel temeli oldukça basittir. Her tarih milisaniye cinsinden bir sayıya dönüştürülür; bitiş tarihinin sayısından başlangıç tarihinin sayısı çıkarılır. Elde edilen milisaniye farkı, bir günün milisaniye karşılığı olan 86.400.000'e bölünerek gün sayısı elde edilir. Araçımız bu hesaplamayı otomatik yapar ve artık yılları da doğru biçimde işler.
+    </p>
+
+    <h2>Hafta, Ay ve Yıl Hesaplama</h2>
+    <p>
+      Gün farkından hareketle diğer zaman birimlerine dönüştürme şu şekilde yapılır:
+    </p>
+    <ul>
+      <li><strong>Hafta:</strong> Toplam gün sayısı 7'ye bölünür; kalan günler ayrıca gösterilir.</li>
+      <li><strong>Ay (yaklaşık):</strong> Ayların 28 ila 31 gün arasında değişmesi nedeniyle ortalama ay uzunluğu olan 30,44 gün kullanılır; toplam gün 30,44'e bölünür.</li>
+      <li><strong>Yıl (yaklaşık):</strong> Artık yıllar dikkate alınarak ortalama yıl uzunluğu 365,25 gün olarak alınır; toplam gün 365,25'e bölünür.</li>
+    </ul>
+
+    <h2>Gün Hesaplamanın Kullanım Alanları</h2>
+    <p>
+      Tarih farkı hesaplama ihtiyacı gündelik hayatın birçok alanında karşımıza çıkar:
+    </p>
+    <ul>
+      <li><strong>İş ve proje yönetimi:</strong> Projenin başlangıç ve bitiş tarihleri arasındaki toplam çalışma süresi kolayca belirlenir.</li>
+      <li><strong>Hukuki sözleşmeler:</strong> Kira, hizmet ve kefalet sözleşmelerinde süre takibi için gün sayısı kritik öneme sahiptir.</li>
+      <li><strong>Sağlık ve ilaç takibi:</strong> Tedavi süresi, bağışıklık takvimi veya hamilelik haftası hesaplamasında doğru gün sayısı gerekir.</li>
+      <li><strong>Vize ve seyahat:</strong> Vize izin süresi, ikamet izni süresi veya seyahat sigortası geçerlilik tarihini kontrol etmek için kullanılır.</li>
+      <li><strong>Kişisel hedefler:</strong> Diyet, egzersiz, bırakma programları (sigara, alkol) gibi hedeflere kaç gün kaldığını takip etmek motivasyonu artırır.</li>
+      <li><strong>Eğitim:</strong> Sınav tarihine kaç gün kaldığını hesaplamak, çalışma planı oluşturmada yardımcı olur.</li>
+    </ul>
+
+    <h2>İş Günü Hesaplama Hakkında</h2>
+    <p>
+      Aracımız takvim günlerini hesaplar; hafta sonları ve resmi tatil günleri bu toplamın içinde yer alır. Yalnızca iş günlerini hesaplamak istiyorsanız cumartesi, pazar günleri ile Türkiye'deki resmi tatilleri (Kurban Bayramı, Ramazan Bayramı, Cumhuriyet Bayramı vb.) ayrıca düşmeniz gerekir. Resmi tatil takvimi her yıl değişebildiğinden iş günü hesabı için tatil takvimini güncel tutmak önemlidir.
+    </p>
+
+    <h2>Sıkça Sorulan Sorular</h2>
+    {faq.map(item => (
+      <details>
+        <summary><strong>{item.question}</strong></summary>
+        <p>{item.answer}</p>
+      </details>
+    ))}
+  </section>
+</CalcLayout>

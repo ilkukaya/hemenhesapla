@@ -1,0 +1,35 @@
+---
+interface Props {
+  id?: string;
+}
+const { id = 'calc-result' } = Astro.props;
+---
+
+<div id={id} class="calc-result hidden">
+  <div class="calc-result-main">
+    <slot name="main" />
+  </div>
+
+  <div class="calc-result-details">
+    <slot name="details" />
+  </div>
+
+  <div class="calc-result-actions">
+    <button id="copy-link-btn" class="btn-secondary" title="Sonuç linkini kopyala">
+      🔗 Linki Kopyala
+    </button>
+  </div>
+</div>
+
+<script>
+  document.getElementById('copy-link-btn')?.addEventListener('click', () => {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      const btn = document.getElementById('copy-link-btn');
+      if (btn) {
+        const original = btn.textContent;
+        btn.textContent = '✅ Kopyalandı!';
+        setTimeout(() => { btn.textContent = original; }, 2000);
+      }
+    });
+  });
+</script>

@@ -1,0 +1,200 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcSelect from '../../components/calculator/CalcSelect.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "İdeal kilo nasıl hesaplanır?",
+    answer: "İdeal kilo hesaplamasında boy ve cinsiyet temel belirleyicilerdir. Devine, Robinson, Miller ve Hamwi gibi farklı bilimsel formüller, bu iki değişkeni kullanarak bir kişi için önerilen ağırlık aralığını ortaya koyar. Hesap makinemiz bu dört formülün ortalamasını alarak size en kapsamlı sonucu sunar. Ancak ideal kilo yalnızca bir referans değerdir; kişisel sağlık durumu, kemik yapısı ve kas kütlesi de göz önünde bulundurulmalıdır."
+  },
+  {
+    question: "Devine formülü nedir?",
+    answer: "Devine formülü, 1974 yılında Dr. B.J. Devine tarafından ilaç dozajı hesaplamalarında kullanılmak üzere geliştirilmiştir. Erkekler için: İdeal Kilo = 50 + 2,3 × (boy inç olarak − 60). Kadınlar için: İdeal Kilo = 45,5 + 2,3 × (boy inç olarak − 60). Boyun santimetre değeri 2,54'e bölünerek inç değerine dönüştürülür."
+  },
+  {
+    question: "İdeal kilo ile VKİ arasındaki fark nedir?",
+    answer: "İdeal kilo, belirli bir boy için önerilen ağırlığı tek bir değer olarak ifade ederken; Vücut Kitle İndeksi (VKİ), kilo ile boyun karesinin oranına bakarak kişiyi kategoriler (zayıf, normal, fazla kilolu, obez) içinde konumlandırır. İdeal kilo formülleri daha çok tıbbi hesaplamalarda referans olarak kullanılırken VKİ, genel sağlık değerlendirmelerinde daha yaygındır."
+  }
+];
+
+const meta = {
+  title: "İdeal Kilo Hesaplama",
+  description: "Boy ve cinsiyete göre ideal kilonuzu Devine, Robinson, Miller ve Hamwi formülleriyle hesaplayın. Bilimsel yöntemlerle ideal vücut ağırlığınızı öğrenin.",
+  category: "saglik",
+  slug: "ideal-kilo-hesaplama",
+  keywords: ["ideal kilo hesaplama", "ideal kilo nedir", "Devine formülü", "Robinson formülü", "boy kilo hesaplama", "ideal vücut ağırlığı"],
+  dateModified: "2026-04-01",
+  relatedCalcs: ["kalori-hesaplama", "vucut-kitle-indeksi-hesaplama"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form">
+    <CalcSelect
+      id="cinsiyet"
+      label="Cinsiyet"
+      options={[
+        { value: "erkek", label: "Erkek" },
+        { value: "kadin", label: "Kadın" }
+      ]}
+      value="erkek"
+    />
+    <CalcInput
+      id="boy"
+      label="Boy"
+      type="number"
+      suffix="cm"
+      placeholder="175"
+      step={1}
+      min={140}
+      max={220}
+    />
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">İdeal Kilo (Ortalama)</p>
+      <p class="calc-result-value" id="ideal-ort">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Devine Formülü</span>
+        <span class="calc-detail-value" id="devine">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Robinson Formülü</span>
+        <span class="calc-detail-value" id="robinson">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Miller Formülü</span>
+        <span class="calc-detail-value" id="miller">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Hamwi Formülü</span>
+        <span class="calc-detail-value" id="hamwi">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const resultArea = document.getElementById('calc-result');
+
+      function debounce(fn: (...args: unknown[]) => void, delay = 150) {
+        let timer: ReturnType<typeof setTimeout>;
+        return (...args: unknown[]) => {
+          clearTimeout(timer);
+          timer = setTimeout(() => fn(...args), delay);
+        };
+      }
+
+      function formatNumber(num: number, dec = 1) {
+        return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: dec, maximumFractionDigits: dec }).format(num);
+      }
+
+      const debouncedCalc = debounce(calculate);
+      inputs.forEach(input => {
+        input.addEventListener('input', debouncedCalc);
+        input.addEventListener('change', debouncedCalc);
+      });
+
+      function calculate() {
+        const cinsiyet = (document.getElementById('cinsiyet') as HTMLSelectElement).value;
+        const boy = parseFloat((document.getElementById('boy') as HTMLInputElement).value);
+
+        if (!boy || boy <= 0) return;
+
+        const inches = boy / 2.54;
+        const over60 = inches - 60;
+
+        let devine: number, robinson: number, miller: number, hamwi: number;
+
+        if (cinsiyet === 'erkek') {
+          devine   = 50   + 2.3   * over60;
+          robinson = 52   + 1.9   * over60;
+          miller   = 56.2 + 1.41  * over60;
+          hamwi    = 48   + 2.7   * over60;
+        } else {
+          devine   = 45.5 + 2.3   * over60;
+          robinson = 49   + 1.7   * over60;
+          miller   = 53.1 + 1.36  * over60;
+          hamwi    = 45.5 + 2.2   * over60;
+        }
+
+        const ortalama = (devine + robinson + miller + hamwi) / 4;
+
+        (document.getElementById('ideal-ort') as HTMLElement).textContent = formatNumber(ortalama, 1) + ' kg';
+        (document.getElementById('devine') as HTMLElement).textContent = formatNumber(devine, 1) + ' kg';
+        (document.getElementById('robinson') as HTMLElement).textContent = formatNumber(robinson, 1) + ' kg';
+        (document.getElementById('miller') as HTMLElement).textContent = formatNumber(miller, 1) + ' kg';
+        (document.getElementById('hamwi') as HTMLElement).textContent = formatNumber(hamwi, 1) + ' kg';
+
+        if (resultArea) resultArea.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const params = new URLSearchParams();
+        inputs.forEach(input => {
+          const el = input as HTMLInputElement;
+          if (el.value && el.value !== '' && el.id) {
+            params.set(el.id, el.value);
+          }
+        });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+      }
+
+      function loadFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        let hasParams = false;
+        inputs.forEach(input => {
+          const el = input as HTMLInputElement;
+          if (el.id && params.has(el.id)) {
+            el.value = params.get(el.id)!;
+            hasParams = true;
+          }
+        });
+        if (hasParams) calculate();
+      }
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>İdeal Kilo Nedir?</h2>
+    <p>
+      İdeal kilo, bir bireyin boy uzunluğu ve cinsiyetine göre sağlık açısından uygun kabul edilen vücut ağırlığıdır. Tek ve evrensel bir "ideal kilo" değeri yoktur; bu nedenle bilim dünyasında farklı formüller geliştirilmiştir. Bu hesap makinesi dört farklı bilimsel formülü (Devine, Robinson, Miller, Hamwi) kullanarak size kapsamlı bir fikir vermektedir.
+    </p>
+    <h2>Kullanılan Formüller</h2>
+    <p>
+      Tüm formüllerde boy santimetre cinsinden alınarak önce inç birimine dönüştürülür (cm ÷ 2,54) ve 60 inçin (152,4 cm) üzerindeki değer hesaplamalarda kullanılır:
+    </p>
+    <ul>
+      <li><strong>Devine (1974):</strong> Erkek = 50 + 2,3 × (inç − 60) | Kadın = 45,5 + 2,3 × (inç − 60)</li>
+      <li><strong>Robinson (1983):</strong> Erkek = 52 + 1,9 × (inç − 60) | Kadın = 49 + 1,7 × (inç − 60)</li>
+      <li><strong>Miller (1983):</strong> Erkek = 56,2 + 1,41 × (inç − 60) | Kadın = 53,1 + 1,36 × (inç − 60)</li>
+      <li><strong>Hamwi (1964):</strong> Erkek = 48 + 2,7 × (inç − 60) | Kadın = 45,5 + 2,2 × (inç − 60)</li>
+    </ul>
+    <h2>Formüller Neden Farklı Sonuç Verir?</h2>
+    <p>
+      Her formül farklı bir araştırma grubuna ve amaca yönelik geliştirilmiştir. Devine formülü başlangıçta ilaç dozajı hesabı için tasarlanmıştır. Robinson ve Miller formülleri sigorta şirketleri tarafından risk değerlendirmesinde, Hamwi formülü ise beslenme terapisinde kullanılmak üzere oluşturulmuştur. Bu farklı bakış açıları nedeniyle sonuçlar birkaç kilogram farklılık gösterebilir; ortalamanın referans alınması daha güvenilir bir yaklaşım sunar.
+    </p>
+    <h2>İdeal Kilo Tek Başına Yeterli mi?</h2>
+    <p>
+      İdeal kilo formülleri kemik yapısı, kas kütlesi ve yağ oranı gibi bireysel farklılıkları hesaba katmaz. Bu nedenle ideal kilo değeri yalnızca genel bir referans noktası olarak değerlendirilmelidir. Sağlıklı bir kilo aralığının tam olarak belirlenmesi için Vücut Kitle İndeksi (VKİ), bel çevresi ölçümü ve bir sağlık uzmanının değerlendirmesi birlikte kullanılmalıdır. Özellikle kronik hastalığı olan kişiler için kişiselleştirilmiş bir beslenme ve egzersiz planı büyük önem taşır.
+    </p>
+
+    <h2>Sık Sorulan Sorular</h2>
+    {faq.map(item => (
+      <details>
+        <summary><strong>{item.question}</strong></summary>
+        <p>{item.answer}</p>
+      </details>
+    ))}
+  </section>
+</CalcLayout>
