@@ -1,0 +1,195 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcSelect from '../../components/calculator/CalcSelect.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Altın türleri arasındaki fark nedir?",
+    answer: "Gram altın; piyasada işlem gören en küçük standart birimdir ve has (24 ayar) altından üretilir. Çeyrek altın yaklaşık 1,75 gram, yarım altın yaklaşık 3,5 gram ve tam altın yaklaşık 7,2 gram gelir. Cumhuriyet altını ise Türkiye Cumhuriyet Merkez Bankası tarafından basılan ve yaklaşık 7,2 gram olan özel bir altın türüdür. Fiyatlar; darphane işçilik bedeli, arz-talep dengesi ve dövizdeki hareketlilik nedeniyle gram fiyatıyla tam orantılı olmayabilir.",
+  },
+  {
+    question: "Altın fiyatlarını neler etkiler?",
+    answer: "Altın fiyatları; uluslararası piyasalarda belirlenen ons fiyatı, dolar/TL kuru, enflasyon beklentileri, jeopolitik riskler, merkez bankalarının altın alım-satımları ve küresel risk iştahı gibi faktörler tarafından belirlenir. Türkiye'de altın fiyatları ayrıca TL'nin dolar karşısındaki değerine bağlıdır; dolar yükseldiğinde TL bazındaki altın fiyatları da artış gösterir.",
+  },
+  {
+    question: "Altın yatırımı yaparken nelere dikkat edilmeli?",
+    answer: "Fiziksel altın alırken kuyumcu veya banka kaynaklı satın almanız, saflık belgesi (ayar) ve alım-satım makbuzu almanız önemlidir. Altın yatırım hesabı veya altın fonları, fiziksel depolama ve güvenlik endişesi olmaksızın altın fiyatından yararlanmanızı sağlar. Altın fiyatları kısa vadede dalgalanabilir; bu nedenle uzun vadeli bir yatırım aracı olarak değerlendirmek daha sağlıklıdır. Portföyünüzün tamamını değil, belirli bir oranını altına yatırmak riski azaltır.",
+  },
+];
+
+const meta = {
+  title: "Altın Hesaplama — Gram, Çeyrek, Yarım, Tam Altın Fiyatı",
+  description: "Gram, çeyrek, yarım, tam ve cumhuriyet altını değerini hesaplayın. Altın portföyünüzün toplam TL değerini anında öğrenin.",
+  category: "finans",
+  slug: "altin-hesaplama",
+  keywords: ["altın hesaplama", "gram altın fiyatı", "çeyrek altın hesaplama", "tam altın fiyatı", "cumhuriyet altını", "altın değeri hesaplama"],
+  dateModified: "2026-04-01",
+  relatedCalcs: ["doviz-cevirici", "enflasyon-hesaplama", "yatirim-getiri-hesaplama"],
+  faq,
+};
+
+const altinTurleri = [
+  { value: "gram", label: "Gram Altın" },
+  { value: "ceyrek", label: "Çeyrek Altın" },
+  { value: "yarim", label: "Yarım Altın" },
+  { value: "tam", label: "Tam Altın" },
+  { value: "cumhuriyet", label: "Cumhuriyet Altını" },
+];
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
+    <CalcSelect
+      id="altinTuru"
+      label="Altın Türü"
+      options={altinTurleri}
+      value="gram"
+      helpText="Hesaplamak istediğiniz altın türünü seçin"
+    />
+    <CalcInput
+      id="miktar"
+      label="Miktar"
+      type="number"
+      suffix="adet"
+      placeholder="1"
+      step={1}
+      min={1}
+      value="1"
+      helpText="Kaç adet ya da gram altın hesaplamak istiyorsunuz?"
+    />
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <span class="calc-result-label">Toplam Değer</span>
+      <span class="calc-result-value" id="toplam-deger">—</span>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Birim Fiyat</span>
+        <span class="calc-detail-value" id="birim-fiyat">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Gram Karşılığı</span>
+        <span class="calc-detail-value" id="gram-karsiligi">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <p class="text-sm text-[var(--color-text-muted)] mt-2 px-1">* Fiyatlar yaklaşık değerlerdir. Güncel fiyatlar için kuyumcu veya bankanızla iletişime geçin.</p>
+
+  <section class="calc-content">
+    <h2>Altın Hesaplama Nasıl Yapılır?</h2>
+    <p>
+      Altın, Türkiye'de geleneksel olarak en yaygın bireysel yatırım araçlarından biridir. Düğün, nişan gibi özel günlerde verilen çeyrek ve tam altınlar; aynı zamanda enflasyona karşı korunma aracı olarak da tercih edilmektedir. Altın hesaplama aracımız, farklı altın türlerinin toplam değerini hızlı ve pratik şekilde hesaplamanızı sağlar.
+    </p>
+    <p>
+      Türkiye'de en sık işlem gören altın türleri şunlardır: gram altın, çeyrek altın, yarım altın, tam altın ve cumhuriyet altını. Bu türlerin birim fiyatları; İstanbul kapalı çarşısındaki işlemler, uluslararası altın ons fiyatı ve döviz kuruna bağlı olarak sürekli değişir. Hesaplama aracımızdaki fiyatlar yaklaşık referans değerleri olup gerçek zamanlı piyasa verilerini yansıtmamaktadır.
+    </p>
+    <p>
+      Altın yatırımı yaparken fiziksel altın tutmanın yanı sıra altın hesabı, altın fonu ya da borsada işlem gören altın ETF'leri de değerlendirilebilir. Bu araçlar fiziksel depolama gerektirmeden altın fiyatından yararlanmanızı sağlar. Ancak her yatırım aracının kendine özgü risk ve maliyetleri bulunduğundan, karar vermeden önce detaylı araştırma yapmanız önerilir.
+    </p>
+    <h3>Altın Değeri Hesaplama Formülü</h3>
+    <p>
+      Altın değerini hesaplamak oldukça basittir:
+    </p>
+    <p>
+      <strong>Toplam Değer = Miktar × Birim Fiyat</strong>
+    </p>
+    <p>
+      Gram karşılığı hesabı için ise her altın türünün yaklaşık gram ağırlığı kullanılır. Çeyrek altın ≈ 1,75 gr, yarım altın ≈ 3,50 gr, tam altın ≈ 7,20 gr, cumhuriyet altını ≈ 7,20 gr ağırlığındadır. Bu değerler; altının işçilik ve prim bedelini içermediğinden yaklaşık gram ağırlıklarıdır.
+    </p>
+    <h3>Dikkat Edilmesi Gerekenler</h3>
+    <p>
+      Kuyumcular her altın türüne farklı işçilik bedeli uygulayabilir. Satın alınan ve satılan altın arasındaki fark (spread), fiziksel altın yatırımının gerçek maliyetini etkiler. Altın alım-satım işlemlerinde kuyumcu, banka ve borsa fiyatları birbirinden farklılık gösterebilir. Miras veya hediye amaçlı büyük miktarda altın işlemlerinde noter ve vergi yükümlülüklerini de göz önünde bulundurmanız tavsiye edilir.
+    </p>
+    <h3>Sıkça Sorulan Sorular</h3>
+    {faq.map((item) => (
+      <div class="faq-item">
+        <h4>{item.question}</h4>
+        <p>{item.answer}</p>
+      </div>
+    ))}
+  </section>
+</CalcLayout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+    const resultArea = document.getElementById('calc-result');
+
+    const fiyatlar: Record<string, { fiyat: number; gram: number; label: string }> = {
+      gram:       { fiyat: 3250,  gram: 1,    label: 'Gram Altın' },
+      ceyrek:     { fiyat: 5350,  gram: 1.75, label: 'Çeyrek Altın' },
+      yarim:      { fiyat: 10700, gram: 3.50, label: 'Yarım Altın' },
+      tam:        { fiyat: 21200, gram: 7.20, label: 'Tam Altın' },
+      cumhuriyet: { fiyat: 22500, gram: 7.20, label: 'Cumhuriyet Altını' },
+    };
+
+    function debounce(fn: (...args: unknown[]) => void, delay = 150) {
+      let timer: ReturnType<typeof setTimeout>;
+      return (...args: unknown[]) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), delay); };
+    }
+
+    function formatTL(num: number) {
+      return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
+    }
+
+    function formatNumber(num: number, d = 2) {
+      return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: d, maximumFractionDigits: d }).format(num);
+    }
+
+    const debouncedCalc = debounce(calculate);
+    inputs.forEach(i => {
+      i.addEventListener('input', debouncedCalc);
+      i.addEventListener('change', debouncedCalc);
+    });
+
+    function calculate() {
+      const altinTuru = (document.getElementById('altinTuru') as HTMLSelectElement).value;
+      const miktar = parseFloat((document.getElementById('miktar') as HTMLInputElement).value);
+
+      if (!altinTuru || !miktar || miktar <= 0) {
+        if (resultArea) resultArea.classList.add('hidden');
+        return;
+      }
+
+      const altin = fiyatlar[altinTuru];
+      if (!altin) return;
+
+      const toplamDeger = miktar * altin.fiyat;
+      const gramKarsiligi = miktar * altin.gram;
+
+      (document.getElementById('toplam-deger') as HTMLElement).textContent = formatTL(toplamDeger);
+      (document.getElementById('birim-fiyat') as HTMLElement).textContent = formatTL(altin.fiyat);
+      (document.getElementById('gram-karsiligi') as HTMLElement).textContent = `${formatNumber(gramKarsiligi, 2)} gram`;
+
+      if (resultArea) resultArea.classList.remove('hidden');
+      updateURL();
+    }
+
+    function updateURL() {
+      const params = new URLSearchParams();
+      inputs.forEach(i => {
+        const el = i as HTMLInputElement;
+        if (el.value && el.id) params.set(el.id, el.value);
+      });
+      history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+    }
+
+    function loadFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      let hasParams = false;
+      inputs.forEach(i => {
+        const el = i as HTMLInputElement;
+        if (el.id && params.has(el.id)) { el.value = params.get(el.id)!; hasParams = true; }
+      });
+      if (hasParams) calculate();
+    }
+
+    loadFromURL();
+    calculate();
+  });
+</script>

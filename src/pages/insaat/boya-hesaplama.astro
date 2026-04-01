@@ -1,0 +1,204 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcSelect from '../../components/calculator/CalcSelect.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const katOptions = [
+  { value: "1", label: "1 Kat" },
+  { value: "2", label: "2 Kat" },
+  { value: "3", label: "3 Kat" },
+];
+
+const faq = [
+  {
+    question: "Boya hesaplamasında kaç kat boya gerekmektedir?",
+    answer: "Genel kural olarak iç cephe boyalarında 2 kat boya önerilir. Koyu renkten açık renge geçişte ya da alçı-sıva üzerine ilk boyamada 3 kat gerekebilir. Dış cephe boyalarında ise 2-3 kat standart kabul edilir. Yüzeyin emiciliği ve boyamanın amaçlandığı sonuç, kat sayısını doğrudan etkiler."
+  },
+  {
+    question: "1 litre boya kaç metrekare yapar?",
+    answer: "Standart iç cephe boyaları ortalama 10-12 m² alan boyar (bir katta). Bu araç hesaplamada 10 m²/litre değerini esas almaktadır; ancak üreticiden üreticiye göre bu değer değişebilir. Satın almadan önce boyaladığınız ürünün etiketindeki önerilen sarfiyata (m²/lt) mutlaka bakın."
+  },
+  {
+    question: "Kapı ve pencereler boya hesabına dahil edilmeli mi?",
+    answer: "Kapı ve pencere yüzeyleri genellikle farklı boya veya vernikle boyanır; duvar boyasına dahil edilmez. Bu nedenle hesaplamada bu alanları toplam duvar alanından düşmek daha doğru bir sonuç verir. Aracımızdaki 'Kapı/Pencere Alanı' girişi tam da bu amaçla eklenmiştir. Standart bir oda için 3-5 m² pencere+kapı alanı tipiktir."
+  }
+];
+
+const meta = {
+  title: "Boya Hesaplama",
+  description: "Oda veya evin boyası için gereken litre miktarını hesaplayın. Oda boyutlarına, kat sayısına ve kapı/pencere alanına göre boya hesaplayıcı.",
+  category: "insaat",
+  slug: "boya-hesaplama",
+  keywords: ["boya hesaplama", "boya miktarı hesaplama", "kaç litre boya lazım", "duvar boyası hesaplama", "boya hesaplayıcı"],
+  dateModified: "2026-04-01",
+  relatedCalcs: ["fayans-hesaplama", "parke-hesaplama"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
+    <div class="calc-inputs">
+      <CalcInput
+        id="en"
+        label="Oda Eni"
+        type="number"
+        placeholder="Örn: 4"
+        suffix="m"
+        min={0.1}
+        step={0.1}
+        helpText="Odanın en ölçüsünü metre cinsinden girin"
+      />
+      <CalcInput
+        id="boy"
+        label="Oda Boyu"
+        type="number"
+        placeholder="Örn: 5"
+        suffix="m"
+        min={0.1}
+        step={0.1}
+        helpText="Odanın boy ölçüsünü metre cinsinden girin"
+      />
+      <CalcInput
+        id="yukseklik"
+        label="Tavan Yüksekliği"
+        type="number"
+        placeholder="2.80"
+        suffix="m"
+        min={2}
+        step={0.1}
+        value={2.8}
+        helpText="Standart tavan yüksekliği 2.80 m'dir"
+      />
+      <CalcInput
+        id="kapiPencere"
+        label="Kapı/Pencere Alanı"
+        type="number"
+        placeholder="3"
+        suffix="m²"
+        min={0}
+        step={0.5}
+        value={3}
+        helpText="Boyanmayacak kapı ve pencere alanlarının toplamı"
+      />
+      <CalcSelect
+        id="katSayisi"
+        label="Kat Sayısı"
+        options={katOptions}
+        value="2"
+        helpText="Kaç kat boya uygulanacağını seçin"
+      />
+    </div>
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">Gereken Boya</p>
+      <p class="calc-result-value" id="sonuc-boya">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Gereken Boya</span>
+        <span class="calc-detail-value" id="detail-boya">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Duvar Alanı</span>
+        <span class="calc-detail-value" id="detail-alan">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Teneke Sayısı (2,5 lt)</span>
+        <span class="calc-detail-value" id="detail-teneke">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <section class="calc-content">
+    <h2>Boya Hesaplama Nasıl Yapılır?</h2>
+    <p>
+      Ev veya ofis boyatmadan önce gereken boya miktarını doğru hesaplamak, hem bütçe planlaması hem de gereksiz boya alımını önlemek açısından büyük önem taşır. Fazla boya almak israf yaratırken, eksik almak projenin ortasında mağaza koşturmaya neden olur. Bu araç, girdiğiniz oda ölçülerine göre ihtiyacınız olan boya miktarını litre cinsinden hesaplar.
+    </p>
+    <p>
+      Boya hesaplamasının temel adımı toplam duvar alanının bulunmasıdır. Dikdörtgen bir odada duvar alanı şu şekilde hesaplanır: (En + Boy) × 2 × Yükseklik. Bu formül odanın dört duvarının toplam alanını verir. Ardından boyanmayacak olan kapı ve pencere alanları bu değerden çıkarılır. Örneğin 4m × 5m ve 2.8m yüksekliğinde bir odanın toplam duvar alanı (4+5)×2×2.8 = 50.4 m²'dir.
+    </p>
+    <p>
+      Boya tüketimi, uygulanacak kat sayısına ve boyalanın önerilen sarfiyatına bağlıdır. Standart iç cephe boyaları yaklaşık 10 m²/litre kapasiteye sahiptir; bu oran hesaplamamızda esas alınmıştır. 2 kat boya uygulandığında alanın 2 katı kadar boya tüketileceği göz önünde bulundurulur. Sonuç olarak gereken litre miktarı: (Duvar Alanı × Kat Sayısı) / 10 formülüyle bulunur.
+    </p>
+    <p>
+      Boya genellikle 2,5 litrelik veya 15 litrelik tenekeler halinde satılır. Araç ayrıca kaç adet 2,5 litrelik teneke almanız gerektiğini de yukarıya yuvarlayarak gösterir. Böylece mağazaya gitmeden önce tam olarak ne alacağınızı bilirsiniz.
+    </p>
+
+    <h3>Formül</h3>
+    <p>
+      Duvar Alanı = 2 × (En + Boy) × Yükseklik − Kapı/Pencere Alanı. Gereken Boya (lt) = Duvar Alanı × Kat Sayısı / 10. Teneke Sayısı = ⌈Gereken Boya / 2.5⌉ (yukarı yuvarlanır).
+    </p>
+
+    <h3>Dikkat Edilmesi Gerekenler</h3>
+    <p>
+      Bu hesaplama dört duvarlı düzgün dikdörtgen odalar için uygundur. Girintili-çıkıntılı alanlarda, kemer veya kolon olan duvarlarda ölçümleri ayrıca yapmanız gerekir. Tavan boyası hesaba dahil değildir; tavan için oda alanı (en × boy) kadar ek boya gerektiğini göz önünde bulundurun. Dış cephe boyalarında iklim koşullarına bağlı olarak 3 kata kadar ihtiyaç duyulabilir; yüzde 10-15 ilave pay bırakmanız önerilir.
+    </p>
+
+    <h3>Sıkça Sorulan Sorular</h3>
+    {faq.map((item) => (
+      <div class="faq-item">
+        <h4>{item.question}</h4>
+        <p>{item.answer}</p>
+      </div>
+    ))}
+  </section>
+</CalcLayout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+    const resultArea = document.getElementById('calc-result');
+
+    function debounce(fn, d = 150) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), d); }; }
+    function formatNumber(n, d = 2) {
+      return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 0, maximumFractionDigits: d }).format(n);
+    }
+
+    const dc = debounce(calculate);
+    inputs.forEach(i => { i.addEventListener('input', dc); i.addEventListener('change', dc); });
+
+    function calculate() {
+      const en = parseFloat((document.getElementById('en')).value);
+      const boy = parseFloat((document.getElementById('boy')).value);
+      const yukseklik = parseFloat((document.getElementById('yukseklik')).value);
+      const kapiPencere = parseFloat((document.getElementById('kapiPencere')).value) || 0;
+      const katSayisi = parseInt((document.getElementById('katSayisi')).value) || 2;
+
+      if (isNaN(en) || isNaN(boy) || isNaN(yukseklik) || en <= 0 || boy <= 0 || yukseklik <= 0) {
+        if (resultArea) resultArea.classList.add('hidden');
+        return;
+      }
+
+      const wallArea = 2 * (en + boy) * yukseklik - kapiPencere;
+      const boyal = (wallArea * katSayisi) / 10;
+      const teneke = Math.ceil(boyal / 2.5);
+
+      document.getElementById('sonuc-boya').textContent = `${formatNumber(boyal)} litre`;
+      document.getElementById('detail-boya').textContent = `${formatNumber(boyal)} lt`;
+      document.getElementById('detail-alan').textContent = `${formatNumber(wallArea)} m²`;
+      document.getElementById('detail-teneke').textContent = `${teneke} adet`;
+
+      if (resultArea) resultArea.classList.remove('hidden');
+      updateURL();
+    }
+
+    function updateURL() {
+      const p = new URLSearchParams();
+      inputs.forEach(i => { if (i.value && i.id) p.set(i.id, i.value); });
+      history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
+    }
+
+    function loadFromURL() {
+      const p = new URLSearchParams(window.location.search);
+      let h = false;
+      inputs.forEach(i => { if (i.id && p.has(i.id)) { i.value = p.get(i.id); h = true; } });
+      if (h) calculate();
+    }
+
+    loadFromURL();
+  });
+</script>

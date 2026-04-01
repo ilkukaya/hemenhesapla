@@ -1,0 +1,173 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Standart sapma ne anlama gelir?",
+    answer: "Standart sapma, bir veri kümesindeki değerlerin ortalamadan ne kadar uzaklaştığını ölçen istatistiksel bir değerdir. Düşük standart sapma, verilerin ortalamaya yakın toplandığını; yüksek standart sapma ise verilerin geniş bir alana yayıldığını gösterir. Örneğin standart sapması 2 olan bir sınav sonuçları seti, standart sapması 15 olandan çok daha homojen bir dağılıma sahiptir."
+  },
+  {
+    question: "Popülasyon standart sapması ile örneklem standart sapması arasındaki fark nedir?",
+    answer: "Popülasyon standart sapması (σ), tüm veriler mevcut olduğunda kullanılır; varyans hesabında n'e bölünür. Örneklem standart sapması (s) ise bir popülasyonun alt kümesinden hesaplandığında kullanılır; n-1'e bölünür (Bessel düzeltmesi). Araştırmalarda genellikle örneklemle çalışıldığından s değeri daha yaygın kullanılır."
+  },
+  {
+    question: "Standart sapma hangi alanlarda kullanılır?",
+    answer: "Standart sapma istatistik, finans, kalite kontrol, tıp ve eğitim gibi birçok alanda kullanılır. Finansta portföy risk ölçümünde, kalite kontrolde üretim süreçlerinin tutarlılığında, eğitimde sınav sonuçlarının dağılımını değerlendirmede başvurulur. Normal dağılım eğrisinde verilerin %68'i ortalama ± 1 standart sapma aralığında yer alır."
+  }
+];
+
+const meta = {
+  title: "Standart Sapma Hesaplama",
+  description: "Sayı dizisinin standart sapmasını, varyansını ve ortalamasını anında hesaplayın. Popülasyon ve örneklem standart sapması hesaplayıcı.",
+  category: "matematik",
+  slug: "standart-sapma-hesaplama",
+  keywords: ["standart sapma hesaplama", "varyans hesaplama", "istatistik hesaplama", "standart sapma formülü", "örneklem standart sapması"],
+  dateModified: "2026-04-01",
+  relatedCalcs: ["ortalama-hesaplama", "karekok-hesaplama"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
+    <div class="calc-inputs">
+      <CalcInput
+        id="sayilar"
+        label="Sayılar"
+        type="text"
+        placeholder="10, 20, 30, 40, 50"
+        helpText="Virgülle ayırarak girin (örn: 10, 20, 30, 40, 50)"
+      />
+    </div>
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">Standart Sapma (σ)</p>
+      <p class="calc-result-value" id="sonuc-std">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Standart Sapma (Popülasyon σ)</span>
+        <span class="calc-detail-value" id="detail-std">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Örnek Std. Sapma (s)</span>
+        <span class="calc-detail-value" id="detail-ornekstd">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Varyans (σ²)</span>
+        <span class="calc-detail-value" id="detail-varyans">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Ortalama</span>
+        <span class="calc-detail-value" id="detail-ortalama">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Sayı Adedi</span>
+        <span class="calc-detail-value" id="detail-adet">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <section class="calc-content">
+    <h2>Standart Sapma Hesaplama Nasıl Yapılır?</h2>
+    <p>
+      Standart sapma, bir veri setindeki değerlerin ortalamadan ne ölçüde uzaklaştığını nicel olarak ifade eden temel istatistik ölçüsüdür. Sıfıra yakın bir standart sapma değeri, verilerin birbirine ve ortalamaya çok yakın olduğunu gösterirken; yüksek bir değer verilerin geniş bir aralığa yayıldığını ortaya koyar. İstatistiğin neredeyse her dalında, veri dağılımını tanımlamak için başvurulan bu kavram, Yunanca sigma (σ) harfiyle sembolize edilir.
+    </p>
+    <p>
+      Günlük hayatta standart sapma en çok finans, eğitim ve kalite kontrol alanlarında karşımıza çıkar. Bir yatırım aracının getiri oynaklığını ölçmek, sınav puanlarının homojenliğini değerlendirmek ya da bir üretim hattındaki boyut toleranslarını kontrol etmek için standart sapma hesabına ihtiyaç duyulur. Modern portföy teorisinde risk, büyük ölçüde standart sapma ile ölçülür.
+    </p>
+    <p>
+      Normal dağılım (Gauss eğrisi) bağlamında standart sapmanın önemi daha da artar. Normal dağılım gösteren bir veri setinde değerlerin %68,27'si ortalama ± 1σ aralığında, %95,45'i ortalama ± 2σ aralığında ve %99,73'ü ortalama ± 3σ aralığında bulunur. Bu kural "68-95-99,7 kuralı" veya "ampirik kural" olarak bilinir ve veri analizi süreçlerinde yaygın biçimde kullanılır.
+    </p>
+    <p>
+      Varyans, standart sapmanın karesidir (σ²). Varyans hesaplandıktan sonra karekök alınarak standart sapmaya ulaşılır. Varyans değeri genellikle birim karesi cinsinden ifade edildiği için yorumlanması güçtür; standart sapma ise orijinal verinin birimiyle ifade edildiğinden daha kolay yorumlanır.
+    </p>
+
+    <h3>Formül</h3>
+    <p>
+      Popülasyon standart sapması: σ = √[Σ(xᵢ − x̄)² / n]. Örneklem standart sapması: s = √[Σ(xᵢ − x̄)² / (n−1)]. Adımlar: (1) Ortalama x̄ hesaplanır. (2) Her değerden ortalama çıkarılır ve sonuç karesine alınır. (3) Bu karelerin toplamı n (veya n−1) ile bölünür → varyans elde edilir. (4) Varyansın karekökü alınır → standart sapma bulunur.
+    </p>
+
+    <h3>Dikkat Edilmesi Gerekenler</h3>
+    <p>
+      Hesaplama için en az iki sayı girmeniz gerekmektedir; tek sayıyla örneklem standart sapması tanımsızdır (n−1 = 0'a bölme hatası). Sayıları virgülle ayırırken Türkçe ondalık ayracı olarak virgül yerine nokta kullanmanız önerilir. Çok büyük sayı kümelerinde sonuçlar yuvarlama nedeniyle küçük farklar gösterebilir. Araştırma verilerinde tüm popülasyona değil de örnekleme sahipseniz s (örneklem standart sapması) kullanmayı tercih edin.
+    </p>
+
+    <h3>Sıkça Sorulan Sorular</h3>
+    {faq.map((item) => (
+      <div class="faq-item">
+        <h4>{item.question}</h4>
+        <p>{item.answer}</p>
+      </div>
+    ))}
+  </section>
+</CalcLayout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+    const resultArea = document.getElementById('calc-result');
+
+    function debounce(fn, d = 150) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), d); }; }
+    function formatNumber(n, d = 4) {
+      return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 0, maximumFractionDigits: d }).format(n);
+    }
+
+    const dc = debounce(calculate);
+    inputs.forEach(i => { i.addEventListener('input', dc); i.addEventListener('change', dc); });
+
+    function parseNumbers(str) {
+      return str
+        .replace(/;/g, ',')
+        .split(',')
+        .map(s => parseFloat(s.trim().replace(',', '.')))
+        .filter(n => !isNaN(n));
+    }
+
+    function calculate() {
+      const raw = (document.getElementById('sayilar')).value;
+      const nums = parseNumbers(raw);
+
+      if (nums.length < 2) {
+        if (resultArea) resultArea.classList.add('hidden');
+        return;
+      }
+
+      const n = nums.length;
+      const mean = nums.reduce((a, b) => a + b, 0) / n;
+      const variance = nums.reduce((sum, x) => sum + Math.pow(x - mean, 2), 0) / n;
+      const sampleVariance = nums.reduce((sum, x) => sum + Math.pow(x - mean, 2), 0) / (n - 1);
+      const stddev = Math.sqrt(variance);
+      const sampleStddev = Math.sqrt(sampleVariance);
+
+      document.getElementById('sonuc-std').textContent = formatNumber(stddev);
+      document.getElementById('detail-std').textContent = formatNumber(stddev);
+      document.getElementById('detail-ornekstd').textContent = formatNumber(sampleStddev);
+      document.getElementById('detail-varyans').textContent = formatNumber(variance);
+      document.getElementById('detail-ortalama').textContent = formatNumber(mean);
+      document.getElementById('detail-adet').textContent = n.toString();
+
+      if (resultArea) resultArea.classList.remove('hidden');
+      updateURL();
+    }
+
+    function updateURL() {
+      const p = new URLSearchParams();
+      inputs.forEach(i => { if (i.value && i.id) p.set(i.id, i.value); });
+      history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
+    }
+
+    function loadFromURL() {
+      const p = new URLSearchParams(window.location.search);
+      let h = false;
+      inputs.forEach(i => { if (i.id && p.has(i.id)) { i.value = p.get(i.id); h = true; } });
+      if (h) calculate();
+    }
+
+    loadFromURL();
+  });
+</script>

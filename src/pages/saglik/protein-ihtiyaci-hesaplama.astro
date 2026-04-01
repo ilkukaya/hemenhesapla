@@ -1,0 +1,170 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcSelect from '../../components/calculator/CalcSelect.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Günlük protein ihtiyacım nasıl hesaplanır?",
+    answer: "Günlük protein ihtiyacı vücut ağırlığına ve aktivite düzeyine göre hesaplanır. Hareketsiz bireyler için kilogram başına 0,8 g protein yeterli olurken, düzenli spor yapanlar için bu değer 1,2–1,6 g'a çıkar. Vücut geliştirme veya ağır spor yapanlar için ise 1,6–2,2 g/kg önerilmektedir. Formül: Günlük Protein (g) = Vücut Ağırlığı (kg) × Aktivite Faktörü."
+  },
+  {
+    question: "Protein neden önemlidir?",
+    answer: "Protein; kas dokusunun yapımı ve onarımı, enzim ve hormon üretimi, bağışıklık sistemi işlevi ve enerji üretimi gibi pek çok hayati görevi üstlenir. Yeterli protein almak kas kaybını önler, tokluk hissini artırır ve metabolizmanın hızlı çalışmasına katkı sağlar. Kaliteli protein kaynakları arasında et, balık, yumurta, süt ürünleri, baklagiller ve soya ürünleri yer alır."
+  },
+  {
+    question: "Protein öğünlere nasıl bölünmelidir?",
+    answer: "Araştırmalar, protein alımını gün içine dağıtmanın tek seferde büyük miktarda tüketmekten daha etkili olduğunu göstermektedir. Her öğünde 20–40 g protein tüketmek, kas protein sentezini optimum düzeyde tetikler. Günlük proteini 3–5 öğüne yaymak, hem sindirimi kolaylaştırır hem de gün boyunca sürekli amino asit akışı sağlar."
+  }
+];
+
+const meta = {
+  title: "Günlük Protein İhtiyacı Hesaplama",
+  description: "Vücut ağırlığınıza ve aktivite düzeyinize göre günlük protein ihtiyacınızı hesaplayın. Kas gelişimi ve sağlıklı beslenme için doğru protein miktarını öğrenin.",
+  category: "saglik",
+  slug: "protein-ihtiyaci-hesaplama",
+  keywords: ["protein ihtiyacı hesaplama", "günlük protein", "kas gelişimi protein", "sporcu protein ihtiyacı", "protein hesaplama", "beslenme"],
+  dateModified: "2026-04-01",
+  relatedCalcs: ["kalori-hesaplama", "baz-metabolizma-hizi", "ideal-kilo-hesaplama"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form">
+    <CalcInput
+      id="kilo"
+      label="Vücut Ağırlığı"
+      type="number"
+      suffix="kg"
+      placeholder="70"
+      min={30}
+      max={300}
+      step={0.1}
+    />
+    <CalcSelect
+      id="aktivite"
+      label="Aktivite Düzeyi"
+      options={[
+        { value: "0.8", label: "Hareketsiz (masa başı, spor yok)" },
+        { value: "1.0", label: "Hafif aktif (haftada 1-2 gün spor)" },
+        { value: "1.2", label: "Orta aktif (haftada 3-5 gün spor)" },
+        { value: "1.6", label: "Sporcu (günlük antrenman)" },
+        { value: "2.0", label: "Ağır sporcu (günde 2 antrenman)" }
+      ]}
+      value="1.0"
+    />
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">Günlük Protein İhtiyacı</p>
+      <p class="calc-result-value" id="protein-sonuc">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Öğün Başına (÷3)</span>
+        <span class="calc-detail-value" id="d-ogun">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Aktivite Faktörü</span>
+        <span class="calc-detail-value" id="d-faktor">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Vücut Ağırlığı</span>
+        <span class="calc-detail-value" id="d-kilo">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const resultArea = document.getElementById('calc-result');
+
+      function debounce(fn, delay = 150) {
+        let t;
+        return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), delay); };
+      }
+
+      function formatNumber(n, d = 0) {
+        return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: d, maximumFractionDigits: d }).format(n);
+      }
+
+      const dc = debounce(calculate);
+      inputs.forEach(i => { i.addEventListener('input', dc); i.addEventListener('change', dc); });
+
+      function calculate() {
+        const kilo = parseFloat(document.getElementById('kilo').value);
+        const faktor = parseFloat(document.getElementById('aktivite').value);
+
+        if (isNaN(kilo) || kilo <= 0) {
+          if (resultArea) resultArea.classList.add('hidden');
+          return;
+        }
+
+        const protein = kilo * faktor;
+        const ogunBasina = protein / 3;
+
+        document.getElementById('protein-sonuc').textContent = formatNumber(protein, 0) + ' g';
+        document.getElementById('d-ogun').textContent = formatNumber(ogunBasina, 0) + ' g';
+        document.getElementById('d-faktor').textContent = formatNumber(faktor, 1) + ' g/kg';
+        document.getElementById('d-kilo').textContent = formatNumber(kilo, 1) + ' kg';
+
+        if (resultArea) resultArea.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const p = new URLSearchParams();
+        inputs.forEach(i => { if (i.value && i.id) p.set(i.id, i.value); });
+        history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
+      }
+
+      function loadFromURL() {
+        const p = new URLSearchParams(window.location.search);
+        let h = false;
+        inputs.forEach(i => { if (i.id && p.has(i.id)) { i.value = p.get(i.id); h = true; } });
+        if (h) calculate();
+      }
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>Günlük Protein İhtiyacı Nasıl Hesaplanır?</h2>
+    <p>
+      Protein, vücudumuzun yapı taşlarından biri olan ve yaşamsal öneme sahip bir makro besindir. Kasların, organların, hormonların, enzimlerin ve bağışıklık sisteminin temel bileşeni olan proteinleri yeterli miktarda almak; hem genel sağlık hem de spor performansı açısından kritik önem taşır. Günlük protein ihtiyacı kişinin vücut ağırlığı ve aktivite düzeyine göre değişmektedir.
+    </p>
+    <p>
+      Dünya Sağlık Örgütü'nün temel önerisi hareketsiz yetişkinler için kilogram başına 0,8 gram proteindir. Ancak bu değer minimum ihtiyacı karşılar; spor yapanlar, yaşlılar ve belirli sağlık durumundaki bireyler için protein ihtiyacı önemli ölçüde artabilir. Güncel araştırmalar, kas gelişimi ve korunması için sporcuların kilogram başına 1,6–2,0 gram protein tüketmesi gerektiğini ortaya koymaktadır.
+    </p>
+
+    <h3>Formül</h3>
+    <p>
+      <strong>Günlük Protein (g) = Vücut Ağırlığı (kg) × Aktivite Faktörü (g/kg)</strong>
+    </p>
+    <ul>
+      <li><strong>Hareketsiz (0,8 g/kg):</strong> Spor yapmayan, masa başı çalışan bireyler</li>
+      <li><strong>Hafif aktif (1,0 g/kg):</strong> Haftada 1–2 gün düzenli egzersiz yapanlar</li>
+      <li><strong>Orta aktif (1,2 g/kg):</strong> Haftada 3–5 gün egzersiz yapanlar</li>
+      <li><strong>Sporcu (1,6 g/kg):</strong> Günlük antrenman yapan bireyler</li>
+      <li><strong>Ağır sporcu (2,0 g/kg):</strong> Günde iki antrenman yapan performans sporcuları</li>
+    </ul>
+
+    <h3>Dikkat Edilmesi Gerekenler</h3>
+    <p>
+      Proteini tek öğünde toplu almak yerine gün içine yaymak daha verimlidir. Her öğünde 20–40 gram protein tüketmek, kas protein sentezini optimize eder. Protein kalitesi de önemlidir; hayvansal kaynaklar tam amino asit profili sunarken bitkisel kaynakları çeşitlendirerek tam amino asit alımı sağlanabilir. Böbrek hastalığı gibi sağlık sorunlarınız varsa yüksek protein alımından önce doktorunuza danışmanızı öneririz.
+    </p>
+
+    <h3>Sıkça Sorulan Sorular</h3>
+    {faq.map(item => (
+      <details>
+        <summary><strong>{item.question}</strong></summary>
+        <p>{item.answer}</p>
+      </details>
+    ))}
+  </section>
+</CalcLayout>

@@ -1,0 +1,253 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcSelect from '../../components/calculator/CalcSelect.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Vücut yağ oranı nasıl hesaplanır?",
+    answer: "Vücut yağ oranı çeşitli yöntemlerle ölçülebilir. Bunlar arasında DEXA taraması, hidrodansitometri, biyoelektrik impedans analizi ve US Navy yöntemi sayılabilir. US Navy yöntemi, bel, boyun ve kadınlar için kalça çevresi ölçümlerini kullanarak doğru bir tahminde bulunur. Erkekler için formül: %86,010 × log10(bel−boyun) − 70,041 × log10(boy) + 36,76; kadınlar için: %163,205 × log10(bel+kalça−boyun) − 97,684 × log10(boy) − 78,387 şeklindedir."
+  },
+  {
+    question: "Sağlıklı vücut yağ oranı nedir?",
+    answer: "Amerikan Spor Tıbbı Koleji'nin sınıflandırmasına göre erkeklerde %6–13 atletik, %14–17 iyi, %18–24 kabul edilebilir ve %25 üzeri obez sayılır. Kadınlarda ise %20–24 atletik, %25–30 iyi, %31–36 kabul edilebilir ve %37 üzeri obez olarak değerlendirilir. Kadınlarda hormonal işlevler için gerekli temel yağ oranı erkeklere göre daha yüksektir."
+  },
+  {
+    question: "Vücut yağ oranını düşürmek için ne yapılmalıdır?",
+    answer: "Yağ oranını düşürmek için kalori açığı oluşturmak temel adımdır. Bunun yanı sıra yeterli protein tüketimi (vücut ağırlığının kilogramı başına en az 1,6 g) kas kaybını önler. Direnç antrenmanları ve kardiyo egzersizlerini birleştiren bir program, metabolizma hızını artırarak yağ yakımını destekler. Uyku kalitesi ve stres yönetimi de yağ metabolizması üzerinde önemli rol oynar."
+  }
+];
+
+const meta = {
+  title: "Vücut Yağ Oranı Hesaplama",
+  description: "US Navy yöntemiyle vücut yağ oranınızı hesaplayın. Bel, boyun ve kalça ölçümlerinizle yağ kütlesi, yağsız kütle ve sağlık kategorinizi öğrenin.",
+  category: "saglik",
+  slug: "yag-orani-hesaplama",
+  keywords: ["vücut yağ oranı", "yağ oranı hesaplama", "US Navy yöntemi", "bel boyun ölçümü", "vücut kompozisyonu", "yağ kütlesi"],
+  dateModified: "2026-04-01",
+  relatedCalcs: ["vucut-kitle-indeksi", "ideal-kilo-hesaplama", "baz-metabolizma-hizi"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form">
+    <CalcSelect
+      id="cinsiyet"
+      label="Cinsiyet"
+      options={[
+        { value: "erkek", label: "Erkek" },
+        { value: "kadin", label: "Kadın" }
+      ]}
+      value="erkek"
+    />
+    <CalcInput
+      id="boy"
+      label="Boy"
+      type="number"
+      suffix="cm"
+      placeholder="175"
+      min={100}
+      max={250}
+      step={1}
+    />
+    <CalcInput
+      id="bel"
+      label="Bel Çevresi"
+      type="number"
+      suffix="cm"
+      placeholder="80"
+      min={40}
+      max={200}
+      step={0.5}
+      helpText="Göbek hizasından ölçün"
+    />
+    <CalcInput
+      id="boyun"
+      label="Boyun Çevresi"
+      type="number"
+      suffix="cm"
+      placeholder="38"
+      min={20}
+      max={80}
+      step={0.5}
+    />
+    <CalcInput
+      id="kalca"
+      label="Kalça Çevresi"
+      type="number"
+      suffix="cm"
+      placeholder="95"
+      min={40}
+      max={200}
+      step={0.5}
+      helpText="Sadece kadınlar için"
+    />
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">Vücut Yağ Oranı</p>
+      <p class="calc-result-value" id="yag-orani">—</p>
+      <p id="yag-kategori" style="font-size:1.1rem;font-weight:600;margin-top:0.25rem;"></p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Kategori</span>
+        <span class="calc-detail-value" id="d-kategori">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Yağ Kütlesi</span>
+        <span class="calc-detail-value" id="d-yag-kitle">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Yağsız Kütle</span>
+        <span class="calc-detail-value" id="d-yagsiz-kitle">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const resultArea = document.getElementById('calc-result');
+      const kalcaInput = document.getElementById('kalca');
+      const kalcaWrapper = kalcaInput ? kalcaInput.closest('.calc-input-wrapper, .input-wrapper, div') : null;
+
+      function debounce(fn, delay = 150) {
+        let t;
+        return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), delay); };
+      }
+
+      function formatNumber(n, d = 0) {
+        return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: d, maximumFractionDigits: d }).format(n);
+      }
+
+      function toggleKalca() {
+        const cinsiyet = document.getElementById('cinsiyet').value;
+        const kalcaField = document.getElementById('kalca');
+        if (!kalcaField) return;
+        const wrapper = kalcaField.closest('[class*="input"], [class*="field"], .calc-input-wrapper') || kalcaField.parentElement;
+        if (wrapper) wrapper.style.display = cinsiyet === 'kadin' ? '' : 'none';
+      }
+
+      document.getElementById('cinsiyet').addEventListener('change', toggleKalca);
+      toggleKalca();
+
+      const dc = debounce(calculate);
+      inputs.forEach(i => { i.addEventListener('input', dc); i.addEventListener('change', dc); });
+
+      function getKategori(oran, cinsiyet) {
+        if (cinsiyet === 'erkek') {
+          if (oran < 6) return { label: 'Temel Yağ', renk: '#2563eb' };
+          if (oran < 14) return { label: 'Atletik', renk: '#16a34a' };
+          if (oran < 18) return { label: 'İyi', renk: '#65a30d' };
+          if (oran < 25) return { label: 'Kabul Edilebilir', renk: '#ea580c' };
+          return { label: 'Obez', renk: '#dc2626' };
+        } else {
+          if (oran < 14) return { label: 'Temel Yağ', renk: '#2563eb' };
+          if (oran < 21) return { label: 'Atletik', renk: '#16a34a' };
+          if (oran < 25) return { label: 'İyi', renk: '#65a30d' };
+          if (oran < 32) return { label: 'Kabul Edilebilir', renk: '#ea580c' };
+          return { label: 'Obez', renk: '#dc2626' };
+        }
+      }
+
+      function calculate() {
+        const cinsiyet = document.getElementById('cinsiyet').value;
+        const boy = parseFloat(document.getElementById('boy').value);
+        const bel = parseFloat(document.getElementById('bel').value);
+        const boyun = parseFloat(document.getElementById('boyun').value);
+        const kalca = parseFloat(document.getElementById('kalca').value);
+
+        if (isNaN(boy) || isNaN(bel) || isNaN(boyun) || boy <= 0 || bel <= 0 || boyun <= 0) {
+          if (resultArea) resultArea.classList.add('hidden');
+          return;
+        }
+        if (cinsiyet === 'kadin' && isNaN(kalca)) {
+          if (resultArea) resultArea.classList.add('hidden');
+          return;
+        }
+
+        let yagOrani;
+        if (cinsiyet === 'erkek') {
+          yagOrani = 86.010 * Math.log10(bel - boyun) - 70.041 * Math.log10(boy) + 36.76;
+        } else {
+          yagOrani = 163.205 * Math.log10(bel + kalca - boyun) - 97.684 * Math.log10(boy) - 78.387;
+        }
+
+        yagOrani = Math.max(3, Math.min(60, yagOrani));
+
+        const kat = getKategori(yagOrani, cinsiyet);
+
+        document.getElementById('yag-orani').textContent = formatNumber(yagOrani, 1) + '%';
+        const katEl = document.getElementById('yag-kategori');
+        katEl.textContent = kat.label;
+        katEl.style.color = kat.renk;
+        document.getElementById('d-kategori').textContent = kat.label;
+
+        const kiloEl = document.getElementById('kilo');
+        // No kilo input; show yag/yagkitlwe note
+        document.getElementById('d-yag-kitle').textContent = formatNumber(yagOrani, 1) + '% yağ';
+        document.getElementById('d-yagsiz-kitle').textContent = formatNumber(100 - yagOrani, 1) + '% yağsız';
+
+        if (resultArea) resultArea.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const p = new URLSearchParams();
+        inputs.forEach(i => { if (i.value && i.id) p.set(i.id, i.value); });
+        history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
+      }
+
+      function loadFromURL() {
+        const p = new URLSearchParams(window.location.search);
+        let h = false;
+        inputs.forEach(i => { if (i.id && p.has(i.id)) { i.value = p.get(i.id); h = true; } });
+        if (h) { toggleKalca(); calculate(); }
+      }
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>Vücut Yağ Oranı Nasıl Hesaplanır?</h2>
+    <p>
+      Vücut yağ oranı, toplam vücut ağırlığının yağ dokuya oranını yüzde olarak ifade eden önemli bir sağlık göstergesidir. Kiloya göre çok daha kapsamlı bir resim sunan bu ölçüm, kişinin sağlık durumunu, atletik performansını ve kronik hastalık riskini değerlendirmek için kullanılır. İki kişi aynı kiloda ve boyda olsa bile yağ oranları birbirinden çok farklı olabilir; bu nedenle yağ oranı, vücut kompozisyonunu anlamada en güvenilir göstergelerden biri sayılmaktadır.
+    </p>
+    <p>
+      Bu hesap makinesi, yaygın kullanılan ve bilimsel güvenilirliği kanıtlanmış <strong>US Navy Yöntemi</strong>'ni esas almaktadır. Bu yöntemde sadece mezura ile yapılabilen birkaç basit ölçüm yeterlidir: boy, bel çevresi, boyun çevresi ve kadınlar için kalça çevresi.
+    </p>
+
+    <h3>Formül</h3>
+    <p>
+      US Navy formülleri şu şekildedir:
+    </p>
+    <ul>
+      <li><strong>Erkekler:</strong> %Yağ = 86,010 × log10(bel − boyun) − 70,041 × log10(boy) + 36,76</li>
+      <li><strong>Kadınlar:</strong> %Yağ = 163,205 × log10(bel + kalça − boyun) − 97,684 × log10(boy) − 78,387</li>
+    </ul>
+    <p>
+      Tüm ölçümler santimetre cinsinden yapılmalıdır. Bel ölçümü göbek hizasından, boyun ölçümü boyunun en ince noktasından, kalça ölçümü ise en geniş noktadan alınmalıdır.
+    </p>
+
+    <h3>Dikkat Edilmesi Gerekenler</h3>
+    <p>
+      Ölçüm doğruluğu için aynı saatte, tercihen sabah aç karnına ölçüm yapmanız önerilir. Mezurayı çok sıkı ya da çok gevşek tutmak sonucu yanıltabilir. Ciddi obezite veya anormal vücut kompozisyonlarında formülün hata payı artabilir. DEXA taraması veya suya batırma yöntemi gibi klinik testler daha kesin sonuç verir; ancak bu hesaplama günlük takip için oldukça yeterlidir.
+    </p>
+    <p>
+      Vücut yağ oranınızı düşürmek istiyorsanız kalori açığı oluşturmak, yeterli protein almak ve düzenli egzersiz yapmak temel stratejilerdir. Haftada 0,5–1 kg civarında yavaş ama sürdürülebilir bir ilerleme, kas kaybını minimize ederek sağlıklı bir yağ azalmasını destekler.
+    </p>
+
+    <h3>Sıkça Sorulan Sorular</h3>
+    {faq.map(item => (
+      <details>
+        <summary><strong>{item.question}</strong></summary>
+        <p>{item.answer}</p>
+      </details>
+    ))}
+  </section>
+</CalcLayout>

@@ -1,0 +1,179 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Ortalama ile medyan arasındaki fark nedir?",
+    answer: "Ortalama (aritmetik ortalama), tüm sayıların toplamının sayı adedine bölünmesiyle bulunur. Medyan ise sayılar sıralandığında tam ortada kalan değerdir. Medyan, uç değerlerden etkilenmediği için dağılımı daha doğru yansıtabilir. Örneğin 1, 2, 3, 4, 100 serisinin ortalaması 22 iken medyanı 3'tür."
+  },
+  {
+    question: "Kaç sayının ortalaması hesaplanabilir?",
+    answer: "Bu araç ile istediğiniz kadar sayının ortalamasını hesaplayabilirsiniz. Sayıları virgülle ayırarak (örneğin: 10, 25, 38, 47) giriş kutusuna yazmanız yeterlidir. Boşluklar otomatik olarak yok sayılır. Minimum iki sayı girmeniz durumunda ortalama, medyan, minimum, maksimum, toplam ve sayı adedi bilgileri görüntülenir."
+  },
+  {
+    question: "Ağırlıklı ortalama bu araçla hesaplanabilir mi?",
+    answer: "Bu araç ağırlıksız (basit) aritmetik ortalama hesaplar. Ağırlıklı ortalama için her sayının farklı bir katsayıyla (ağırlıkla) çarpılması gerekir. Ağırlıklı ortalama hesabı yapmak istiyorsanız Not Ortalaması Hesaplama aracımızı kullanabilirsiniz; orada her nota kredi değeri atanabilmektedir."
+  }
+];
+
+const meta = {
+  title: "Ortalama Hesaplama",
+  description: "Sayı dizisinin ortalamasını, medyanını, minimumunu, maksimumunu ve toplamını anında hesaplayın. Virgülle ayrılmış sayılarla hızlı ortalama hesaplayıcı.",
+  category: "matematik",
+  slug: "ortalama-hesaplama",
+  keywords: ["ortalama hesaplama", "aritmetik ortalama", "medyan hesaplama", "sayı ortalaması", "ortalama hesaplayıcı"],
+  dateModified: "2026-04-01",
+  relatedCalcs: ["standart-sapma-hesaplama", "karekok-hesaplama"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
+    <div class="calc-inputs">
+      <CalcInput
+        id="sayilar"
+        label="Sayılar"
+        type="text"
+        placeholder="10, 20, 30, 40, 50"
+        helpText="Virgülle ayırarak girin (örn: 10, 20, 30, 40, 50)"
+      />
+    </div>
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">Ortalama</p>
+      <p class="calc-result-value" id="sonuc-ortalama">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Ortalama</span>
+        <span class="calc-detail-value" id="detail-ortalama">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Medyan</span>
+        <span class="calc-detail-value" id="detail-medyan">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Minimum</span>
+        <span class="calc-detail-value" id="detail-min">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Maksimum</span>
+        <span class="calc-detail-value" id="detail-max">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Toplam</span>
+        <span class="calc-detail-value" id="detail-toplam">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Sayı Adedi</span>
+        <span class="calc-detail-value" id="detail-adet">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <section class="calc-content">
+    <h2>Ortalama Hesaplama Nasıl Yapılır?</h2>
+    <p>
+      Aritmetik ortalama, bir sayı kümesinin merkezi eğilimini ifade eden en temel istatistiksel ölçüdür. Hesaplaması oldukça basittir: sayıların tümü toplanır ve bu toplam, sayı adedine bölünür. Örneğin 10, 20, 30, 40 ve 50 sayılarının ortalaması (10+20+30+40+50)/5 = 150/5 = 30 eder. Bu araç sayesinde herhangi bir sayı kümesinin ortalamasını, medyanını, minimumunu, maksimumunu ve toplamını tek seferde hesaplayabilirsiniz.
+    </p>
+    <p>
+      Ortalama hesaplama; sınav notlarının değerlendirilmesinde, istatistiksel veri analizinde, spor performanslarının ölçümünde, finansal verilerin değerlendirilmesinde ve günlük hayatın pek çok alanında kullanılır. Öğrenciler dönem not ortalamalarını, araştırmacılar deney sonuçlarını, yöneticiler ise satış verilerini analiz ederken bu hesaplamaya başvurur.
+    </p>
+    <p>
+      Medyan değeri, sayıların büyükten küçüğe ya da küçükten büyüğe sıralanması durumunda tam ortada yer alan sayıdır. Sayı adedi çift ise ortadaki iki sayının ortalaması alınır. Medyan, özellikle aşırı uç değerlerin bulunduğu veri setlerinde ortalamadan daha güvenilir bir merkezi eğilim göstergesi olarak kabul edilir. Gelir dağılımı analizlerinde ortalama gelir yerine medyan gelirin tercih edilmesi bunun en bilinen örneğidir.
+    </p>
+    <p>
+      Minimum ve maksimum değerler, veri setinin yayılım aralığını ortaya koyar. Bu iki değer arasındaki fark "ranj" olarak adlandırılır ve veri setinin dağılımı hakkında hızlı bir fikir verir. Geniş bir ranj, verilerin birbirinden uzak olduğunu; dar bir ranj ise verilerin birbirine yakın olduğunu gösterir.
+    </p>
+
+    <h3>Formül</h3>
+    <p>
+      Aritmetik ortalama formülü: x̄ = (x₁ + x₂ + … + xₙ) / n. Burada x̄ ortalamayı, x₁'den xₙ'e kadar değerler veri noktalarını, n ise toplam veri sayısını temsil eder. Medyan için sayılar sıralanır; tek sayıda eleman varsa ortadaki, çift sayıda eleman varsa ortadaki iki elemanın ortalaması alınır.
+    </p>
+
+    <h3>Dikkat Edilmesi Gerekenler</h3>
+    <p>
+      Sayıları girerken virgül (,) veya noktalı virgül (;) ile ayırabilirsiniz; araç her iki ayırıcıyı da tanır. Boşluklar otomatik olarak yok sayılır. Ondalıklı sayı girerken Türkçe kullanımda virgül (3,14) veya nokta (3.14) kullanılabilir; her ikisi de doğru şekilde işlenir. Hesaplama için en az iki geçerli sayı girilmesi gerekmektedir. Harf veya sembol içeren girişler sayı olarak tanınmaz ve hesaplamaya dahil edilmez.
+    </p>
+
+    <h3>Sıkça Sorulan Sorular</h3>
+    {faq.map((item) => (
+      <div class="faq-item">
+        <h4>{item.question}</h4>
+        <p>{item.answer}</p>
+      </div>
+    ))}
+  </section>
+</CalcLayout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+    const resultArea = document.getElementById('calc-result');
+
+    function debounce(fn, d = 150) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), d); }; }
+    function formatNumber(n, d = 4) {
+      return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 0, maximumFractionDigits: d }).format(n);
+    }
+
+    const dc = debounce(calculate);
+    inputs.forEach(i => { i.addEventListener('input', dc); i.addEventListener('change', dc); });
+
+    function parseNumbers(str) {
+      return str
+        .replace(/;/g, ',')
+        .split(',')
+        .map(s => parseFloat(s.trim().replace(',', '.')))
+        .filter(n => !isNaN(n));
+    }
+
+    function calculate() {
+      const raw = (document.getElementById('sayilar')).value;
+      const nums = parseNumbers(raw);
+
+      if (nums.length < 2) {
+        if (resultArea) resultArea.classList.add('hidden');
+        return;
+      }
+
+      const sum = nums.reduce((a, b) => a + b, 0);
+      const mean = sum / nums.length;
+      const sorted = [...nums].sort((a, b) => a - b);
+      const mid = Math.floor(sorted.length / 2);
+      const median = sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+      const min = sorted[0];
+      const max = sorted[sorted.length - 1];
+
+      document.getElementById('sonuc-ortalama').textContent = formatNumber(mean);
+      document.getElementById('detail-ortalama').textContent = formatNumber(mean);
+      document.getElementById('detail-medyan').textContent = formatNumber(median);
+      document.getElementById('detail-min').textContent = formatNumber(min);
+      document.getElementById('detail-max').textContent = formatNumber(max);
+      document.getElementById('detail-toplam').textContent = formatNumber(sum);
+      document.getElementById('detail-adet').textContent = nums.length.toString();
+
+      if (resultArea) resultArea.classList.remove('hidden');
+      updateURL();
+    }
+
+    function updateURL() {
+      const p = new URLSearchParams();
+      inputs.forEach(i => { if (i.value && i.id) p.set(i.id, i.value); });
+      history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
+    }
+
+    function loadFromURL() {
+      const p = new URLSearchParams(window.location.search);
+      let h = false;
+      inputs.forEach(i => { if (i.id && p.has(i.id)) { i.value = p.get(i.id); h = true; } });
+      if (h) calculate();
+    }
+
+    loadFromURL();
+  });
+</script>

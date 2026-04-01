@@ -1,0 +1,200 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcSelect from '../../components/calculator/CalcSelect.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Döviz çevirici hangi kurları kullanıyor?",
+    answer: "Bu araçta kullanılan döviz kurları yaklaşık referans değerlerdir ve gerçek zamanlı piyasa verilerini yansıtmamaktadır. Gerçek işlemler için bankanızın veya döviz bürosunun güncel alış-satış kurlarını kontrol etmenizi öneririz. Döviz kurları gün içinde sürekli değişebildiğinden, büyük miktarlarda işlem yapmadan önce mutlaka güncel kuru doğrulayın.",
+  },
+  {
+    question: "Türk Lirası ile döviz nasıl dönüştürülür?",
+    answer: "Döviz dönüştürme işleminde iki para biriminin TL karşısındaki değerleri kullanılır. Kaynak para birimini TL'ye çevirmek için ilgili kur ile çarpılır; ardından TL, hedef para birimine bölünerek sonuç elde edilir. Örneğin 100 USD'yi EUR'ya çevirmek için: 100 × 38,50 = 3.850 TL, ardından 3.850 / 42,20 ≈ 91,23 EUR bulunur.",
+  },
+  {
+    question: "Hangi para birimleri destekleniyor?",
+    answer: "Araçta ABD Doları (USD), Euro (EUR), İngiliz Sterlini (GBP), İsviçre Frangı (CHF) ve Türk Lirası (TRY) desteklenmektedir. Bu beş para birimi arasındaki tüm çevirimleri gerçekleştirebilirsiniz. Farklı para birimlerine ihtiyaç duymanız halinde bankanızın veya merkez bankasının resmi kur listesine başvurabilirsiniz.",
+  },
+];
+
+const meta = {
+  title: "Döviz Çevirici — USD EUR GBP TRY Kur Hesaplama",
+  description: "Dolar, Euro, Sterlin ve İsviçre Frangı arasında anında döviz çevirisi yapın. Güncel kur ile TRY dönüştürme hesaplayıcısı.",
+  category: "finans",
+  slug: "doviz-cevirici",
+  keywords: ["döviz çevirici", "dolar TL hesaplama", "euro TL hesaplama", "kur hesaplama", "döviz dönüştürme", "USD EUR TRY"],
+  dateModified: "2026-04-01",
+  relatedCalcs: ["altin-hesaplama", "enflasyon-hesaplama", "yatirim-getiri-hesaplama"],
+  faq,
+};
+
+const paraBirimleri = [
+  { value: "USD", label: "ABD Doları (USD)" },
+  { value: "EUR", label: "Euro (EUR)" },
+  { value: "GBP", label: "İngiliz Sterlini (GBP)" },
+  { value: "CHF", label: "İsviçre Frangı (CHF)" },
+  { value: "TRY", label: "Türk Lirası (TRY)" },
+];
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
+    <CalcInput
+      id="miktar"
+      label="Miktar"
+      type="number"
+      placeholder="1"
+      step={0.01}
+      min={0.01}
+      value="1"
+      helpText="Dönüştürmek istediğiniz miktarı girin"
+    />
+    <CalcSelect
+      id="kaynakPara"
+      label="Kaynak Para Birimi"
+      options={paraBirimleri}
+      value="USD"
+      helpText="Hangi para biriminden dönüştürmek istiyorsunuz?"
+    />
+    <CalcSelect
+      id="hedefPara"
+      label="Hedef Para Birimi"
+      options={paraBirimleri}
+      value="TRY"
+      helpText="Hangi para birimine dönüştürmek istiyorsunuz?"
+    />
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <span class="calc-result-label">Dönüştürülen Tutar</span>
+      <span class="calc-result-value" id="donusturulen-tutar">—</span>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Kur</span>
+        <span class="calc-detail-value" id="kur-bilgisi">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Ters Kur</span>
+        <span class="calc-detail-value" id="ters-kur">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <p class="text-sm text-[var(--color-text-muted)] mt-2 px-1">* Kurlar yaklaşık değerlerdir. Gerçek işlemler için bankanızın güncel kurlarını kontrol edin.</p>
+
+  <section class="calc-content">
+    <h2>Döviz Çevirici Nasıl Kullanılır?</h2>
+    <p>
+      Döviz çevirici, farklı para birimleri arasında hızlı ve kolay dönüşüm yapmanızı sağlayan bir finansal araçtır. ABD Doları (USD), Euro (EUR), İngiliz Sterlini (GBP), İsviçre Frangı (CHF) ve Türk Lirası (TRY) arasındaki tüm kombinasyonları bu araç aracılığıyla hesaplayabilirsiniz. Yurt dışı alışveriş, seyahat planlaması, yatırım kararları veya döviz tasarrufu değerlendirmesi gibi pek çok senaryoda döviz çevirici büyük kolaylık sağlar.
+    </p>
+    <p>
+      Döviz piyasaları dünya genelinde 24 saat boyunca işlem gören dinamik piyasalardır. Kur değerleri; merkez bankası kararları, enflasyon verileri, ticaret dengesi, jeopolitik gelişmeler ve küresel piyasa hareketlerine bağlı olarak sürekli değişkenlik göstermektedir. Bu nedenle hesaplama aracımızdaki kurlar sabit referans değerler olup gerçek zamanlı piyasa verilerini yansıtmamaktadır.
+    </p>
+    <p>
+      Türkiye Cumhuriyet Merkez Bankası (TCMB) her gün saat 15:30'da resmi kur listesini yayımlamaktadır. Büyük miktarlarda döviz işlemi yapmadan önce TCMB'nin resmi sitesinden veya bankanızın kur sayfasından güncel alış-satış kurlarını kontrol etmenizi öneririz. Banka ve döviz bürosu kurları arasında da farklılıklar bulunabilir.
+    </p>
+    <h3>Döviz Hesaplama Formülü</h3>
+    <p>
+      Çapraz kur hesaplama için tüm para birimleri önce TL'ye dönüştürülür, ardından hedef para birimine çevrilir:
+    </p>
+    <p>
+      <strong>Sonuç = Miktar × (Kaynak Para Kuru / Hedef Para Kuru)</strong>
+    </p>
+    <p>
+      Örneğin 500 USD'yi EUR'ya çevirmek için: 500 × (38,50 / 42,20) ≈ 456,40 EUR hesaplanır. Kaynak para birimi TRY ise oran direkt hedef kurun tersine bölünür.
+    </p>
+    <h3>Dikkat Edilmesi Gerekenler</h3>
+    <p>
+      Döviz alım-satım işlemlerinde bankaların uyguladığı spread (alış-satış farkı) gerçek dönüştürme maliyetini etkiler. Döviz büroları ve bankalar farklı kurlar uygulayabileceği gibi, işlem miktarına göre kur da değişebilir. Yurt dışı kredi kartı işlemlerinde kur farkına ek olarak yabancı işlem ücreti de uygulanabilir. Bu araç yalnızca bilgilendirme amaçlıdır ve yatırım tavsiyesi niteliği taşımaz.
+    </p>
+    <h3>Sıkça Sorulan Sorular</h3>
+    {faq.map((item) => (
+      <div class="faq-item">
+        <h4>{item.question}</h4>
+        <p>{item.answer}</p>
+      </div>
+    ))}
+  </section>
+</CalcLayout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+    const resultArea = document.getElementById('calc-result');
+
+    const kurlar: Record<string, number> = {
+      USD: 38.50,
+      EUR: 42.20,
+      GBP: 49.80,
+      CHF: 45.10,
+      TRY: 1,
+    };
+
+    function debounce(fn: (...args: unknown[]) => void, delay = 150) {
+      let timer: ReturnType<typeof setTimeout>;
+      return (...args: unknown[]) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), delay); };
+    }
+
+    function formatNumber(num: number, digits = 4) {
+      return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: digits }).format(num);
+    }
+
+    const debouncedCalc = debounce(calculate);
+    inputs.forEach(i => {
+      i.addEventListener('input', debouncedCalc);
+      i.addEventListener('change', debouncedCalc);
+    });
+
+    function calculate() {
+      const miktar = parseFloat((document.getElementById('miktar') as HTMLInputElement).value);
+      const kaynakPara = (document.getElementById('kaynakPara') as HTMLSelectElement).value;
+      const hedefPara = (document.getElementById('hedefPara') as HTMLSelectElement).value;
+
+      if (!miktar || miktar <= 0 || !kaynakPara || !hedefPara) {
+        if (resultArea) resultArea.classList.add('hidden');
+        return;
+      }
+
+      const kaynakKur = kurlar[kaynakPara] ?? 1;
+      const hedefKur = kurlar[hedefPara] ?? 1;
+      const oran = kaynakKur / hedefKur;
+      const sonuc = miktar * oran;
+
+      (document.getElementById('donusturulen-tutar') as HTMLElement).textContent =
+        `${formatNumber(sonuc, 4)} ${hedefPara}`;
+      (document.getElementById('kur-bilgisi') as HTMLElement).textContent =
+        `1 ${kaynakPara} = ${formatNumber(oran, 4)} ${hedefPara}`;
+      (document.getElementById('ters-kur') as HTMLElement).textContent =
+        `1 ${hedefPara} = ${formatNumber(1 / oran, 4)} ${kaynakPara}`;
+
+      if (resultArea) resultArea.classList.remove('hidden');
+      updateURL();
+    }
+
+    function updateURL() {
+      const params = new URLSearchParams();
+      inputs.forEach(i => {
+        const el = i as HTMLInputElement;
+        if (el.value && el.id) params.set(el.id, el.value);
+      });
+      history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+    }
+
+    function loadFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      let hasParams = false;
+      inputs.forEach(i => {
+        const el = i as HTMLInputElement;
+        if (el.id && params.has(el.id)) { el.value = params.get(el.id)!; hasParams = true; }
+      });
+      if (hasParams) calculate();
+    }
+
+    loadFromURL();
+    calculate();
+  });
+</script>

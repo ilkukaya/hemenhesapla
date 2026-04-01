@@ -1,0 +1,204 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcSelect from '../../components/calculator/CalcSelect.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Bileşik faiz ile basit faiz arasındaki fark nedir?",
+    answer: "Basit faizde yalnızca ana para üzerinden faiz hesaplanır ve her dönem kazanılan faiz anaparaya eklenmez. Bileşik faizde ise her dönem sonunda kazanılan faiz anaparaya eklenir ve bir sonraki dönemde bu birleşik tutar üzerinden faiz hesaplanır. Bu 'faizin faizi' etkisi, uzun vadede önemli bir fark yaratır. Örneğin 100.000 TL'yi %40 basit faizle 5 yıl tutarsanız 300.000 TL ederken, %40 yıllık bileşik faizle (yıllık) aynı tutar yaklaşık 537.824 TL'ye ulaşır.",
+  },
+  {
+    question: "Bileşik periyodu seçimi neden önemlidir?",
+    answer: "Bileşik periyodu ne kadar sık olursa, faizin anaparaya eklenme sıklığı artar ve bu durum efektif yıllık getiriyi yükseltir. Yıllık bileşim yapıldığında efektif oran nominal oranla aynıdır. Aylık bileşimde ise efektif oran (1 + r/12)^12 - 1 formülüyle nominal orandan yüksek çıkar. Günlük bileşim en yüksek etkin oranı sağlar ancak fark giderek küçülür. Yatırım veya kredi kararlarında efektif yıllık oranı (EYO) karşılaştırmak daha doğru bir değerlendirme yapmanızı sağlar.",
+  },
+  {
+    question: "Hangi yatırım araçları bileşik faiz sağlar?",
+    answer: "Bileşik faiz etkisinden yararlanmak için mevduat yenileme, yatırım fonları, hisse senedi temettü yeniden yatırımı ve borsa yatırımları kullanılabilir. Özellikle uzun vadeli birikim planlarında, her dönem kazanılan getirinin anaparaya eklenerek yeniden değerlendirmeye alınması, bileşik faizin maksimum etkisini ortaya çıkarır. Türkiye'de yüksek enflasyon ortamında bileşik getirinin reel değerini koruyup korumadığını da değerlendirmeniz önemlidir.",
+  },
+];
+
+const meta = {
+  title: "Bileşik Faiz Hesaplama — Faizin Faizi Hesaplayıcısı",
+  description: "Anapara, faiz oranı ve süreye göre bileşik faiz getirisini hesaplayın. Aylık, 3 aylık, yıllık ve günlük bileşim seçenekleriyle toplam getiriyi öğrenin.",
+  category: "finans",
+  slug: "bilesik-faiz-hesaplama",
+  keywords: ["bileşik faiz hesaplama", "faizin faizi", "yatırım getirisi", "mevduat hesaplama", "efektif yıllık oran", "bileşik faiz formülü"],
+  dateModified: "2026-04-01",
+  relatedCalcs: ["mevduat-faizi-hesaplama", "yatirim-getiri-hesaplama", "enflasyon-hesaplama"],
+  faq,
+};
+
+const periyotlar = [
+  { value: "1",   label: "Yıllık" },
+  { value: "4",   label: "3 Aylık (Çeyreklik)" },
+  { value: "12",  label: "Aylık" },
+  { value: "365", label: "Günlük" },
+];
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
+    <CalcInput
+      id="anapara"
+      label="Anapara"
+      type="number"
+      suffix="₺"
+      placeholder="100000"
+      step={1000}
+      min={1}
+      helpText="Yatırmak istediğiniz başlangıç tutarı"
+    />
+    <CalcInput
+      id="yillikFaiz"
+      label="Yıllık Faiz Oranı"
+      type="number"
+      suffix="%"
+      placeholder="40.00"
+      step={0.01}
+      min={0.01}
+      helpText="Yıllık nominal faiz oranı"
+    />
+    <CalcInput
+      id="sure"
+      label="Yatırım Süresi"
+      type="number"
+      suffix="yıl"
+      placeholder="5"
+      step={1}
+      min={1}
+      max={50}
+      helpText="Yatırımı ne kadar süre tutmayı planlıyorsunuz?"
+    />
+    <CalcSelect
+      id="bilesikPeriyot"
+      label="Bileşim Periyodu"
+      options={periyotlar}
+      value="12"
+      helpText="Faizin anaparaya ne sıklıkla ekleneceğini seçin"
+    />
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <span class="calc-result-label">Toplam Tutar</span>
+      <span class="calc-result-value" id="toplam-tutar">—</span>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Faiz Getirisi</span>
+        <span class="calc-detail-value" id="faiz-getirisi">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Efektif Yıllık Oran</span>
+        <span class="calc-detail-value" id="efektif-oran">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <section class="calc-content">
+    <h2>Bileşik Faiz Hesaplama Nasıl Yapılır?</h2>
+    <p>
+      Bileşik faiz, "paranın zaman değeri" kavramının en güçlü ifadesidir. Yatırım dünyasında "sekizinci mucize" olarak da anılan bileşik faiz, her dönem kazanılan faizin anaparaya eklenerek bir sonraki dönemde de faiz üretmesi prensibine dayanır. Bu zincirleme büyüme etkisi, uzun vadeli yatırımların gücünü ortaya koymaktadır.
+    </p>
+    <p>
+      Türkiye gibi yüksek enflasyon ortamlarında bileşik faiz hesaplaması özellikle önemlidir. Mevduat yenileme, yatırım fonu getirisi ve uzun vadeli birikim planları değerlendirilirken yalnızca nominal getiriyi değil, efektif yıllık oranı ve reel getiriyi de hesaba katmanız gerekmektedir. Bileşim periyodunun sıklığı arttıkça etkin getiri de artmaktadır.
+    </p>
+    <p>
+      Bileşik faiz hesaplayıcımız, başlangıç tutarınız, yıllık nominal faiz oranınız, yatırım süreniz ve bileşim periyodunuza göre toplam tutarı, faiz getirisini ve efektif yıllık oranı anında hesaplar. Farklı senaryoları karşılaştırarak en avantajlı yatırım planını belirlemenize yardımcı olur.
+    </p>
+    <h3>Bileşik Faiz Formülü</h3>
+    <p>
+      Bileşik faiz hesaplamada kullanılan standart formül şöyledir:
+    </p>
+    <p>
+      <strong>A = P × (1 + r/n)^(n × t)</strong>
+    </p>
+    <p>
+      Formülde: <em>A</em> = Toplam tutar, <em>P</em> = Anapara, <em>r</em> = Yıllık nominal faiz oranı (ondalık), <em>n</em> = Yılda bileşim sayısı, <em>t</em> = Yıl sayısı. Efektif Yıllık Oran (EYO) ise şu formülle hesaplanır: <strong>EYO = (1 + r/n)^n − 1</strong>.
+    </p>
+    <h3>Dikkat Edilmesi Gerekenler</h3>
+    <p>
+      Bileşik faiz hesaplamalarında kullanılan faiz oranının enflasyonun üzerinde olup olmadığını kontrol etmek önemlidir. Nominal getiri pozitif olsa bile enflasyon sonrası reel getiri negatif olabilir. Ayrıca mevduat faizleri üzerinden kesilen gelir vergisi stopajı (%15 veya %0) ve diğer vergi yükümlülükleri net getiriyi etkileyebilir. Uzun vadeli hesaplamalarda vergi ve enflasyon etkilerini mutlaka değerlendirin.
+    </p>
+    <h3>Sıkça Sorulan Sorular</h3>
+    {faq.map((item) => (
+      <div class="faq-item">
+        <h4>{item.question}</h4>
+        <p>{item.answer}</p>
+      </div>
+    ))}
+  </section>
+</CalcLayout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+    const resultArea = document.getElementById('calc-result');
+
+    function debounce(fn: (...args: unknown[]) => void, delay = 150) {
+      let timer: ReturnType<typeof setTimeout>;
+      return (...args: unknown[]) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), delay); };
+    }
+
+    function formatTL(num: number) {
+      return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
+    }
+
+    function formatPercent(num: number) {
+      return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 4 }).format(num) + '%';
+    }
+
+    const debouncedCalc = debounce(calculate);
+    inputs.forEach(i => {
+      i.addEventListener('input', debouncedCalc);
+      i.addEventListener('change', debouncedCalc);
+    });
+
+    function calculate() {
+      const anapara = parseFloat((document.getElementById('anapara') as HTMLInputElement).value);
+      const yillikFaiz = parseFloat((document.getElementById('yillikFaiz') as HTMLInputElement).value);
+      const sure = parseFloat((document.getElementById('sure') as HTMLInputElement).value);
+      const n = parseInt((document.getElementById('bilesikPeriyot') as HTMLSelectElement).value);
+
+      if (!anapara || !yillikFaiz || !sure || anapara <= 0 || yillikFaiz <= 0 || sure < 1) {
+        if (resultArea) resultArea.classList.add('hidden');
+        return;
+      }
+
+      const r = yillikFaiz / 100;
+      const toplamTutar = anapara * Math.pow(1 + r / n, n * sure);
+      const faizGetirisi = toplamTutar - anapara;
+      const efektifOran = (Math.pow(1 + r / n, n) - 1) * 100;
+
+      (document.getElementById('toplam-tutar') as HTMLElement).textContent = formatTL(toplamTutar);
+      (document.getElementById('faiz-getirisi') as HTMLElement).textContent = formatTL(faizGetirisi);
+      (document.getElementById('efektif-oran') as HTMLElement).textContent = formatPercent(efektifOran);
+
+      if (resultArea) resultArea.classList.remove('hidden');
+      updateURL();
+    }
+
+    function updateURL() {
+      const params = new URLSearchParams();
+      inputs.forEach(i => {
+        const el = i as HTMLInputElement;
+        if (el.value && el.id) params.set(el.id, el.value);
+      });
+      history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+    }
+
+    function loadFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      let hasParams = false;
+      inputs.forEach(i => {
+        const el = i as HTMLInputElement;
+        if (el.id && params.has(el.id)) { el.value = params.get(el.id)!; hasParams = true; }
+      });
+      if (hasParams) calculate();
+    }
+
+    loadFromURL();
+  });
+</script>

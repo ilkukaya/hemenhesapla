@@ -1,0 +1,195 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Yatırım getirisi nasıl hesaplanır?",
+    answer: "Yatırım getirisi, satış fiyatından alış fiyatının çıkarılmasıyla bulunan net kâr tutarının, alış fiyatına bölünüp 100 ile çarpılmasıyla yüzde olarak hesaplanır. Formül: Getiri Oranı (%) = ((Satış Fiyatı - Alış Fiyatı) / Alış Fiyatı) × 100. Yıllık getiriyi hesaplamak için ise elde edilen oranı yatırım süresiyle (ay) orantılı biçimde çevirebilirsiniz.",
+  },
+  {
+    question: "Yıllık getiri oranı neden önemlidir?",
+    answer: "Farklı vadelerde yapılan yatırımları karşılaştırabilmek için getiriyi yıllık bazda ifade etmek gerekir. 6 ayda %30 getiri sağlayan bir yatırım, yıllık %60 getiriye eşdeğerdir. Bu sayede hisse senedi, altın, döviz veya mevduat gibi farklı yatırım araçlarının performansını aynı ölçütle değerlendirebilirsiniz. Ancak yıllıklandırılmış oran, o vadeyi sürdürebileceğini garanti etmez; özellikle kısa vadeli getirilerde dikkatli yorumlanmalıdır.",
+  },
+  {
+    question: "Getiri hesaplarken hangi maliyetler göz önünde bulundurulmalıdır?",
+    answer: "Gerçek net getiriyi hesaplarken alım-satım komisyonu, vergi (BSMV, gelir vergisi, stopaj), saklama ve hesap ücretleri ile döviz kuru maliyetleri dikkate alınmalıdır. Hisse senedi işlemlerinde borsa komisyonları ve BSMV, gayrimenkul satışlarında tapu harcı ve değer artışı vergisi gibi ek maliyetler net getiriyi önemli ölçüde düşürebilir. Bu araçta yalnızca fiyat farkına dayalı brüt getiri hesaplanmaktadır.",
+  },
+];
+
+const meta = {
+  title: "Yatırım Getiri Hesaplama — ROI ve Yıllık Getiri",
+  description: "Alış ve satış fiyatına göre yatırım getirisini, getiri oranını ve yıllık getiriyi hesaplayın. Hisse senedi, döviz ve altın yatırımları için ROI hesaplayıcısı.",
+  category: "finans",
+  slug: "yatirim-getiri-hesaplama",
+  keywords: ["yatırım getiri hesaplama", "ROI hesaplama", "yıllık getiri", "hisse senedi getiri", "yatırım kâr hesaplama", "getiri oranı"],
+  dateModified: "2026-04-01",
+  relatedCalcs: ["bilesik-faiz-hesaplama", "altin-hesaplama", "doviz-cevirici"],
+  faq,
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
+    <CalcInput
+      id="alisFiyati"
+      label="Alış Fiyatı / Tutarı"
+      type="number"
+      suffix="₺"
+      placeholder="10000"
+      step={100}
+      min={1}
+      helpText="Yatırımı satın aldığınız fiyat veya toplam maliyet"
+    />
+    <CalcInput
+      id="satisFiyati"
+      label="Satış Fiyatı / Tutarı"
+      type="number"
+      suffix="₺"
+      placeholder="15000"
+      step={100}
+      min={1}
+      helpText="Yatırımı sattığınız fiyat veya güncel değeri"
+    />
+    <CalcInput
+      id="yatirimSuresi"
+      label="Yatırım Süresi"
+      type="number"
+      suffix="ay"
+      placeholder="12"
+      step={1}
+      min={1}
+      helpText="Yatırımı ne kadar süre tuttunuz veya tutmayı planlıyorsunuz?"
+    />
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <span class="calc-result-label">Net Getiri</span>
+      <span class="calc-result-value" id="net-getiri">—</span>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Getiri Oranı</span>
+        <span class="calc-detail-value" id="getiri-orani">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Yıllık Getiri Oranı</span>
+        <span class="calc-detail-value" id="yillik-getiri">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <section class="calc-content">
+    <h2>Yatırım Getirisi Nasıl Hesaplanır?</h2>
+    <p>
+      Yatırım getirisi (ROI — Return on Investment), bir yatırımın sağladığı kârın, yatırılan tutara oranını ifade eden temel bir finansal göstergedir. Hisse senedi, döviz, altın, gayrimenkul veya mevduat gibi farklı yatırım araçlarının performansını karşılaştırmak ve değerlendirmek için kullanılır. Yatırım getiri hesaplayıcımız sayesinde alış ve satış fiyatlarınızı girerek net kârınızı, getiri oranınızı ve yıllık getirinizi anında öğrenebilirsiniz.
+    </p>
+    <p>
+      Yatırım kararları alırken yalnızca mutlak getiri tutarına değil, oransal getiriye de bakmak gerekir. Örneğin 5.000 TL kâr elde etmek; 10.000 TL yatırımda %50 getiri anlamına gelirken, 100.000 TL yatırımda yalnızca %5 getiri demektir. Dolayısıyla farklı yatırım araçlarını karşılaştırırken oransal getiri daha anlamlı bir ölçüt sunar.
+    </p>
+    <p>
+      Yıllık getiri hesaplaması da farklı vadedeki yatırımları eşit koşullarda karşılaştırmanızı sağlar. 6 ayda %20 getiri sağlayan bir yatırım, yıllık bazda %40 getiriye karşılık gelir. Bu sayede kısa vadeli ve uzun vadeli yatırımların gerçek performansını daha sağlıklı değerlendirebilirsiniz. Hesaplama aracımızda basit yıllıklandırma yöntemi kullanılmakta olup bileşik getiri için ayrı hesaplamalar gerekebilir.
+    </p>
+    <h3>Getiri Hesaplama Formülleri</h3>
+    <p>
+      Yatırım getirisini hesaplamak için aşağıdaki formüller kullanılır:
+    </p>
+    <p>
+      <strong>Net Getiri = Satış Fiyatı − Alış Fiyatı</strong>
+    </p>
+    <p>
+      <strong>Getiri Oranı (%) = (Net Getiri / Alış Fiyatı) × 100</strong>
+    </p>
+    <p>
+      <strong>Yıllık Getiri (%) = Getiri Oranı × (12 / Süre (ay))</strong>
+    </p>
+    <p>
+      Örneğin 10.000 TL'ye satın alınan bir hisse senedini 8 ay sonra 14.500 TL'ye satarsanız: Net Getiri = 4.500 TL, Getiri Oranı = %45, Yıllık Getiri = 45 × (12/8) = %67,50 olarak hesaplanır.
+    </p>
+    <h3>Dikkat Edilmesi Gerekenler</h3>
+    <p>
+      Bu araç brüt getiriyi hesaplar; gerçek net getiriyi bulmak için komisyon, vergi ve diğer maliyetleri de çıkarmanız gerekir. Yıllık getiri, basit yıllıklandırma yöntemiyle hesaplanmakta olup bileşik büyüme varsayımı içermez. Negatif getiri (zarar) durumlarında sonuçlar eksi değer gösterecektir. Geçmiş getiriler gelecekteki performansı garanti etmez; bu araç yatırım tavsiyesi niteliği taşımaz.
+    </p>
+    <h3>Sıkça Sorulan Sorular</h3>
+    {faq.map((item) => (
+      <div class="faq-item">
+        <h4>{item.question}</h4>
+        <p>{item.answer}</p>
+      </div>
+    ))}
+  </section>
+</CalcLayout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+    const resultArea = document.getElementById('calc-result');
+
+    function debounce(fn: (...args: unknown[]) => void, delay = 150) {
+      let timer: ReturnType<typeof setTimeout>;
+      return (...args: unknown[]) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), delay); };
+    }
+
+    function formatTL(num: number) {
+      return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
+    }
+
+    function formatPercent(num: number) {
+      return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num) + '%';
+    }
+
+    const debouncedCalc = debounce(calculate);
+    inputs.forEach(i => {
+      i.addEventListener('input', debouncedCalc);
+      i.addEventListener('change', debouncedCalc);
+    });
+
+    function calculate() {
+      const alisFiyati = parseFloat((document.getElementById('alisFiyati') as HTMLInputElement).value);
+      const satisFiyati = parseFloat((document.getElementById('satisFiyati') as HTMLInputElement).value);
+      const yatirimSuresi = parseInt((document.getElementById('yatirimSuresi') as HTMLInputElement).value);
+
+      if (!alisFiyati || !satisFiyati || !yatirimSuresi || alisFiyati <= 0 || yatirimSuresi < 1) {
+        if (resultArea) resultArea.classList.add('hidden');
+        return;
+      }
+
+      const netGetiri = satisFiyati - alisFiyati;
+      const getiriOrani = (netGetiri / alisFiyati) * 100;
+      const yillikGetiri = getiriOrani * (12 / yatirimSuresi);
+
+      const netEl = document.getElementById('net-getiri') as HTMLElement;
+      netEl.textContent = formatTL(netGetiri);
+      netEl.style.color = netGetiri >= 0 ? 'var(--color-success, #16a34a)' : 'var(--color-danger, #dc2626)';
+
+      (document.getElementById('getiri-orani') as HTMLElement).textContent = formatPercent(getiriOrani);
+      (document.getElementById('yillik-getiri') as HTMLElement).textContent = formatPercent(yillikGetiri);
+
+      if (resultArea) resultArea.classList.remove('hidden');
+      updateURL();
+    }
+
+    function updateURL() {
+      const params = new URLSearchParams();
+      inputs.forEach(i => {
+        const el = i as HTMLInputElement;
+        if (el.value && el.id) params.set(el.id, el.value);
+      });
+      history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+    }
+
+    function loadFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      let hasParams = false;
+      inputs.forEach(i => {
+        const el = i as HTMLInputElement;
+        if (el.id && params.has(el.id)) { el.value = params.get(el.id)!; hasParams = true; }
+      });
+      if (hasParams) calculate();
+    }
+
+    loadFromURL();
+  });
+</script>
