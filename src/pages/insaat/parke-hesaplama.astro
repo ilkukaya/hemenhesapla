@@ -1,0 +1,178 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Parke döşemede fire payı ne kadar olmalıdır?",
+    answer: "Standart düz döşemede %10 fire payı genellikle yeterlidir. Köşegen (45° veya 60°) döşemede %15-20, karmaşık şekilli odalarda %20'ye kadar fire bırakılmalıdır. Artık parçaların boyutuna göre bazı kesimler yeniden kullanılabilir; ancak hesapta güvenli tarafta kalmak önemlidir. Projenin bitiminde birkaç paket fazla parkenin elinizde bulunması ileride oluşabilecek hasarlar için faydalıdır."
+  },
+  {
+    question: "Parke paketi kaç m² kapsıyor?",
+    answer: "Standart laminat parke paketleri genellikle 2.22 m² kapsayacak şekilde tasarlanmıştır (bu araçta kullanılan değer). Ancak farklı markalar ve formatlar 1.5 m² ile 2.5 m² arasında değişen paket içeriklerine sahip olabilir. Aldığınız ürünün paket bilgisini kontrol ederek paket sayısını buna göre ayarlamanız önerilir."
+  },
+  {
+    question: "Parke döşemeden önce hangi hazırlıklar yapılmalıdır?",
+    answer: "Parke döşemeden önce zemin düzlüğü kontrol edilmeli; 2 metrelik mastayla ölçüldüğünde 3 mm'den fazla eğrilik varsa düzeltme yapılmalıdır. Zeminin kuru olması ve nem oranının %65'in altında bulunması gerekir. Alt zemine uygun sünger veya ses yalıtımı pedi serilmelidir. Parke paketleri döşeme öncesinde en az 48 saat oda sıcaklığında bekletilerek ortama alışması sağlanmalıdır."
+  }
+];
+
+const meta = {
+  title: "Parke Hesaplama",
+  description: "Oda veya salon için gereken laminat parke miktarını ve paket sayısını hesaplayın. Alan ve fire oranına göre parke hesaplayıcı.",
+  category: "insaat",
+  slug: "parke-hesaplama",
+  keywords: ["parke hesaplama", "laminat parke hesaplama", "kaç paket parke lazım", "parke m2 hesaplama", "parke hesaplayıcı"],
+  dateModified: "2026-04-01",
+  relatedCalcs: ["fayans-hesaplama", "boya-hesaplama"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
+    <div class="calc-inputs">
+      <CalcInput
+        id="odaEn"
+        label="Oda Eni"
+        type="number"
+        placeholder="Örn: 4"
+        suffix="m"
+        min={0.1}
+        step={0.1}
+        helpText="Odanın en ölçüsünü metre cinsinden girin"
+      />
+      <CalcInput
+        id="odaBoy"
+        label="Oda Boyu"
+        type="number"
+        placeholder="Örn: 5"
+        suffix="m"
+        min={0.1}
+        step={0.1}
+        helpText="Odanın boy ölçüsünü metre cinsinden girin"
+      />
+      <CalcInput
+        id="fire"
+        label="Fire Payı"
+        type="number"
+        placeholder="10"
+        suffix="%"
+        min={0}
+        max={50}
+        step={1}
+        value={10}
+        helpText="Kesim kayıpları için eklenen fire yüzdesi (önerilen: %10)"
+      />
+    </div>
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">Gereken Parke</p>
+      <p class="calc-result-value" id="sonuc-parke">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Gereken Parke (fire dahil)</span>
+        <span class="calc-detail-value" id="detail-parke">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Paket Sayısı (2,22 m²/paket)</span>
+        <span class="calc-detail-value" id="detail-paket">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Oda Alanı</span>
+        <span class="calc-detail-value" id="detail-alan">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <section class="calc-content">
+    <h2>Parke Hesaplama Nasıl Yapılır?</h2>
+    <p>
+      Ev veya ofis dekorasyonunun vazgeçilmez unsurlarından biri olan laminat ve masif parke döşemelerinde doğru malzeme planlaması yapmak hem zaman hem de para tasarrufu sağlar. Parke hesaplama işlemi görünüşte basit olsa da fire payı, oda şekli ve döşeme yönü gibi faktörler hesabı etkiler. Bu araç, odanızın boyutlarına göre gereken parke miktarını ve alınması gereken paket sayısını hesaplar.
+    </p>
+    <p>
+      Temel hesaplama adımları şöyledir: Oda eni ile boyu çarpılarak oda alanı bulunur. Ardından fire payı eklenerek gerçek ihtiyaç miktarı hesaplanır. Son olarak bu değer paket başına düşen m²'ye bölünerek alınması gereken paket sayısı belirlenir (yukarı yuvarlanır). Örneğin 4m × 5m = 20 m² bir oda için %10 fire ile 22 m² parke, yani 10 paket (22 / 2.22 ≈ 9.9 → 10) gerekmektedir.
+    </p>
+    <p>
+      Parke döşemesinde fire kaçınılmazdır. Odanın köşelerinde, kapı kasaları yanında ve kesim gerektiren her noktada parça kayıpları oluşur. Düz döşemede bu kayıp genellikle %8-12 aralığında kalırken, köşegen döşemede %15-20'ye ulaşabilir. Büyük döngüsel motifli parkelerde ise eşleştirme zorunluluğu nedeniyle fire %25'i aşabilir.
+    </p>
+    <p>
+      Laminat parkelerin standart paketi genellikle 2.22 m² olup bu değer hesaplamada esas alınmaktadır. Paketin gerçek m² değeri aldığınız ürüne göre farklılık gösterebilir; bu nedenle satın alma aşamasında paketteki bilgiyi kontrol etmeniz önerilir. Fazla gelen paketleri iade edebileceğiniz bir mağazadan alışveriş yapmak da yaygın bir pratik yöntemdir.
+    </p>
+
+    <h3>Formül</h3>
+    <p>
+      Oda Alanı = Oda Eni × Oda Boyu. Parke (m²) = Oda Alanı × (1 + Fire % / 100). Paket Sayısı = ⌈Parke (m²) / 2.22⌉ (yukarı yuvarlanır).
+    </p>
+
+    <h3>Dikkat Edilmesi Gerekenler</h3>
+    <p>
+      Düzensiz şekilli odalarda (L şekli, köşeli girintiler vb.) odayı dikdörtgenlere bölüp her parçayı ayrı hesapladıktan sonra toplamı alın. Birden fazla oda için hesap yapıyorsanız her odayı ayrı hesaplayın; her oda ayrı fire üretir. Parke döşemesinde zemin yüksekliğinin değişeceğini (genellikle 8-12 mm) kapı kasası ayarlamalarında göz önünde bulundurun.
+    </p>
+
+    <h3>Sıkça Sorulan Sorular</h3>
+    {faq.map((item) => (
+      <div class="faq-item">
+        <h4>{item.question}</h4>
+        <p>{item.answer}</p>
+      </div>
+    ))}
+  </section>
+</CalcLayout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+    const resultArea = document.getElementById('calc-result');
+
+    function debounce(fn, d = 150) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), d); }; }
+    function formatNumber(n, d = 2) {
+      return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 0, maximumFractionDigits: d }).format(n);
+    }
+
+    const dc = debounce(calculate);
+    inputs.forEach(i => { i.addEventListener('input', dc); i.addEventListener('change', dc); });
+
+    function calculate() {
+      const odaEn = parseFloat((document.getElementById('odaEn')).value);
+      const odaBoy = parseFloat((document.getElementById('odaBoy')).value);
+      const fire = parseFloat((document.getElementById('fire')).value) || 0;
+
+      if (isNaN(odaEn) || isNaN(odaBoy) || odaEn <= 0 || odaBoy <= 0) {
+        if (resultArea) resultArea.classList.add('hidden');
+        return;
+      }
+
+      const alan = odaEn * odaBoy;
+      const parke = alan * (1 + fire / 100);
+      const paket = Math.ceil(parke / 2.22);
+
+      document.getElementById('sonuc-parke').textContent = `${formatNumber(parke)} m²`;
+      document.getElementById('detail-parke').textContent = `${formatNumber(parke)} m²`;
+      document.getElementById('detail-paket').textContent = `${paket} paket`;
+      document.getElementById('detail-alan').textContent = `${formatNumber(alan)} m²`;
+
+      if (resultArea) resultArea.classList.remove('hidden');
+      updateURL();
+    }
+
+    function updateURL() {
+      const p = new URLSearchParams();
+      inputs.forEach(i => { if (i.value && i.id) p.set(i.id, i.value); });
+      history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
+    }
+
+    function loadFromURL() {
+      const p = new URLSearchParams(window.location.search);
+      let h = false;
+      inputs.forEach(i => { if (i.id && p.has(i.id)) { i.value = p.get(i.id); h = true; } });
+      if (h) calculate();
+    }
+
+    loadFromURL();
+  });
+</script>

@@ -1,0 +1,203 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcSelect from '../../components/calculator/CalcSelect.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const birimOptions = [
+  { value: "mg", label: "Miligram (mg)" },
+  { value: "g", label: "Gram (g)" },
+  { value: "kg", label: "Kilogram (kg)" },
+  { value: "ton", label: "Ton (t)" },
+  { value: "ons", label: "Ons (oz)" },
+  { value: "pound", label: "Pound (lb)" },
+];
+
+const faq = [
+  {
+    question: "1 pound kaç kilogramdır?",
+    answer: "1 pound (lb) tam olarak 453.592 grama, yani yaklaşık 0.4536 kilograma eşittir. Tersine çevrildiğinde 1 kilogram ≈ 2.2046 pound olur. Pound birimi başta ABD olmak üzere birçok Anglo-Sakson ülkesinde yaygın olarak kullanılmaktadır. Vücut ağırlığı ifadesinde de pounds sık karşılaşılan bir birimdir."
+  },
+  {
+    question: "1 ons kaç gramdır?",
+    answer: "1 ons (oz) yaklaşık 28.3495 grama eşittir. Ons birimi özellikle ABD'de gıda paketleme, mücevher tartımı ve ilaç dozajlarında kullanılır. Mücevher sektöründe ise 'troy ons' adı verilen farklı bir ons birimi kullanılır ve bu 31.1035 grama eşittir. Bu araçta standart avordupois onsu (28.3495 g) kullanılmaktadır."
+  },
+  {
+    question: "Metrik ton ile İngiliz tonu arasındaki fark nedir?",
+    answer: "Metrik ton 1.000 kg'a eşittir ve bu araçta kullanılan ton birimidir. İngiliz kısa tonu (short ton) ise yaklaşık 907.185 kg, İngiliz uzun tonu (long ton) ise 1016.05 kg'dır. Türkiye ve Avrupa'da 'ton' denildiğinde metrik ton kastedilir. Uluslararası ticaret belgelerinde karışıklığa yol açmamak için 'metrik ton' veya 'tonne' ifadesinin kullanılması önerilir."
+  }
+];
+
+const meta = {
+  title: "Ağırlık Dönüştürücü",
+  description: "mg, g, kg, ton, ons ve pound arasında ağırlık dönüşümü yapın. Anlık ağırlık birimi çevirici hesaplayıcı.",
+  category: "donusum",
+  slug: "agirlik-donusturucu",
+  keywords: ["ağırlık dönüştürücü", "ağırlık birimi çevirici", "kg pound dönüşümü", "gram ons çevirme", "ağırlık hesaplayıcı"],
+  dateModified: "2026-04-01",
+  relatedCalcs: ["uzunluk-donusturucu", "sicaklik-donusturucu"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
+    <div class="calc-inputs">
+      <CalcInput
+        id="deger"
+        label="Değer"
+        type="number"
+        placeholder="Örn: 75"
+        step="any"
+        helpText="Dönüştürmek istediğiniz sayıyı girin"
+      />
+      <CalcSelect
+        id="birim"
+        label="Kaynak Birim"
+        options={birimOptions}
+        value="kg"
+        helpText="Girilen değerin birimini seçin"
+      />
+    </div>
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">Gram (g)</p>
+      <p class="calc-result-value" id="sonuc-ana">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Miligram (mg)</span>
+        <span class="calc-detail-value" id="detail-mg">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Gram (g)</span>
+        <span class="calc-detail-value" id="detail-g">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Kilogram (kg)</span>
+        <span class="calc-detail-value" id="detail-kg">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Ton (t)</span>
+        <span class="calc-detail-value" id="detail-ton">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Ons (oz)</span>
+        <span class="calc-detail-value" id="detail-ons">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Pound (lb)</span>
+        <span class="calc-detail-value" id="detail-pound">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <section class="calc-content">
+    <h2>Ağırlık Dönüştürücü Nasıl Kullanılır?</h2>
+    <p>
+      Ağırlık birimleri arasında dönüşüm yapmak; mutfak ölçümleri, uluslararası ticaret, taşımacılık, tıp, spor ve mühendislik gibi pek çok alanda sıkça karşılaşılan bir ihtiyaçtır. Türkiye'de yaygın olarak kullanılan metrik sistem (miligram, gram, kilogram, ton) ile İngiliz-Amerikan emperyal sistemi (ons, pound) arasındaki dönüşümler her gün milyonlarca kişi tarafından ihtiyaç duyulmaktadır.
+    </p>
+    <p>
+      Bu araç; miligram (mg), gram (g), kilogram (kg), ton (t), ons (oz) ve pound (lb) birimleri arasında anlık dönüşüm yapmanızı sağlar. Dönüştürmek istediğiniz değeri girin, kaynak birimi seçin; araç diğer tüm birimlerdeki karşılıkları otomatik olarak hesaplar.
+    </p>
+    <p>
+      Metrik sistemde ağırlık birimleri arasındaki ilişkiler 1000 katsayısına dayanır: 1 ton = 1000 kg = 1.000.000 g = 1.000.000.000 mg. Bu sistematik yapı metrik sistemi pratik kullanım için son derece uygun kılar. Günlük hayatta kilogram, mutfakta gram, ilaçlarda miligram yaygın olarak kullanılmaktadır.
+    </p>
+    <p>
+      Emperyal sistemde ise 1 pound = 16 ons ve 1 ton (kısa ton, ABD) ≈ 907 kg şeklinde düzensiz ilişkiler mevcuttur. Online alışverişte yurt dışı ürün ağırlıklarını anlamlandırmak, yurt dışı spor etkinliklerindeki ağırlık sınıflarını yorumlamak veya ithalat-ihracat belgelerini değerlendirmek için bu dönüşümler hayati önem taşımaktadır.
+    </p>
+
+    <h3>Dönüşüm Katsayıları</h3>
+    <p>
+      Gram bazında: mg = 0.001 g, g = 1 g, kg = 1000 g, ton = 1.000.000 g, ons = 28.3495 g, pound = 453.592 g. Tüm dönüşümler önce değeri grama çevirerek ardından hedef birime bölme yöntemiyle gerçekleştirilir.
+    </p>
+
+    <h3>Dikkat Edilmesi Gerekenler</h3>
+    <p>
+      Bu araçta "ton" metrik tonu (1000 kg) ifade etmektedir. Amerikan kısa tonu (907 kg) veya İngiliz uzun tonu (1016 kg) farklıdır. "Ons" olarak avordupois onsu (28.3495 g) kullanılmaktadır; mücevher ve kıymetli metal sektöründe kullanılan troy onsu (31.1035 g) farklıdır. Çok büyük veya çok küçük sayılarda sonuç bilimsel gösterimde görünebilir.
+    </p>
+
+    <h3>Sıkça Sorulan Sorular</h3>
+    {faq.map((item) => (
+      <div class="faq-item">
+        <h4>{item.question}</h4>
+        <p>{item.answer}</p>
+      </div>
+    ))}
+  </section>
+</CalcLayout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+    const resultArea = document.getElementById('calc-result');
+
+    function debounce(fn, d = 150) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), d); }; }
+    function formatNumber(n) {
+      if (Math.abs(n) < 0.0001 || Math.abs(n) >= 1e10) {
+        return n.toExponential(4);
+      }
+      return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 0, maximumFractionDigits: 6 }).format(n);
+    }
+
+    const toGrams = { mg: 0.001, g: 1, kg: 1000, ton: 1000000, ons: 28.3495, pound: 453.592 };
+
+    const dc = debounce(calculate);
+    inputs.forEach(i => { i.addEventListener('input', dc); i.addEventListener('change', dc); });
+
+    function calculate() {
+      const deger = parseFloat((document.getElementById('deger')).value);
+      const birim = (document.getElementById('birim')).value;
+
+      if (isNaN(deger) || !birim) {
+        if (resultArea) resultArea.classList.add('hidden');
+        return;
+      }
+
+      const grams = deger * (toGrams[birim] || 1);
+
+      const results = {
+        mg: grams / 0.001,
+        g: grams,
+        kg: grams / 1000,
+        ton: grams / 1000000,
+        ons: grams / 28.3495,
+        pound: grams / 453.592,
+      };
+
+      // Main result: show kg if input is not kg, else show g
+      const mainUnit = birim === 'kg' ? 'g' : 'kg';
+      const mainLabel = mainUnit === 'kg' ? 'Kilogram (kg)' : 'Gram (g)';
+      document.getElementById('sonuc-ana').textContent = `${formatNumber(results[mainUnit])} ${mainUnit}`;
+      const labelEl = document.querySelector('#calc-result .calc-result-label');
+      if (labelEl) labelEl.textContent = mainLabel;
+
+      document.getElementById('detail-mg').textContent = `${formatNumber(results.mg)} mg`;
+      document.getElementById('detail-g').textContent = `${formatNumber(results.g)} g`;
+      document.getElementById('detail-kg').textContent = `${formatNumber(results.kg)} kg`;
+      document.getElementById('detail-ton').textContent = `${formatNumber(results.ton)} t`;
+      document.getElementById('detail-ons').textContent = `${formatNumber(results.ons)} oz`;
+      document.getElementById('detail-pound').textContent = `${formatNumber(results.pound)} lb`;
+
+      if (resultArea) resultArea.classList.remove('hidden');
+      updateURL();
+    }
+
+    function updateURL() {
+      const p = new URLSearchParams();
+      inputs.forEach(i => { if (i.value && i.id) p.set(i.id, i.value); });
+      history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
+    }
+
+    function loadFromURL() {
+      const p = new URLSearchParams(window.location.search);
+      let h = false;
+      inputs.forEach(i => { if (i.id && p.has(i.id)) { i.value = p.get(i.id); h = true; } });
+      if (h) calculate();
+    }
+
+    loadFromURL();
+  });
+</script>

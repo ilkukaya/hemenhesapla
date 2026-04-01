@@ -1,0 +1,205 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "YKS puan hesaplama formülü nedir?",
+    answer: "YKS puanı hesaplama resmi formülü ÖSYM tarafından belirlenir ve yıldan yıla değişkenlik gösterebilir. Temel mantık şudur: Net sayısı = Doğru - (Yanlış / 4). Ardından standartlaştırma katsayıları uygulanarak ham puana ulaşılır ve buna ek puan eklenir. Bu araçtaki hesaplama tahmini bir değer olup resmi sonuçtan farklılık gösterebilir."
+  },
+  {
+    question: "TYT ve AYT sınavları kaç sorudan oluşur?",
+    answer: "TYT (Temel Yeterlilik Testi) toplam 120 sorudan oluşur: Türkçe 40, Sosyal Bilimler 20, Matematik 40, Fen Bilimleri 20 soru. AYT (Alan Yeterlilik Testi) ise alan seçimine göre farklılaşmakla birlikte genellikle 40 veya 80 soru içerir. TYT sonuçları hem TYT hem de AYT puanına, AYT ise yalnızca AYT puanına etki eder."
+  },
+  {
+    question: "YKS'de yanlış cevabın puana etkisi nedir?",
+    answer: "YKS'de her 4 yanlış cevap 1 doğruyu götürür. Yani net = doğru - (yanlış / 4) formülüyle hesaplanır. Boş bırakılan sorular puana etkimez. Bu nedenle 4'ten az doğru tahminde bulunduğunuz sorularda boş bırakmak, yanlış cevaplamaktan daha avantajlı olabilir."
+  }
+];
+
+const meta = {
+  title: "YKS Puan Hesaplama",
+  description: "TYT ve AYT doğru-yanlış sayılarına göre tahmini YKS puanınızı hesaplayın. Net hesaplama ve puan tahmini hesaplayıcı.",
+  category: "egitim",
+  slug: "yks-puan-hesaplama",
+  keywords: ["YKS puan hesaplama", "TYT puan hesaplama", "AYT puan hesaplama", "üniversite sınav puanı", "YKS net hesaplama"],
+  dateModified: "2026-04-01",
+  relatedCalcs: ["not-ortalamasi-hesaplama"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
+    <div class="calc-inputs">
+      <p class="text-sm font-semibold text-[var(--color-text-muted)] mb-1 col-span-full">TYT (Temel Yeterlilik Testi — 120 soru)</p>
+      <CalcInput
+        id="tytDogru"
+        label="TYT Doğru Sayısı"
+        type="number"
+        placeholder="Örn: 90"
+        min={0}
+        max={120}
+        step={1}
+        helpText="TYT'de doğru cevap sayısı (0-120)"
+      />
+      <CalcInput
+        id="tytYanlis"
+        label="TYT Yanlış Sayısı"
+        type="number"
+        placeholder="Örn: 15"
+        min={0}
+        max={120}
+        step={1}
+        helpText="TYT'de yanlış cevap sayısı (0-120)"
+      />
+      <p class="text-sm font-semibold text-[var(--color-text-muted)] mb-1 col-span-full">AYT (Alan Yeterlilik Testi — 80 soru)</p>
+      <CalcInput
+        id="aytDogru"
+        label="AYT Doğru Sayısı"
+        type="number"
+        placeholder="Örn: 60"
+        min={0}
+        max={80}
+        step={1}
+        helpText="AYT'de doğru cevap sayısı (0-80)"
+      />
+      <CalcInput
+        id="aytYanlis"
+        label="AYT Yanlış Sayısı"
+        type="number"
+        placeholder="Örn: 10"
+        min={0}
+        max={80}
+        step={1}
+        helpText="AYT'de yanlış cevap sayısı (0-80)"
+      />
+    </div>
+    <p class="text-xs text-[var(--color-text-muted)] mt-4">⚠️ Bu araç tahmini hesaplama yapmaktadır. Resmi ÖSYM sonuçlarından farklılık gösterebilir.</p>
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">TYT Puanı (Tahmini)</p>
+      <p class="calc-result-value" id="sonuc-tyt">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">TYT Puanı (tahmini)</span>
+        <span class="calc-detail-value" id="detail-tytpuan">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">AYT Puanı (tahmini)</span>
+        <span class="calc-detail-value" id="detail-aytpuan">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">TYT Net</span>
+        <span class="calc-detail-value" id="detail-tytnet">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">AYT Net</span>
+        <span class="calc-detail-value" id="detail-aytnet">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <section class="calc-content">
+    <h2>YKS Puan Hesaplama Nasıl Yapılır?</h2>
+    <p>
+      Yükseköğretim Kurumları Sınavı (YKS), Türkiye'de üniversiteye giriş için ÖSYM tarafından düzenlenen merkezi sınavdır. İki aşamadan oluşan sınav; Temel Yeterlilik Testi (TYT) ve Alan Yeterlilik Testi (AYT) olarak uygulanmaktadır. Sınav sonuçlarına göre hesaplanan puanlar, adayların tercih yapabileceği bölümleri belirler. Bu hesaplayıcı, TYT ve AYT doğru-yanlış sayılarınıza göre tahmini puan hesaplaması yapar.
+    </p>
+    <p>
+      TYT; Türkçe (40 soru), Temel Matematik (40 soru), Sosyal Bilimler (20 soru) ve Fen Bilimleri (20 soru) olmak üzere toplam 120 sorudan oluşur. AYT ise adayın seçtiği alana göre Sözel, Eşit Ağırlık, Sayısal veya Dil bölümlerinden biri şeklinde uygulanır. Her yanlış cevap, 1/4 doğruyu götürür; bu da 4 yanlışın 1 doğruyu sıfırladığı anlamına gelir.
+    </p>
+    <p>
+      Net hesabı sınav stratejisinin temelini oluşturur. Toplam 120 soruluk TYT'de 90 doğru ve 15 yanlış yapan bir öğrencinin neti: 90 - 15/4 = 90 - 3.75 = 86.25'tir. ÖSYM bu net değerini çeşitli katsayılarla çarparak ve taban puan ekleyerek ham puanı hesaplar. Kullanılan katsayılar her yıl yeniden belirlenebildiğinden bu araçtaki değerler yaklaşık sonuçlar vermektedir.
+    </p>
+    <p>
+      Puan hesaplamasındaki katsayılar ve taban puan değerleri ÖSYM tarafından sınav yılına göre güncellenmektedir. Bu nedenle bu araçta sunulan sonuçlar yalnızca ön değerlendirme amacıyla kullanılmalı, resmi yerleştirme kılavuzundaki katsayılar esas alınmalıdır. Tercih döneminde ise ÖSYM'nin resmi puan hesaplama araçlarını kullanmanız tavsiye edilir.
+    </p>
+
+    <h3>Formül</h3>
+    <p>
+      Net = Doğru − (Yanlış / 4). TYT Puanı ≈ 100 + TYT Net × 3.33. AYT Puanı ≈ 100 + AYT Net × 3.33. Bu formüller yaklaşık değerler içindir; resmi ÖSYM katsayıları farklılık gösterebilir.
+    </p>
+
+    <h3>Dikkat Edilmesi Gerekenler</h3>
+    <p>
+      Doğru ve yanlış sayılarının toplamı ilgili sınavın toplam soru sayısını (TYT: 120, AYT: 80) aşmamalıdır. Bu araç tahmini değerler üretmekte olup ÖSYM'nin resmi sonuçları farklılık gösterebilir. YKS'de puan türleri (SAY, EA, SÖZ, DİL) farklı ağırlıklara sahiptir; belirli bir puan türünü hesaplamak istiyorsanız ÖSYM kılavuzundaki ağırlıkları incelemeniz gerekmektedir.
+    </p>
+
+    <h3>Sıkça Sorulan Sorular</h3>
+    {faq.map((item) => (
+      <div class="faq-item">
+        <h4>{item.question}</h4>
+        <p>{item.answer}</p>
+      </div>
+    ))}
+  </section>
+</CalcLayout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+    const resultArea = document.getElementById('calc-result');
+
+    function debounce(fn, d = 150) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), d); }; }
+    function formatNumber(n, d = 2) {
+      return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 0, maximumFractionDigits: d }).format(n);
+    }
+
+    const dc = debounce(calculate);
+    inputs.forEach(i => { i.addEventListener('input', dc); i.addEventListener('change', dc); });
+
+    function calculate() {
+      const tytDogru = parseFloat((document.getElementById('tytDogru')).value);
+      const tytYanlis = parseFloat((document.getElementById('tytYanlis')).value) || 0;
+      const aytDogru = parseFloat((document.getElementById('aytDogru')).value);
+      const aytYanlis = parseFloat((document.getElementById('aytYanlis')).value) || 0;
+
+      const hasTYT = !isNaN(tytDogru);
+      const hasAYT = !isNaN(aytDogru);
+
+      if (!hasTYT && !hasAYT) {
+        if (resultArea) resultArea.classList.add('hidden');
+        return;
+      }
+
+      let tytNet = 0, tytPuan = 0, aytNet = 0, aytPuan = 0;
+
+      if (hasTYT) {
+        tytNet = Math.max(0, tytDogru - tytYanlis / 4);
+        tytPuan = 100 + tytNet * 3.33;
+      }
+      if (hasAYT) {
+        aytNet = Math.max(0, aytDogru - aytYanlis / 4);
+        aytPuan = 100 + aytNet * 3.33;
+      }
+
+      document.getElementById('sonuc-tyt').textContent = hasTYT ? formatNumber(tytPuan) : '—';
+      document.getElementById('detail-tytpuan').textContent = hasTYT ? formatNumber(tytPuan) : '—';
+      document.getElementById('detail-aytpuan').textContent = hasAYT ? formatNumber(aytPuan) : '—';
+      document.getElementById('detail-tytnet').textContent = hasTYT ? formatNumber(tytNet) : '—';
+      document.getElementById('detail-aytnet').textContent = hasAYT ? formatNumber(aytNet) : '—';
+
+      if (resultArea) resultArea.classList.remove('hidden');
+      updateURL();
+    }
+
+    function updateURL() {
+      const p = new URLSearchParams();
+      inputs.forEach(i => { if (i.value && i.id) p.set(i.id, i.value); });
+      history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
+    }
+
+    function loadFromURL() {
+      const p = new URLSearchParams(window.location.search);
+      let h = false;
+      inputs.forEach(i => { if (i.id && p.has(i.id)) { i.value = p.get(i.id); h = true; } });
+      if (h) calculate();
+    }
+
+    loadFromURL();
+  });
+</script>

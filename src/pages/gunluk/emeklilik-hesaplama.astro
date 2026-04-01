@@ -1,0 +1,208 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcSelect from '../../components/calculator/CalcSelect.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Türkiye'de emeklilik yaşı kaçtır?",
+    answer: "Türkiye'de emeklilik yaşı sigortalının cinsiyetine ve işe giriş tarihine göre değişmektedir. 5510 sayılı Sosyal Sigortalar Kanunu çerçevesinde yapılan düzenlemelerle emeklilik yaşı kademeli olarak artırılmıştır. Genel kural olarak erkeklerde 60, kadınlarda 58 yaş ile birlikte 7.200 SGK prim günü şartı aranmaktadır. Ancak EYT (Emeklilikte Yaşa Takılanlar) düzenlemesiyle belirli koşulları sağlayanlar yaşa bakılmaksızın emekli olabilmiştir."
+  },
+  {
+    question: "SGK prim günü nasıl hesaplanır?",
+    answer: "SGK prim günü, sigortalının işe başladığı tarihten itibaren çalıştığı her takvim günü için 1 prim günü sayılması esasına dayanır. Bir ayda 30 gün çalışıldığında 30 prim günü kazanılır. Askerlik, doğum izni ve bazı durumlarda işsizlik sigortasından prim ödenen süreler de prim gününe dahil edilebilir. E-Devlet üzerinden SGK Hizmet Dökümü sorgulanarak gerçek prim gün sayısına ulaşılabilir."
+  },
+  {
+    question: "Erken emeklilik için ne yapılabilir?",
+    answer: "Erken emeklilik için çeşitli seçenekler mevcuttur: Bireysel Emeklilik Sistemi (BES) ile devlet katkısından yararlanarak ek emeklilik geliri oluşturabilirsiniz. Borçlanma hakkı kapsamında askerlik, yükseköğrenim ve doğum sürelerini SGK'ya borçlanarak prim gününüzü artırabilirsiniz. Bunun yanı sıra serbest meslek ya da isteğe bağlı sigorta yoluyla prim ödemeye devam ederek emeklilik hakkını erkenden kazanmak da mümkündür."
+  }
+];
+
+const meta = {
+  title: "Emeklilik Hesaplama",
+  description: "Doğum tarihinize, cinsiyetinize ve işe başlama tarihinize göre tahmini emeklilik yaşınızı ve emekliliğe kalan süreyi hesaplayın.",
+  category: "gunluk",
+  slug: "emeklilik-hesaplama",
+  keywords: ["emeklilik hesaplama", "emeklilik yaşı", "SGK prim günü", "emeklilik tarihi", "ne zaman emekli olurum", "emeklilik süresi"],
+  dateModified: "2026-04-01",
+  relatedCalcs: ["tasarruf-hesaplama", "askerlik-hesaplama"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form">
+    <CalcInput
+      id="dogumTarihi"
+      label="Doğum Tarihi"
+      type="date"
+    />
+    <CalcSelect
+      id="cinsiyet"
+      label="Cinsiyet"
+      options={[
+        { value: "erkek", label: "Erkek" },
+        { value: "kadin", label: "Kadın" }
+      ]}
+      value="erkek"
+    />
+    <CalcInput
+      id="iseBaslamaTarihi"
+      label="İşe Başlama Tarihi (İlk SGK)"
+      type="date"
+      helpText="İlk kez SGK'ya kayıt yaptırdığınız tarih"
+    />
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">Tahmini Emeklilik Yaşı</p>
+      <p class="calc-result-value" id="emeklilik-yasi">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Tahmini Emeklilik Tarihi</span>
+        <span class="calc-detail-value" id="d-tarih">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Emekliliğe Kalan Süre</span>
+        <span class="calc-detail-value" id="d-kalan">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Tahmini SGK Günü (Şimdiye)</span>
+        <span class="calc-detail-value" id="d-sgk">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const resultArea = document.getElementById('calc-result');
+
+      function debounce(fn, delay = 150) {
+        let t;
+        return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), delay); };
+      }
+
+      function formatNumber(n, d = 0) {
+        return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: d, maximumFractionDigits: d }).format(n);
+      }
+
+      function formatDate(date) {
+        return new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' }).format(date);
+      }
+
+      const dc = debounce(calculate);
+      inputs.forEach(i => { i.addEventListener('input', dc); i.addEventListener('change', dc); });
+
+      function calculate() {
+        const dogumVal = document.getElementById('dogumTarihi').value;
+        const cinsiyet = document.getElementById('cinsiyet').value;
+        const iseVal = document.getElementById('iseBaslamaTarihi').value;
+
+        if (!dogumVal) {
+          if (resultArea) resultArea.classList.add('hidden');
+          return;
+        }
+
+        const dogum = new Date(dogumVal);
+        if (isNaN(dogum.getTime())) {
+          if (resultArea) resultArea.classList.add('hidden');
+          return;
+        }
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        // Emeklilik yaşı: erkek 60, kadın 58
+        const emeklilikYasi = cinsiyet === 'erkek' ? 60 : 58;
+
+        // Tahmini emeklilik tarihi (yaş bazlı)
+        const emeklilikTarihi = new Date(dogum);
+        emeklilikTarihi.setFullYear(dogum.getFullYear() + emeklilikYasi);
+
+        // Kalan süre
+        const kalanMs = emeklilikTarihi.getTime() - today.getTime();
+        const kalanGun = Math.ceil(kalanMs / (24 * 60 * 60 * 1000));
+        const kalanYil = Math.floor(kalanGun / 365);
+        const kalanAyKalan = Math.floor((kalanGun % 365) / 30);
+
+        let kalanMetin = '';
+        if (kalanGun <= 0) {
+          kalanMetin = 'Emeklilik yaşına ulaşıldı';
+        } else if (kalanYil > 0) {
+          kalanMetin = kalanYil + ' yıl ' + kalanAyKalan + ' ay';
+        } else {
+          kalanMetin = kalanAyKalan + ' ay';
+        }
+
+        document.getElementById('emeklilik-yasi').textContent = emeklilikYasi + ' yaş';
+        document.getElementById('d-tarih').textContent = formatDate(emeklilikTarihi);
+        document.getElementById('d-kalan').textContent = kalanMetin;
+
+        // SGK gün tahmini
+        if (iseVal) {
+          const ise = new Date(iseVal);
+          if (!isNaN(ise.getTime())) {
+            const calismaMs = today.getTime() - ise.getTime();
+            const calismGun = Math.max(0, Math.floor(calismaMs / (24 * 60 * 60 * 1000)));
+            const sgkGun = Math.floor(calismGun * (30 / 30)); // month approx
+            document.getElementById('d-sgk').textContent = formatNumber(calismGun) + ' gün (~' + formatNumber(Math.floor(calismGun / 30)) + ' ay)';
+          } else {
+            document.getElementById('d-sgk').textContent = '—';
+          }
+        } else {
+          document.getElementById('d-sgk').textContent = '—';
+        }
+
+        if (resultArea) resultArea.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const p = new URLSearchParams();
+        inputs.forEach(i => { if (i.value && i.id) p.set(i.id, i.value); });
+        history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
+      }
+
+      function loadFromURL() {
+        const p = new URLSearchParams(window.location.search);
+        let h = false;
+        inputs.forEach(i => { if (i.id && p.has(i.id)) { i.value = p.get(i.id); h = true; } });
+        if (h) calculate();
+      }
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>Emeklilik Hesaplama Nasıl Yapılır?</h2>
+    <p>
+      Emeklilik, çalışma hayatının en önemli dönüm noktalarından biridir ve bu süreci önceden planlamak finansal güvenlik açısından büyük önem taşır. Türkiye'de emeklilik sistemi 5510 sayılı Sosyal Sigortalar ve Genel Sağlık Sigortası Kanunu çerçevesinde düzenlenmekte olup yaş, prim gün sayısı ve sigortalılık süresi gibi farklı kriterlere dayanan koşullar söz konusudur.
+    </p>
+    <p>
+      Bu hesap makinesi, doğum tarihinizi, cinsiyetinizi ve işe başlama tarihinizi baz alarak tahmini emeklilik yaşınızı ve emekliliğe kalan süreyi hızlıca hesaplamanızı sağlar. Sonuçlar bilgilendirme amaçlıdır; kesin emeklilik hesabı için SGK'ya başvurmanız ya da e-Devlet üzerinden "SGK Hizmet Dökümü" sorgulaması yapmanız önerilir.
+    </p>
+
+    <h3>Türkiye'de Emeklilik Koşulları (Basitleştirilmiş)</h3>
+    <p>
+      Genel tabloya göre: Erkekler 60 yaşında ve 7.200 SGK prim günü dolduğunda, kadınlar ise 58 yaşında ve 7.200 prim günü tamamlandığında yaşlılık aylığına hak kazanabilmektedir. Emeklilik koşulları işe giriş tarihine ve farklı sigortalılık türüne göre (4/a, 4/b, 4/c) değişebilmektedir.
+    </p>
+
+    <h3>Dikkat Edilmesi Gerekenler</h3>
+    <p>
+      Emeklilik mevzuatı zaman içinde değişebilmekte ve bireysel koşullar (borçlanma, askerlik süresi, eksik gün telafisi vb.) sonuçları etkileyebilmektedir. Hesaplama yalnızca genel bir tahmin sunmaktadır. Gerçek emeklilik hakkınızı öğrenmek için SGK'nın resmi web sitesi veya e-Devlet portalı üzerinden SGK Hizmet Dökümünüzü ve Emeklilik Sorgulama aracını kullanmanızı tavsiye ederiz.
+    </p>
+
+    <h3>Sıkça Sorulan Sorular</h3>
+    {faq.map(item => (
+      <details>
+        <summary><strong>{item.question}</strong></summary>
+        <p>{item.answer}</p>
+      </details>
+    ))}
+  </section>
+</CalcLayout>

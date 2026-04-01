@@ -1,0 +1,186 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Ağırlıklı not ortalaması nasıl hesaplanır?",
+    answer: "Ağırlıklı not ortalaması, her dersin notunun o dersin kredi değeriyle çarpılması ve bu çarpımların toplamının toplam krediye bölünmesiyle hesaplanır. Formül: Ortalama = Σ(Not × Kredi) / Σ(Kredi). Örneğin 80 puanlık 3 kredili ders ve 90 puanlık 5 kredili dersin ortalaması (80×3 + 90×5)/(3+5) = (240+450)/8 = 86.25 olur."
+  },
+  {
+    question: "4.0'lık GPA sistemi nasıl çalışır?",
+    answer: "Amerikan üniversitelerinde yaygın olan 4.0 GPA sisteminde notlar harf karşılıklarına dönüştürülür: A (4.0), A- (3.7), B+ (3.3), B (3.0), B- (2.7), C+ (2.3), C (2.0) gibi. Bu araçta kullanılan dönüşüm tablosu: 90-100 = 4.0 (A), 85-89 = 3.5, 80-84 = 3.0 (B), 75-79 = 2.5, 70-74 = 2.0 (C), 65-69 = 1.5, 60-64 = 1.0 (D), 0-59 = 0 (F)."
+  },
+  {
+    question: "5'ten fazla ders için ortalama nasıl hesaplanır?",
+    answer: "Bu araç 5 derse kadar not girişine izin vermektedir. Daha fazla ders için (Not₁×Kredi₁ + Not₂×Kredi₂ + … + Notₙ×Krediₙ) / (Kredi₁ + Kredi₂ + … + Krediₙ) formülünü kendiniz uygulayabilirsiniz. Alternatif olarak notları ve kredileri gruplara bölerek her grubu ayrı hesaplayabilirsiniz."
+  }
+];
+
+const meta = {
+  title: "Not Ortalaması Hesaplama",
+  description: "Üniversite veya lise not ortalamanızı ve GPA değerinizi hesaplayın. Kredili ağırlıklı not ortalaması ve 4.0 GPA hesaplayıcı.",
+  category: "egitim",
+  slug: "not-ortalamasi-hesaplama",
+  keywords: ["not ortalaması hesaplama", "GPA hesaplama", "ağırlıklı not ortalaması", "vize final ortalaması", "üniversite not ortalaması"],
+  dateModified: "2026-04-01",
+  relatedCalcs: ["yks-puan-hesaplama"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
+    <div class="calc-inputs">
+      <div class="grid grid-cols-2 gap-x-4 gap-y-0">
+        <CalcInput id="notu1" label="Ders 1 — Not" type="number" placeholder="85" min={0} max={100} step={1} helpText="" />
+        <CalcInput id="kredi1" label="Ders 1 — Kredi" type="number" placeholder="3" min={1} max={10} step={1} helpText="" />
+        <CalcInput id="notu2" label="Ders 2 — Not" type="number" placeholder="90" min={0} max={100} step={1} helpText="" />
+        <CalcInput id="kredi2" label="Ders 2 — Kredi" type="number" placeholder="4" min={1} max={10} step={1} helpText="" />
+        <CalcInput id="notu3" label="Ders 3 — Not" type="number" placeholder="75" min={0} max={100} step={1} helpText="" />
+        <CalcInput id="kredi3" label="Ders 3 — Kredi" type="number" placeholder="2" min={1} max={10} step={1} helpText="" />
+        <CalcInput id="notu4" label="Ders 4 — Not" type="number" placeholder="80" min={0} max={100} step={1} helpText="" />
+        <CalcInput id="kredi4" label="Ders 4 — Kredi" type="number" placeholder="3" min={1} max={10} step={1} helpText="" />
+        <CalcInput id="notu5" label="Ders 5 — Not" type="number" placeholder="95" min={0} max={100} step={1} helpText="" />
+        <CalcInput id="kredi5" label="Ders 5 — Kredi" type="number" placeholder="5" min={1} max={10} step={1} helpText="" />
+      </div>
+    </div>
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">Ortalama (/100)</p>
+      <p class="calc-result-value" id="sonuc-ortalama">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Not Ortalaması</span>
+        <span class="calc-detail-value" id="detail-ortalama">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">GPA (4.0 Ölçeği)</span>
+        <span class="calc-detail-value" id="detail-gpa">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Toplam Kredi</span>
+        <span class="calc-detail-value" id="detail-kredi">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Aktif Ders Sayısı</span>
+        <span class="calc-detail-value" id="detail-ders">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <section class="calc-content">
+    <h2>Not Ortalaması Hesaplama Nasıl Yapılır?</h2>
+    <p>
+      Öğrencilerin dönem sonu not ortalamasını hesaplaması, sınıf geçme, burs başvurusu, yüksek lisans başvurusu veya şartlı kayıt gibi pek çok süreçte kritik öneme sahiptir. Özellikle üniversitelerde farklı derslerin farklı kredi değerlerine sahip olması, hesaplamayı basit bir aritmetik ortalamadan daha karmaşık hale getirir. Bu araç, her ders için not ve kredi değerini girerek ağırlıklı not ortalamasını ve buna karşılık gelen GPA değerini hesaplar.
+    </p>
+    <p>
+      Ağırlıklı not ortalaması, her dersin notunu o dersin kredisiyle orantılı biçimde değerlendirir. Bu sayede 5 kredili bir dersin ortalamanıza etkisi, 1 kredili bir dersten çok daha fazla olur. Örneğin 4 ve 5 kredili derslerde yüksek not almak, 1-2 kredili derslerdeki düşük notun etkisini büyük ölçüde dengeler.
+    </p>
+    <p>
+      4.0 GPA sistemi, özellikle yurt dışı üniversite başvurularında yaygın olarak kullanılmaktadır. Türkiye'deki 100'lük not sistemi bu skala üzerinden değerlendirilerek yurt dışındaki eşdeğer not belirlenir. Pek çok yabancı üniversite ve burs programı başvurularında minimum GPA şartı aramaktadır; bu araç sayesinde mevcut durumunuzu hızlıca değerlendirebilirsiniz.
+    </p>
+    <p>
+      Boş bırakılan satırlar otomatik olarak atlanır; yalnızca hem not hem de kredi girişi yapılan dersler hesaba dahil edilir. Bu sayede daha az ders için de doğru hesaplama yapılabilmektedir. Beşten az ders girerseniz araç yalnızca dolu satırları kullanarak sonucu hesaplar.
+    </p>
+
+    <h3>Formül</h3>
+    <p>
+      Ağırlıklı Ortalama = Σ(Notᵢ × Krediᵢ) / Σ(Krediᵢ). GPA Dönüşümü: 90-100 → 4.0, 85-89 → 3.5, 80-84 → 3.0, 75-79 → 2.5, 70-74 → 2.0, 65-69 → 1.5, 60-64 → 1.0, 0-59 → 0.0.
+    </p>
+
+    <h3>Dikkat Edilmesi Gerekenler</h3>
+    <p>
+      Bu araç maksimum 5 ders için hesaplama yapar. Notlar 0 ile 100 arasında olmalıdır. Kredi değerleri 1-10 arasında tam sayı olarak girilmelidir. GPA dönüşümü yaklaşık bir değer olup kurumdan kuruma farklılık gösterebilir; resmi başvurularda üniversitenizin resmi not dönüşüm tablosunu kullanın. Bütünleme notu veya mazeret sınavı gibi özel durumlar için ilgili kurumun yönetmeliğine başvurmanız gerekmektedir.
+    </p>
+
+    <h3>Sıkça Sorulan Sorular</h3>
+    {faq.map((item) => (
+      <div class="faq-item">
+        <h4>{item.question}</h4>
+        <p>{item.answer}</p>
+      </div>
+    ))}
+  </section>
+</CalcLayout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+    const resultArea = document.getElementById('calc-result');
+
+    function debounce(fn, d = 150) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), d); }; }
+    function formatNumber(n, d = 2) {
+      return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 0, maximumFractionDigits: d }).format(n);
+    }
+
+    const dc = debounce(calculate);
+    inputs.forEach(i => { i.addEventListener('input', dc); i.addEventListener('change', dc); });
+
+    function toGPA(avg) {
+      if (avg >= 90) return 4.0;
+      if (avg >= 85) return 3.5;
+      if (avg >= 80) return 3.0;
+      if (avg >= 75) return 2.5;
+      if (avg >= 70) return 2.0;
+      if (avg >= 65) return 1.5;
+      if (avg >= 60) return 1.0;
+      return 0.0;
+    }
+
+    function calculate() {
+      let totalWeighted = 0;
+      let totalKredi = 0;
+      let dersCount = 0;
+
+      for (let i = 1; i <= 5; i++) {
+        const notuEl = document.getElementById(`notu${i}`);
+        const krediEl = document.getElementById(`kredi${i}`);
+        const not = parseFloat(notuEl.value);
+        const kredi = parseFloat(krediEl.value);
+
+        if (!isNaN(not) && !isNaN(kredi) && kredi > 0) {
+          totalWeighted += not * kredi;
+          totalKredi += kredi;
+          dersCount++;
+        }
+      }
+
+      if (dersCount === 0 || totalKredi === 0) {
+        if (resultArea) resultArea.classList.add('hidden');
+        return;
+      }
+
+      const ortalama = totalWeighted / totalKredi;
+      const gpa = toGPA(ortalama);
+
+      document.getElementById('sonuc-ortalama').textContent = formatNumber(ortalama);
+      document.getElementById('detail-ortalama').textContent = `${formatNumber(ortalama)} / 100`;
+      document.getElementById('detail-gpa').textContent = formatNumber(gpa);
+      document.getElementById('detail-kredi').textContent = formatNumber(totalKredi, 0);
+      document.getElementById('detail-ders').textContent = `${dersCount} ders`;
+
+      if (resultArea) resultArea.classList.remove('hidden');
+      updateURL();
+    }
+
+    function updateURL() {
+      const p = new URLSearchParams();
+      inputs.forEach(i => { if (i.value && i.id) p.set(i.id, i.value); });
+      history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
+    }
+
+    function loadFromURL() {
+      const p = new URLSearchParams(window.location.search);
+      let h = false;
+      inputs.forEach(i => { if (i.id && p.has(i.id)) { i.value = p.get(i.id); h = true; } });
+      if (h) calculate();
+    }
+
+    loadFromURL();
+  });
+</script>

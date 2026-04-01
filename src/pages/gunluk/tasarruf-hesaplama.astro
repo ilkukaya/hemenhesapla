@@ -1,0 +1,207 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Tasarruf hedefime ne zaman ulaşırım?",
+    answer: "Hedefe ulaşma süresi, aylık birikim miktarınıza ve faiz oranına bağlıdır. Faizsiz hesaplamada süre = Hedef Tutar ÷ Aylık Birikim formülüyle bulunur. Faiz varsa bileşik faiz etkisiyle para daha hızlı büyür. Örneğin 100.000 TL hedef için aylık 2.000 TL biriktirirseniz faizsiz senaryoda 50 ay (yaklaşık 4 yıl 2 ay) sürer; ancak yıllık %30 faizle bu süre önemli ölçüde kısalır."
+  },
+  {
+    question: "Bileşik faiz neden önemlidir?",
+    answer: "Bileşik faiz, kazandığınız faizin de bir sonraki dönemde faiz getirmesi anlamına gelir. Bu etki zamanla kar topu gibi büyür. Bir örnek: 50.000 TL'yi yıllık %40 faizle tutarsanız 3 yıl sonra yaklaşık 137.200 TL olur. Bileşik faizi erken ve düzenli olarak kullanmak, uzun vadede servet biriktirmenin en güçlü araçlarından biridir."
+  },
+  {
+    question: "Tasarruf için hangi yatırım araçları uygundur?",
+    answer: "Türkiye'de popüler tasarruf araçları arasında vadeli mevduat, devlet tahvili ve hazine bonosu, altın ve döviz hesapları, bireysel emeklilik sistemi (BES) ve yatırım fonları yer almaktadır. Her birinin risk, getiri ve vergi profili farklıdır. Düşük riskli ve likit tutmak isteyenler için vadeli mevduat ve devlet tahvilleri; uzun vadeli büyüme hedefleyenler için BES veya yatırım fonları daha uygun olabilir."
+  }
+];
+
+const meta = {
+  title: "Tasarruf ve Birikim Hesaplama",
+  description: "Aylık birikim miktarı ve faiz oranıyla tasarruf hedefinize ne zaman ulaşacağınızı hesaplayın. Bileşik faiz etkisini ve toplam faiz getirisini görün.",
+  category: "gunluk",
+  slug: "tasarruf-hesaplama",
+  keywords: ["tasarruf hesaplama", "birikim hesaplama", "bileşik faiz hesaplama", "hedefe ulaşma süresi", "aylık tasarruf", "para biriktirme"],
+  dateModified: "2026-04-01",
+  relatedCalcs: ["emeklilik-hesaplama"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form">
+    <CalcInput
+      id="hedefTutar"
+      label="Hedef Tutar"
+      type="number"
+      prefix="₺"
+      placeholder="100000"
+      min={1}
+      step={1000}
+    />
+    <CalcInput
+      id="aylikBirikim"
+      label="Aylık Birikim"
+      type="number"
+      prefix="₺"
+      placeholder="2000"
+      min={1}
+      step={100}
+    />
+    <CalcInput
+      id="faizOrani"
+      label="Yıllık Faiz Oranı"
+      type="number"
+      suffix="%"
+      placeholder="0"
+      min={0}
+      max={500}
+      step={0.01}
+      value={0}
+      helpText="Faizsiz birikim için 0 girin"
+    />
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">Hedefe Ulaşma Süresi</p>
+      <p class="calc-result-value" id="sure-sonuc">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Toplam Yatırılan</span>
+        <span class="calc-detail-value" id="d-yatirilan">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Faiz Getirisi</span>
+        <span class="calc-detail-value" id="d-faiz-getiri">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Toplam Birikim</span>
+        <span class="calc-detail-value" id="d-toplam">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const resultArea = document.getElementById('calc-result');
+
+      function debounce(fn, delay = 150) {
+        let t;
+        return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), delay); };
+      }
+
+      function formatTL(n) {
+        return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+      }
+
+      function formatNumber(n, d = 0) {
+        return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: d, maximumFractionDigits: d }).format(n);
+      }
+
+      const dc = debounce(calculate);
+      inputs.forEach(i => { i.addEventListener('input', dc); i.addEventListener('change', dc); });
+
+      function calculate() {
+        const hedef = parseFloat(document.getElementById('hedefTutar').value);
+        const aylik = parseFloat(document.getElementById('aylikBirikim').value);
+        const yillikFaiz = parseFloat(document.getElementById('faizOrani').value) || 0;
+
+        if (isNaN(hedef) || isNaN(aylik) || hedef <= 0 || aylik <= 0) {
+          if (resultArea) resultArea.classList.add('hidden');
+          return;
+        }
+
+        let ay = 0;
+        let toplamBirikim = 0;
+        const aylikFaiz = yillikFaiz / 100 / 12;
+
+        if (yillikFaiz <= 0) {
+          ay = Math.ceil(hedef / aylik);
+          toplamBirikim = hedef;
+        } else {
+          // Compound monthly iteration
+          const MAX_AY = 600;
+          while (toplamBirikim < hedef && ay < MAX_AY) {
+            toplamBirikim = toplamBirikim * (1 + aylikFaiz) + aylik;
+            ay++;
+          }
+        }
+
+        const toplamYatirilan = aylik * ay;
+        const faizGetirisi = toplamBirikim - toplamYatirilan;
+
+        const yil = Math.floor(ay / 12);
+        const kalanAy = ay % 12;
+        let sureMetin = '';
+        if (yil > 0 && kalanAy > 0) {
+          sureMetin = yil + ' yıl ' + kalanAy + ' ay';
+        } else if (yil > 0) {
+          sureMetin = yil + ' yıl';
+        } else {
+          sureMetin = kalanAy + ' ay';
+        }
+
+        document.getElementById('sure-sonuc').textContent = sureMetin;
+        document.getElementById('d-yatirilan').textContent = formatTL(toplamYatirilan);
+        document.getElementById('d-faiz-getiri').textContent = formatTL(Math.max(0, faizGetirisi));
+        document.getElementById('d-toplam').textContent = formatTL(toplamBirikim);
+
+        if (resultArea) resultArea.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const p = new URLSearchParams();
+        inputs.forEach(i => { if (i.value && i.id) p.set(i.id, i.value); });
+        history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
+      }
+
+      function loadFromURL() {
+        const p = new URLSearchParams(window.location.search);
+        let h = false;
+        inputs.forEach(i => { if (i.id && p.has(i.id)) { i.value = p.get(i.id); h = true; } });
+        if (h) calculate();
+      }
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>Tasarruf Hesaplama Nasıl Yapılır?</h2>
+    <p>
+      Finansal özgürlüğe giden yolun temel taşı, düzenli ve bilinçli bir birikim alışkanlığı oluşturmaktır. İster ev almak, ister emeklilik fonu kurmak, ister tatil planlamak olsun; bir tasarruf hedefi belirleyip bu hedefe ulaşmak için ne kadar süre gerektiğini bilmek motivasyonu büyük ölçüde artırır. Bu hesap makinesi, hedefinize ne kadar sürede ulaşacağınızı ve faiz getirisi varsa ne kadar kazanacağınızı gösterir.
+    </p>
+    <p>
+      Aylık sabit bir miktar birikim yapıyorsanız ve paranızı faiz getiren bir hesapta tutuyorsanız bileşik faiz etkisinden yararlanırsınız. Bileşik faiz, kazandığınız faizin de bir sonraki dönemde faiz getirmesidir; bu etki özellikle uzun vadeli birikimlerde son derece güçlü sonuçlar doğurur. Faiz oranı ne kadar yüksek ve süre ne kadar uzunsa bileşik faizin katkısı o kadar belirginleşir.
+    </p>
+
+    <h3>Formül</h3>
+    <p>
+      <strong>Faizsiz:</strong> Ay Sayısı = ⌈Hedef Tutar ÷ Aylık Birikim⌉
+    </p>
+    <p>
+      <strong>Faizli (Aylık Bileşik):</strong> Her ay toplam birikim önce aylık faizle büyütülür, ardından aylık birikim eklenir. Bu işlem hedef tutara ulaşılana kadar tekrarlanır.<br />
+      Aylık Faiz = Yıllık Faiz ÷ 12<br />
+      Yeni Birikim = Önceki Birikim × (1 + Aylık Faiz) + Aylık Katkı
+    </p>
+
+    <h3>Dikkat Edilmesi Gerekenler</h3>
+    <p>
+      Bu hesaplama sabit aylık birikim ve sabit faiz oranı varsayımına dayanmaktadır. Enflasyon, vergiler ve yatırım ürününe bağlı değişken faiz oranları gerçek sonucu etkileyebilir. Türkiye gibi yüksek enflasyon ortamında nominal faiz oranı yüksek görünse de reel getiriyi hesaplamak için enflasyon oranını çıkarmak gerekir. Uzun vadeli tasarruf kararları için bir finansal danışmandan profesyonel destek almanızı öneririz.
+    </p>
+
+    <h3>Sıkça Sorulan Sorular</h3>
+    {faq.map(item => (
+      <details>
+        <summary><strong>{item.question}</strong></summary>
+        <p>{item.answer}</p>
+      </details>
+    ))}
+  </section>
+</CalcLayout>

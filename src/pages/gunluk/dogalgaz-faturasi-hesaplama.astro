@@ -1,0 +1,174 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Doğalgaz faturası nasıl hesaplanır?",
+    answer: "Doğalgaz faturası; gaz bedeli, sistem kullanım bedeli, ÖTV (Özel Tüketim Vergisi) ve KDV bileşenlerinden oluşur. Gaz bedeli, tüketim miktarının (m³) birim fiyatla çarpımıyla bulunur. Sistem kullanım bedeli ayrıca hesaplanır. ÖTV, gaz ve sistem bedellerinin %10'u olarak uygulanır. KDV ise tüm bu bileşenler üzerinden %20 olarak hesaplanır."
+  },
+  {
+    question: "Türkiye'de doğalgaz birim fiyatı ne kadardır?",
+    answer: "Türkiye'de doğalgaz fiyatları EPDK tarafından düzenlenmekte ve BOTAŞ tarafından güncellenmektedir. 2026 itibarıyla mesken aboneleri için doğalgaz birim fiyatı yaklaşık 8,74 TL/m³ düzeyindedir. Bu fiyatlar şehre, dağıtım şirketine ve abone kademesine göre farklılık gösterebilir. Kış aylarında tüketim arttığında kademe fiyatları da değişebilmektedir."
+  },
+  {
+    question: "Doğalgaz tüketimini azaltmak için ne yapılmalıdır?",
+    answer: "Doğalgaz tasarrufu için; ısı yalıtımı iyileştirmesi, pencerelere çift cam uygulaması, termostat optimizasyonu (gece ve gündüz farklı sıcaklık ayarları), düzenli kazan bakımı ve temizliği, ev içi sıcaklığı 20–21°C'de tutma ve kısa duş süreleri başlıca yöntemler arasındadır. Iyi yalıtılmış bir evde tüketim %30–50 oranında azaltılabilir."
+  }
+];
+
+const meta = {
+  title: "Doğalgaz Faturası Hesaplama",
+  description: "Aylık doğalgaz tüketiminize göre fatura tutarınızı hesaplayın. Gaz bedeli, sistem kullanım bedeli, ÖTV ve KDV dahil toplam doğalgaz faturanızı öğrenin.",
+  category: "gunluk",
+  slug: "dogalgaz-faturasi-hesaplama",
+  keywords: ["doğalgaz faturası hesaplama", "doğalgaz tüketim hesaplama", "m3 doğalgaz fiyatı", "doğalgaz birim fiyatı", "BOTAŞ tarife", "gaz faturası"],
+  dateModified: "2026-04-01",
+  relatedCalcs: ["elektrik-faturasi-hesaplama", "tasarruf-hesaplama"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form">
+    <CalcInput
+      id="tuketim"
+      label="Aylık Tüketim"
+      type="number"
+      suffix="m³"
+      placeholder="50"
+      min={0}
+      step={1}
+    />
+    <CalcInput
+      id="birimFiyat"
+      label="Birim Fiyat"
+      type="number"
+      prefix="₺"
+      suffix="/m³"
+      placeholder="8.74"
+      min={0}
+      step={0.01}
+      value={8.74}
+      helpText="2026 mesken tarifesi yaklaşık değeri"
+    />
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">Tahmini Toplam Fatura</p>
+      <p class="calc-result-value" id="toplam">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Gaz Bedeli</span>
+        <span class="calc-detail-value" id="d-gaz">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Sistem Kullanım Bedeli</span>
+        <span class="calc-detail-value" id="d-sistem">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">ÖTV (%10)</span>
+        <span class="calc-detail-value" id="d-otv">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">KDV (%20)</span>
+        <span class="calc-detail-value" id="d-kdv">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const resultArea = document.getElementById('calc-result');
+
+      function debounce(fn, delay = 150) {
+        let t;
+        return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), delay); };
+      }
+
+      function formatTL(n) {
+        return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+      }
+
+      const dc = debounce(calculate);
+      inputs.forEach(i => { i.addEventListener('input', dc); i.addEventListener('change', dc); });
+
+      function calculate() {
+        const tuketim = parseFloat(document.getElementById('tuketim').value);
+        const birimFiyat = parseFloat(document.getElementById('birimFiyat').value);
+
+        if (isNaN(tuketim) || isNaN(birimFiyat) || tuketim < 0 || birimFiyat <= 0) {
+          if (resultArea) resultArea.classList.add('hidden');
+          return;
+        }
+
+        const gaz = tuketim * birimFiyat;
+        const sistem = tuketim * 0.50;
+        const otv = (gaz + sistem) * 0.10;
+        const araTop = gaz + sistem + otv;
+        const kdv = araTop * 0.20;
+        const toplam = araTop + kdv;
+
+        document.getElementById('toplam').textContent = formatTL(toplam);
+        document.getElementById('d-gaz').textContent = formatTL(gaz);
+        document.getElementById('d-sistem').textContent = formatTL(sistem);
+        document.getElementById('d-otv').textContent = formatTL(otv);
+        document.getElementById('d-kdv').textContent = formatTL(kdv);
+
+        if (resultArea) resultArea.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const p = new URLSearchParams();
+        inputs.forEach(i => { if (i.value && i.id) p.set(i.id, i.value); });
+        history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
+      }
+
+      function loadFromURL() {
+        const p = new URLSearchParams(window.location.search);
+        let h = false;
+        inputs.forEach(i => { if (i.id && p.has(i.id)) { i.value = p.get(i.id); h = true; } });
+        if (h) calculate();
+      }
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>Doğalgaz Faturası Nasıl Hesaplanır?</h2>
+    <p>
+      Doğalgaz, Türkiye'de milyonlarca hanenin ısınma, sıcak su ve yemek pişirme ihtiyacını karşılayan temel enerji kaynaklarından biridir. Özellikle kış aylarında doğalgaz faturası hanehalkı bütçesinde önemli bir yer tutar. Fatura tutarını önceden tahmin etmek, bütçe planlaması ve tasarruf stratejileri geliştirmek açısından büyük fayda sağlar.
+    </p>
+    <p>
+      Doğalgaz faturası birkaç farklı bileşenden oluşmaktadır. Bu bileşenleri anlamak, faturanızda hangi kalemin ne kadar yer tuttuğunu görmenizi ve hangi önlemlerle tasarruf sağlayabileceğinizi belirlemenizi kolaylaştırır. Türkiye'de doğalgaz tarifeleri EPDK tarafından düzenlenmekte, dağıtım şirketleri ise bölgesel farklılıklar gösterebilmektedir.
+    </p>
+
+    <h3>Formül</h3>
+    <ul>
+      <li><strong>Gaz Bedeli:</strong> Tüketim (m³) × Birim Fiyat (₺/m³)</li>
+      <li><strong>Sistem Kullanım Bedeli:</strong> Tüketim (m³) × 0,50 ₺/m³ (yaklaşık)</li>
+      <li><strong>ÖTV:</strong> (Gaz Bedeli + Sistem Kullanım Bedeli) × %10</li>
+      <li><strong>KDV:</strong> (Gaz + Sistem + ÖTV) × %20</li>
+      <li><strong>Toplam:</strong> Gaz + Sistem + ÖTV + KDV</li>
+    </ul>
+
+    <h3>Dikkat Edilmesi Gerekenler</h3>
+    <p>
+      Bu hesaplama tahmini sonuçlar vermektedir. Gerçek fatura tutarınız; abone sınıfı, sayaç tipi, tüketim kademesi, sabit abonelik bedeli ve bölgesel tarife farklılıklarına göre değişebilir. Kış aylarında yüksek kademe tüketimi söz konusu olduğunda bazı dağıtım şirketleri kademeli tarife uygulamaktadır. Güncel ve kesin tarife bilgilerine dağıtım şirketinizin web sitesinden veya EPDK'dan ulaşabilirsiniz. Sistem kullanım bedeli ₺/m³ olarak belirlenen sabit bir kalemdir ve buradaki 0,50 TL değeri yaklaşık bir tahmindir.
+    </p>
+
+    <h3>Sıkça Sorulan Sorular</h3>
+    {faq.map(item => (
+      <details>
+        <summary><strong>{item.question}</strong></summary>
+        <p>{item.answer}</p>
+      </details>
+    ))}
+  </section>
+</CalcLayout>

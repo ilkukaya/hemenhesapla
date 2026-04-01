@@ -1,0 +1,175 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Askerlik terhis tarihi nasıl hesaplanır?",
+    answer: "Türkiye'de zorunlu askerlik süresi erbaş ve erler için 12 aydır. Bedelli askerlik seçeneğiyle 21 gün fiili askerlik yapılabilmektedir. Terhis tarihi, askere alınma tarihine hizmet süresi eklenerek hesaplanır. Bu hesap makinesi ise terhis tarihine kalan gün, hafta ve ay sayısını hesaplamaktadır."
+  },
+  {
+    question: "Türkiye'de askerlik süresi ne kadardır?",
+    answer: "Türkiye'de zorunlu askerlik hizmet süresi 2019 yılından itibaren 12 ay olarak uygulanmaktadır (erbaş ve erler için). Daha önce bu süre 15 aydı. Bedelli askerlik seçeneğinde ise 21 gün fiili hizmet yapılmakta, belirli bir ücret ödenmektedir. Subay ve astsubaylar için hizmet süreleri farklı kurallara tabidir."
+  },
+  {
+    question: "Askerlik tecili nasıl alınır?",
+    answer: "Askerlik tecili (erteleme) çeşitli nedenlerle talep edilebilir: yükseköğrenim, lisansüstü eğitim, yurt dışı eğitim, sağlık durumu ve bazı mesleki sebepler bunların başında gelir. Tecil başvuruları Milli Savunma Bakanlığı'na bağlı askerlik şubeleri aracılığıyla yapılmaktadır. Tecil süresi dolduğunda askerlik görevi yerine getirilir. E-Devlet üzerinden askerlik erteleme işlemleri yapılabilmektedir."
+  }
+];
+
+const meta = {
+  title: "Askerlik Terhis Tarihi Hesaplama",
+  description: "Terhis tarihinize göre askerliğe kalan gün, hafta ve ay sayısını hesaplayın. Askerlik geri sayım hesaplayıcısı.",
+  category: "gunluk",
+  slug: "askerlik-hesaplama",
+  keywords: ["askerlik hesaplama", "terhis tarihi hesaplama", "askerliğe kalan gün", "askerlik geri sayım", "terhis kaç gün kaldı"],
+  dateModified: "2026-04-01",
+  relatedCalcs: ["gun-hesaplama", "emeklilik-hesaplama"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form">
+    <CalcInput
+      id="terhisTarihi"
+      label="Terhis Tarihi"
+      type="date"
+      helpText="Askerlik bitiş tarihinizi girin"
+    />
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">Terhise Kalan Gün</p>
+      <p class="calc-result-value" id="kalan-gun">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Kalan Hafta</span>
+        <span class="calc-detail-value" id="d-hafta">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Kalan Ay (yaklaşık)</span>
+        <span class="calc-detail-value" id="d-ay">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Terhis Tarihi</span>
+        <span class="calc-detail-value" id="d-tarih">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const resultArea = document.getElementById('calc-result');
+
+      function debounce(fn, delay = 150) {
+        let t;
+        return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), delay); };
+      }
+
+      function formatNumber(n, d = 0) {
+        return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: d, maximumFractionDigits: d }).format(n);
+      }
+
+      function formatDate(date) {
+        return new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' }).format(date);
+      }
+
+      const dc = debounce(calculate);
+      inputs.forEach(i => { i.addEventListener('input', dc); i.addEventListener('change', dc); });
+
+      function calculate() {
+        const terhisVal = document.getElementById('terhisTarihi').value;
+        if (!terhisVal) {
+          if (resultArea) resultArea.classList.add('hidden');
+          return;
+        }
+
+        const terhis = new Date(terhisVal);
+        if (isNaN(terhis.getTime())) {
+          if (resultArea) resultArea.classList.add('hidden');
+          return;
+        }
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        terhis.setHours(0, 0, 0, 0);
+
+        const diffMs = terhis.getTime() - today.getTime();
+        const diffGun = Math.ceil(diffMs / (24 * 60 * 60 * 1000));
+
+        let gunMetin = '';
+        if (diffGun < 0) {
+          gunMetin = 'Terhis olundu!';
+        } else if (diffGun === 0) {
+          gunMetin = 'Bugün terhis!';
+        } else {
+          gunMetin = formatNumber(diffGun) + ' gün';
+        }
+
+        const kalanHafta = diffGun > 0 ? Math.floor(diffGun / 7) : 0;
+        const kalanAy = diffGun > 0 ? (diffGun / 30.44).toFixed(1) : 0;
+
+        document.getElementById('kalan-gun').textContent = gunMetin;
+        document.getElementById('d-hafta').textContent = diffGun > 0 ? formatNumber(kalanHafta) + ' hafta' : '—';
+        document.getElementById('d-ay').textContent = diffGun > 0 ? new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(kalanAy) + ' ay' : '—';
+        document.getElementById('d-tarih').textContent = formatDate(terhis);
+
+        if (resultArea) resultArea.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const p = new URLSearchParams();
+        inputs.forEach(i => { if (i.value && i.id) p.set(i.id, i.value); });
+        history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
+      }
+
+      function loadFromURL() {
+        const p = new URLSearchParams(window.location.search);
+        let h = false;
+        inputs.forEach(i => { if (i.id && p.has(i.id)) { i.value = p.get(i.id); h = true; } });
+        if (h) calculate();
+      }
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>Askerlik Terhis Tarihi Hesaplama Nasıl Yapılır?</h2>
+    <p>
+      Türkiye'de zorunlu askerlik hizmeti, vatandaşlık görevlerinin en önemlilerinden biri olarak kabul edilmektedir. Askerliğe başlayan ya da yaklaşan bireyler için terhis tarihine kalan süreyi bilmek; hem kişisel planlama hem de ailelerin takibi açısından büyük önem taşır. Bu askerlik hesap makinesi, terhis tarihinizi girerek kalan gün, hafta ve ay sayısını anında hesaplamanıza olanak tanır.
+    </p>
+    <p>
+      Askerlikte geçen her gün sayılır; özellikle askerlik süresinin sonlarına doğru geri sayım manevi açıdan büyük bir önem kazanır. Hem askerdekiler hem de sevdiklerini bekleyenler için bu araç, o büyülü terhis gününe ne kadar kaldığını net olarak görmeyi sağlar.
+    </p>
+
+    <h3>Hesaplama Formülü</h3>
+    <p>
+      <strong>Kalan Gün = Terhis Tarihi − Bugünün Tarihi</strong><br />
+      <strong>Kalan Hafta = Kalan Gün ÷ 7</strong><br />
+      <strong>Kalan Ay = Kalan Gün ÷ 30,44 (ortalama ay uzunluğu)</strong>
+    </p>
+    <p>
+      Hesaplama bugünün tarihiyle terhis tarihi arasındaki farka dayanmaktadır. Hafta sayısı tam olarak gösterilirken ay sayısı ondalıklı bir yaklaşım olarak verilmektedir.
+    </p>
+
+    <h3>Dikkat Edilmesi Gerekenler</h3>
+    <p>
+      Terhis tarihi izin günlerine, tatillere ve olası görev değişikliklerine bağlı olarak öne ya da arkaya alınabilir. Bu hesaplama yalnızca matematiksel bir geri sayım sunmakta olup resmi terhis bilgisi için bağlı olunan askeri birimin ilgili personeline veya Milli Savunma Bakanlığı'na başvurulması gerekmektedir. Bedelli askerlik yaptıysanız süre 21 gün olduğundan hesaplama oldukça kısa bir geri sayım gösterecektir.
+    </p>
+
+    <h3>Sıkça Sorulan Sorular</h3>
+    {faq.map(item => (
+      <details>
+        <summary><strong>{item.question}</strong></summary>
+        <p>{item.answer}</p>
+      </details>
+    ))}
+  </section>
+</CalcLayout>

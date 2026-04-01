@@ -1,0 +1,193 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Elektrik faturası nasıl hesaplanır?",
+    answer: "Elektrik faturası; enerji bedeli, dağıtım bedeli, TRT payı, belediye tüketim vergisi ve KDV bileşenlerinden oluşur. Enerji bedeli, tüketilen kWh miktarıyla birim fiyatın çarpımıyla bulunur. Dağıtım bedeli ayrıca hesaplanır. Ardından TRT payı (%2) ve belediye vergisi (%5) enerji bedeli üzerinden, KDV (%20) ise tüm bu bileşenler üzerinden hesaplanır."
+  },
+  {
+    question: "Elektrik tüketimimi nasıl azaltabilirim?",
+    answer: "Enerji tasarrufu için LED ampul kullanımı, A sınıfı enerji verimli beyaz eşya tercihi, bekleme modundaki cihazların fişini çekme, klima setpointini yaz aylarında 26°C, kış aylarında 22°C'de tutma ve doğal aydınlatmadan yararlanma başlıca yöntemler arasındadır. Ayrıca bulaşık makinesi ve çamaşır makinesini dolduğunda çalıştırmak ve düşük sıcaklıkta yıkama programı seçmek önemli tasarruf sağlar."
+  },
+  {
+    question: "Türkiye'de mesken elektrik birim fiyatı ne kadardır?",
+    answer: "Türkiye'de EPDK tarafından belirlenen elektrik tarifeleri düzenli olarak güncellenmektedir. 2026 itibarıyla mesken aboneleri için aktif enerji birim fiyatı yaklaşık 4,16 TL/kWh, dağıtım bedeli ise yaklaşık 1,02 TL/kWh düzeyindedir. Bu değerler abone grubuna, tüketim kademesine ve bölgeye göre farklılık gösterebilir. Güncel tarifeleri EPDK'nın resmi web sitesinden veya dağıtım şirketinizden öğrenebilirsiniz."
+  }
+];
+
+const meta = {
+  title: "Elektrik Faturası Hesaplama",
+  description: "Aylık elektrik tüketiminize göre fatura tutarınızı hesaplayın. Enerji bedeli, dağıtım bedeli, TRT payı, belediye vergisi ve KDV dahil toplam elektrik faturanızı öğrenin.",
+  category: "gunluk",
+  slug: "elektrik-faturasi-hesaplama",
+  keywords: ["elektrik faturası hesaplama", "elektrik tüketim hesaplama", "kWh hesaplama", "elektrik birim fiyatı", "enerji faturası", "EPDK tarife"],
+  dateModified: "2026-04-01",
+  relatedCalcs: ["dogalgaz-faturasi-hesaplama", "tasarruf-hesaplama"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form">
+    <CalcInput
+      id="tuketim"
+      label="Aylık Tüketim"
+      type="number"
+      suffix="kWh"
+      placeholder="200"
+      min={0}
+      step={1}
+    />
+    <CalcInput
+      id="birimFiyat"
+      label="Aktif Enerji Birim Fiyatı"
+      type="number"
+      prefix="₺"
+      suffix="/kWh"
+      placeholder="4.16"
+      min={0}
+      step={0.01}
+      value={4.16}
+      helpText="2026 mesken tarifesi yaklaşık değeri"
+    />
+    <CalcInput
+      id="dagitimBedeli"
+      label="Dağıtım Bedeli"
+      type="number"
+      prefix="₺"
+      suffix="/kWh"
+      placeholder="1.02"
+      min={0}
+      step={0.01}
+      value={1.02}
+    />
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">Tahmini Toplam Fatura</p>
+      <p class="calc-result-value" id="toplam">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Enerji Bedeli</span>
+        <span class="calc-detail-value" id="d-enerji">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Dağıtım Bedeli</span>
+        <span class="calc-detail-value" id="d-dagitim">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">TRT Payı (%2)</span>
+        <span class="calc-detail-value" id="d-trt">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Belediye Tüketim Vergisi (%5)</span>
+        <span class="calc-detail-value" id="d-belediye">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">KDV (%20)</span>
+        <span class="calc-detail-value" id="d-kdv">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const resultArea = document.getElementById('calc-result');
+
+      function debounce(fn, delay = 150) {
+        let t;
+        return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), delay); };
+      }
+
+      function formatTL(n) {
+        return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+      }
+
+      const dc = debounce(calculate);
+      inputs.forEach(i => { i.addEventListener('input', dc); i.addEventListener('change', dc); });
+
+      function calculate() {
+        const tuketim = parseFloat(document.getElementById('tuketim').value);
+        const birimFiyat = parseFloat(document.getElementById('birimFiyat').value);
+        const dagitimBedeli = parseFloat(document.getElementById('dagitimBedeli').value);
+
+        if (isNaN(tuketim) || isNaN(birimFiyat) || isNaN(dagitimBedeli) || tuketim < 0) {
+          if (resultArea) resultArea.classList.add('hidden');
+          return;
+        }
+
+        const enerji = tuketim * birimFiyat;
+        const dagitim = tuketim * dagitimBedeli;
+        const trt = enerji * 0.02;
+        const belediye = enerji * 0.05;
+        const araTop = enerji + dagitim + trt + belediye;
+        const kdv = araTop * 0.20;
+        const toplam = araTop + kdv;
+
+        document.getElementById('toplam').textContent = formatTL(toplam);
+        document.getElementById('d-enerji').textContent = formatTL(enerji);
+        document.getElementById('d-dagitim').textContent = formatTL(dagitim);
+        document.getElementById('d-trt').textContent = formatTL(trt);
+        document.getElementById('d-belediye').textContent = formatTL(belediye);
+        document.getElementById('d-kdv').textContent = formatTL(kdv);
+
+        if (resultArea) resultArea.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const p = new URLSearchParams();
+        inputs.forEach(i => { if (i.value && i.id) p.set(i.id, i.value); });
+        history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
+      }
+
+      function loadFromURL() {
+        const p = new URLSearchParams(window.location.search);
+        let h = false;
+        inputs.forEach(i => { if (i.id && p.has(i.id)) { i.value = p.get(i.id); h = true; } });
+        if (h) calculate();
+      }
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>Elektrik Faturası Nasıl Hesaplanır?</h2>
+    <p>
+      Elektrik faturası Türkiye'de mesken aboneleri için birkaç farklı bileşenden oluşmaktadır. Bu bileşenleri tek tek anlamak hem bütçe planlaması hem de tasarruf fırsatlarını değerlendirmek açısından büyük önem taşır. Elektrik tüketim maliyetlerinin son yıllarda sürekli artması, enerji faturasını hanehalkı bütçesinin en önemli kalemlerinden biri haline getirmiştir.
+    </p>
+    <p>
+      Elektrik faturanızın ana bileşenleri şunlardır: aktif enerji bedeli, dağıtım bedeli, TRT (Türkiye Radyo ve Televizyon Kurumu) payı, belediye tüketim vergisi ve KDV. Bu hesap makinesi, tüketim miktarınızı ve güncel birim fiyatları girerek tahmini fatura tutarınızı kolayca hesaplamanıza olanak tanır.
+    </p>
+
+    <h3>Formül</h3>
+    <ul>
+      <li><strong>Enerji Bedeli:</strong> Tüketim (kWh) × Birim Fiyat (₺/kWh)</li>
+      <li><strong>Dağıtım Bedeli:</strong> Tüketim (kWh) × Dağıtım Birim Fiyatı (₺/kWh)</li>
+      <li><strong>TRT Payı:</strong> Enerji Bedeli × %2</li>
+      <li><strong>Belediye Tüketim Vergisi:</strong> Enerji Bedeli × %5</li>
+      <li><strong>KDV:</strong> (Enerji + Dağıtım + TRT + Belediye) × %20</li>
+      <li><strong>Toplam:</strong> Tüm bileşenlerin toplamı</li>
+    </ul>
+
+    <h3>Dikkat Edilmesi Gerekenler</h3>
+    <p>
+      Hesaplama sonuçları tahmini nitelik taşımaktadır. Gerçek fatura tutarınız; abone grubunuza (tek zamanlı / çok zamanlı), tüketim kademelerine, reaktif güç, güç aşım bedeli ve sayaç okuma dönemine göre farklılık gösterebilir. Ayrıca bazı aboneler için geçerli olan enerji tasarruf desteği ve sosyal tarife uygulamaları fatura tutarını değiştirebilir. Güncel tarife bilgilerine EPDK'nın (Enerji Piyasası Düzenleme Kurumu) resmi web sitesinden veya dağıtım şirketinizin müşteri hizmetlerinden ulaşabilirsiniz.
+    </p>
+
+    <h3>Sıkça Sorulan Sorular</h3>
+    {faq.map(item => (
+      <details>
+        <summary><strong>{item.question}</strong></summary>
+        <p>{item.answer}</p>
+      </details>
+    ))}
+  </section>
+</CalcLayout>

@@ -1,0 +1,178 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcSelect from '../../components/calculator/CalcSelect.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Restoranda ne kadar bahşiş bırakılmalıdır?",
+    answer: "Türkiye'de restoran bahşişi için genel kural hesap tutarının %10–15'idir. Hizmet kalitesinden çok memnun kaldıysanız %20'ye kadar çıkabilirsiniz. Bazı restoranlarda servis ücreti faturaya dahil edilmiş olabilir; bu durumu kontrol etmek önemlidir. Uluslararası standartlarda %15–20 aralığı kabul görmektedir."
+  },
+  {
+    question: "Bahşiş hesap tutarı üzerinden mi hesaplanır?",
+    answer: "Bahşiş geleneksel olarak vergi ve servis bedeli öncesi hesap tutarı üzerinden hesaplanır; ancak pratikte çoğu kişi toplam fatura tutarını baz alır. Bu hesap makinesi, girdiğiniz hesap tutarı üzerinden hesaplama yapmaktadır. Grup yemeklerinde kişi başı payı görmek için kişi sayısını da girebilirsiniz."
+  },
+  {
+    question: "Bahşiş vermek zorunlu mudur?",
+    answer: "Türkiye'de yasal bir zorunluluk olmamakla birlikte bahşiş, hizmet sektörü çalışanlarının gelirinin önemli bir parçasını oluşturmaktadır. Özellikle restoran, kafe, kuaför, otel ve taksi hizmetlerinde bahşiş kültürü yaygındır. Hizmet servis bedeliyle zaten faturaya yansıtılmamışsa iyi hizmet karşılığında bahşiş bırakmak hem teşvik edici hem de takdir göstergesidir."
+  }
+];
+
+const meta = {
+  title: "Bahşiş Hesaplama",
+  description: "Hesap tutarına göre bahşiş miktarını hesaplayın. %5'ten %25'e farklı bahşiş oranlarını ve kişi başına düşen tutarı anında görün.",
+  category: "gunluk",
+  slug: "bahsis-hesaplama",
+  keywords: ["bahşiş hesaplama", "restoran bahşiş", "tip hesaplama", "kişi başı hesap", "bahşiş oranı", "servis ücreti"],
+  dateModified: "2026-04-01",
+  relatedCalcs: ["tasarruf-hesaplama"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form">
+    <CalcInput
+      id="hesapTutari"
+      label="Hesap Tutarı"
+      type="number"
+      prefix="₺"
+      placeholder="250"
+      min={1}
+      step={1}
+    />
+    <CalcSelect
+      id="bahsisOrani"
+      label="Bahşiş Oranı"
+      options={[
+        { value: "5", label: "%5" },
+        { value: "10", label: "%10" },
+        { value: "15", label: "%15" },
+        { value: "20", label: "%20" },
+        { value: "25", label: "%25" }
+      ]}
+      value="10"
+    />
+    <CalcInput
+      id="kisiSayisi"
+      label="Kişi Sayısı"
+      type="number"
+      suffix="kişi"
+      placeholder="1"
+      min={1}
+      max={100}
+      step={1}
+      value={1}
+    />
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">Bahşiş Tutarı</p>
+      <p class="calc-result-value" id="bahsis-tutari">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Toplam Ödenecek</span>
+        <span class="calc-detail-value" id="d-toplam">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Kişi Başı</span>
+        <span class="calc-detail-value" id="d-kisi-basi">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Kişi Başı Bahşiş</span>
+        <span class="calc-detail-value" id="d-kisi-bahsis">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const resultArea = document.getElementById('calc-result');
+
+      function debounce(fn, delay = 150) {
+        let t;
+        return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), delay); };
+      }
+
+      function formatTL(n) {
+        return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+      }
+
+      const dc = debounce(calculate);
+      inputs.forEach(i => { i.addEventListener('input', dc); i.addEventListener('change', dc); });
+
+      function calculate() {
+        const hesapTutari = parseFloat(document.getElementById('hesapTutari').value);
+        const bahsisOrani = parseFloat(document.getElementById('bahsisOrani').value);
+        const kisiSayisi = parseInt(document.getElementById('kisiSayisi').value) || 1;
+
+        if (isNaN(hesapTutari) || hesapTutari <= 0) {
+          if (resultArea) resultArea.classList.add('hidden');
+          return;
+        }
+
+        const bahsis = hesapTutari * (bahsisOrani / 100);
+        const toplam = hesapTutari + bahsis;
+        const kisiBasi = toplam / kisiSayisi;
+        const kisiBahsis = bahsis / kisiSayisi;
+
+        document.getElementById('bahsis-tutari').textContent = formatTL(bahsis);
+        document.getElementById('d-toplam').textContent = formatTL(toplam);
+        document.getElementById('d-kisi-basi').textContent = formatTL(kisiBasi);
+        document.getElementById('d-kisi-bahsis').textContent = formatTL(kisiBahsis);
+
+        if (resultArea) resultArea.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const p = new URLSearchParams();
+        inputs.forEach(i => { if (i.value && i.id) p.set(i.id, i.value); });
+        history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
+      }
+
+      function loadFromURL() {
+        const p = new URLSearchParams(window.location.search);
+        let h = false;
+        inputs.forEach(i => { if (i.id && p.has(i.id)) { i.value = p.get(i.id); h = true; } });
+        if (h) calculate();
+      }
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>Bahşiş Hesaplama Nasıl Yapılır?</h2>
+    <p>
+      Bahşiş, hizmet sektöründe çalışanlara sunulan hizmetin kalitesini takdir etmenin en somut yollarından biridir. Türkiye'de restoran, kafe, kuaför, otel, spa ve taksi gibi pek çok hizmet alanında bahşiş vermek yaygın bir gelenek olarak yer etmiştir. Özellikle grup yemeklerinde ya da hesap büyük geldiğinde ne kadar bahşiş bırakılması gerektiğini belirlemek zaman zaman kafa karıştırıcı olabilmektedir.
+    </p>
+    <p>
+      Bu bahşiş hesap makinesi, hesap tutarını ve tercih ettiğiniz bahşiş oranını girerek bahşiş miktarını, toplamda ne ödemeniz gerektiğini ve birden fazla kişi varsa kişi başına düşen payı anında hesaplamanızı sağlar. Arkadaş gruplarında hesabı paylaşırken bu araç son derece pratik bir çözüm sunar.
+    </p>
+
+    <h3>Formül</h3>
+    <p>
+      <strong>Bahşiş Tutarı = Hesap Tutarı × (Bahşiş Oranı ÷ 100)</strong><br />
+      <strong>Toplam = Hesap Tutarı + Bahşiş Tutarı</strong><br />
+      <strong>Kişi Başı = Toplam ÷ Kişi Sayısı</strong>
+    </p>
+
+    <h3>Dikkat Edilmesi Gerekenler</h3>
+    <p>
+      Bazı restoran ve kafelerde faturaya otomatik olarak servis bedeli (%10 veya %15) eklenmiş olabilir. Bu durumda faturanızı dikkatlice inceleyin; servis bedeli zaten dahilse ayrıca bahşiş bırakmak zorunlu değildir. Kredi kartıyla ödeme yapılırken bahşiş eklemek mümkün olmayabilir; bu durumda nakit bahşiş bırakmak daha uygun olacaktır. Bahşişi doğrudan garsonunuza veya ilgilenen personele vermeniz daha uygun bir yaklaşımdır.
+    </p>
+
+    <h3>Sıkça Sorulan Sorular</h3>
+    {faq.map(item => (
+      <details>
+        <summary><strong>{item.question}</strong></summary>
+        <p>{item.answer}</p>
+      </details>
+    ))}
+  </section>
+</CalcLayout>
