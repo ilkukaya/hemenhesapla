@@ -246,6 +246,11 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--color-primary-light);
 }
 
+.btn-primary:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
 .btn-secondary {
   display: inline-flex;
   align-items: center;
@@ -264,6 +269,11 @@ h1, h2, h3, h4, h5, h6 {
 .btn-secondary:hover {
   border-color: var(--color-primary);
   color: var(--color-primary);
+}
+
+.btn-secondary:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 /* SEO content */
@@ -314,12 +324,65 @@ h1, h2, h3, h4, h5, h6 {
 /* Noscript */
 .noscript-warning {
   background: #FFF3CD;
-  border: 1px solid #FFC107;
+  border: 1px solid #D4A017;
   border-radius: 0.5rem;
   padding: 1rem;
   text-align: center;
-  color: #856404;
+  color: #664D03;
   font-size: 0.875rem;
+}
+
+/* Details / Summary (FAQ) */
+.calc-content details {
+  margin-bottom: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.calc-content details summary {
+  padding: 0.875rem 1rem;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--color-text);
+  background: var(--color-bg);
+  transition: background 0.2s;
+  list-style: none;
+}
+
+.calc-content details summary::-webkit-details-marker {
+  display: none;
+}
+
+.calc-content details summary::before {
+  content: '▸';
+  display: inline-block;
+  margin-right: 0.5rem;
+  transition: transform 0.2s;
+}
+
+.calc-content details[open] summary::before {
+  transform: rotate(90deg);
+}
+
+.calc-content details summary:hover {
+  background: var(--color-surface);
+}
+
+.calc-content details > p,
+.calc-content details > div {
+  padding: 0.75rem 1rem;
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+  border-top: 1px solid var(--color-border);
+}
+
+/* Focus styles for interactive elements */
+a:focus-visible,
+select:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 /* Category badge */

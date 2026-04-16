@@ -123,8 +123,6 @@ const kdvOranlari = [
         // Girilen tutar KDV hariç (matrah) kabul edilir
         const kdvTutari = tutar * oran / 100;
         const kdvDahilFiyat = tutar + kdvTutari;
-        // KDV dahil fiyattan KDV hariç hesabı
-        const kdvHaricFiyat = tutar / (1 + oran / 100);
 
         document.getElementById('kdv-tutari').textContent = formatTL(kdvTutari);
         document.getElementById('kdv-haric').textContent = formatTL(tutar);

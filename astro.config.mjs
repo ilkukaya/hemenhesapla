@@ -4,6 +4,8 @@ import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
   site: 'https://hemenhesapla.net',
+  trailingSlash: 'always',
+  compressHTML: true,
   integrations: [
     sitemap({
       changefreq: 'weekly',

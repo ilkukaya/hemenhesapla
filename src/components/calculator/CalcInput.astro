@@ -46,8 +46,9 @@ const {
       class="calc-input"
       inputmode={type === 'number' ? 'decimal' : undefined}
       autocomplete="off"
+      aria-describedby={helpText ? `${id}-help` : undefined}
     />
     {suffix && <span class="calc-input-suffix">{suffix}</span>}
   </div>
-  {helpText && <p class="calc-help-text">{helpText}</p>}
+  {helpText && <p id={`${id}-help`} class="calc-help-text">{helpText}</p>}
 </div>
