@@ -1,0 +1,54 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+---
+
+<PageLayout
+  title="Hesaplama Yöntemi ve Editoryal İlkeler | Hemen Hesapla"
+  h1="Hesaplama yöntemi"
+  description="Hemen Hesapla'daki hesaplayıcıların hangi kaynaklara, formüllere ve güncelleme sürecine dayandığını; hata bildirimi ve düzeltme politikamızı açıklıyoruz."
+  lede="Bir hesaplayıcı ancak arkasındaki veri kadar güvenilirdir. Bu sayfada sonuçlarımızı nasıl ürettiğimizi ve nasıl güncel tuttuğumuzu anlatıyoruz."
+  updated="2026-09-26"
+>
+  <h2>Veri kaynakları</h2>
+  <p>Yasal ve mali parametreleri yalnızca birincil kaynaklardan alırız:</p>
+  <ul>
+    <li><a href="https://www.resmigazete.gov.tr/" target="_blank" rel="noopener">Resmî Gazete</a> – kanun, yönetmelik ve tebliğler</li>
+    <li><a href="https://www.gib.gov.tr/" target="_blank" rel="noopener">Gelir İdaresi Başkanlığı</a> – gelir vergisi tarifesi, damga vergisi, KDV ve stopaj oranları</li>
+    <li><a href="https://www.sgk.gov.tr/" target="_blank" rel="noopener">Sosyal Güvenlik Kurumu</a> – prim oranları, SGK tavan ve taban tutarları</li>
+    <li><a href="https://www.csgb.gov.tr/" target="_blank" rel="noopener">Çalışma ve Sosyal Güvenlik Bakanlığı</a> – asgari ücret ve kıdem tazminatı tavanı</li>
+    <li><a href="https://www.tuik.gov.tr/" target="_blank" rel="noopener">TÜİK</a> ve <a href="https://www.tcmb.gov.tr/" target="_blank" rel="noopener">TCMB</a> – enflasyon ve faiz verileri</li>
+    <li><a href="https://www.osym.gov.tr/" target="_blank" rel="noopener">ÖSYM</a> ve <a href="https://www.meb.gov.tr/" target="_blank" rel="noopener">MEB</a> – sınav puanlama yöntemleri</li>
+    <li>Sağlık hesaplayıcılarında Dünya Sağlık Örgütü (WHO) ve hakemli bilimsel yayınlardaki kabul görmüş formüller</li>
+  </ul>
+
+  <h2>Formüller ve varsayımlar</h2>
+  <p>
+    Her hesaplayıcı sayfasında kullanılan formülü açık biçimde yazar, bir örnek hesapla gösteririz. Yuvarlama, kümülatif vergi matrahı,
+    asgari ücret istisnası gibi sonucu etkileyen varsayımları sonuç alanının altında veya açıklama metninde belirtiriz.
+    Resmî kurumların henüz yayımlamadığı değerlerde "yaklaşık" ifadesini kullanırız.
+  </p>
+
+  <h2>Güncelleme süreci</h2>
+  <ul>
+    <li>Ocak ve Temmuz aylarında değişen parametreler (asgari ücret, vergi dilimleri, kıdem tavanı, memur katsayıları) yayımlandıkları gün kontrol edilir.</li>
+    <li>Her sayfanın başında "Güncellendi" tarihi yer alır; içerik değiştiğinde bu tarih yenilenir.</li>
+    <li>Hesaplayıcılar yayına alınmadan önce elle yapılmış örnek hesaplarla ve resmî kurum örnekleriyle karşılaştırılarak test edilir.</li>
+  </ul>
+
+  <h2>Sorumluluk sınırı</h2>
+  <p>
+    Sonuçlar bilgilendirme amaçlıdır; bordro, vergi beyannamesi, kredi sözleşmesi veya tıbbi karar gibi resmî ya da kişisel önem taşıyan
+    işlemlerde ilgili kurumdan, mali müşavirden veya hekiminizden teyit alınız.
+  </p>
+
+  <h2>Hata bildirimi ve düzeltme</h2>
+  <p>
+    Bir hesaplamada hata olduğunu düşünüyorsanız, kullandığınız değerlerle birlikte <a href="/iletisim/">bize bildirin</a>. Doğrulanan hataları
+    en geç iki iş günü içinde düzeltir, sayfanın güncelleme tarihini yenileriz.
+  </p>
+
+  <h2>Reklam ve bağımsızlık</h2>
+  <p>
+    Reklamlar ve sponsorlu bağlantılar açıkça etiketlenir. Reklam verenler ya da satış ortakları hesaplama yöntemimizi, sonuçları veya içerikleri etkileyemez.
+  </p>
+</PageLayout>

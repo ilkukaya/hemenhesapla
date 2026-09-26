@@ -1,0 +1,221 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Yumurtlama dönemi nasıl hesaplanır?",
+    answer: "Yumurtlama (ovulasyon) genellikle bir sonraki adetin başlamasından yaklaşık 14 gün önce gerçekleşir. Bu nedenle yumurtlama günü, Son Adet Tarihi + Döngü Süresi − 14 formülüyle tahmin edilir. 28 günlük düzenli döngüde yumurtlama, son adetin ilk gününden itibaren 14. gün civarındadır. Döngünüz 32 günse bu gün 18. güne kayar."
+  },
+  {
+    question: "Doğurgan dönem kaç gün sürer?",
+    answer: "Doğurgan dönem, yumurtlamadan önceki 5 gün ile yumurtlama günü ve sonrasındaki 1 günü kapsayan yaklaşık 6-7 günlük bir aralıktır. Sperm kadın üreme sisteminde 5 güne kadar canlı kalabilirken yumurta hücresi yumurtlamadan sonra yalnızca 12-24 saat döllenebilir. Gebelik olasılığı en çok yumurtlamadan önceki 2 gün ve yumurtlama gününde yüksektir."
+  },
+  {
+    question: "Düzensiz adet görenlerde ovulasyon hesaplanabilir mi?",
+    answer: "Döngü süresi aydan aya birkaç günden fazla değişiyorsa takvim yöntemiyle yapılan hesaplama güvenilirliğini kaybeder. Bu durumda son 6-12 döngünün en kısa ve en uzun sürelerini ayrı ayrı girerek olası aralığı görebilirsiniz. Ovulasyon testleri, bazal vücut ısısı takibi ve servikal mukus gözlemi daha kişisel sonuç verir; düzensizlik devam ediyorsa jinekoloğa başvurun."
+  },
+  {
+    question: "Yumurtlama belirtileri nelerdir?",
+    answer: "Yumurtlama döneminde servikal mukus artar, kaygan ve yumurta akı kıvamına gelir. Bazal vücut ısısı yumurtlamadan sonra 0,2-0,5 °C yükselir ve adete kadar yüksek kalır. Bazı kadınlar kasıkta tek taraflı hafif ağrı, göğüslerde hassasiyet ve cinsel istekte artış hisseder. Eczanelerden alınan LH testleri, yumurtlamadan 24-36 saat önceki hormon artışını gösterir."
+  },
+  {
+    question: "Ovulasyon takvimi doğum kontrol yöntemi olarak kullanılabilir mi?",
+    answer: "Takvim hesaplaması tek başına güvenilir bir doğum kontrol yöntemi değildir. Döngüler stres, hastalık ve seyahat gibi nedenlerle kayabilir ve sperm birkaç gün canlı kalabildiği için yanılma payı yüksektir. Doğurganlık farkındalığına dayalı yöntemler eğitimle ve birden fazla belirti takibiyle kullanılmalıdır. Güvenilir korunma için bir kadın doğum uzmanına danışın."
+  },
+  {
+    question: "Hamilelik testi ne zaman yapılmalı?",
+    answer: "Evde yapılan idrar gebelik testleri, en doğru sonucu beklenen adet tarihinin geciktiği ilk gün veya sonrasında verir. Döllenmeden sonra hCG hormonunun ölçülebilir düzeye çıkması yaklaşık 10-14 gün sürer. Test negatif çıkar ancak adet gecikmesi devam ederse birkaç gün sonra testi tekrarlayın veya kan testi (beta hCG) için doktora başvurun."
+  }
+];
+
+const meta = {
+  title: "Ovulasyon Hesaplama",
+  seoTitle: "Ovulasyon Hesaplama - Yumurtlama Dönemi ve Takvimi",
+  description: "Ovulasyon hesaplama ile son adet tarihinize ve döngü sürenize göre yumurtlama gününüzü, doğurgan döneminizi ve sonraki adet tarihinizi hesaplayın.",
+  summary: "Yumurtlama günü, bir sonraki adetten yaklaşık 14 gün öncedir: Ovulasyon = Son Adet Tarihi + Döngü Süresi − 14. Doğurgan dönem yumurtlamadan 5 gün önce başlar ve 1 gün sonra biter. 28 günlük döngüde yumurtlama 14. gün, doğurgan dönem 9. ile 15. günler arasıdır.",
+  howTo: [
+    "Son adetinizin başladığı ilk günü seçin.",
+    "Ortalama döngü sürenizi girin (bir adetin ilk gününden sonrakinin ilk gününe kadar).",
+    "Biliyorsanız luteal faz sürenizi değiştirin; bilmiyorsanız 14 gün olarak bırakın.",
+    "Yumurtlama gününüzü, doğurgan döneminizi ve sonraki 3 döngüyü inceleyin."
+  ],
+  sources: [
+    { name: "ACOG - Fertility Awareness-Based Methods of Family Planning", url: "https://www.acog.org/womens-health/faqs/fertility-awareness-based-methods-of-family-planning" }
+  ],
+  category: "saglik",
+  slug: "ovulasyon-hesaplama",
+  keywords: ["ovulasyon hesaplama", "yumurtlama dönemi hesaplama", "yumurtlama takvimi", "doğurgan dönem hesaplama", "hamile kalma günleri", "ovulasyon takvimi"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["saglik/adet-takvimi-hesaplama", "saglik/gebelik-haftasi-hesaplama", "saglik/dogum-tarihi-hesaplama", "saglik/vucut-kitle-indeksi"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" class="calc-inputs">
+    <CalcInput id="sat" label="Son Adetin İlk Günü" type="date" />
+    <CalcInput id="dongu" label="Ortalama Döngü Süresi" type="number" suffix="gün" placeholder="28" value="28" step={1} min={20} max={45} />
+    <CalcInput id="luteal" label="Luteal Faz Süresi" type="number" suffix="gün" placeholder="14" value="14" step={1} min={10} max={16} helpText="Yumurtlama ile adet arasındaki süre. Bilmiyorsanız 14 bırakın." />
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">Tahmini Yumurtlama Günü</p>
+      <p class="calc-result-value" id="ovulasyon">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row"><span class="calc-detail-label">Doğurgan Dönem</span><span class="calc-detail-value" id="dogurgan">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">En Yüksek Olasılıklı Günler</span><span class="calc-detail-value" id="zirve">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Sonraki Adet Tarihi</span><span class="calc-detail-value" id="sonraki">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Gebelik Testi İçin En Erken Tarih</span><span class="calc-detail-value" id="test">—</span></div>
+      <div class="calc-table-wrapper">
+        <table class="calc-table">
+          <thead><tr><th>Döngü</th><th>Doğurgan Dönem</th><th>Yumurtlama</th><th>Adet Başlangıcı</th></tr></thead>
+          <tbody id="takvim"></tbody>
+        </table>
+      </div>
+    </div>
+  </CalcResult>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('calc-form');
+      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const resultArea = document.getElementById('calc-result');
+
+      function debounce(fn: () => void, delay = 150) {
+        let timer: ReturnType<typeof setTimeout>;
+        return () => { clearTimeout(timer); timer = setTimeout(fn, delay); };
+      }
+      const val = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
+      const setText = (id: string, t: string) => { (document.getElementById(id) as HTMLElement).textContent = t; };
+      const tarihFmt = new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'long', year: 'numeric', weekday: 'long' });
+      const kisaFmt = new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'long' });
+      const parseDate = (s: string) => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+      const addDays = (d: Date, n: number) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+
+      form?.addEventListener('submit', (e) => e.preventDefault());
+      const debouncedCalc = debounce(calculate);
+      inputs.forEach(input => {
+        input.addEventListener('input', debouncedCalc);
+        input.addEventListener('change', debouncedCalc);
+      });
+
+      function calculate() {
+        const satStr = val('sat');
+        const dongu = parseInt(val('dongu'), 10);
+        const luteal = parseInt(val('luteal'), 10) || 14;
+        if (!satStr || !dongu || dongu < 20 || dongu > 45 || luteal >= dongu) return;
+        const sat = parseDate(satStr);
+        if (isNaN(sat.getTime())) return;
+
+        const ov = addDays(sat, dongu - luteal);
+        setText('ovulasyon', tarihFmt.format(ov));
+        setText('dogurgan', `${kisaFmt.format(addDays(ov, -5))} – ${kisaFmt.format(addDays(ov, 1))}`);
+        setText('zirve', `${kisaFmt.format(addDays(ov, -2))} – ${kisaFmt.format(ov)}`);
+        const sonraki = addDays(sat, dongu);
+        setText('sonraki', tarihFmt.format(sonraki));
+        setText('test', tarihFmt.format(sonraki));
+
+        const tbody = document.getElementById('takvim') as HTMLElement;
+        tbody.innerHTML = '';
+        for (let i = 0; i < 3; i++) {
+          const baslangic = addDays(sat, dongu * i);
+          const o = addDays(baslangic, dongu - luteal);
+          const tr = document.createElement('tr');
+          [`${i + 1}. döngü`, `${kisaFmt.format(addDays(o, -5))} – ${kisaFmt.format(addDays(o, 1))}`, kisaFmt.format(o), kisaFmt.format(addDays(baslangic, dongu))]
+            .forEach(t => { const td = document.createElement('td'); td.textContent = t; tr.appendChild(td); });
+          tbody.appendChild(tr);
+        }
+
+        if (resultArea) resultArea.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const params = new URLSearchParams();
+        inputs.forEach(input => {
+          const el = input as HTMLInputElement;
+          if (el.value && el.id) params.set(el.id, el.value);
+        });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+      }
+
+      function loadFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        let hasParams = false;
+        inputs.forEach(input => {
+          const el = input as HTMLInputElement;
+          if (el.id && params.has(el.id)) { el.value = params.get(el.id)!; hasParams = true; }
+        });
+        if (hasParams) calculate();
+      }
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>Ovulasyon (Yumurtlama) Nedir?</h2>
+    <p>
+      Ovulasyon, yumurtalıkta olgunlaşan yumurta hücresinin serbest bırakılarak fallop tüpüne geçmesidir. Her adet döngüsünde genellikle bir kez gerçekleşir ve döllenme yalnızca bu dönemde mümkündür. Serbest kalan yumurta 12-24 saat canlı kalırken sperm hücreleri kadın üreme sisteminde 5 güne kadar yaşayabilir. Bu nedenle hamile kalma şansının yüksek olduğu doğurgan dönem, yumurtlamadan birkaç gün önce başlar.
+    </p>
+
+    <h2>Yumurtlama Günü Nasıl Hesaplanır?</h2>
+    <p>
+      Adet döngüsü iki evreden oluşur: yumurtlamaya kadar süren foliküler evre ve yumurtlamadan sonraki luteal evre. Foliküler evrenin süresi kişiden kişiye ve aydan aya değişirken luteal evre çoğu kadında 12-16 gün, ortalama 14 gün sürer. Bu yüzden yumurtlama, döngünün ortasından değil bir sonraki adetten geriye doğru sayılarak hesaplanır:
+    </p>
+    <ul>
+      <li><strong>Yumurtlama günü:</strong> Son Adet Tarihi + Döngü Süresi − 14</li>
+      <li><strong>Doğurgan dönem:</strong> Yumurtlamadan 5 gün önce ile 1 gün sonrası</li>
+      <li><strong>Sonraki adet:</strong> Son Adet Tarihi + Döngü Süresi</li>
+    </ul>
+
+    <h2>Döngü Süresine Göre Yumurtlama Günü</h2>
+    <table>
+      <thead>
+        <tr><th>Döngü Süresi</th><th>Yumurtlama (döngünün kaçıncı günü)</th><th>Doğurgan Dönem (döngü günleri)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>24 gün</td><td>10. gün</td><td>5. – 11. gün</td></tr>
+        <tr><td>26 gün</td><td>12. gün</td><td>7. – 13. gün</td></tr>
+        <tr><td>28 gün</td><td>14. gün</td><td>9. – 15. gün</td></tr>
+        <tr><td>30 gün</td><td>16. gün</td><td>11. – 17. gün</td></tr>
+        <tr><td>32 gün</td><td>18. gün</td><td>13. – 19. gün</td></tr>
+        <tr><td>35 gün</td><td>21. gün</td><td>16. – 22. gün</td></tr>
+      </tbody>
+    </table>
+    <p class="calc-note">Tablodaki gün numaraları, son adetin ilk günü "0. gün" kabul edilerek eklenen gün sayısını gösterir.</p>
+
+    <h2>Örnek Hesaplama</h2>
+    <p>
+      Son adeti 1 Eylül 2026'da başlayan ve döngüsü 30 gün süren bir kadın için:
+    </p>
+    <ul>
+      <li>Yumurtlama günü: 1 Eylül + (30 − 14) gün = 17 Eylül 2026</li>
+      <li>Doğurgan dönem: 12 Eylül – 18 Eylül 2026</li>
+      <li>En yüksek olasılıklı günler: 15 – 17 Eylül 2026</li>
+      <li>Sonraki adet tarihi: 1 Ekim 2026</li>
+    </ul>
+
+    <h2>Hesaplamayı Destekleyen Yöntemler</h2>
+    <ul>
+      <li><strong>LH ovulasyon testi:</strong> İdrarda luteinize edici hormon artışını saptar; pozitif sonuçtan 24-36 saat sonra yumurtlama beklenir.</li>
+      <li><strong>Bazal vücut ısısı:</strong> Her sabah yataktan kalkmadan ölçülen ısı, yumurtlamadan sonra kalıcı olarak hafifçe yükselir.</li>
+      <li><strong>Servikal mukus:</strong> Doğurgan günlerde mukus şeffaf, kaygan ve esnek hale gelir.</li>
+      <li><strong>Ultrason takibi:</strong> Tüp bebek ve aşılama tedavilerinde folikül gelişimi ultrasonla izlenir.</li>
+    </ul>
+
+    <h2>Ne Zaman Doktora Başvurmalı?</h2>
+    <p>
+      35 yaş altında düzenli ilişkiye rağmen 12 ay, 35 yaş üstünde 6 ay içinde gebelik oluşmuyorsa bir kadın hastalıkları ve doğum uzmanına başvurmanız önerilir. Döngülerin 21 günden kısa veya 35 günden uzun olması, adetlerin çok düzensiz ya da ağrılı olması da değerlendirilmesi gereken durumlardır.
+    </p>
+    <h2>Hamile Kalma Şansını Etkileyen Faktörler</h2>
+    <p>Doğru zamanlamaya rağmen her döngüde gebelik oluşmayabilir; sağlıklı genç çiftlerde bile tek bir döngüde gebelik olasılığı yaklaşık %20-25 civarındadır. Yaş, sigara ve alkol kullanımı, aşırı zayıflık veya kilo fazlalığı, tiroit hastalıkları ve polikistik over sendromu doğurganlığı etkileyebilir. Doğurgan dönemde iki günde bir ilişki, sperm sayısını düşürmeden yumurtlama gününü kapsamanın pratik bir yoludur. Gebelik planlayan kadınlara, nöral tüp defektlerini önlemek için gebelikten önce folik asit kullanımına başlamaları önerilir; doz için hekiminize danışın.</p>
+    <p class="calc-note">
+      Uyarı: Bu hesaplayıcı düzenli döngüye dayalı tahmini sonuç verir ve tıbbi tavsiye yerine geçmez. Doğum kontrol yöntemi olarak kullanılmamalıdır.
+    </p>
+  </section>
+</CalcLayout>

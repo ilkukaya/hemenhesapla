@@ -1,0 +1,227 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Burcumu nasıl öğrenirim?",
+    answer: "Güneş burcunuz, doğduğunuz gün Güneş'in zodyakta bulunduğu takımyıldız bölümüne göre belirlenir ve yalnızca doğum gününüz ile ayınız yeterlidir. Örneğin 23 Temmuz ile 22 Ağustos arasında doğanlar Aslan, 23 Eylül ile 22 Ekim arasında doğanlar Terazi burcudur. Doğum tarihinizi hesaplayıcıya girdiğinizde burcunuz, elementi ve yönetici gezegeni gösterilir."
+  },
+  {
+    question: "Burç tarihleri neden her kaynakta farklı?",
+    answer: "Güneş'in bir burçtan diğerine geçtiği an her yıl birkaç saat kayar; bu nedenle burç sınırları yıla göre 19'u, 20'si veya 21'i gibi farklı günlere denk gelebilir. Kaynaklar genellikle ortalama tarihleri kullanır. Doğum gününüz iki burcun geçiş gününe denk geliyorsa kesin burcunuzu öğrenmek için doğum saatiniz ve yılınızla hazırlanan bir doğum haritasına bakmanız gerekir."
+  },
+  {
+    question: "Güneş burcu ile yükselen burç arasındaki fark nedir?",
+    answer: "Güneş burcu, doğduğunuz gün Güneş'in bulunduğu burçtur ve yalnızca doğum tarihiyle bulunur. Yükselen burç ise doğduğunuz anda doğu ufkunda yükselen burçtur; yaklaşık her iki saatte bir değiştiği için doğum saati ve doğum yeri gerektirir. Bu hesaplayıcı yalnızca güneş burcunu hesaplar; yükselen burç için saat ve konum bilgili astronomik hesap gerekir."
+  },
+  {
+    question: "Burçların elementleri nelerdir?",
+    answer: "Astrolojide 12 burç dört elemente ayrılır. Ateş burçları Koç, Aslan ve Yay; toprak burçları Boğa, Başak ve Oğlak; hava burçları İkizler, Terazi ve Kova; su burçları ise Yengeç, Akrep ve Balık'tır. Elementler, astrolojik geleneğe göre burçların genel mizaç özelliklerini tanımlamak için kullanılır."
+  },
+  {
+    question: "Burçlar bilimsel mi?",
+    answer: "Astroloji bilimsel bir yöntem değildir; burçların kişilik veya gelecek üzerinde etkisi olduğunu gösteren doğrulanmış bir bilimsel kanıt bulunmamaktadır. Burç tarihleri ise gerçek bir astronomik olguya, Güneş'in yıl boyunca gökyüzündeki görünür yoluna (ekliptik) dayanır. Bu sayfadaki bilgiler eğlence ve kültürel merak amacıyla sunulmaktadır."
+  }
+];
+
+const meta = {
+  title: "Burç Hesaplama",
+  seoTitle: "Burç Hesaplama - Doğum Tarihine Göre Burcum Ne?",
+  description: "Burç hesaplama: doğum tarihinizi girin, güneş burcunuzu, elementini, niteliğini ve yönetici gezegenini öğrenin. 12 burcun tarih aralıkları tablosu ile.",
+  summary: "Güneş burcu doğum gününe ve ayına göre belirlenir: Koç 21 Mart-19 Nisan, Boğa 20 Nisan-20 Mayıs, İkizler 21 Mayıs-20 Haziran, Yengeç 21 Haziran-22 Temmuz, Aslan 23 Temmuz-22 Ağustos, Başak 23 Ağustos-22 Eylül, Terazi 23 Eylül-22 Ekim, Akrep 23 Ekim-21 Kasım, Yay 22 Kasım-21 Aralık, Oğlak 22 Aralık-19 Ocak, Kova 20 Ocak-18 Şubat, Balık 19 Şubat-20 Mart.",
+  howTo: [
+    "Doğum tarihinizi takvimden seçin.",
+    "Hesaplayıcı gün ve aya göre güneş burcunuzu bulur.",
+    "Burcunuzun elementini, niteliğini ve yönetici gezegenini inceleyin.",
+    "Geçiş gününde doğduysanız uyarıyı dikkate alın."
+  ],
+  sources: [],
+  category: "gunluk",
+  slug: "burc-hesaplama",
+  keywords: ["burç hesaplama", "burcum ne", "doğum tarihine göre burç", "burç tarihleri", "güneş burcu hesaplama", "hangi burcum"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["gunluk/yas-hesaplama", "gunluk/kac-gun-kaldi-hesaplama", "gunluk/gun-hesaplama", "saglik/dogum-tarihi-hesaplama"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" class="calc-inputs">
+    <CalcInput id="dogum" label="Doğum Tarihi" type="date" />
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">Güneş Burcunuz</p>
+      <p class="calc-result-value" id="burc">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row"><span class="calc-detail-label">Tarih Aralığı</span><span class="calc-detail-value" id="aralik">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Element</span><span class="calc-detail-value" id="element">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Nitelik</span><span class="calc-detail-value" id="nitelik">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Yönetici Gezegen</span><span class="calc-detail-value" id="gezegen">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Karşıt Burç</span><span class="calc-detail-value" id="karsit">—</span></div>
+      <p class="calc-note" id="uyari" hidden></p>
+    </div>
+  </CalcResult>
+
+  <script>
+    // [ad, başlangıç ayı, başlangıç günü, element, nitelik, gezegen, aralık metni]
+    const BURCLAR: [string, number, number, string, string, string, string][] = [
+      ['Oğlak', 12, 22, 'Toprak', 'Öncü', 'Satürn', '22 Aralık – 19 Ocak'],
+      ['Kova', 1, 20, 'Hava', 'Sabit', 'Satürn (modern: Uranüs)', '20 Ocak – 18 Şubat'],
+      ['Balık', 2, 19, 'Su', 'Değişken', 'Jüpiter (modern: Neptün)', '19 Şubat – 20 Mart'],
+      ['Koç', 3, 21, 'Ateş', 'Öncü', 'Mars', '21 Mart – 19 Nisan'],
+      ['Boğa', 4, 20, 'Toprak', 'Sabit', 'Venüs', '20 Nisan – 20 Mayıs'],
+      ['İkizler', 5, 21, 'Hava', 'Değişken', 'Merkür', '21 Mayıs – 20 Haziran'],
+      ['Yengeç', 6, 21, 'Su', 'Öncü', 'Ay', '21 Haziran – 22 Temmuz'],
+      ['Aslan', 7, 23, 'Ateş', 'Sabit', 'Güneş', '23 Temmuz – 22 Ağustos'],
+      ['Başak', 8, 23, 'Toprak', 'Değişken', 'Merkür', '23 Ağustos – 22 Eylül'],
+      ['Terazi', 9, 23, 'Hava', 'Öncü', 'Venüs', '23 Eylül – 22 Ekim'],
+      ['Akrep', 10, 23, 'Su', 'Sabit', 'Mars (modern: Plüton)', '23 Ekim – 21 Kasım'],
+      ['Yay', 11, 22, 'Ateş', 'Değişken', 'Jüpiter', '22 Kasım – 21 Aralık'],
+    ];
+    function burcIndex(ay: number, gun: number): number {
+      const kod = ay * 100 + gun;
+      let idx = 0; // Oğlak (22 Aralık - 19 Ocak) varsayılan
+      for (let i = 1; i < BURCLAR.length; i++) {
+        if (kod >= BURCLAR[i][1] * 100 + BURCLAR[i][2]) idx = i;
+      }
+      if (kod >= 1222) idx = 0;
+      return idx;
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('calc-form');
+      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const resultArea = document.getElementById('calc-result');
+
+      function debounce(fn: () => void, delay = 150) {
+        let timer: ReturnType<typeof setTimeout>;
+        return () => { clearTimeout(timer); timer = setTimeout(fn, delay); };
+      }
+      const val = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
+      const setText = (id: string, t: string) => { (document.getElementById(id) as HTMLElement).textContent = t; };
+
+      form?.addEventListener('submit', (e) => e.preventDefault());
+      const debouncedCalc = debounce(calculate);
+      inputs.forEach(input => {
+        input.addEventListener('input', debouncedCalc);
+        input.addEventListener('change', debouncedCalc);
+      });
+
+      function calculate() {
+        const s = val('dogum');
+        if (!s) return;
+        const [, ay, gun] = s.split('-').map(Number);
+        if (!ay || !gun) return;
+        const i = burcIndex(ay, gun);
+        const b = BURCLAR[i];
+        setText('burc', b[0]);
+        setText('aralik', b[6]);
+        setText('element', b[3]);
+        setText('nitelik', b[4]);
+        setText('gezegen', b[5]);
+        setText('karsit', BURCLAR[(i + 6) % 12][0]);
+
+        // Geçiş günü kontrolü: bir gün önce veya sonra farklı burç mu?
+        const d = new Date(2000, ay - 1, gun);
+        const once = new Date(2000, ay - 1, gun - 1);
+        const sonra = new Date(2000, ay - 1, gun + 1);
+        const iOnce = burcIndex(once.getMonth() + 1, once.getDate());
+        const iSonra = burcIndex(sonra.getMonth() + 1, sonra.getDate());
+        const uyari = document.getElementById('uyari') as HTMLElement;
+        const komsu = iOnce !== i ? BURCLAR[iOnce][0] : iSonra !== i ? BURCLAR[iSonra][0] : '';
+        if (komsu && !isNaN(d.getTime())) {
+          uyari.hidden = false;
+          uyari.textContent = `Geçiş (cusp) günündesiniz: Doğum yılınıza ve saatinize göre burcunuz ${komsu} olabilir. Kesin sonuç için doğum haritanıza bakın.`;
+        } else {
+          uyari.hidden = true;
+        }
+
+        if (resultArea) resultArea.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const params = new URLSearchParams();
+        inputs.forEach(input => {
+          const el = input as HTMLInputElement;
+          if (el.value && el.id) params.set(el.id, el.value);
+        });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+      }
+
+      function loadFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        let hasParams = false;
+        inputs.forEach(input => {
+          const el = input as HTMLInputElement;
+          if (el.id && params.has(el.id)) { el.value = params.get(el.id)!; hasParams = true; }
+        });
+        if (hasParams) calculate();
+      }
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>Burç Hesaplama Nasıl Yapılır?</h2>
+    <p>
+      Batı astrolojisinde "burcum ne?" sorusunun cevabı güneş burcudur. Dünya, Güneş'in etrafında dönerken Güneş gökyüzünde yıl boyunca ekliptik adı verilen bir yol izler ve bu yol 30'ar derecelik 12 bölüme ayrılır. Doğduğunuz gün Güneş hangi bölümdeyse güneş burcunuz odur. Bu nedenle güneş burcunu bulmak için doğum yılına veya saatine gerek yoktur; gün ve ay yeterlidir. Burç hesaplama aracı, doğum tarihinizi girdiğiniz anda burcunuzu ve temel astrolojik özelliklerini gösterir.
+    </p>
+
+    <h2>Burç Tarihleri Tablosu</h2>
+    <table>
+      <thead>
+        <tr><th>Burç</th><th>Tarih Aralığı</th><th>Element</th><th>Nitelik</th><th>Yönetici Gezegen</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Koç</td><td>21 Mart – 19 Nisan</td><td>Ateş</td><td>Öncü</td><td>Mars</td></tr>
+        <tr><td>Boğa</td><td>20 Nisan – 20 Mayıs</td><td>Toprak</td><td>Sabit</td><td>Venüs</td></tr>
+        <tr><td>İkizler</td><td>21 Mayıs – 20 Haziran</td><td>Hava</td><td>Değişken</td><td>Merkür</td></tr>
+        <tr><td>Yengeç</td><td>21 Haziran – 22 Temmuz</td><td>Su</td><td>Öncü</td><td>Ay</td></tr>
+        <tr><td>Aslan</td><td>23 Temmuz – 22 Ağustos</td><td>Ateş</td><td>Sabit</td><td>Güneş</td></tr>
+        <tr><td>Başak</td><td>23 Ağustos – 22 Eylül</td><td>Toprak</td><td>Değişken</td><td>Merkür</td></tr>
+        <tr><td>Terazi</td><td>23 Eylül – 22 Ekim</td><td>Hava</td><td>Öncü</td><td>Venüs</td></tr>
+        <tr><td>Akrep</td><td>23 Ekim – 21 Kasım</td><td>Su</td><td>Sabit</td><td>Mars / Plüton</td></tr>
+        <tr><td>Yay</td><td>22 Kasım – 21 Aralık</td><td>Ateş</td><td>Değişken</td><td>Jüpiter</td></tr>
+        <tr><td>Oğlak</td><td>22 Aralık – 19 Ocak</td><td>Toprak</td><td>Öncü</td><td>Satürn</td></tr>
+        <tr><td>Kova</td><td>20 Ocak – 18 Şubat</td><td>Hava</td><td>Sabit</td><td>Satürn / Uranüs</td></tr>
+        <tr><td>Balık</td><td>19 Şubat – 20 Mart</td><td>Su</td><td>Değişken</td><td>Jüpiter / Neptün</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Örnek Hesaplama</h2>
+    <p>
+      14 Ağustos 1995 doğumlu biri için yalnızca gün ve ay dikkate alınır: 14 Ağustos, 23 Temmuz – 22 Ağustos aralığına düştüğü için burcu <strong>Aslan</strong>'dır. Aslan bir ateş burcudur, sabit niteliktedir ve yönetici gezegeni Güneş'tir. Karşıt burcu ise Kova'dır.
+    </p>
+
+    <h2>Element ve Nitelik Ne Anlama Gelir?</h2>
+    <p>
+      Astrolojik gelenekte her burç bir elemente ve bir niteliğe sahiptir. Elementler (ateş, toprak, hava, su) burçların genel mizacını; nitelikler ise değişime yaklaşımı tanımlar:
+    </p>
+    <ul>
+      <li><strong>Öncü burçlar (Koç, Yengeç, Terazi, Oğlak):</strong> Mevsimlerin başlangıcına denk gelir; başlatıcı ve girişken olarak tanımlanır.</li>
+      <li><strong>Sabit burçlar (Boğa, Aslan, Akrep, Kova):</strong> Mevsimlerin ortasına denk gelir; kararlı ve istikrarlı olarak tanımlanır.</li>
+      <li><strong>Değişken burçlar (İkizler, Başak, Yay, Balık):</strong> Mevsim geçişlerine denk gelir; uyumlu ve esnek olarak tanımlanır.</li>
+    </ul>
+
+    <h2>Geçiş (Cusp) Günleri</h2>
+    <p>
+      Güneş'in bir burçtan diğerine geçtiği an her yıl aynı saate denk gelmez; artık yıl düzeni nedeniyle geçiş günü bir gün ileri veya geri kayabilir. Örneğin Güneş bazı yıllarda Terazi'ye 22 Eylül'de, bazı yıllarda 23 Eylül'de girer. Doğum gününüz tablodaki sınırların bir gün öncesine veya sonrasına denk geliyorsa hesaplayıcı sizi uyarır. Kesin sonuç için doğum yılı, saati ve yeri kullanılarak hazırlanan doğum haritasına bakılmalıdır.
+    </p>
+
+    <h2>Yükselen Burç ve Ay Burcu</h2>
+    <p>
+      Yükselen burç, doğduğunuz anda doğu ufkunda yükselen burçtur ve yaklaşık iki saatte bir değişir; bu yüzden doğum saati ve şehri olmadan hesaplanamaz. Ay burcu ise Ay'ın doğum anında bulunduğu burçtur ve Ay bir burçta yalnızca iki buçuk gün kaldığı için tam tarih ve saat gerektirir. Bu hesaplayıcı yalnızca güneş burcunu gösterir.
+    </p>
+    <h2>Burçlar ve Mevsimler</h2>
+    <p>Burç takviminin başlangıcı, ilkbahar ekinoksuna denk gelen Koç burcudur. Güneş'in Koç burcuna girdiği an kuzey yarımkürede ilkbaharın, Yengeç'e girdiği an yazın, Terazi'ye girdiği an sonbaharın ve Oğlak'a girdiği an kışın astronomik başlangıcıdır. Öncü burçların mevsim başlarına denk gelmesinin nedeni budur.</p>
+    <p class="calc-note">
+      Not: Astroloji bilimsel bir yöntem değildir. Bu sayfadaki bilgiler eğlence ve kültürel merak amacıyla sunulmaktadır.
+    </p>
+  </section>
+</CalcLayout>

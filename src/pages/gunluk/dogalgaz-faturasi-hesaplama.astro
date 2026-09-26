@@ -5,170 +5,263 @@ import CalcResult from '../../components/calculator/CalcResult.astro';
 
 const faq = [
   {
+    question: "Doğalgaz m³ fiyatı 2026'da kaç TL?",
+    answer: "BOTAŞ'ın 4 Nisan 2026'dan beri geçerli tarifesinde konutlar için toptan fiyat Kademe 1'de 10,625 TL/m³, Kademe 2'de 18 TL/m³'tür (KDV hariç). Dağıtım şirketinin sistem kullanım bedeli, ÖTV ve %20 KDV eklendiğinde abonenin ödediği fiyat büyükşehirlerde Kademe 1 için yaklaşık 14–15 TL/m³, Kademe 2 için yaklaşık 23 TL/m³ olur. Kesin fiyat ilden ile değişir."
+  },
+  {
+    question: "Doğalgazda kademe sistemi nedir?",
+    answer: "Nisan 2026'dan itibaren konut aboneleri için il ve ay bazında bir aylık tüketim limiti belirlenir. Tüketiminiz limitin altındaysa tamamı Kademe 1 fiyatından faturalanır. Limit aşılırsa yalnızca aşan kısım değil, o ayın tüketiminin tamamı Kademe 2 fiyatından hesaplanır. Limitler kış aylarında yüksek, yaz aylarında düşüktür."
+  },
+  {
     question: "Doğalgaz faturası nasıl hesaplanır?",
-    answer: "Doğalgaz faturası; gaz bedeli, sistem kullanım bedeli, ÖTV (Özel Tüketim Vergisi) ve KDV bileşenlerinden oluşur. Gaz bedeli, tüketim miktarının (m³) birim fiyatla çarpımıyla bulunur. Sistem kullanım bedeli ayrıca hesaplanır. ÖTV, gaz ve sistem bedellerinin %10'u olarak uygulanır. KDV ise tüm bu bileşenler üzerinden %20 olarak hesaplanır."
+    answer: "Sayaçtan okunan m³ tüketim, uygulanan kademenin KDV dahil birim fiyatıyla çarpılır. Örneğin Kademe 1'de 150 m³ tüketen bir abone 150 × 14,00 = 2.100 TL öder. Faturada tüketim genellikle kWh olarak da gösterilir; 1 m³ doğalgaz yaklaşık 10,64 kWh enerjiye karşılık gelir ve dağıtım şirketi aylık ısıl değere göre bu katsayıyı günceller."
   },
   {
-    question: "Türkiye'de doğalgaz birim fiyatı ne kadardır?",
-    answer: "Türkiye'de doğalgaz fiyatları EPDK tarafından düzenlenmekte ve BOTAŞ tarafından güncellenmektedir. 2026 itibarıyla mesken aboneleri için doğalgaz birim fiyatı yaklaşık 8,74 TL/m³ düzeyindedir. Bu fiyatlar şehre, dağıtım şirketine ve abone kademesine göre farklılık gösterebilir. Kış aylarında tüketim arttığında kademe fiyatları da değişebilmektedir."
+    question: "İlimin kademe limitini nereden öğrenirim?",
+    answer: "Aylık limitler BOTAŞ'ın internet sitesinde il ve ay bazında tablo olarak yayımlanır; dağıtım şirketiniz de faturada ve internet sitesinde bu limiti gösterir. Örneğin İstanbul için Mart ayı limiti 278 m³ civarındadır. Limit tüketim günlerine göre ayarlandığından fatura döneminiz 30 günden farklıysa limit de oransal değişir."
   },
   {
-    question: "Doğalgaz tüketimini azaltmak için ne yapılmalıdır?",
-    answer: "Doğalgaz tasarrufu için; ısı yalıtımı iyileştirmesi, pencerelere çift cam uygulaması, termostat optimizasyonu (gece ve gündüz farklı sıcaklık ayarları), düzenli kazan bakımı ve temizliği, ev içi sıcaklığı 20–21°C'de tutma ve kısa duş süreleri başlıca yöntemler arasındadır. Iyi yalıtılmış bir evde tüketim %30–50 oranında azaltılabilir."
+    question: "Doğalgaz faturasında hangi vergiler var?",
+    answer: "Konut doğalgaz faturasında gaz bedeli (BOTAŞ alış fiyatı ve dağıtım şirketinin sistem kullanım bedeli), m³ başına sabit tutarlı özel tüketim vergisi (ÖTV) ve toplam üzerinden %20 KDV bulunur. Elektrikteki gibi belediye tüketim vergisi alınmaz. Hesaplayıcı KDV dahil fiyatla çalıştığı için faturadaki KDV payını ayrıca gösterir."
+  },
+  {
+    question: "Doğalgaz tüketimini azaltmanın en etkili yolu nedir?",
+    answer: "Oda sıcaklığını 1 °C düşürmek ısınma tüketimini yaklaşık %6 azaltır; 21 °C genellikle yeterlidir. Kombiyi oda termostatıyla kullanmak, radyatörlere termostatik vana takmak, yıllık kombi bakımı ve çatı ile dış cephe yalıtımı en büyük tasarrufu sağlar. Kademe limitine yakınsanız birkaç derecelik ayar faturanın tamamının Kademe 2'ye geçmesini önleyebilir."
   }
 ];
 
 const meta = {
   title: "Doğalgaz Faturası Hesaplama",
-  description: "Aylık doğalgaz tüketiminize göre fatura tutarınızı hesaplayın. Gaz bedeli, sistem kullanım bedeli, ÖTV ve KDV dahil toplam doğalgaz faturanızı öğrenin.",
+  seoTitle: "Doğalgaz Faturası Hesaplama 2026 – Kademe 1 ve 2 m³ Fiyatı",
+  description: "m³ tüketiminizi ve ilinizin kademe limitini girin, 2026 BOTAŞ kademeli tarifesine göre KDV dahil doğalgaz faturanızı hesaplayın. Birim fiyat düzenlenebilir.",
+  summary: "Doğalgaz faturası, m³ tüketimin KDV dahil birim fiyatla çarpılmasıyla bulunur. Nisan 2026'dan beri tüketim il ve ay bazlı limiti aşarsa ayın tüketiminin tamamı Kademe 2'den faturalanır. Eylül 2026 itibarıyla konutta KDV dahil fiyat Kademe 1'de yaklaşık 14 TL/m³, Kademe 2'de yaklaşık 23 TL/m³'tür; 100 m³ Kademe 1'de yaklaşık 1.400 TL tutar.",
+  howTo: [
+    "Faturanızdaki veya sayaçtaki aylık tüketimi m³ olarak girin.",
+    "İliniz ve ilgili ay için ilan edilen kademe limitini yazın; bilmiyorsanız boş bırakın, tamamı Kademe 1 sayılır.",
+    "Varsayılan birim fiyatlar Eylül 2026 itibarıyla büyükşehir ortalamasına yakın KDV dahil tahminlerdir; dağıtım şirketinizin fiyatıyla değiştirin.",
+    "Toplam tutarı, uygulanan kademeyi, KDV payını ve limit aşımının maliyetini sonuçta inceleyin."
+  ],
+  sources: [
+    { name: "BOTAŞ – 4 Nisan 2026'dan itibaren geçerli doğal gaz toptan satış fiyat tarifesi", url: "https://www.botas.gov.tr/Sayfa/4-nisan-2026-tarihinden-itibaren-gecerli-botas-dogal-gaz-toptan-satis-fiyat-tarifesi/812" },
+    { name: "İGDAŞ – Perakende Satış Fiyatları", url: "https://www.igdas.istanbul/perakende-satis" }
+  ],
   category: "gunluk",
   slug: "dogalgaz-faturasi-hesaplama",
-  keywords: ["doğalgaz faturası hesaplama", "doğalgaz tüketim hesaplama", "m3 doğalgaz fiyatı", "doğalgaz birim fiyatı", "BOTAŞ tarife", "gaz faturası"],
-  dateModified: "2026-04-01",
-  relatedCalcs: ["elektrik-faturasi-hesaplama", "tasarruf-hesaplama"],
+  keywords: ["doğalgaz faturası hesaplama", "doğalgaz m3 fiyatı 2026", "doğalgaz kademe hesaplama", "kademe 1 kademe 2 doğalgaz", "BOTAŞ tarife", "gaz faturası"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["gunluk/elektrik-faturasi-hesaplama", "gunluk/tasarruf-hesaplama", "gunluk/yakit-maliyeti-hesaplama", "finans/enflasyon-hesaplama"],
   faq
 };
 ---
 
 <CalcLayout meta={meta}>
-  <form id="calc-form">
+  <form id="calc-form" class="calc-inputs" novalidate>
     <CalcInput
       id="tuketim"
       label="Aylık Tüketim"
       type="number"
       suffix="m³"
-      placeholder="50"
+      placeholder="150"
       min={0}
       step={1}
     />
     <CalcInput
-      id="birimFiyat"
-      label="Birim Fiyat"
+      id="limit"
+      label="Kademe Limiti"
       type="number"
-      prefix="₺"
-      suffix="/m³"
-      placeholder="8.74"
+      suffix="m³"
+      placeholder="Örn. 278"
+      min={0}
+      step={1}
+      required={false}
+      helpText="İl ve aya göre BOTAŞ limiti; boşsa tamamı Kademe 1"
+    />
+    <CalcInput
+      id="k1Fiyat"
+      label="Kademe 1 Birim Fiyatı"
+      type="number"
+      suffix="₺/m³"
+      placeholder="14.00"
+      value={14}
       min={0}
       step={0.01}
-      value={8.74}
-      helpText="2026 mesken tarifesi yaklaşık değeri"
+      helpText="KDV dahil, Eylül 2026 yaklaşık değer"
+    />
+    <CalcInput
+      id="k2Fiyat"
+      label="Kademe 2 Birim Fiyatı"
+      type="number"
+      suffix="₺/m³"
+      placeholder="22.90"
+      value={22.9}
+      min={0}
+      step={0.01}
+      helpText="KDV dahil, limit aşılırsa tüm tüketime uygulanır"
     />
   </form>
 
   <CalcResult>
     <div slot="main">
-      <p class="calc-result-label">Tahmini Toplam Fatura</p>
+      <p class="calc-result-label">Tahmini Fatura Tutarı</p>
       <p class="calc-result-value" id="toplam">—</p>
+      <p class="calc-result-sub" id="toplam-alt"></p>
     </div>
     <div slot="details">
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Gaz Bedeli</span>
-        <span class="calc-detail-value" id="d-gaz">—</span>
+        <span class="calc-detail-label">Uygulanan birim fiyat</span>
+        <span class="calc-detail-value" id="d-birim">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Sistem Kullanım Bedeli</span>
-        <span class="calc-detail-value" id="d-sistem">—</span>
-      </div>
-      <div class="calc-detail-row">
-        <span class="calc-detail-label">ÖTV (%10)</span>
-        <span class="calc-detail-value" id="d-otv">—</span>
+        <span class="calc-detail-label">KDV hariç tutar</span>
+        <span class="calc-detail-value" id="d-kdvsiz">—</span>
       </div>
       <div class="calc-detail-row">
         <span class="calc-detail-label">KDV (%20)</span>
         <span class="calc-detail-value" id="d-kdv">—</span>
       </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Enerji karşılığı (yaklaşık)</span>
+        <span class="calc-detail-value" id="d-kwh">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Limit durumu</span>
+        <span class="calc-detail-value" id="d-limit">—</span>
+      </div>
     </div>
   </CalcResult>
 
+  <p class="calc-note">Varsayılan fiyatlar tahminidir ve ile göre değişir. Doğru sonuç için dağıtım şirketinizin (İGDAŞ, Başkentgaz, İzmirgaz vb.) güncel KDV dahil konut fiyatını girin.</p>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const inputs = document.querySelectorAll<HTMLInputElement | HTMLSelectElement>('#calc-form input, #calc-form select');
       const resultArea = document.getElementById('calc-result');
+      const $ = (id: string) => document.getElementById(id) as HTMLElement;
 
-      function debounce(fn, delay = 150) {
-        let t;
-        return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), delay); };
+      function debounce(fn: () => void, delay = 150) {
+        let timer: ReturnType<typeof setTimeout>;
+        return () => { clearTimeout(timer); timer = setTimeout(fn, delay); };
       }
 
-      function formatTL(n) {
-        return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+      function num(id: string) {
+        const raw = (document.getElementById(id) as HTMLInputElement).value.replace(',', '.').trim();
+        return raw === '' ? NaN : Number(raw);
       }
 
-      const dc = debounce(calculate);
-      inputs.forEach(i => { i.addEventListener('input', dc); i.addEventListener('change', dc); });
+      const tl = (n: number) => new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+      const fmt = (n: number, d = 0) => new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 0, maximumFractionDigits: d }).format(n);
+      const KWH_PER_M3 = 10.64;
 
       function calculate() {
-        const tuketim = parseFloat(document.getElementById('tuketim').value);
-        const birimFiyat = parseFloat(document.getElementById('birimFiyat').value);
+        const tuketim = num('tuketim');
+        const limit = num('limit');
+        const k1 = num('k1Fiyat');
+        const k2 = num('k2Fiyat');
 
-        if (isNaN(tuketim) || isNaN(birimFiyat) || tuketim < 0 || birimFiyat <= 0) {
-          if (resultArea) resultArea.classList.add('hidden');
+        if (!isFinite(tuketim) || !isFinite(k1) || tuketim < 0 || k1 < 0) {
+          resultArea?.classList.add('hidden');
           return;
         }
 
-        const gaz = tuketim * birimFiyat;
-        const sistem = tuketim * 0.50;
-        const otv = (gaz + sistem) * 0.10;
-        const araTop = gaz + sistem + otv;
-        const kdv = araTop * 0.20;
-        const toplam = araTop + kdv;
+        const limitVar = isFinite(limit) && limit > 0;
+        const asim = limitVar && tuketim > limit;
+        if (asim && (!isFinite(k2) || k2 < 0)) {
+          resultArea?.classList.add('hidden');
+          return;
+        }
 
-        document.getElementById('toplam').textContent = formatTL(toplam);
-        document.getElementById('d-gaz').textContent = formatTL(gaz);
-        document.getElementById('d-sistem').textContent = formatTL(sistem);
-        document.getElementById('d-otv').textContent = formatTL(otv);
-        document.getElementById('d-kdv').textContent = formatTL(kdv);
+        const birim = asim ? k2 : k1;
+        const toplam = tuketim * birim;
+        const kdv = toplam * 20 / 120;
 
-        if (resultArea) resultArea.classList.remove('hidden');
+        $('toplam').textContent = tl(toplam);
+        $('toplam-alt').textContent = asim ? 'Limit aşıldı: tüketimin tamamı Kademe 2' : 'Kademe 1';
+        $('d-birim').textContent = `${fmt(birim, 2)} ₺/m³`;
+        $('d-kdvsiz').textContent = tl(toplam - kdv);
+        $('d-kdv').textContent = tl(kdv);
+        $('d-kwh').textContent = `${fmt(tuketim * KWH_PER_M3)} kWh`;
+        if (!limitVar) {
+          $('d-limit').textContent = 'Limit girilmedi';
+        } else if (asim) {
+          $('d-limit').textContent = `${fmt(tuketim - limit)} m³ aşım, ek maliyet ${tl(tuketim * (k2 - k1))}`;
+        } else {
+          $('d-limit').textContent = `Limite ${fmt(limit - tuketim)} m³ var`;
+        }
+
+        resultArea?.classList.remove('hidden');
         updateURL();
       }
 
       function updateURL() {
-        const p = new URLSearchParams();
-        inputs.forEach(i => { if (i.value && i.id) p.set(i.id, i.value); });
-        history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
+        const params = new URLSearchParams();
+        inputs.forEach(el => { if (el.id && el.value !== '') params.set(el.id, el.value); });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
       }
 
       function loadFromURL() {
-        const p = new URLSearchParams(window.location.search);
-        let h = false;
-        inputs.forEach(i => { if (i.id && p.has(i.id)) { i.value = p.get(i.id); h = true; } });
-        if (h) calculate();
+        const params = new URLSearchParams(window.location.search);
+        let has = false;
+        inputs.forEach(el => {
+          if (el.id && params.has(el.id)) { el.value = params.get(el.id) ?? ''; has = true; }
+        });
+        if (has) calculate();
       }
+
+      const debounced = debounce(calculate);
+      inputs.forEach(el => {
+        el.addEventListener('input', debounced);
+        el.addEventListener('change', debounced);
+      });
 
       loadFromURL();
     });
   </script>
 
   <section class="calc-content">
-    <h2>Doğalgaz Faturası Nasıl Hesaplanır?</h2>
+    <h2>Doğalgaz faturası nasıl hesaplanır?</h2>
     <p>
-      Doğalgaz, Türkiye'de milyonlarca hanenin ısınma, sıcak su ve yemek pişirme ihtiyacını karşılayan temel enerji kaynaklarından biridir. Özellikle kış aylarında doğalgaz faturası hanehalkı bütçesinde önemli bir yer tutar. Fatura tutarını önceden tahmin etmek, bütçe planlaması ve tasarruf stratejileri geliştirmek açısından büyük fayda sağlar.
-    </p>
-    <p>
-      Doğalgaz faturası birkaç farklı bileşenden oluşmaktadır. Bu bileşenleri anlamak, faturanızda hangi kalemin ne kadar yer tuttuğunu görmenizi ve hangi önlemlerle tasarruf sağlayabileceğinizi belirlemenizi kolaylaştırır. Türkiye'de doğalgaz tarifeleri EPDK tarafından düzenlenmekte, dağıtım şirketleri ise bölgesel farklılıklar gösterebilmektedir.
+      Doğalgaz faturası, sayaçtan okunan metreküp (m³) tüketimin birim fiyatla çarpılmasıyla oluşur. Birim fiyatın içinde BOTAŞ'ın toptan satış fiyatı, şehrinizdeki dağıtım şirketinin sistem kullanım bedeli, m³ başına alınan ÖTV ve %20 KDV vardır. Dağıtım bedeli ilden ile değiştiği için aynı miktarda gaz İstanbul'da, Ankara'da ve İzmir'de farklı tutar tutar.
     </p>
 
-    <h3>Formül</h3>
-    <ul>
-      <li><strong>Gaz Bedeli:</strong> Tüketim (m³) × Birim Fiyat (₺/m³)</li>
-      <li><strong>Sistem Kullanım Bedeli:</strong> Tüketim (m³) × 0,50 ₺/m³ (yaklaşık)</li>
-      <li><strong>ÖTV:</strong> (Gaz Bedeli + Sistem Kullanım Bedeli) × %10</li>
-      <li><strong>KDV:</strong> (Gaz + Sistem + ÖTV) × %20</li>
-      <li><strong>Toplam:</strong> Gaz + Sistem + ÖTV + KDV</li>
-    </ul>
-
-    <h3>Dikkat Edilmesi Gerekenler</h3>
+    <h3>2026 kademeli tarife nasıl işler?</h3>
     <p>
-      Bu hesaplama tahmini sonuçlar vermektedir. Gerçek fatura tutarınız; abone sınıfı, sayaç tipi, tüketim kademesi, sabit abonelik bedeli ve bölgesel tarife farklılıklarına göre değişebilir. Kış aylarında yüksek kademe tüketimi söz konusu olduğunda bazı dağıtım şirketleri kademeli tarife uygulamaktadır. Güncel ve kesin tarife bilgilerine dağıtım şirketinizin web sitesinden veya EPDK'dan ulaşabilirsiniz. Sistem kullanım bedeli ₺/m³ olarak belirlenen sabit bir kalemdir ve buradaki 0,50 TL değeri yaklaşık bir tahmindir.
+      BOTAŞ, 4 Nisan 2026'dan itibaren konutlarda kademeli fiyata geçti. Her il için ve her ay için ayrı bir tüketim limiti belirleniyor. Aylık tüketiminiz bu limitin altında kalırsa Kademe 1, üstüne çıkarsa Kademe 2 fiyatı uygulanır. Elektrikten farklı olarak doğalgazda limit aşıldığında <strong>ayın tüketiminin tamamı</strong> Kademe 2'den faturalanır; limiti 1 m³ aşmak bile faturayı yaklaşık %65 artırabilir.
+    </p>
+    <table>
+      <thead>
+        <tr><th>Kalem</th><th>Kademe 1</th><th>Kademe 2</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>BOTAŞ konut toptan fiyatı (KDV hariç)</td><td>10,625 TL/m³</td><td>18,000 TL/m³</td></tr>
+        <tr><td>Aboneye yansıyan fiyat (KDV dahil, yaklaşık)</td><td>14–15 TL/m³</td><td>23 TL/m³ civarı</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Örnek hesaplama</h2>
+    <p>
+      Ekim ayında 150 m³ doğalgaz kullanan bir hane düşünelim. İlin o ay için limiti 180 m³ olsun. Tüketim limitin altında kaldığı için Kademe 1 uygulanır:
+    </p>
+    <p><strong>150 m³ × 14,00 TL = 2.100,00 TL</strong> (içindeki KDV: 350,00 TL)</p>
+    <p>
+      Aynı hane soğuk bir ayda limiti 120 m³ iken 150 m³ tüketseydi tüketimin tamamı Kademe 2'den hesaplanacaktı: 150 × 22,90 = 3.435,00 TL. Limitin sadece 30 m³ aşılması faturaya 1.335 TL ek yük getirir. Bu yüzden limite yaklaşan hanelerde termostatı 1–2 derece düşürmek en ucuz tasarruf yöntemidir.
     </p>
 
-    <h3>Sıkça Sorulan Sorular</h3>
-    {faq.map(item => (
-      <details>
-        <summary><strong>{item.question}</strong></summary>
-        <p>{item.answer}</p>
-      </details>
-    ))}
+    <h2>Tüketime göre tahmini fatura (Kademe 1, 14 TL/m³)</h2>
+    <table>
+      <thead>
+        <tr><th>Aylık tüketim</th><th>Tipik dönem</th><th>Tahmini fatura</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>30 m³</td><td>Yaz (sıcak su, ocak)</td><td>420 TL</td></tr>
+        <tr><td>80 m³</td><td>Ekim–Kasım</td><td>1.120 TL</td></tr>
+        <tr><td>150 m³</td><td>Aralık–Şubat, iyi yalıtımlı daire</td><td>2.100 TL</td></tr>
+        <tr><td>250 m³</td><td>Ocak, yalıtımsız veya büyük konut</td><td>3.500 TL (limit aşılırsa yaklaşık 5.725 TL)</td></tr>
+      </tbody>
+    </table>
+
+    <h2>m³ ve kWh farkı</h2>
+    <p>
+      Dağıtım şirketleri tüketimi m³ olarak ölçer ama faturada kWh karşılığını da gösterir. Dönüşüm, gazın ısıl değerine göre yapılır ve 1 m³ yaklaşık 10,64 kWh'e denk gelir. Kombi ve elektrikli ısıtıcı maliyetini karşılaştırmak için kWh başı fiyatı kullanabilirsiniz: 14 TL/m³ fiyatla doğalgazın kWh maliyeti yaklaşık 1,32 TL'dir; kombi verimi hesaba katılsa da elektrikli ısınmadan belirgin şekilde ucuzdur.
+    </p>
   </section>
 </CalcLayout>

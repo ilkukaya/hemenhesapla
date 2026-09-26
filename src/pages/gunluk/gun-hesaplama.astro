@@ -1,209 +1,261 @@
 ---
 import CalcLayout from '../../layouts/CalcLayout.astro';
 import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcSelect from '../../components/calculator/CalcSelect.astro';
 import CalcResult from '../../components/calculator/CalcResult.astro';
 
 const faq = [
   {
-    question: "İki tarih arasındaki gün farkı nasıl hesaplanır?",
-    answer: "İki tarih arasındaki gün farkı, bitiş tarihinin milisaniye cinsinden değerinden başlangıç tarihinin milisaniye değeri çıkarılarak hesaplanır. Elde edilen fark 86.400.000 (bir günün milisaniyesi) ile bölünür. Araçımız artık yılları ve farklı ay uzunluklarını otomatik olarak dikkate alır."
+    question: "İki tarih arasındaki gün sayısı nasıl hesaplanır?",
+    answer: "Bitiş tarihinden başlangıç tarihi çıkarılır. Aynı ay içindeyse gün numaralarını çıkarmak yeterlidir; farklı aylarda ise aradaki ayların gün sayıları (28, 29, 30 veya 31) toplanır. Örneğin 26 Eylül 2026 ile 1 Ocak 2027 arasında 4 + 31 + 30 + 31 + 1 = 97 gün vardır. Hesaplayıcı bu sayımı takvim üzerinden otomatik yapar."
   },
   {
-    question: "Gün hesaplama nerelerde kullanılır?",
-    answer: "Gün hesaplama; proje süreleri, sözleşme ve vize geçerlilik süreleri, hamilelik haftası takibi, askerlik geri sayımı, kira ve kefalet sözleşmeleri, ilaç tedavi süreleri ve önemli bir etkinliğe kaç gün kaldığını öğrenmek gibi birçok alanda kullanılır."
+    question: "Gün hesaplamada ilk ve son gün dahil mi?",
+    answer: "Standart gün farkında başlangıç günü sayılır, bitiş günü sayılmaz; yani 1 Ocak'tan 2 Ocak'a 1 gün vardır. Otel konaklaması veya kira süresi gibi hesaplarda bu yöntem kullanılır. İzin, rapor ya da etkinlik süresi gibi her iki günün de dahil olduğu durumlarda \"Son gün dahil\" seçeneğini açın; sonuca 1 gün eklenir."
   },
   {
-    question: "Hafta ve ay hesaplaması nasıl yapılır?",
-    answer: "Hafta sayısı, toplam gün sayısının 7'ye bölünmesiyle elde edilir. Yaklaşık ay sayısı için ise ortalama ay uzunluğu olan 30,44 gün kullanılır; toplam gün sayısı 30,44'e bölünür. Yıl hesabında ise artık yılı da kapsayan 365,25 günlük ortalama yıl uzunluğu kullanılır."
+    question: "İki tarih arasındaki iş günü nasıl hesaplanır?",
+    answer: "Toplam gün sayısından cumartesi ve pazar günleri çıkarılır. Hesaplayıcı iş gününü pazartesi–cuma olarak sayar. Resmi ve dini bayramlar tarihe göre değiştiği için otomatik düşülmez; aralıkta örneğin 29 Ekim Cumhuriyet Bayramı hafta içine denk geliyorsa sonuçtan ayrıca 1 gün düşmeniz gerekir."
+  },
+  {
+    question: "Bir yılda kaç gün var, artık yıl nasıl anlaşılır?",
+    answer: "Normal yıllar 365, artık yıllar 366 gündür. 4'e tam bölünen yıllar artık yıldır; ancak 100'e bölünüp 400'e bölünmeyenler (ör. 1900, 2100) artık yıl değildir. 2024 ve 2028 artık yıl, 2026 ve 2027 normal yıldır. Hesaplayıcı 29 Şubat'ları otomatik olarak dikkate alır."
+  },
+  {
+    question: "Gün farkı ay ve yıla nasıl çevrilir?",
+    answer: "Aylar eşit uzunlukta olmadığı için gün sayısını 30'a bölmek yaklaşık sonuç verir. Doğru yöntem takvim üzerinden tamamlanan ay ve yılları saymaktır. Hesaplayıcı sonucu hem \"X yıl Y ay Z gün\" biçiminde hem de toplam hafta cinsinden gösterir. Ortalama bir ay 30,44 gün, bir yıl 365,25 gündür."
+  },
+  {
+    question: "Yasal süreler (itiraz, tebligat) gün hesabı nasıl yapılır?",
+    answer: "Hukuki sürelerde genellikle olayın gerçekleştiği gün sayılmaz, süre ertesi gün başlar ve son günün mesai bitiminde sona erer. Son gün resmi tatile denk gelirse süre izleyen ilk iş günü biter. Bu nedenle yasal süreler için bu hesaplayıcıyı yol gösterici olarak kullanın ve ilgili kanundaki özel kuralları kontrol edin."
   }
 ];
 
 const meta = {
   title: "Gün Hesaplama",
-  description: "İki tarih arasındaki gün farkını hesaplayın. Başlangıç ve bitiş tarihlerini girerek gün, hafta, ay ve yıl cinsinden tarih farkını anında öğrenin.",
+  seoTitle: "Gün Hesaplama 2026 – İki Tarih Arası Kaç Gün?",
+  description: "İki tarih arasında kaç gün olduğunu anında hesaplayın. Sonucu hafta, ay ve yıl olarak görün; iş günü ve hafta sonu sayısını da öğrenin, son günü dahil edin.",
+  summary: "İki tarih arasındaki gün sayısı, bitiş tarihinden başlangıç tarihinin çıkarılmasıyla bulunur; başlangıç günü sayılır, bitiş günü sayılmaz. Her iki günü de dahil etmek için sonuca 1 eklenir. Örneğin 26 Eylül 2026 ile 1 Ocak 2027 arasında 97 gün (3 ay 6 gün) vardır.",
+  howTo: [
+    "Başlangıç tarihini seçin.",
+    "Bitiş tarihini seçin; bitiş başlangıçtan önce olsa bile fark hesaplanır.",
+    "İzin veya etkinlik süresi gibi her iki günün de sayılması gerekiyorsa \"Son gün dahil\" seçeneğini işaretleyin.",
+    "Toplam gün, hafta, yıl-ay-gün karşılığı ile iş günü ve hafta sonu sayısını sonuç alanında inceleyin."
+  ],
+  sources: [],
   category: "gunluk",
   slug: "gun-hesaplama",
-  keywords: ["gün hesaplama", "tarih farkı hesaplama", "iki tarih arası gün", "gün sayısı hesaplama", "tarih hesaplayıcı"],
-  dateModified: "2026-04-01",
-  relatedCalcs: ["yas-hesaplama"],
+  keywords: ["gün hesaplama", "tarih farkı hesaplama", "iki tarih arası gün", "gün sayısı hesaplama", "tarih hesaplayıcı", "iş günü hesaplama"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["gunluk/yas-hesaplama", "gunluk/askerlik-hesaplama", "saglik/gebelik-haftasi-hesaplama", "finans/ihbar-tazminati-hesaplama"],
   faq
 };
 ---
 
 <CalcLayout meta={meta}>
-  <form id="calc-form" novalidate>
-    <div class="calc-inputs">
-      <CalcInput
-        id="baslangic"
-        label="Başlangıç Tarihi"
-        type="date"
-        helpText="Hesaplamayı başlatmak istediğiniz tarihi seçin"
-      />
-      <CalcInput
-        id="bitis"
-        label="Bitiş Tarihi"
-        type="date"
-        helpText="Hesaplamayı bitirmek istediğiniz tarihi seçin"
-      />
-    </div>
+  <form id="calc-form" class="calc-inputs" novalidate>
+    <CalcInput
+      id="baslangic"
+      label="Başlangıç Tarihi"
+      type="date"
+    />
+    <CalcInput
+      id="bitis"
+      label="Bitiş Tarihi"
+      type="date"
+    />
+    <CalcSelect
+      id="sonGun"
+      label="Son Gün Dahil mi?"
+      options={[
+        { value: "hayir", label: "Hayır (standart gün farkı)" },
+        { value: "evet", label: "Evet (her iki gün sayılsın, +1)" }
+      ]}
+      value="hayir"
+    />
   </form>
 
   <CalcResult>
     <div slot="main">
-      <p class="calc-result-label">Gün Farkı</p>
+      <p class="calc-result-label">İki Tarih Arası</p>
       <p class="calc-result-value" id="gun-ana">—</p>
+      <p class="calc-result-sub" id="gun-alt"></p>
     </div>
     <div slot="details">
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Hafta</span>
+        <span class="calc-detail-label">Yıl, ay, gün olarak</span>
+        <span class="calc-detail-value" id="sonuc-ymd">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Hafta olarak</span>
         <span class="calc-detail-value" id="sonuc-hafta">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Ay (yaklaşık)</span>
-        <span class="calc-detail-value" id="sonuc-ay">—</span>
+        <span class="calc-detail-label">İş günü (Pzt–Cum)</span>
+        <span class="calc-detail-value" id="sonuc-isgunu">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Yıl (yaklaşık)</span>
-        <span class="calc-detail-value" id="sonuc-yil">—</span>
+        <span class="calc-detail-label">Hafta sonu günü</span>
+        <span class="calc-detail-value" id="sonuc-haftasonu">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Saat olarak</span>
+        <span class="calc-detail-value" id="sonuc-saat">—</span>
       </div>
     </div>
   </CalcResult>
 
+  <p class="calc-note">İş günü sayısına resmi ve dini bayramlar dahil edilmez; aralıktaki hafta içi tatilleri ayrıca düşün.</p>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const inputs = document.querySelectorAll<HTMLInputElement | HTMLSelectElement>('#calc-form input, #calc-form select');
       const resultArea = document.getElementById('calc-result');
+      const $ = (id: string) => document.getElementById(id) as HTMLElement;
 
-      function debounce(fn, delay = 150) {
-        let timer;
-        return (...args) => {
-          clearTimeout(timer);
-          timer = setTimeout(() => fn(...args), delay);
-        };
+      function debounce(fn: () => void, delay = 150) {
+        let timer: ReturnType<typeof setTimeout>;
+        return () => { clearTimeout(timer); timer = setTimeout(fn, delay); };
       }
 
-      function formatNumber(num, decimals = 0) {
-        return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }).format(num);
-      }
+      const fmt = (n: number) => new Intl.NumberFormat('tr-TR').format(n);
 
-      const debouncedCalc = debounce(calculate);
-      inputs.forEach(input => {
-        input.addEventListener('input', debouncedCalc);
-        input.addEventListener('change', debouncedCalc);
-      });
+      function parseDate(s: string): Date | null {
+        const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
+        if (!m) return null;
+        const d = new Date(2000, 0, 1);
+        d.setFullYear(+m[1], +m[2] - 1, +m[3]);
+        return d.getMonth() === +m[2] - 1 ? d : null;
+      }
+      // UTC gün numarası: yaz saati geçişlerinden etkilenmez
+      const dayNum = (d: Date) => Math.round(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5);
+      const daysInMonth = (y: number, m: number) => new Date(y, m + 1, 0).getDate();
+      function addMonths(d: Date, n: number): Date {
+        const r = new Date(2000, 0, 1);
+        const y = d.getFullYear() + Math.floor((d.getMonth() + n) / 12);
+        const mo = ((d.getMonth() + n) % 12 + 12) % 12;
+        r.setFullYear(y, mo, Math.min(d.getDate(), daysInMonth(y, mo)));
+        return r;
+      }
 
       function calculate() {
-        const baslangicEl = document.getElementById('baslangic');
-        const bitisEl = document.getElementById('bitis');
+        let a = parseDate((document.getElementById('baslangic') as HTMLInputElement).value);
+        let b = parseDate((document.getElementById('bitis') as HTMLInputElement).value);
+        const dahil = (document.getElementById('sonGun') as HTMLSelectElement).value === 'evet';
 
-        const baslangicStr = baslangicEl.value;
-        const bitisStr = bitisEl.value;
-
-        if (!baslangicStr || !bitisStr) {
-          if (resultArea) resultArea.classList.add('hidden');
+        if (!a || !b) {
+          resultArea?.classList.add('hidden');
           return;
         }
 
-        const baslangic = new Date(baslangicStr);
-        const bitis = new Date(bitisStr);
+        const ters = dayNum(b) < dayNum(a);
+        if (ters) [a, b] = [b, a];
 
-        const msPerGun = 1000 * 60 * 60 * 24;
-        const diffMs = Math.abs(bitis - baslangic);
-        const toplamGun = Math.round(diffMs / msPerGun);
+        // Sayılan günler: [a, b) veya son gün dahilse [a, b]
+        const sonGunNo = dayNum(b) + (dahil ? 1 : 0);
+        const toplam = sonGunNo - dayNum(a);
 
-        const hafta = Math.floor(toplamGun / 7);
-        const kalanGun = toplamGun % 7;
-        const yaklasikAy = toplamGun / 30.44;
-        const yaklasikYil = toplamGun / 365.25;
+        // Takvim bazlı yıl-ay-gün (bitiş, dahil seçeneğine göre bir gün ileri alınır)
+        const son = new Date(2000, 0, 1);
+        son.setFullYear(b.getFullYear(), b.getMonth(), b.getDate() + (dahil ? 1 : 0));
+        let aylar = (son.getFullYear() - a.getFullYear()) * 12 + (son.getMonth() - a.getMonth());
+        if (dayNum(addMonths(a, aylar)) > dayNum(son)) aylar--;
+        const gunKalan = dayNum(son) - dayNum(addMonths(a, aylar));
+        const yil = Math.floor(aylar / 12);
+        const ay = aylar % 12;
 
-        const gunAnaEl = document.getElementById('gun-ana');
-        const sonucHaftaEl = document.getElementById('sonuc-hafta');
-        const sonucAyEl = document.getElementById('sonuc-ay');
-        const sonucYilEl = document.getElementById('sonuc-yil');
+        // İş günü sayımı
+        const tamHafta = Math.floor(toplam / 7);
+        let isGunu = tamHafta * 5;
+        const baslangicGun = new Date((dayNum(a) + tamHafta * 7) * 864e5).getUTCDay();
+        for (let i = 0; i < toplam % 7; i++) {
+          const w = (baslangicGun + i) % 7;
+          if (w !== 0 && w !== 6) isGunu++;
+        }
 
-        if (gunAnaEl) gunAnaEl.textContent = `${formatNumber(toplamGun)} Gün`;
-        if (sonucHaftaEl) sonucHaftaEl.textContent = kalanGun > 0
-          ? `${formatNumber(hafta)} hafta, ${formatNumber(kalanGun)} gün`
-          : `${formatNumber(hafta)} hafta`;
-        if (sonucAyEl) sonucAyEl.textContent = `${formatNumber(yaklasikAy, 1)} ay`;
-        if (sonucYilEl) sonucYilEl.textContent = `${formatNumber(yaklasikYil, 2)} yıl`;
+        const parcalar: string[] = [];
+        if (yil) parcalar.push(`${fmt(yil)} yıl`);
+        if (ay) parcalar.push(`${ay} ay`);
+        if (gunKalan || parcalar.length === 0) parcalar.push(`${gunKalan} gün`);
 
-        if (resultArea) resultArea.classList.remove('hidden');
+        $('gun-ana').textContent = `${fmt(toplam)} gün`;
+        $('gun-alt').textContent = ters ? 'Bitiş tarihi başlangıçtan önce; tarihler yer değiştirilerek hesaplandı.' : (dahil ? 'Başlangıç ve bitiş günleri dahil' : 'Başlangıç günü dahil, bitiş günü hariç');
+        $('sonuc-ymd').textContent = parcalar.join(' ');
+        $('sonuc-hafta').textContent = `${fmt(Math.floor(toplam / 7))} hafta ${toplam % 7} gün`;
+        $('sonuc-isgunu').textContent = `${fmt(isGunu)} gün`;
+        $('sonuc-haftasonu').textContent = `${fmt(toplam - isGunu)} gün`;
+        $('sonuc-saat').textContent = `${fmt(toplam * 24)} saat`;
+
+        resultArea?.classList.remove('hidden');
         updateURL();
       }
 
       function updateURL() {
         const params = new URLSearchParams();
-        inputs.forEach(input => {
-          if (input.value && input.value !== '' && input.id) {
-            params.set(input.id, input.value);
-          }
-        });
-        const newURL = `${window.location.pathname}?${params.toString()}`;
-        history.replaceState(null, '', newURL);
+        inputs.forEach(el => { if (el.id && el.value !== '') params.set(el.id, el.value); });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
       }
 
       function loadFromURL() {
         const params = new URLSearchParams(window.location.search);
-        let hasParams = false;
-        inputs.forEach(input => {
-          if (input.id && params.has(input.id)) {
-            input.value = params.get(input.id);
-            hasParams = true;
-          }
+        let has = false;
+        inputs.forEach(el => {
+          if (el.id && params.has(el.id)) { el.value = params.get(el.id) ?? ''; has = true; }
         });
-        if (hasParams) calculate();
+        if (has) calculate();
       }
+
+      const debounced = debounce(calculate);
+      inputs.forEach(el => {
+        el.addEventListener('input', debounced);
+        el.addEventListener('change', debounced);
+      });
 
       loadFromURL();
     });
   </script>
 
   <section class="calc-content">
-    <h2>Gün Hesaplama Nedir?</h2>
+    <h2>İki tarih arası gün nasıl hesaplanır?</h2>
     <p>
-      Gün hesaplama, iki tarih arasındaki süreyi gün, hafta, ay ve yıl cinsinden hesaplayan pratik bir araçtır. Günlük yaşamda pek çok durumda iki tarih arasındaki farkı bilmemiz gerekir: bir projenin kaç gün sürdüğünü hesaplamak, sözleşme bitiş tarihini takip etmek, vize geçerlilik süresini kontrol etmek ya da önemli bir etkinliğe kaç gün kaldığını öğrenmek bunların başında gelir. Başlangıç ve bitiş tarihlerini girerek tüm bu bilgilere anında ulaşabilirsiniz.
+      Gün farkı, bitiş tarihinden başlangıç tarihinin çıkarılmasıyla bulunur. Elle hesaplarken başlangıç ayında kalan günleri, aradaki tam ayların gün sayılarını ve bitiş ayındaki günleri toplarsınız. Ayların 28, 29, 30 ve 31 gün çekmesi ve artık yıllar işi karıştırdığı için hesaplayıcı tarihleri doğrudan takvim günü numarasına çevirerek çıkarır. Yaz saati uygulamasının geçmişte yarattığı 23 ya da 25 saatlik günler de sonucu etkilemez.
     </p>
 
-    <h2>Gün Farkı Nasıl Hesaplanır?</h2>
-    <p>
-      Tarih farkı hesaplamanın matematiksel temeli oldukça basittir. Her tarih milisaniye cinsinden bir sayıya dönüştürülür; bitiş tarihinin sayısından başlangıç tarihinin sayısı çıkarılır. Elde edilen milisaniye farkı, bir günün milisaniye karşılığı olan 86.400.000'e bölünerek gün sayısı elde edilir. Araçımız bu hesaplamayı otomatik yapar ve artık yılları da doğru biçimde işler.
-    </p>
-
-    <h2>Hafta, Ay ve Yıl Hesaplama</h2>
-    <p>
-      Gün farkından hareketle diğer zaman birimlerine dönüştürme şu şekilde yapılır:
-    </p>
+    <h3>Son gün dahil mi, hariç mi?</h3>
     <ul>
-      <li><strong>Hafta:</strong> Toplam gün sayısı 7'ye bölünür; kalan günler ayrıca gösterilir.</li>
-      <li><strong>Ay (yaklaşık):</strong> Ayların 28 ila 31 gün arasında değişmesi nedeniyle ortalama ay uzunluğu olan 30,44 gün kullanılır; toplam gün 30,44'e bölünür.</li>
-      <li><strong>Yıl (yaklaşık):</strong> Artık yıllar dikkate alınarak ortalama yıl uzunluğu 365,25 gün olarak alınır; toplam gün 365,25'e bölünür.</li>
+      <li><strong>Standart (hariç):</strong> 1 Ocak'tan 2 Ocak'a 1 gün. Konaklama gecesi, kira ve faiz günü hesaplarında kullanılır.</li>
+      <li><strong>Son gün dahil:</strong> 1 Ocak ile 2 Ocak dahil 2 gün. Yıllık izin, rapor süresi, kampanya veya etkinlik süresinde kullanılır.</li>
     </ul>
 
-    <h2>Gün Hesaplamanın Kullanım Alanları</h2>
+    <h2>Örnek hesaplama</h2>
     <p>
-      Tarih farkı hesaplama ihtiyacı gündelik hayatın birçok alanında karşımıza çıkar:
+      26 Eylül 2026 ile 1 Ocak 2027 arasındaki günleri sayalım. Başlangıç günü sayılıp bitiş günü sayılmadığından Eylül'den 5 gün (26–30), Ekim'den 31, Kasım'dan 30, Aralık'tan 31 gün gelir: 5 + 31 + 30 + 31 = <strong>97 gün</strong>. Takvim karşılığı 3 ay 6 gün, hafta karşılığı 13 hafta 6 gündür.
     </p>
+    <p>
+      Bu aralıkta 69 hafta içi gün bulunur. 29 Ekim 2026 perşembe gününe denk geldiği için resmi tatil düşüldüğünde çalışılan gün sayısı 68 olur (28 Ekim ise saat 13.00'ten itibaren yarım günlük resmi tatildir).
+    </p>
+
+    <h2>Ayların gün sayıları</h2>
+    <table>
+      <thead>
+        <tr><th>Ay</th><th>Gün</th><th>Ay</th><th>Gün</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Ocak</td><td>31</td><td>Temmuz</td><td>31</td></tr>
+        <tr><td>Şubat</td><td>28 (artık yılda 29)</td><td>Ağustos</td><td>31</td></tr>
+        <tr><td>Mart</td><td>31</td><td>Eylül</td><td>30</td></tr>
+        <tr><td>Nisan</td><td>30</td><td>Ekim</td><td>31</td></tr>
+        <tr><td>Mayıs</td><td>31</td><td>Kasım</td><td>30</td></tr>
+        <tr><td>Haziran</td><td>30</td><td>Aralık</td><td>31</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Gün hesaplamanın sık kullanıldığı durumlar</h2>
     <ul>
-      <li><strong>İş ve proje yönetimi:</strong> Projenin başlangıç ve bitiş tarihleri arasındaki toplam çalışma süresi kolayca belirlenir.</li>
-      <li><strong>Hukuki sözleşmeler:</strong> Kira, hizmet ve kefalet sözleşmelerinde süre takibi için gün sayısı kritik öneme sahiptir.</li>
-      <li><strong>Sağlık ve ilaç takibi:</strong> Tedavi süresi, bağışıklık takvimi veya hamilelik haftası hesaplamasında doğru gün sayısı gerekir.</li>
-      <li><strong>Vize ve seyahat:</strong> Vize izin süresi, ikamet izni süresi veya seyahat sigortası geçerlilik tarihini kontrol etmek için kullanılır.</li>
-      <li><strong>Kişisel hedefler:</strong> Diyet, egzersiz, bırakma programları (sigara, alkol) gibi hedeflere kaç gün kaldığını takip etmek motivasyonu artırır.</li>
-      <li><strong>Eğitim:</strong> Sınav tarihine kaç gün kaldığını hesaplamak, çalışma planı oluşturmada yardımcı olur.</li>
+      <li><strong>Yıllık izin planı:</strong> İzin başlangıç ve bitişini son gün dahil seçerek kaç gün izinli olacağınızı, iş günü satırından da kaç iş gününüzün kullanılacağını görün.</li>
+      <li><strong>Vade ve faiz:</strong> Mevduat ve kredi faizleri gün esasıyla işler; standart (son gün hariç) fark kullanılır.</li>
+      <li><strong>Gebelik ve sağlık takibi:</strong> Son adet tarihinden bugüne geçen günü haftaya çevirerek gebelik haftasını bulabilirsiniz.</li>
+      <li><strong>Geri sayım:</strong> Başlangıcı bugün, bitişi hedef tarih yaparak düğün, sınav veya tatile kaç gün kaldığını öğrenin.</li>
     </ul>
-
-    <h2>İş Günü Hesaplama Hakkında</h2>
-    <p>
-      Aracımız takvim günlerini hesaplar; hafta sonları ve resmi tatil günleri bu toplamın içinde yer alır. Yalnızca iş günlerini hesaplamak istiyorsanız cumartesi, pazar günleri ile Türkiye'deki resmi tatilleri (Kurban Bayramı, Ramazan Bayramı, Cumhuriyet Bayramı vb.) ayrıca düşmeniz gerekir. Resmi tatil takvimi her yıl değişebildiğinden iş günü hesabı için tatil takvimini güncel tutmak önemlidir.
-    </p>
-
-    <h2>Sıkça Sorulan Sorular</h2>
-    {faq.map(item => (
-      <details>
-        <summary><strong>{item.question}</strong></summary>
-        <p>{item.answer}</p>
-      </details>
-    ))}
   </section>
 </CalcLayout>

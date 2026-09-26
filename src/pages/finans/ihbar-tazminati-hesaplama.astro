@@ -3,63 +3,89 @@ import CalcLayout from '../../layouts/CalcLayout.astro';
 import CalcSelect from '../../components/calculator/CalcSelect.astro';
 import CalcInput from '../../components/calculator/CalcInput.astro';
 import CalcResult from '../../components/calculator/CalcResult.astro';
+import legal from '../../data/legal-2026.json';
+import taxBrackets from '../../data/tax-brackets.json';
 
-const faq = [
-  {
-    question: "İhbar tazminatı kime ödenir?",
-    answer: "İhbar tazminatı, iş sözleşmesini yasal ihbar süresine uymadan fesheden tarafa karşı diğer tarafa ödenir. İşveren, ihbar süresine uymadan işçiyi çıkardığında ihbar tazminatı ödemek zorundadır. Aynı şekilde işçi de ihbar süresine uymadan işten ayrılırsa işverene ihbar tazminatı ödemekle yükümlüdür. Tazminat, ihbar süresine karşılık gelen brüt ücret tutarında hesaplanır.",
-  },
-  {
-    question: "İhbar süresi çalışma süresine göre nasıl belirlenir?",
-    answer: "4857 sayılı İş Kanunu'nun 17. maddesine göre ihbar süreleri şu şekilde belirlenmiştir: 6 aydan az çalışanlarda 2 hafta (14 gün), 6 ay ile 1,5 yıl arasında çalışanlarda 4 hafta (28 gün), 1,5 yıl ile 3 yıl arasında çalışanlarda 6 hafta (42 gün), 3 yıldan fazla çalışanlarda 8 hafta (56 gün). Bu süreler asgari süreler olup taraflarca artırılabilir ancak azaltılamaz.",
-  },
-  {
-    question: "İhbar tazminatı vergi ve SGK'ya tabi midir?",
-    answer: "İhbar tazminatı gelir vergisi stopajına tabidir; brüt tutar üzerinden gelir vergisi kesilerek net tutar ödenir. SGK primi ise ihbar tazminatından kesilmez; yani ihbar tazminatı SGK primi matrahına dahil edilmez. Bu nedenle hesaplanan tutar brüt ihbar tazminatıdır. Elinize geçecek net tutarı bulmak için gelir vergisi dilimlerinizi de göz önünde bulundurmanız gerekmektedir.",
-  },
-];
+const sureOptions = legal.ihbarSureleri.map((s) => ({ value: s.key, label: `${s.label} (${s.weeks} hafta)` }));
+const vergiOptions = taxBrackets.ucret.map((b) => ({ value: String(b.rate), label: `%${b.rate}` }));
 
 const meta = {
-  title: "İhbar Tazminatı Hesaplama 2026",
-  description: "Çalışma sürenize ve günlük brüt maaşınıza göre ihbar tazminatınızı hesaplayın. İhbar süreleri ve tazminat tutarını anında öğrenin.",
+  title: "İhbar Tazminatı Hesaplama",
+  seoTitle: "İhbar Tazminatı Hesaplama 2026 – İhbar Süresi ve Net Tutar",
+  description: "İhbar tazminatı hesaplama 2026: çalışma sürenize göre 2–8 haftalık ihbar süresini, brüt tazminatı, gelir ve damga vergisi kesintisini ve net tutarı bulun.",
+  summary: "İhbar tazminatı, İş Kanunu md. 17'deki bildirim süresine uyulmadan yapılan fesihte bu sürenin ücreti kadar ödenir: 6 aydan az çalışmada 2 hafta, 6 ay–1,5 yıl 4 hafta, 1,5–3 yıl 6 hafta, 3 yıldan fazla çalışmada 8 hafta. Tutar = gün sayısı × günlük giydirilmiş brüt ücret; gelir vergisi ve damga vergisi kesilir, SGK primi kesilmez.",
+  howTo: [
+    "İşyerindeki toplam çalışma sürenizi seçin.",
+    "Aylık giydirilmiş brüt ücretinizi (düzenli yan ödemeler dahil) girin.",
+    "Bulunduğunuz gelir vergisi dilimini seçin; emin değilseniz bordronuzdaki son oranı kullanın.",
+    "Brüt ihbar tazminatını, vergi kesintilerini ve net tutarı görün."
+  ],
+  sources: [
+    { name: "4857 sayılı İş Kanunu md. 17 (mevzuat.gov.tr)", url: "https://www.mevzuat.gov.tr/MevzuatMetin/1.5.4857.pdf" },
+    { name: "Gelir İdaresi Başkanlığı", url: "https://www.gib.gov.tr/" }
+  ],
   category: "finans",
   slug: "ihbar-tazminati-hesaplama",
-  keywords: ["ihbar tazminatı hesaplama", "ihbar süresi", "ihbar tazminatı 2026", "işten çıkarılma ihbar", "iş kanunu ihbar"],
-  dateModified: "2026-04-01",
-  relatedCalcs: ["kidem-tazminati-hesaplama", "net-brut-maas-hesaplama", "gelir-vergisi-hesaplama"],
-  faq,
+  keywords: ["ihbar tazminatı hesaplama", "ihbar süresi", "ihbar tazminatı 2026", "ihbar tazminatı vergi", "ihbar süresi kaç hafta", "iş kanunu 17. madde"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["finans/kidem-tazminati-hesaplama", "finans/net-brut-maas-hesaplama", "finans/gelir-vergisi-hesaplama"],
+  faq: [
+    {
+      question: "İhbar süresi kaç hafta?",
+      answer: "4857 sayılı İş Kanunu'nun 17. maddesine göre bildirim süreleri işçinin kıdemine bağlıdır: işi 6 aydan az sürmüş işçi için 2 hafta, 6 aydan 1,5 yıla kadar 4 hafta, 1,5 yıldan 3 yıla kadar 6 hafta, 3 yıldan fazla sürmüş işçi için 8 haftadır. Bu süreler asgaridir; iş sözleşmesiyle artırılabilir ama azaltılamaz."
+    },
+    {
+      question: "İhbar tazminatı nasıl hesaplanır?",
+      answer: "İhbar süresinin gün karşılığı (2 hafta için 14 gün, 8 hafta için 56 gün) günlük giydirilmiş brüt ücretle çarpılır. Günlük ücret, aylık giydirilmiş brüt ücretin 30'a bölünmesiyle bulunur. Örneğin aylık 45.000 TL ücretle 3 yıldan fazla çalışan bir işçinin brüt ihbar tazminatı 56 × 1.500 = 84.000 TL'dir."
+    },
+    {
+      question: "İhbar tazminatından vergi kesilir mi?",
+      answer: "Evet. İhbar tazminatı gelir vergisinden istisna değildir; çalışanın kümülatif matrahına göre %15 ile %40 arasında gelir vergisi ve binde 7,59 damga vergisi kesilir. SGK primine tabi değildir. Bu nedenle net tutar, kıdem tazminatından farklı olarak vergi dilimine göre değişir."
+    },
+    {
+      question: "İstifa eden işçi ihbar tazminatı alır mı?",
+      answer: "Hayır. İhbar tazminatı, bildirim süresine uymadan sözleşmeyi fesheden tarafın karşı tarafa ödediği tazminattır. İşçi bildirim süresine uymadan istifa ederse işverene ihbar tazminatı ödemekle yükümlü olur. Haklı nedenle derhal fesihlerde (md. 24 ve 25) ihbar tazminatı doğmaz."
+    },
+    {
+      question: "İşveren ihbar süresini çalıştırırsa ne olur?",
+      answer: "İşveren ihbar süresi boyunca işçiyi çalıştırabilir; bu durumda tazminat ödenmez ancak işçiye yeni iş araması için günde en az 2 saat ücretli izin verilmesi gerekir. İşveren bu süre ücretini peşin ödeyerek sözleşmeyi hemen de sona erdirebilir. İş arama izni kullandırılmazsa bu saatlerin ücreti ayrıca ödenir."
+    }
+  ]
 };
 ---
 
 <CalcLayout meta={meta}>
-  <form id="calc-form" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
+  <form id="calc-form" class="calc-inputs" novalidate>
     <CalcSelect
       id="calismaSuresi"
       label="Çalışma Süresi"
-      options={[
-        { value: "6aydan-az", label: "6 aydan az" },
-        { value: "6ay-1.5yil", label: "6 ay - 1.5 yıl" },
-        { value: "1.5yil-3yil", label: "1.5 - 3 yıl" },
-        { value: "3yil-ustu", label: "3 yıl üstü" },
-      ]}
-      helpText="İş yerinizde toplam çalışma sürenizi seçin"
+      options={sureOptions}
+      value="3yil-ustu"
+      helpText="Aynı işverende geçen toplam süre"
     />
     <CalcInput
-      id="gunlukBrutMaas"
-      label="Günlük Brüt Maaş"
+      id="aylikBrutMaas"
+      label="Aylık Giydirilmiş Brüt Ücret"
       type="number"
       suffix="₺"
-      placeholder="1000"
-      step={1}
+      placeholder="45000"
+      step="any"
       min={0}
-      helpText="Aylık brüt maaşınızı 30'a bölünüz"
+      helpText="Düzenli yol, yemek vb. yan ödemeler dahil"
+    />
+    <CalcSelect
+      id="gvOrani"
+      label="Gelir Vergisi Dilimi"
+      options={vergiOptions}
+      value="15"
+      helpText="Fesih ayındaki kümülatif matrahınıza göre dilim"
     />
   </form>
 
   <CalcResult>
     <div slot="main">
-      <span class="calc-result-label">İhbar Tazminatı</span>
-      <span class="calc-result-value" id="ihbar-tazminati">—</span>
+      <p class="calc-result-label">Net İhbar Tazminatı</p>
+      <p class="calc-result-value" id="ihbar-tazminati">—</p>
     </div>
     <div slot="details">
       <div class="calc-detail-row">
@@ -67,115 +93,113 @@ const meta = {
         <span class="calc-detail-value" id="ihbar-suresi">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">İhbar Süresi (Gün)</span>
-        <span class="calc-detail-value" id="ihbar-gun">—</span>
+        <span class="calc-detail-label">Günlük Brüt Ücret</span>
+        <span class="calc-detail-value" id="gunluk-ucret">—</span>
       </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Brüt İhbar Tazminatı</span>
+        <span class="calc-detail-value" id="brut-tazminat">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Gelir Vergisi</span>
+        <span class="calc-detail-value" id="gelir-vergisi">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Damga Vergisi (binde 7,59)</span>
+        <span class="calc-detail-value" id="damga">—</span>
+      </div>
+      <p class="calc-note">Hesaplama tahminidir; tazminat bir sonraki dilime taşıyorsa gelir vergisi biraz daha yüksek çıkabilir. SGK primi kesilmez.</p>
     </div>
   </CalcResult>
 
-  <section class="calc-content">
-    <h2>İhbar Tazminatı Hesaplama Nasıl Yapılır?</h2>
-    <p>
-      İhbar tazminatı, iş sözleşmesini kanunda öngörülen ihbar sürelerine uymaksızın fesheden tarafın karşı tarafa ödemek zorunda olduğu tazminattır. 4857 sayılı İş Kanunu'nun 17. maddesi kapsamında düzenlenen bu tazminat, iş güvencesinin önemli bir parçasını oluşturmaktadır. İşveren tarafından yapılan haksız ve habersiz işten çıkarmalarda işçinin bu haktan yararlanma hakkı doğmaktadır.
-    </p>
-    <p>
-      İhbar tazminatının hesaplanabilmesi için iki temel bilgiye ihtiyaç duyulmaktadır: çalışma süresi ve günlük brüt maaş. Çalışma süresi, kanunda belirlenen ihbar sürelerini doğrudan etkilerken, günlük brüt maaş da tazminat tutarının hesaplanmasında esas alınan değerdir. Günlük brüt maaşı bulmak için aylık brüt maaşınızı 30'a bölmeniz gerekmektedir.
-    </p>
-    <p>
-      Hesaplayıcımız, 4857 sayılı İş Kanunu'nda belirlenen güncel ihbar sürelerini ve yasal formülleri kullanarak tazminat tutarını otomatik olarak hesaplamaktadır. Sonuçlar tahmini nitelikte olup, kesin tutar için iş hukuku uzmanına danışmanız önerilir.
-    </p>
-    <h3>İhbar Tazminatı Formülü</h3>
-    <p>
-      İhbar tazminatı hesaplama formülü şu şekildedir:
-    </p>
-    <p>
-      <strong>İhbar Tazminatı = İhbar Süresi (Gün) × Günlük Brüt Maaş</strong>
-    </p>
-    <p>
-      Çalışma sürelerine göre belirlenen ihbar süreleri: 6 aydan az çalışmada 2 hafta (14 gün), 6 ay ile 1,5 yıl arasında 4 hafta (28 gün), 1,5 ile 3 yıl arasında 6 hafta (42 gün), 3 yıldan fazla çalışmada ise 8 hafta (56 gün)dür. Aylık brüt maaşı 30'a bölerek günlük brüt maaş bulunur.
-    </p>
-    <h3>Dikkat Edilmesi Gerekenler</h3>
-    <p>
-      İhbar tazminatının hesaplanmasında kullanılacak ücret, sadece temel ücret değil; yol, yemek, yakacak gibi düzenli yapılan yan ödemelerin de dahil edildiği brüt ücrettir. İhbar tazminatı, SGK prim matrahına dahil edilmez ancak gelir vergisi stopajına tabidir. İş sözleşmesinde kanunda öngörülen sürelerden daha uzun bir ihbar süresi kararlaştırılmışsa bu süre esas alınır; kanuni sürelerin altında bir süre kararlaştırılamaz. Ayrıca işveren, ihbar tazminatı ödemek yerine ihbar süresini çalıştırma yolunu da seçebilir.
-    </p>
-    <h3>Sıkça Sorulan Sorular</h3>
-    {faq.map((item) => (
-      <div class="faq-item">
-        <h4>{item.question}</h4>
-        <p>{item.answer}</p>
-      </div>
-    ))}
-  </section>
-</CalcLayout>
+  <script type="application/json" id="ihbar-data" set:html={JSON.stringify({ sureler: legal.ihbarSureleri, stampTax: taxBrackets.stampTaxRate })}></script>
 
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
-    const resultArea = document.getElementById('calc-result');
+  <script>
+    import { formatTL, readNumber, readValue, readJSON, setText, showResult, initCalculator, round2 } from './_shared';
 
-    function debounce(fn: (...args: unknown[]) => void, delay = 150) {
-      let timer: ReturnType<typeof setTimeout>;
-      return (...args: unknown[]) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), delay); };
-    }
+    const data = readJSON<{ sureler: { key: string; label: string; weeks: number }[]; stampTax: number }>('ihbar-data');
 
-    function formatTL(num: number) {
-      return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
-    }
+    function calculate(): boolean {
+      const sure = data.sureler.find((s) => s.key === readValue('calismaSuresi'));
+      const aylik = readNumber('aylikBrutMaas');
+      const gvOrani = readNumber('gvOrani');
 
-    const debouncedCalc = debounce(calculate);
-    inputs.forEach(i => {
-      i.addEventListener('input', debouncedCalc);
-      i.addEventListener('change', debouncedCalc);
-    });
-
-    function calculate() {
-      const calismaSuresi = (document.getElementById('calismaSuresi') as HTMLSelectElement).value;
-      const gunlukBrutMaas = parseFloat((document.getElementById('gunlukBrutMaas') as HTMLInputElement).value);
-
-      if (!calismaSuresi || !gunlukBrutMaas || gunlukBrutMaas <= 0) {
-        if (resultArea) resultArea.classList.add('hidden');
-        return;
+      if (!sure || !(aylik > 0) || !(gvOrani >= 0)) {
+        showResult(false);
+        return false;
       }
 
-      const sureler: Record<string, { hafta: number; gun: number; label: string }> = {
-        '6aydan-az':   { hafta: 2, gun: 14, label: '2 Hafta' },
-        '6ay-1.5yil':  { hafta: 4, gun: 28, label: '4 Hafta' },
-        '1.5yil-3yil': { hafta: 6, gun: 42, label: '6 Hafta' },
-        '3yil-ustu':   { hafta: 8, gun: 56, label: '8 Hafta' },
-      };
+      const gun = sure.weeks * 7;
+      const gunluk = aylik / 30;
+      const brut = round2(gun * gunluk);
+      const gv = round2(brut * gvOrani / 100);
+      const damga = round2(brut * data.stampTax / 100);
+      const net = round2(brut - gv - damga);
 
-      const sure = sureler[calismaSuresi];
-      if (!sure) return;
+      setText('ihbar-tazminati', formatTL(net));
+      setText('ihbar-suresi', `${sure.weeks} hafta (${gun} gün)`);
+      setText('gunluk-ucret', formatTL(gunluk));
+      setText('brut-tazminat', formatTL(brut));
+      setText('gelir-vergisi', formatTL(gv));
+      setText('damga', formatTL(damga));
 
-      const tazminat = sure.gun * gunlukBrutMaas;
-
-      (document.getElementById('ihbar-tazminati') as HTMLElement).textContent = formatTL(tazminat);
-      (document.getElementById('ihbar-suresi') as HTMLElement).textContent = sure.label;
-      (document.getElementById('ihbar-gun') as HTMLElement).textContent = `${sure.gun} gün`;
-
-      if (resultArea) resultArea.classList.remove('hidden');
-      updateURL();
+      showResult(true);
+      return true;
     }
 
-    function updateURL() {
-      const params = new URLSearchParams();
-      inputs.forEach(i => {
-        const el = i as HTMLInputElement;
-        if (el.value && el.id) params.set(el.id, el.value);
-      });
-      history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
-    }
+    initCalculator({
+      calculate,
+      onParams: (params) => {
+        // Eski linkler günlük ücret taşıyordu: ?gunlukBrutMaas=...
+        const gunluk = Number(params.get('gunlukBrutMaas'));
+        const el = document.getElementById('aylikBrutMaas') as HTMLInputElement | null;
+        if (el && gunluk > 0 && !params.has('aylikBrutMaas')) {
+          el.value = String(round2(gunluk * 30));
+          calculate();
+        }
+      },
+    });
+  </script>
 
-    function loadFromURL() {
-      const params = new URLSearchParams(window.location.search);
-      let hasParams = false;
-      inputs.forEach(i => {
-        const el = i as HTMLInputElement;
-        if (el.id && params.has(el.id)) { el.value = params.get(el.id)!; hasParams = true; }
-      });
-      if (hasParams) calculate();
-    }
+  <section class="calc-content">
+    <h2>İhbar Tazminatı Nedir?</h2>
+    <p>
+      Belirsiz süreli bir iş sözleşmesini feshetmek isteyen taraf, karşı tarafa önceden bildirimde bulunmak zorundadır. İşveren bu bildirim sürelerine uymadan işçiyi çıkarırsa, sürenin ücretini ihbar tazminatı olarak öder. Kural iki yönlüdür: bildirim süresine uymadan işi bırakan işçi de işverene aynı tutarı ödemekle yükümlüdür.
+    </p>
 
-    loadFromURL();
-  });
-</script>
+    <h2>İhbar Süreleri (İş Kanunu md. 17)</h2>
+    <div class="calc-table-wrap">
+      <table class="calc-table">
+        <thead><tr><th scope="col">Çalışma süresi</th><th scope="col">Bildirim süresi</th><th scope="col">Gün</th></tr></thead>
+        <tbody>
+          {legal.ihbarSureleri.map((s) => (
+            <tr><td>{s.label}</td><td>{s.weeks} hafta</td><td>{s.weeks * 7}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Örnek Hesaplama</h2>
+    <p>
+      4 yıldır aynı işyerinde çalışan ve aylık giydirilmiş brüt ücreti 45.000 TL olan bir işçi, bildirim yapılmadan işten çıkarılıyor. İhbar süresi 8 hafta, yani 56 gündür.
+    </p>
+    <ul>
+      <li>Günlük brüt ücret: 45.000 ÷ 30 = 1.500 TL</li>
+      <li>Brüt ihbar tazminatı: 56 × 1.500 = 84.000 TL</li>
+      <li>Gelir vergisi (%15 dilimde): 12.600 TL</li>
+      <li>Damga vergisi: 637,56 TL</li>
+      <li>Net ihbar tazminatı: <strong>70.762,44 TL</strong></li>
+    </ul>
+    <p>
+      Aynı işçinin kümülatif matrahı fesih ayında 190.000 TL'yi aşmışsa %20 dilim seçilmelidir; bu durumda gelir vergisi 16.800 TL, net tutar 66.562,44 TL olur.
+    </p>
+
+    <h2>Dikkat Edilmesi Gerekenler</h2>
+    <ul>
+      <li>Hesaplamada çıplak ücret değil, düzenli yan ödemelerin eklendiği giydirilmiş brüt ücret kullanılır.</li>
+      <li>İhbar tazminatında kıdem tazminatındaki gibi bir tavan yoktur.</li>
+      <li>Belirli süreli iş sözleşmeleri kendiliğinden sona erdiği için ihbar tazminatı doğmaz.</li>
+      <li>İhbar tazminatı alacağı için zamanaşımı, fesih tarihinden itibaren beş yıldır.</li>
+    </ul>
+  </section>
+</CalcLayout>

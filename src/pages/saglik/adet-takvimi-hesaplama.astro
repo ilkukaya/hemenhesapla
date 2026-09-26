@@ -1,0 +1,238 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcSelect from '../../components/calculator/CalcSelect.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Adet tarihi nasıl hesaplanır?",
+    answer: "Bir sonraki adet tarihi, son adetin başladığı ilk güne ortalama döngü süreniz eklenerek hesaplanır: Sonraki Adet = Son Adet Tarihi + Döngü Süresi. Örneğin son adetiniz 5 Eylül'de başladıysa ve döngünüz 28 gün sürüyorsa, bir sonraki adetiniz 3 Ekim civarında başlar. Döngü süresi, bir adetin ilk gününden sonrakinin ilk gününe kadar geçen gün sayısıdır."
+  },
+  {
+    question: "Normal adet döngüsü kaç gündür?",
+    answer: "Yetişkin kadınlarda normal kabul edilen adet döngüsü 21 ile 35 gün arasındadır; ortalama değer 28 gündür. Ergenlik döneminde ilk yıllarda 21-45 gün arası döngüler de sık görülür. Kanamanın 2 ile 7 gün sürmesi normaldir. Döngü süresinin aydan aya 7-9 günden fazla değişmesi düzensiz döngü olarak değerlendirilir."
+  },
+  {
+    question: "Adet gecikmesi kaç gün normaldir?",
+    answer: "Beklenen tarihten birkaç gün sapma çoğu kadında normaldir; stres, yoğun egzersiz, kilo değişimi, seyahat ve hastalık döngüyü etkileyebilir. Cinsel olarak aktifseniz ve adetiniz beklenen tarihten itibaren gecikmişse önce gebelik testi yapmanız önerilir. Test negatifken gecikme sık tekrarlıyorsa veya 3 ay adet görmüyorsanız doktora başvurun."
+  },
+  {
+    question: "Adet takvimi neden önemli?",
+    answer: "Adet takvimi tutmak; bir sonraki adeti tahmin etmeye, doğurgan günleri bilmeye, gecikmeleri erken fark etmeye ve döngüdeki düzensizlikleri doktora doğru aktarmaya yardımcı olur. Hekimler çoğu zaman son adet tarihini, döngü süresini ve kanama süresini sorar. Birkaç aylık kayıt, polikistik over sendromu veya tiroit bozuklukları gibi durumların fark edilmesini kolaylaştırabilir."
+  },
+  {
+    question: "Düzensiz adet döngüsünde takvim işe yarar mı?",
+    answer: "Döngünüz düzensizse hesaplayıcı yalnızca yaklaşık bir aralık verir. Son birkaç döngünüzün ortalamasını girerek tahmini iyileştirebilirsiniz; en kısa ve en uzun döngünüzü ayrı ayrı deneyerek olası tarih aralığını da görebilirsiniz. Sürekli düzensizlik, hormon dengesizliği veya başka bir sağlık sorununun işareti olabileceğinden kadın doğum uzmanına danışmak önemlidir."
+  },
+  {
+    question: "PMS belirtileri ne zaman başlar?",
+    answer: "Premenstrüel sendrom (PMS) belirtileri genellikle adetten 5-11 gün önce, luteal evrenin ikinci yarısında başlar ve adetin ilk günleriyle birlikte azalır. Göğüs hassasiyeti, şişkinlik, baş ağrısı, yorgunluk ve duygu durum değişiklikleri en sık görülen belirtilerdir. Adet takvimindeki tahmini PMS aralığı bu belirtilere hazırlıklı olmanıza yardımcı olur."
+  }
+];
+
+const meta = {
+  title: "Adet Takvimi Hesaplama",
+  seoTitle: "Adet Takvimi Hesaplama - Sonraki Adet Tarihi Ne Zaman",
+  description: "Adet takvimi hesaplama ile son adet tarihinize göre sonraki adet günlerinizi, doğurgan dönemi ve PMS aralığını 6 aya kadar tablo halinde görün. Ücretsiz.",
+  summary: "Sonraki adet tarihi = Son adetin ilk günü + döngü süresi. 28 günlük döngüde 5 Eylül'de başlayan adetin ardından sonraki adet 3 Ekim'de beklenir. Normal döngü 21-35 gün, adet kanaması 2-7 gün sürer; doğurgan dönem ise bir sonraki adetten yaklaşık 19 ile 13 gün öncesine denk gelir.",
+  howTo: [
+    "Son adetinizin başladığı ilk günü seçin.",
+    "Ortalama döngü sürenizi ve adetinizin kaç gün sürdüğünü girin.",
+    "Kaç döngü ileriye bakmak istediğinizi seçin.",
+    "Tablodan adet günlerinizi, doğurgan döneminizi ve PMS aralığını takip edin."
+  ],
+  sources: [
+    { name: "ACOG - Fertility Awareness-Based Methods of Family Planning", url: "https://www.acog.org/womens-health/faqs/fertility-awareness-based-methods-of-family-planning" }
+  ],
+  category: "saglik",
+  slug: "adet-takvimi-hesaplama",
+  keywords: ["adet takvimi hesaplama", "adet tarihi hesaplama", "regl takvimi", "sonraki adet ne zaman", "adet döngüsü hesaplama", "regl hesaplama"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["saglik/ovulasyon-hesaplama", "saglik/gebelik-haftasi-hesaplama", "saglik/dogum-tarihi-hesaplama", "gunluk/gun-hesaplama"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" class="calc-inputs">
+    <CalcInput id="sat" label="Son Adetin İlk Günü" type="date" />
+    <CalcInput id="dongu" label="Ortalama Döngü Süresi" type="number" suffix="gün" placeholder="28" value="28" step={1} min={20} max={45} />
+    <CalcInput id="sure" label="Adet Süresi" type="number" suffix="gün" placeholder="5" value="5" step={1} min={1} max={10} />
+    <CalcSelect
+      id="adet"
+      label="Gösterilecek Döngü Sayısı"
+      options={[
+        { value: "3", label: "3 döngü" },
+        { value: "6", label: "6 döngü" },
+        { value: "12", label: "12 döngü" }
+      ]}
+      value="6"
+    />
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">Sonraki Adet Başlangıcı</p>
+      <p class="calc-result-value" id="sonraki">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row"><span class="calc-detail-label">Bugün Döngünün Kaçıncı Günü</span><span class="calc-detail-value" id="bugun">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Sonraki Adete Kalan</span><span class="calc-detail-value" id="kalan">—</span></div>
+      <div class="calc-table-wrapper">
+        <table class="calc-table">
+          <thead><tr><th>Adet Dönemi</th><th>Doğurgan Dönem (sonraki adetten önce)</th><th>Tahmini PMS</th></tr></thead>
+          <tbody id="takvim"></tbody>
+        </table>
+      </div>
+    </div>
+  </CalcResult>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('calc-form');
+      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const resultArea = document.getElementById('calc-result');
+
+      function debounce(fn: () => void, delay = 150) {
+        let timer: ReturnType<typeof setTimeout>;
+        return () => { clearTimeout(timer); timer = setTimeout(fn, delay); };
+      }
+      const val = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
+      const setText = (id: string, t: string) => { (document.getElementById(id) as HTMLElement).textContent = t; };
+      const tarihFmt = new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'long', year: 'numeric', weekday: 'long' });
+      const kisaFmt = new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'short', year: 'numeric' });
+      const parseDate = (s: string) => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+      const addDays = (d: Date, n: number) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+      const dayDiff = (a: Date, b: Date) => Math.round((Date.UTC(b.getFullYear(), b.getMonth(), b.getDate()) - Date.UTC(a.getFullYear(), a.getMonth(), a.getDate())) / 86400000);
+      const aralik = (a: Date, b: Date) => `${kisaFmt.format(a)} – ${kisaFmt.format(b)}`;
+
+      form?.addEventListener('submit', (e) => e.preventDefault());
+      const debouncedCalc = debounce(calculate);
+      inputs.forEach(input => {
+        input.addEventListener('input', debouncedCalc);
+        input.addEventListener('change', debouncedCalc);
+      });
+
+      function calculate() {
+        const satStr = val('sat');
+        const dongu = parseInt(val('dongu'), 10);
+        const sure = parseInt(val('sure'), 10) || 5;
+        const adet = parseInt(val('adet'), 10) || 6;
+        if (!satStr || !dongu || dongu < 20 || dongu > 45) return;
+        const sat = parseDate(satStr);
+        if (isNaN(sat.getTime())) return;
+
+        const now = new Date();
+        const bugun = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        // Bugünden sonraki ilk adet başlangıcını bul
+        let n = 1;
+        const gecen = dayDiff(sat, bugun);
+        if (gecen >= dongu) n = Math.floor(gecen / dongu) + 1;
+        const sonraki = addDays(sat, dongu * n);
+        setText('sonraki', tarihFmt.format(sonraki));
+        const kalan = dayDiff(bugun, sonraki);
+        setText('kalan', `${kalan} gün`);
+        setText('bugun', gecen >= 0 ? `${(gecen % dongu) + 1}. gün` : 'Tarih ileride');
+
+        const tbody = document.getElementById('takvim') as HTMLElement;
+        tbody.innerHTML = '';
+        for (let i = 0; i < adet; i++) {
+          const bas = addDays(sat, dongu * i);
+          const bit = addDays(bas, sure - 1);
+          const sonrakiBas = addDays(bas, dongu);
+          const ov = addDays(sonrakiBas, -14);
+          const cells = [
+            aralik(bas, bit),
+            aralik(addDays(ov, -5), addDays(ov, 1)),
+            aralik(addDays(sonrakiBas, -7), addDays(sonrakiBas, -1)),
+          ];
+          const tr = document.createElement('tr');
+          cells.forEach(t => { const td = document.createElement('td'); td.textContent = t; tr.appendChild(td); });
+          tbody.appendChild(tr);
+        }
+
+        if (resultArea) resultArea.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const params = new URLSearchParams();
+        inputs.forEach(input => {
+          const el = input as HTMLInputElement;
+          if (el.value && el.id) params.set(el.id, el.value);
+        });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+      }
+
+      function loadFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        let hasParams = false;
+        inputs.forEach(input => {
+          const el = input as HTMLInputElement;
+          if (el.id && params.has(el.id)) { el.value = params.get(el.id)!; hasParams = true; }
+        });
+        if (hasParams) calculate();
+      }
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>Adet Takvimi Nedir?</h2>
+    <p>
+      Adet takvimi (regl takvimi), adet kanamalarınızın hangi günlerde başlayıp bittiğini kaydetmenize ve sonraki adetlerinizi önceden tahmin etmenize yarayan basit bir planlama aracıdır. Tatil, sınav, spor müsabakası veya iş seyahati gibi önemli günleri planlarken; hamilelik planlarken ya da döngünüzdeki değişiklikleri takip ederken işinize yarar. Adet takvimi hesaplama aracı, son adet tarihiniz ve döngü sürenizle birkaç ay sonrasına kadar tahmini bir takvim oluşturur.
+    </p>
+
+    <h2>Adet Döngüsü Nasıl Hesaplanır?</h2>
+    <p>
+      Döngü süresi, bir adetin ilk gününden bir sonraki adetin ilk gününe kadar geçen gün sayısıdır. Adetin bittiği gün değil, başladığı gün esas alınır. Hesaplayıcı şu kuralları kullanır:
+    </p>
+    <ul>
+      <li><strong>Sonraki adet:</strong> Son Adet Başlangıcı + Döngü Süresi</li>
+      <li><strong>Adet dönemi:</strong> Başlangıç günü + (Adet Süresi − 1) gün</li>
+      <li><strong>Yumurtlama:</strong> Sonraki adetten 14 gün önce</li>
+      <li><strong>Doğurgan dönem:</strong> Yumurtlamadan 5 gün önce ile 1 gün sonrası</li>
+      <li><strong>Tahmini PMS:</strong> Sonraki adetten önceki 7 gün</li>
+    </ul>
+
+    <h2>Örnek Hesaplama</h2>
+    <p>
+      Son adeti 5 Eylül 2026'da başlayan, döngüsü 28 gün ve adeti 5 gün süren bir kadın için:
+    </p>
+    <table>
+      <thead>
+        <tr><th>Döngü</th><th>Adet Dönemi</th><th>Doğurgan Dönem</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>5 – 9 Eylül 2026</td><td>14 – 20 Eylül 2026</td></tr>
+        <tr><td>2</td><td>3 – 7 Ekim 2026</td><td>12 – 18 Ekim 2026</td></tr>
+        <tr><td>3</td><td>31 Ekim – 4 Kasım 2026</td><td>9 – 15 Kasım 2026</td></tr>
+        <tr><td>4</td><td>28 Kasım – 2 Aralık 2026</td><td>7 – 13 Aralık 2026</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Adet Döngüsünün Evreleri</h2>
+    <ul>
+      <li><strong>Menstrüasyon (1-5. günler):</strong> Rahim iç zarı dökülür ve kanama olur.</li>
+      <li><strong>Foliküler evre:</strong> Adetin ilk gününden yumurtlamaya kadar sürer; östrojen yükselir ve yumurta olgunlaşır. Süresi döngüden döngüye en çok değişen evredir.</li>
+      <li><strong>Ovulasyon:</strong> Olgun yumurta yumurtalıktan serbest bırakılır; 28 günlük döngüde yaklaşık 14. gündür.</li>
+      <li><strong>Luteal evre:</strong> Yumurtlamadan sonraki yaklaşık 14 gündür; progesteron yükselir ve gebelik olmazsa yeni adet başlar.</li>
+    </ul>
+
+    <h2>Hangi Durumlarda Doktora Gidilmeli?</h2>
+    <ul>
+      <li>Döngünüz sürekli 21 günden kısa veya 35 günden uzunsa</li>
+      <li>Adet kanaması 7 günden uzun sürüyor ya da çok yoğunsa</li>
+      <li>Üç ay veya daha uzun süre adet görmüyorsanız (gebelik dışında)</li>
+      <li>Adetler arasında kanama ya da şiddetli ağrı oluyorsa</li>
+    </ul>
+    <h2>Döngünüzü Doğru Takip Etmek İçin İpuçları</h2>
+    <p>Hesaplayıcının vereceği tahminin doğruluğu, girdiğiniz döngü süresine bağlıdır. En az üç ila altı ay boyunca her adetin başladığı günü not ederek ortalama döngü sürenizi bulabilirsiniz. Bunun için ardışık adet başlangıçları arasındaki gün sayılarını toplayıp döngü sayısına bölmeniz yeterlidir. Örneğin 27, 29 ve 31 günlük üç döngünün ortalaması 29 gündür.</p>
+    <p>Kanamanın yoğunluğunu, ağrı düzeyini ve PMS belirtilerini de kaydetmek, doktor muayenesinde size ve hekiminize önemli bilgiler sağlar. Doğum kontrol hapı kullananlarda kanama, ilacın hormon içermeyen günlerine göre düzenlenir; bu nedenle takvim hesabı ilacın kullanım şemasından farklı olabilir. Emzirme döneminde, menopoza geçişte ve ergenliğin ilk yıllarında döngülerin düzensiz olması da sık görülür.</p>
+    <p class="calc-note">
+      Uyarı: Adet takvimi düzenli döngü varsayımıyla tahmini tarihler üretir ve tıbbi teşhis ya da doğum kontrol yöntemi yerine geçmez. Sağlığınızla ilgili kararlar için hekiminize danışın.
+    </p>
+  </section>
+</CalcLayout>

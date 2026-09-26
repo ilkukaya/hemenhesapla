@@ -2,61 +2,93 @@
 import CalcLayout from '../../layouts/CalcLayout.astro';
 import CalcInput from '../../components/calculator/CalcInput.astro';
 import CalcResult from '../../components/calculator/CalcResult.astro';
+import legal from '../../data/legal-2026.json';
+import taxBrackets from '../../data/tax-brackets.json';
 
-const faq = [
-  {
-    question: "Kıdem tazminatı tavan tutarı nedir?",
-    answer: "Kıdem tazminatı tavanı her yıl güncellenmektedir. 2026 yılı için kıdem tazminatı tavanı 35.058,58 TL olarak belirlenmiştir. Bu tavan, işçinin son brüt maaşının tavan tutarını aşması halinde tazminat hesaplamasında tavan tutarının esas alınacağı anlamına gelir. Örneğin brüt maaşınız 40.000 TL ise her tam çalışma yılı için 35.058,58 TL üzerinden hesaplama yapılır.",
-  },
-  {
-    question: "Kıdem tazminatı hangi durumlarda ödenir?",
-    answer: "Kıdem tazminatına hak kazanmak için işçinin en az 1 yıl çalışmış olması gerekir. İşveren tarafından haksız fesih, askerlik veya evlilik nedeniyle istifa (kadın işçi için), emeklilik, ölüm, muvazzaf askerlik hizmeti nedeniyle işten ayrılma gibi durumlarda kıdem tazminatı ödenir. İşçinin kendi isteğiyle istifa etmesi durumunda kıdem tazminatı ödenmez.",
-  },
-  {
-    question: "Kıdem tazminatı nasıl hesaplanır, kısmi yıllar dahil edilir mi?",
-    answer: "Kıdem tazminatı, çalışılan her tam yıl için bir aylık brüt maaş tutarında ödenir. Tam yılı aşan kısmi süreler ise gün bazında oransal olarak hesaplanır. Örneğin 3 yıl 6 ay 15 gün çalışan bir işçi için 3 tam yıl + (6 ay 15 gün / 365) oransal hesaplama uygulanır. Gün sayısı 365 güne bölünüp tam yıl sayısına eklenerek toplam çalışma süresi bulunur.",
-  },
-];
+const fmt = (n: number) => new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+const tavan2026H1 = legal.kidemTavan.find((t) => t.from === '2026-01-01')!.amount;
+const tavan2026H2 = legal.kidemTavan.find((t) => t.from === '2026-07-01')!.amount;
 
 const meta = {
-  title: "Kıdem Tazminatı Hesaplama 2026",
-  description: "Çalışma sürenize ve brüt maaşınıza göre kıdem tazminatınızı hesaplayın. 2026 tavan tutarı dahil kıdem tazminatı hesaplama aracı.",
+  title: "Kıdem Tazminatı Hesaplama",
+  seoTitle: "Kıdem Tazminatı Hesaplama 2026 – Tavan 73.729,87 TL",
+  description: `Kıdem tazminatı hesaplama 2026: işe giriş-çıkış tarihi ve giydirilmiş brüt ücretle tazminatınızı, damga vergisini ve ${fmt(tavan2026H2)} TL tavanı otomatik hesaplayın.`,
+  summary: `Kıdem tazminatı, her tam çalışma yılı için 30 günlük giydirilmiş brüt ücret tutarında ödenir; artan ay ve günler orantılı eklenir. Ücret, fesih tarihindeki tavanı aşamaz: 01.01–30.06.2026 için ${fmt(tavan2026H1)} TL, 01.07–31.12.2026 için ${fmt(tavan2026H2)} TL. Tazminattan yalnızca binde 7,59 damga vergisi kesilir.`,
+  howTo: [
+    "İşe başlama ve işten çıkış (fesih) tarihinizi girin.",
+    "Son aylık brüt ücretinizi yazın.",
+    "Düzenli ödenen yol, yemek, ikramiye gibi yan hakların aylık ortalamasını ekleyin.",
+    "Sonuçta çalışma süresini, uygulanan tavanı, brüt ve net tazminatı görün."
+  ],
+  sources: [
+    { name: "ÇSGB – Kıdem tazminatı tavan miktarı", url: "https://www.csgb.gov.tr/%C4%B1statistikler/calisma-hayati-%C4%B1statistikleri/kidem-tazminati-tavan-miktari/" },
+    { name: "1475 sayılı İş Kanunu md. 14 (mevzuat.gov.tr)", url: "https://www.mevzuat.gov.tr/mevzuatmetin/1.5.1475.pdf" },
+    { name: "4857 sayılı İş Kanunu (mevzuat.gov.tr)", url: "https://www.mevzuat.gov.tr/MevzuatMetin/1.5.4857.pdf" }
+  ],
   category: "finans",
   slug: "kidem-tazminati-hesaplama",
-  keywords: ["kıdem tazminatı hesaplama", "kıdem tazminatı 2026", "kıdem tazminatı tavan", "işten çıkarılma tazminat", "iş tazminatı hesaplama"],
-  dateModified: "2026-04-01",
-  relatedCalcs: ["ihbar-tazminati-hesaplama", "net-brut-maas-hesaplama", "gelir-vergisi-hesaplama"],
-  faq,
+  keywords: ["kıdem tazminatı hesaplama", "kıdem tazminatı 2026", "kıdem tazminatı tavanı", "kıdem tazminatı tavanı temmuz 2026", "giydirilmiş brüt ücret", "işten çıkarılma tazminatı"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["finans/ihbar-tazminati-hesaplama", "finans/net-brut-maas-hesaplama", "finans/gelir-vergisi-hesaplama", "gunluk/yas-hesaplama"],
+  faq: [
+    {
+      question: "2026 kıdem tazminatı tavanı ne kadar?",
+      answer: `Kıdem tazminatı tavanı 1 Ocak–30 Haziran 2026 döneminde ${fmt(tavan2026H1)} TL, 1 Temmuz–31 Aralık 2026 döneminde ${fmt(tavan2026H2)} TL'dir. Tavan, memur maaş katsayılarına göre yılda iki kez Hazine ve Maliye Bakanlığı tarafından belirlenir. Hesaplamada iş sözleşmesinin sona erdiği tarihte geçerli olan tavan kullanılır.`
+    },
+    {
+      question: "Kıdem tazminatı almak için kaç yıl çalışmak gerekir?",
+      answer: "Aynı işverene bağlı olarak en az bir yıl çalışmış olmak gerekir. Bir yıldan kısa çalışmada kıdem tazminatı doğmaz. Aynı işverenin farklı işyerlerinde geçen süreler birleştirilir. Bir yılı dolduran çalışanın artan ay ve gün süreleri de orantılı olarak hesaba katılır."
+    },
+    {
+      question: "İstifa eden kıdem tazminatı alabilir mi?",
+      answer: "Kural olarak istifa eden işçi kıdem tazminatı alamaz. Ancak emeklilik ya da yaş dışındaki şartları tamamlayıp SGK'dan yazı alarak ayrılma (15 yıl ve 3600 gün gibi), evlendikten sonraki bir yıl içinde kadın işçinin ayrılması, muvazzaf askerlik ve İş Kanunu md. 24'teki haklı nedenlerle fesih hallerinde istifa edilse de tazminat ödenir."
+    },
+    {
+      question: "Kıdem tazminatından hangi kesintiler yapılır?",
+      answer: "Tavanı aşmayan kıdem tazminatı gelir vergisinden istisnadır ve SGK primi kesilmez. Yalnızca brüt tutar üzerinden binde 7,59 oranında damga vergisi kesilir. Örneğin 200.000 TL brüt kıdem tazminatından 1.518 TL damga vergisi düşülür ve 198.482 TL net ödenir."
+    },
+    {
+      question: "Giydirilmiş brüt ücret nedir?",
+      answer: "Kıdem tazminatına esas ücret, çıplak brüt maaşa ek olarak süreklilik gösteren para ve parayla ölçülebilen menfaatlerin eklenmesiyle bulunur. Düzenli yol ve yemek yardımı, yakacak yardımı, ikramiyelerin aylık payı bu kapsamdadır. Arızi primler ve fazla mesai ücreti dahil edilmez."
+    },
+    {
+      question: "Kıdem tazminatı ne zaman ödenir, geç ödenirse ne olur?",
+      answer: "Kıdem tazminatı iş sözleşmesinin sona erdiği tarihte muaccel olur ve derhal ödenmelidir. Geç ödenen tazminat için bankalarca mevduata uygulanan en yüksek faiz oranında faiz işletilir. Alacak için zamanaşımı süresi, fesih tarihinden itibaren beş yıldır; dava öncesi arabuluculuğa başvurmak zorunludur."
+    }
+  ]
 };
 ---
 
 <CalcLayout meta={meta}>
-  <form id="calc-form" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
-    <CalcInput
-      id="iseBaslamaTarihi"
-      label="İşe Başlama Tarihi"
-      type="date"
-    />
-    <CalcInput
-      id="isCikisTarihi"
-      label="İşten Çıkış Tarihi"
-      type="date"
-    />
+  <form id="calc-form" class="calc-inputs" novalidate>
+    <CalcInput id="iseBaslamaTarihi" label="İşe Başlama Tarihi" type="date" />
+    <CalcInput id="isCikisTarihi" label="İşten Çıkış Tarihi" type="date" />
     <CalcInput
       id="sonBrutMaas"
-      label="Son Brüt Maaş"
+      label="Son Aylık Brüt Ücret"
       type="number"
       suffix="₺"
-      placeholder="25000"
-      step={100}
+      placeholder="60000"
+      step="any"
       min={0}
+    />
+    <CalcInput
+      id="ekOdemeler"
+      label="Düzenli Yan Ödemeler (aylık)"
+      type="number"
+      suffix="₺"
+      placeholder="5000"
+      step="any"
+      min={0}
+      required={false}
+      helpText="Yol, yemek, ikramiye payı gibi sürekli ödemeler (isteğe bağlı)"
     />
   </form>
 
   <CalcResult>
     <div slot="main">
-      <span class="calc-result-label">Kıdem Tazminatı</span>
-      <span class="calc-result-value" id="kidem-tazminati">—</span>
+      <p class="calc-result-label">Net Kıdem Tazminatı</p>
+      <p class="calc-result-value" id="kidem-tazminati">—</p>
     </div>
     <div slot="details">
       <div class="calc-detail-row">
@@ -64,130 +96,183 @@ const meta = {
         <span class="calc-detail-value" id="calisma-suresi">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Hesaplamada Kullanılan Maaş</span>
+        <span class="calc-detail-label">Giydirilmiş Brüt Ücret</span>
+        <span class="calc-detail-value" id="giydirilmis">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Uygulanan Tavan</span>
+        <span class="calc-detail-value" id="tavan-bilgi">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Hesaplamaya Esas Ücret</span>
         <span class="calc-detail-value" id="hesap-maas">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Tavan Uygulandı mı?</span>
-        <span class="calc-detail-value" id="tavan-bilgi">—</span>
+        <span class="calc-detail-label">Brüt Kıdem Tazminatı</span>
+        <span class="calc-detail-value" id="brut-tazminat">—</span>
       </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Damga Vergisi (binde 7,59)</span>
+        <span class="calc-detail-value" id="damga">—</span>
+      </div>
+      <p class="calc-note" id="kidem-uyari"></p>
     </div>
   </CalcResult>
 
+  <script type="application/json" id="kidem-data" set:html={JSON.stringify({ tavan: legal.kidemTavan, stampTax: taxBrackets.stampTaxRate })}></script>
+
+  <script>
+    import { formatTL, readNumber, readValue, readJSON, setText, showResult, initCalculator, round2 } from './_shared';
+
+    interface Tavan { from: string; to: string; amount: number }
+    const data = readJSON<{ tavan: Tavan[]; stampTax: number }>('kidem-data');
+
+    function parseDate(v: string): { y: number; m: number; d: number; t: number } | null {
+      const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v);
+      if (!match) return null;
+      const y = +match[1], m = +match[2], d = +match[3];
+      const t = Date.UTC(y, m - 1, d);
+      if (Number.isNaN(t)) return null;
+      return { y, m, d, t };
+    }
+
+    function daysInMonth(y: number, m: number) {
+      return new Date(Date.UTC(y, m, 0)).getUTCDate();
+    }
+
+    /** Takvim esaslı yıl/ay/gün farkı (ay sonu taşmaları ay sonuna sabitlenir). */
+    function diffYMD(a: { y: number; m: number; d: number; t: number }, b: { y: number; m: number; d: number; t: number }) {
+      let totalMonths = (b.y - a.y) * 12 + (b.m - a.m);
+      const anchorAt = (months: number) => {
+        const idx = a.m - 1 + months;
+        const y = a.y + Math.floor(idx / 12);
+        const m = (idx % 12) + 1;
+        return Date.UTC(y, m - 1, Math.min(a.d, daysInMonth(y, m)));
+      };
+      if (anchorAt(totalMonths) > b.t) totalMonths -= 1;
+      const days = Math.round((b.t - anchorAt(totalMonths)) / 86400000);
+      return { years: Math.floor(totalMonths / 12), months: totalMonths % 12, days };
+    }
+
+    function tavanFor(iso: string): { amount: number; exact: boolean; period: string } {
+      const sorted = [...data.tavan].sort((x, y) => x.from.localeCompare(y.from));
+      const hit = sorted.find((t) => iso >= t.from && iso <= t.to);
+      if (hit) return { amount: hit.amount, exact: true, period: `${hit.from.split('-').reverse().join('.')} – ${hit.to.split('-').reverse().join('.')}` };
+      const fallback = iso < sorted[0].from ? sorted[0] : sorted[sorted.length - 1];
+      return { amount: fallback.amount, exact: false, period: `${fallback.from.split('-').reverse().join('.')} – ${fallback.to.split('-').reverse().join('.')}` };
+    }
+
+    function calculate(): boolean {
+      const giris = parseDate(readValue('iseBaslamaTarihi'));
+      const cikis = parseDate(readValue('isCikisTarihi'));
+      const brut = readNumber('sonBrutMaas');
+      const ek = Math.max(0, readNumber('ekOdemeler') || 0);
+
+      if (!giris || !cikis || !(brut > 0)) {
+        showResult(false);
+        return false;
+      }
+      if (cikis.t <= giris.t) {
+        showResult(true);
+        setText('kidem-tazminati', '—');
+        setText('kidem-uyari', 'İşten çıkış tarihi, işe başlama tarihinden sonra olmalıdır.');
+        return false;
+      }
+
+      const { years, months, days } = diffYMD(giris, cikis);
+      const giydirilmis = brut + ek;
+      const cikisIso = readValue('isCikisTarihi');
+      const tavan = tavanFor(cikisIso);
+      const esas = Math.min(giydirilmis, tavan.amount);
+
+      setText('calisma-suresi', `${years} yıl ${months} ay ${days} gün`);
+      setText('giydirilmis', formatTL(giydirilmis));
+      setText('tavan-bilgi', `${formatTL(tavan.amount)}${giydirilmis > tavan.amount ? ' (uygulandı)' : ''}`);
+      setText('hesap-maas', formatTL(esas));
+
+      if (years < 1) {
+        setText('kidem-tazminati', formatTL(0));
+        setText('brut-tazminat', formatTL(0));
+        setText('damga', formatTL(0));
+        setText('kidem-uyari', 'Kıdem tazminatına hak kazanmak için aynı işverende en az 1 yıl çalışmış olmak gerekir.');
+        showResult(true);
+        return true;
+      }
+
+      const brutTazminat = round2(esas * years + (esas / 12) * months + (esas / 365) * days);
+      const damga = round2(brutTazminat * data.stampTax / 100);
+      const net = round2(brutTazminat - damga);
+
+      setText('kidem-tazminati', formatTL(net));
+      setText('brut-tazminat', formatTL(brutTazminat));
+      setText('damga', formatTL(damga));
+      setText(
+        'kidem-uyari',
+        tavan.exact
+          ? `Fesih tarihine göre ${tavan.period} dönemi tavanı kullanıldı. Tavanı aşmayan kıdem tazminatı gelir vergisinden istisnadır, SGK primi kesilmez.`
+          : `Çıkış tarihiniz kayıtlı tavan dönemlerinin dışında; en yakın dönemin (${tavan.period}) tavanı kullanıldı. Kendi döneminizin tavanını kontrol edin.`
+      );
+
+      showResult(true);
+      return true;
+    }
+
+    initCalculator({ calculate });
+  </script>
+
   <section class="calc-content">
-    <h2>Kıdem Tazminatı Hesaplama Nasıl Yapılır?</h2>
+    <h2>Kıdem Tazminatı Nasıl Hesaplanır?</h2>
     <p>
-      Kıdem tazminatı, iş sözleşmesi belirli koşullar altında sona eren işçilere işveren tarafından ödenen yasal bir haktır. 4857 sayılı İş Kanunu kapsamında değerlendirilen bu tazminat, işçinin kıdemine ve son brüt maaşına bağlı olarak hesaplanır. İşe başlama ve çıkış tarihlerini ile brüt maaşınızı girerek hak ettiğiniz tutarı anında öğrenebilirsiniz.
-    </p>
-    <h3>Kıdem Tazminatı Formülü</h3>
-    <p>
-      Temel hesaplama şu şekilde yapılır:
+      Kıdem tazminatı, halen yürürlükte olan 1475 sayılı İş Kanunu'nun 14. maddesine göre, işçinin işe başladığı günden itibaren her tam yıl için 30 günlük ücreti tutarında ödenir. Bir yılı aşan süreler için aynı oranda orantılı ödeme yapılır. Hesaplamaya esas ücret, son brüt ücrete düzenli yan ödemelerin eklenmesiyle bulunan <strong>giydirilmiş brüt ücrettir</strong>.
     </p>
     <p>
-      <strong>Kıdem Tazminatı = Çalışma Süresi (Yıl) × Son Brüt Maaş</strong>
+      <strong>Formül:</strong> Brüt kıdem tazminatı = Esas ücret × tam yıl + Esas ücret ÷ 12 × ay + Esas ücret ÷ 365 × gün
     </p>
+
+    <h2>2026 Kıdem Tazminatı Tavanı</h2>
     <p>
-      Tam yılı aşan kısmi süreler gün bazında oransal hesaplanır. Brüt maaş 2026 tavanı olan 35.058,58 TL'yi aşıyorsa hesaplamada tavan tutar esas alınır.
+      Giydirilmiş ücret ne kadar yüksek olursa olsun, bir yıl için ödenecek tazminat tavanı aşamaz. Tavan, fesih tarihinde geçerli olan tutardır.
     </p>
-    <h3>Hangi Ödemeler Brüt Maaşa Dahildir?</h3>
+    <div class="calc-table-wrap">
+      <table class="calc-table">
+        <thead><tr><th scope="col">Dönem</th><th scope="col">Yıllık tavan</th></tr></thead>
+        <tbody>
+          {[...legal.kidemTavan].reverse().map((t) => (
+            <tr>
+              <td>{t.from.split('-').reverse().join('.')} – {t.to.split('-').reverse().join('.')}</td>
+              <td>{fmt(t.amount)} TL</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Örnek Hesaplama</h2>
     <p>
-      Kıdem tazminatı hesaplamasında sadece aylık temel ücret değil, düzenli ödenen yol, yemek, yakacak yardımı, konut yardımı gibi sosyal yardımlar da brüt maaşa dahil edilir. Süreklilik arz etmeyen primler ve ikramiyeler genellikle kıdem tazminatı matrahına dahil edilmez. Bu nedenle "son brüt maaş" kavramını geniş yorumlamak ve tüm sabit eklerin toplamını girmek daha doğru bir hesaplama sağlar.
+      15 Mart 2019'da işe başlayıp 15 Eylül 2026'da işten çıkarılan bir çalışanın aylık brüt ücreti 60.000 TL, düzenli yemek ve yol yardımı 5.000 TL olsun. Çalışma süresi 7 yıl 6 aydır; giydirilmiş ücret 65.000 TL, Temmuz 2026 tavanının altında kaldığı için tamamı esas alınır.
     </p>
-    <h3>Dikkat Edilmesi Gerekenler</h3>
+    <ul>
+      <li>7 yıl için: 65.000 × 7 = 455.000 TL</li>
+      <li>6 ay için: 65.000 ÷ 12 × 6 = 32.500 TL</li>
+      <li>Brüt kıdem tazminatı: 487.500 TL</li>
+      <li>Damga vergisi (binde 7,59): 3.700,13 TL</li>
+      <li>Net ödenecek tutar: <strong>483.799,87 TL</strong></li>
+    </ul>
     <p>
-      Kıdem tazminatına hak kazanmak için en az 1 tam yıl çalışmış olmak gerekmektedir. 1 yılın altındaki çalışmalar kıdem tazminatı hakkı doğurmaz. Ayrıca kendi isteğiyle işten ayrılan (istifa eden) işçiler kıdem tazminatı alamaz; ancak emeklilik, evlilik (kadın işçi) veya askerlik nedeniyle ayrılanlar bu haktan yararlanabilir. Hesaplama tahmini niteliktedir; kesin tutar için iş hukuku uzmanına danışmanız önerilir.
+      Aynı çalışanın giydirilmiş ücreti 90.000 TL olsaydı, hesaplamada 73.729,87 TL tavan kullanılacaktı.
     </p>
-    <h3>Sıkça Sorulan Sorular</h3>
-    {faq.map((item) => (
-      <div class="faq-item">
-        <h4>{item.question}</h4>
-        <p>{item.answer}</p>
-      </div>
-    ))}
+
+    <h2>Kıdem Tazminatına Hak Kazanılan Durumlar</h2>
+    <ul>
+      <li>İşverenin, İş Kanunu md. 25/II'deki ahlak ve iyi niyet kurallarına aykırılık dışındaki bir nedenle sözleşmeyi feshetmesi</li>
+      <li>İşçinin md. 24'teki haklı nedenlerle (ücretin ödenmemesi, mobbing, sağlık nedenleri vb.) sözleşmeyi feshetmesi</li>
+      <li>Muvazzaf askerlik nedeniyle ayrılma</li>
+      <li>Emeklilik ya da yaş dışındaki emeklilik şartlarını tamamlayarak ayrılma</li>
+      <li>Kadın işçinin evlilik tarihinden itibaren bir yıl içinde kendi isteğiyle ayrılması</li>
+      <li>İşçinin ölümü (tazminat mirasçılara ödenir)</li>
+    </ul>
+    <p>
+      Bu hesaplama bilgilendirme amaçlıdır. Hizmet süresinin birleştirilmesi, kısmi süreli çalışma veya toplu sözleşme hükümleri gibi özel durumlarda tutar değişebilir.
+    </p>
   </section>
 </CalcLayout>
-
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
-    const resultArea = document.getElementById('calc-result');
-
-    const TAVAN = 35058.58;
-
-    function debounce(fn: (...args: unknown[]) => void, delay = 150) {
-      let timer: ReturnType<typeof setTimeout>;
-      return (...args: unknown[]) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), delay); };
-    }
-
-    function formatTL(num: number) {
-      return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
-    }
-
-    const debouncedCalc = debounce(calculate);
-    inputs.forEach(input => {
-      input.addEventListener('input', debouncedCalc);
-      input.addEventListener('change', debouncedCalc);
-    });
-
-    function calculate() {
-      const baslamaTarihi = (document.getElementById('iseBaslamaTarihi') as HTMLInputElement).value;
-      const cikisTarihi = (document.getElementById('isCikisTarihi') as HTMLInputElement).value;
-      const brutMaas = parseFloat((document.getElementById('sonBrutMaas') as HTMLInputElement).value);
-
-      if (!baslamaTarihi || !cikisTarihi || !brutMaas || brutMaas <= 0) {
-        if (resultArea) resultArea.classList.add('hidden');
-        return;
-      }
-
-      const baslama = new Date(baslamaTarihi);
-      const cikis = new Date(cikisTarihi);
-
-      if (cikis <= baslama) {
-        if (resultArea) resultArea.classList.add('hidden');
-        return;
-      }
-
-      const toplamGun = Math.floor((cikis.getTime() - baslama.getTime()) / (1000 * 60 * 60 * 24));
-      const toplamYil = toplamGun / 365;
-
-      const yil = Math.floor(toplamYil);
-      const kalanGun = toplamGun - (yil * 365);
-      const kalanAy = Math.floor(kalanGun / 30);
-      const kalanGunKalan = kalanGun - (kalanAy * 30);
-
-      const tavanUygulandi = brutMaas > TAVAN;
-      const hesapMaas = tavanUygulandi ? TAVAN : brutMaas;
-
-      const kidemTazminati = toplamYil * hesapMaas;
-
-      (document.getElementById('kidem-tazminati') as HTMLElement).textContent = formatTL(kidemTazminati);
-      (document.getElementById('calisma-suresi') as HTMLElement).textContent = `${yil} yıl ${kalanAy} ay ${kalanGunKalan} gün`;
-      (document.getElementById('hesap-maas') as HTMLElement).textContent = formatTL(hesapMaas);
-      (document.getElementById('tavan-bilgi') as HTMLElement).textContent = tavanUygulandi ? `Evet (Tavan: ${formatTL(TAVAN)})` : 'Hayır';
-
-      if (resultArea) resultArea.classList.remove('hidden');
-      updateURL();
-    }
-
-    function updateURL() {
-      const params = new URLSearchParams();
-      inputs.forEach(input => {
-        const el = input as HTMLInputElement;
-        if (el.value && el.id) params.set(el.id, el.value);
-      });
-      history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
-    }
-
-    function loadFromURL() {
-      const params = new URLSearchParams(window.location.search);
-      let hasParams = false;
-      inputs.forEach(input => {
-        const el = input as HTMLInputElement;
-        if (el.id && params.has(el.id)) { el.value = params.get(el.id)!; hasParams = true; }
-      });
-      if (hasParams) calculate();
-    }
-
-    loadFromURL();
-  });
-</script>

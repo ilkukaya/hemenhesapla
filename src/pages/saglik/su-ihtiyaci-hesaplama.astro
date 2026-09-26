@@ -1,162 +1,262 @@
 ---
 import CalcLayout from '../../layouts/CalcLayout.astro';
 import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcSelect from '../../components/calculator/CalcSelect.astro';
 import CalcResult from '../../components/calculator/CalcResult.astro';
 
 const faq = [
   {
-    question: "Günlük su ihtiyacı nasıl hesaplanır?",
-    answer: "Günlük su ihtiyacı hesaplamasında en yaygın kullanılan yöntem, vücut ağırlığını 0,033 ile çarpmaktır. Örneğin 70 kg olan bir kişinin günlük su ihtiyacı 70 × 0,033 = 2,31 litredir. Bu miktar bireyden bireye değişebilir; egzersiz yoğunluğu, hava sıcaklığı ve genel sağlık durumu ihtiyacı artırabilir."
+    question: "Günde kaç litre su içmeliyim?",
+    answer: "Pratik kural, kilo başına günde yaklaşık 30–35 mL sıvıdır; hesaplayıcı 33 mL/kg kullanır. 70 kg bir yetişkin için bu 2,3 litre eder. Avrupa Gıda Güvenliği Otoritesi (EFSA) yiyecekler dahil toplam su için kadınlara 2,0 litre, erkeklere 2,5 litre önerir. Bunun yaklaşık %20'si besinlerden geldiği için içeceklerle alınması gereken miktar biraz daha azdır."
   },
   {
-    question: "Günde kaç bardak su içmeliyim?",
-    answer: "Standart bir bardak 200 mL olarak kabul edildiğinde, 70 kg için hesaplanan 2,31 litre yaklaşık 11-12 bardağa karşılık gelir. Araçta sonuç ekranında litre cinsinden değerin yanı sıra bardak sayısı da otomatik olarak hesaplanmaktadır. Dünya Sağlık Örgütü ortalama yetişkin için günde 8 bardak suyu minimum önermektedir."
+    question: "Kilo başına su ihtiyacı nasıl hesaplanır?",
+    answer: "Vücut ağırlığınızı 0,033 ile çarpın: 60 kg × 0,033 = 1,98 litre, 80 kg × 0,033 = 2,64 litre. Egzersiz yapıyorsanız her 30 dakika için yaklaşık 350 mL, sıcak havada 500 mL daha ekleyin. Gebelikte günde yaklaşık 300 mL, emzirme döneminde 600–700 mL ek sıvı önerilir. Hesaplayıcı bu eklemeleri otomatik yapar."
   },
   {
-    question: "Egzersiz yapıyorsam su ihtiyacım artar mı?",
-    answer: "Evet, terleme yoluyla kaybedilen sıvı miktarı egzersiz sırasında önemli ölçüde artar. Orta yoğunlukta 1 saatlik egzersiz için ek 500-750 mL su tüketimi önerilir. Yaz aylarında veya sıcak ortamlarda çalışıyorsanız bu miktarı daha da artırmalısınız. Sporcular ve ağır işte çalışanlar için temel hesabın üzerine günde en az 1 litre ek su alınması tavsiye edilir."
+    question: "Su yerine çay, kahve veya ayran içmek sayılır mı?",
+    answer: "Evet, sıvı ihtiyacına tüm içecekler katkı sağlar. Çay ve kahvedeki kafein hafif idrar söktürücü olsa da düzenli tüketimde içeceğin sıvı katkısı kaybı karşılar. Yine de şekerli ve asitli içecekler yerine ağırlıklı olarak su tercih edilmelidir. Karpuz, salatalık, çorba ve yoğurt gibi besinler de günlük sıvıya önemli katkı yapar."
+  },
+  {
+    question: "Yeterince su içip içmediğimi nasıl anlarım?",
+    answer: "En pratik gösterge idrar rengidir: açık saman sarısı yeterli sıvı alımını, koyu sarı ise sıvı açığını düşündürür. Sık susama, baş ağrısı, yorgunluk ve kabızlık da yetersiz sıvının işaretleri olabilir. Yaşlılarda susama hissi azaldığından, susamayı beklemeden gün içine yayılmış şekilde içmek önemlidir."
+  },
+  {
+    question: "Çok fazla su içmek zararlı mı?",
+    answer: "Sağlıklı böbrekler saatte yaklaşık 0,8–1 litre suyu atabilir. Kısa sürede bunun çok üzerinde su içmek kandaki sodyumu seyrelterek hiponatremiye yol açabilir; bu durum özellikle uzun dayanıklılık yarışlarında görülür. Kalp yetmezliği veya böbrek hastalığı olanlarda sıvı kısıtlaması gerekebilir; bu kişiler hekimlerinin önerdiği miktara uymalıdır."
+  },
+  {
+    question: "Egzersizde ne kadar su içmeliyim?",
+    answer: "Terleme hızı kişiye ve ortama göre saatte 0,5–2 litre arasında değişir. Genel öneri, egzersizden 2–4 saat önce kilo başına 5–7 mL içmek, egzersiz sırasında susuzluğa göre düzenli yudumlamak ve sonrasında kaybı yerine koymaktır. Bir saati aşan yoğun egzersizlerde elektrolit içeren içecekler faydalı olabilir."
   }
 ];
 
 const meta = {
   title: "Su İhtiyacı Hesaplama",
-  description: "Vücut ağırlığınıza göre günlük su ihtiyacınızı hesaplayın. Kaç litre su içmeniz gerektiğini ve bardak cinsinden miktarı anında öğrenin.",
+  seoTitle: "Günlük Su İhtiyacı Hesaplama 2026 – Kaç Litre Su İçmeli?",
+  description: "Kilonuza, egzersiz sürenize ve hava durumuna göre günlük su ihtiyacınızı hesaplayın. Kaç litre ve kaç bardak su içmeniz gerektiğini hemen öğrenin.",
+  summary: "Yetişkinlerin günlük sıvı ihtiyacı kilo başına yaklaşık 30–35 mL'dir; 70 kg bir kişi için yaklaşık 2,3 litre. EFSA, besinler dahil toplam su için kadınlara günde 2,0, erkeklere 2,5 litre önerir. Egzersiz, sıcak hava, gebelik ve emzirme bu ihtiyacı artırır.",
+  howTo: [
+    "Vücut ağırlığınızı kilogram cinsinden girin.",
+    "Günlük egzersiz sürenizi dakika olarak yazın (yoksa boş bırakın).",
+    "Hava durumu ve varsa gebelik/emzirme durumunuzu seçin.",
+    "Toplam sıvı ihtiyacınızı litre ve 200 mL'lik bardak sayısı olarak görün."
+  ],
+  sources: [
+    { name: "EFSA (2010) – Scientific Opinion on Dietary Reference Values for water", url: "https://efsa.onlinelibrary.wiley.com/doi/pdf/10.2903/j.efsa.2010.1459" },
+    { name: "Hydration Status: Influence of Exercise and Diet Quality, PMC", url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC6600620/" }
+  ],
   category: "saglik",
   slug: "su-ihtiyaci-hesaplama",
-  keywords: ["su ihtiyacı hesaplama", "günlük su ihtiyacı", "kaç litre su içmeliyim", "su hesaplayıcı", "günlük su miktarı"],
-  dateModified: "2026-04-01",
-  relatedCalcs: ["kalori-hesaplama", "vucut-kitle-indeksi"],
-  faq,
+  keywords: ["su ihtiyacı hesaplama", "günlük su ihtiyacı", "kaç litre su içmeliyim", "kilo başına su", "günlük su miktarı"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["saglik/kalori-hesaplama", "saglik/protein-ihtiyaci-hesaplama", "saglik/vucut-kitle-indeksi", "saglik/gebelik-haftasi-hesaplama"],
+  faq
 };
 ---
 
 <CalcLayout meta={meta}>
-  <form id="calc-form" novalidate>
-    <div class="calc-inputs">
-      <CalcInput
-        id="kilo"
-        label="Vücut Ağırlığı"
-        type="number"
-        placeholder="Örn: 70"
-        suffix="kg"
-        min={30}
-        max={200}
-        step={0.1}
-        helpText="Kilonuzu kilogram cinsinden girin"
-      />
-    </div>
+  <form id="calc-form" class="calc-inputs" novalidate>
+    <CalcInput
+      id="kilo"
+      label="Vücut Ağırlığı"
+      type="number"
+      placeholder="68"
+      suffix="kg"
+      min={30}
+      max={250}
+      step={0.1}
+    />
+    <CalcInput
+      id="egzersiz"
+      label="Günlük Egzersiz Süresi"
+      type="number"
+      placeholder="30"
+      suffix="dk"
+      min={0}
+      max={600}
+      step={5}
+      required={false}
+      helpText="Egzersiz yapmıyorsanız boş bırakın"
+    />
+    <CalcSelect
+      id="hava"
+      label="Hava / Ortam"
+      options={[
+        { value: "normal", label: "Normal / serin" },
+        { value: "sicak", label: "Sıcak veya nemli (+500 mL)" }
+      ]}
+      value="normal"
+    />
+    <CalcSelect
+      id="durum"
+      label="Özel Durum"
+      options={[
+        { value: "yok", label: "Yok" },
+        { value: "gebelik", label: "Gebelik (+300 mL)" },
+        { value: "emzirme", label: "Emzirme (+700 mL)" }
+      ]}
+      value="yok"
+    />
   </form>
 
   <CalcResult>
     <div slot="main">
-      <p class="calc-result-label">Günlük Su İhtiyacı</p>
+      <p class="calc-result-label">Günlük Toplam Sıvı İhtiyacı</p>
       <p class="calc-result-value" id="result-litre">—</p>
+      <p class="calc-result-sub" id="result-bardak-ana"></p>
     </div>
     <div slot="details">
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Bardak Sayısı (200 mL)</span>
+        <span class="calc-detail-label">Temel ihtiyaç (33 mL × kg)</span>
+        <span class="calc-detail-value" id="result-temel">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Egzersiz, hava ve özel durum eki</span>
+        <span class="calc-detail-value" id="result-ek">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Bardak sayısı (200 mL)</span>
         <span class="calc-detail-value" id="result-bardak">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Mililitre Cinsinden</span>
-        <span class="calc-detail-value" id="result-ml">—</span>
+        <span class="calc-detail-label">Besinlerden gelen pay çıkarıldığında (~%20)</span>
+        <span class="calc-detail-value" id="result-icecek">—</span>
       </div>
     </div>
   </CalcResult>
 
+  <p class="calc-note">
+    Bu hesap sağlıklı yetişkinler için genel bir tahmindir. Kalp yetmezliği, böbrek hastalığı, karaciğer hastalığı veya sıvı kısıtlaması gerektiren başka bir durumunuz varsa hekiminizin önerdiği miktara uyun. Çocuklar için değerler farklıdır.
+  </p>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const inputs = document.querySelectorAll<HTMLInputElement | HTMLSelectElement>('#calc-form input, #calc-form select');
       const resultArea = document.getElementById('calc-result');
+      const $ = (id: string) => document.getElementById(id) as HTMLElement;
 
-      function debounce(fn, delay = 150) {
-        let timer;
-        return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), delay); };
+      function debounce(fn: () => void, delay = 150) {
+        let timer: ReturnType<typeof setTimeout>;
+        return () => { clearTimeout(timer); timer = setTimeout(fn, delay); };
       }
 
-      function formatNumber(num, dec = 0) {
-        return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: dec, maximumFractionDigits: dec }).format(num);
+      function num(id: string) {
+        const raw = (document.getElementById(id) as HTMLInputElement).value.replace(',', '.');
+        return raw.trim() === '' ? NaN : parseFloat(raw);
       }
 
-      const debouncedCalc = debounce(calculate);
-      inputs.forEach(input => {
-        input.addEventListener('input', debouncedCalc);
-        input.addEventListener('change', debouncedCalc);
-      });
+      function fmt(n: number, d = 1) {
+        return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: d, maximumFractionDigits: d }).format(n);
+      }
+
+      const DURUM_EK: Record<string, number> = { yok: 0, gebelik: 300, emzirme: 700 };
 
       function calculate() {
-        const kilo = parseFloat(document.getElementById('kilo').value);
+        const kilo = num('kilo');
+        const egzersizRaw = num('egzersiz');
+        const egzersiz = isFinite(egzersizRaw) && egzersizRaw > 0 ? Math.min(egzersizRaw, 600) : 0;
+        const hava = (document.getElementById('hava') as HTMLSelectElement).value;
+        const durum = (document.getElementById('durum') as HTMLSelectElement).value;
 
-        if (isNaN(kilo) || kilo < 30 || kilo > 200) {
-          if (resultArea) resultArea.classList.add('hidden');
+        if (!isFinite(kilo) || kilo < 20 || kilo > 300) {
+          resultArea?.classList.add('hidden');
           return;
         }
 
-        const litre = kilo * 0.033;
-        const ml = litre * 1000;
-        const bardak = litre / 0.2;
+        const temelMl = kilo * 33;
+        // Egzersiz: 30 dakika başına ~350 mL (≈ 11,7 mL/dk)
+        const ekMl = egzersiz * (350 / 30) + (hava === 'sicak' ? 500 : 0) + (DURUM_EK[durum] ?? 0);
+        const toplamMl = temelMl + ekMl;
 
-        document.getElementById('result-litre').textContent = formatNumber(litre, 2) + ' litre';
-        document.getElementById('result-bardak').textContent = formatNumber(bardak, 1) + ' bardak';
-        document.getElementById('result-ml').textContent = formatNumber(ml, 0) + ' mL';
+        $('result-litre').textContent = fmt(toplamMl / 1000, 1) + ' litre';
+        $('result-bardak-ana').textContent = `Yaklaşık ${Math.round(toplamMl / 200)} bardak`;
+        $('result-temel').textContent = fmt(temelMl / 1000, 2) + ' L';
+        $('result-ek').textContent = ekMl > 0 ? '+' + fmt(ekMl / 1000, 2) + ' L' : 'Yok';
+        $('result-bardak').textContent = fmt(toplamMl / 200, 1) + ' bardak';
+        $('result-icecek').textContent = fmt((toplamMl * 0.8) / 1000, 1) + ' L içecek';
 
-        if (resultArea) resultArea.classList.remove('hidden');
+        resultArea?.classList.remove('hidden');
         updateURL();
       }
 
       function updateURL() {
         const params = new URLSearchParams();
-        inputs.forEach(input => { if (input.value && input.id) params.set(input.id, input.value); });
+        inputs.forEach(el => { if (el.id && el.value !== '') params.set(el.id, el.value); });
         history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
       }
 
       function loadFromURL() {
         const params = new URLSearchParams(window.location.search);
-        let h = false;
-        inputs.forEach(input => { if (input.id && params.has(input.id)) { input.value = params.get(input.id); h = true; } });
-        if (h) calculate();
+        let has = false;
+        inputs.forEach(el => {
+          if (el.id && params.has(el.id)) { el.value = params.get(el.id) ?? ''; has = true; }
+        });
+        if (has) calculate();
       }
+
+      const debounced = debounce(calculate);
+      inputs.forEach(el => {
+        el.addEventListener('input', debounced);
+        el.addEventListener('change', debounced);
+      });
 
       loadFromURL();
     });
   </script>
 
   <section class="calc-content">
-    <h2>Su İhtiyacı Nasıl Hesaplanır?</h2>
+    <h2>Günlük su ihtiyacı neye göre değişir?</h2>
     <p>
-      Su, yaşam için vazgeçilmez bir kaynaktır. İnsan vücudunun yaklaşık yüzde altmışı sudan oluşmakta olup hücre fonksiyonları, sindirim, ısı düzenlemesi ve toksin atımı gibi kritik süreçler yeterli su tüketimiyle doğrudan ilişkilidir. Günlük su ihtiyacının doğru hesaplanması, sağlıklı bir yaşamın temel taşlarından birini oluşturur.
-    </p>
-    <p>
-      En yaygın kabul gören hesaplama yöntemi, vücut ağırlığını 0,033 ile çarpmaktır. Bu formüle göre 60 kg olan bir kişi günde 1,98 litre, 80 kg olan bir kişi ise 2,64 litre su tüketmelidir. Bu değer, iklim koşulları, aktivite düzeyi ve bireysel metabolizma farklılıklarına göre artış gösterebilir.
+      Vücudumuzun yaklaşık %50–60'ı sudur ve her gün idrar, ter, nefes ve dışkıyla 2–3 litre sıvı kaybederiz. Bu kaybın yerine konması gereken miktar; vücut ağırlığına, fiziksel aktiviteye, ortam sıcaklığına, beslenme şekline ve gebelik gibi özel durumlara göre değişir. Tek bir "herkes için 8 bardak" kuralı yerine kilonuza göre hesaplanan bir hedef daha gerçekçidir.
     </p>
 
-    <h3>Formül</h3>
+    <h2>Hesaplama yöntemi</h2>
+    <ul>
+      <li><strong>Temel ihtiyaç:</strong> Kilo × 33 mL (yaygın kullanılan 30–35 mL/kg aralığının ortası)</li>
+      <li><strong>Egzersiz:</strong> Her 30 dakika için +350 mL</li>
+      <li><strong>Sıcak veya nemli ortam:</strong> +500 mL</li>
+      <li><strong>Gebelik:</strong> +300 mL, <strong>emzirme:</strong> +700 mL (EFSA önerisine göre)</li>
+    </ul>
     <p>
-      <strong>Günlük Su İhtiyacı (litre) = Vücut Ağırlığı (kg) × 0,033</strong>
-    </p>
-    <p>
-      Bardak cinsinden hesaplamak için sonucu 0,2'ye bölmeniz yeterlidir (1 bardak = 200 mL). Örneğin 75 kg için: 75 × 0,033 = 2,475 litre → 2,475 ÷ 0,2 ≈ 12,4 bardak.
-    </p>
-
-    <h3>Su İhtiyacını Etkileyen Faktörler</h3>
-    <p>
-      Temel formül genel bir rehber sunar; ancak gerçek su ihtiyacı birçok faktöre göre farklılık gösterebilir. Yüksek sıcaklıkta çalışma veya yoğun egzersiz, terlemeyi artırarak sıvı kaybını hızlandırır. Hamilelik ve emzirme dönemlerinde günlük su ihtiyacı belirgin biçimde artar. Öte yandan çay, kahve ve meyve gibi sıvı içeren besinler de günlük su ihtiyacının bir kısmını karşılayabilir.
-    </p>
-    <p>
-      Susuzluk hissinin başlaması su eksikliğinin uyarı işareti olarak görülse de bu his gecikebilir; özellikle yaşlılarda susuzluk hissi körelebilmektedir. Bu nedenle düzenli aralıklarla su içme alışkanlığı edinmek, susama hissini beklemekten daha sağlıklıdır.
+      Sonuç, yiyeceklerden gelen su dahil toplam sıvı hedefidir. Tipik bir beslenmede suyun yaklaşık %20'si sebze, meyve, çorba ve yoğurt gibi besinlerden gelir; bu yüzden içeceklerle almanız gereken miktar hesaplanan toplamın yaklaşık %80'idir.
     </p>
 
-    <h3>Dikkat Edilmesi Gerekenler</h3>
+    <h2>Örnek hesaplama</h2>
     <p>
-      Gereğinden fazla su tüketimi de zararlı olabilir. Hiponatremi adı verilen bu durumda kandaki sodyum düzeyi tehlikeli ölçüde düşer. Böbrek hastalığı olanların veya belirli ilaçlar kullananların günlük su tüketimi konusunda doktorlarına danışması önerilir. Araçtaki sonuç genel popülasyon için bir başlangıç noktası sunar; sağlık durumunuza özgü net bir öneri için bir uzman görüşü alınmalıdır.
+      68 kg ağırlığında, günde 45 dakika yürüyüş yapan ve yaz aylarında sıcak bir şehirde yaşayan biri için:
+    </p>
+    <ul>
+      <li>Temel ihtiyaç: 68 × 33 = 2.244 mL</li>
+      <li>Egzersiz: 45 dk × (350 ÷ 30) = 525 mL</li>
+      <li>Sıcak hava: 500 mL</li>
+      <li>Toplam: 3.269 mL ≈ <strong>3,3 litre</strong> (yaklaşık 16 bardak); içeceklerden alınması gereken kısım yaklaşık 2,6 litre</li>
+    </ul>
+
+    <h2>Kiloya göre günlük su ihtiyacı tablosu</h2>
+    <table>
+      <thead>
+        <tr><th>Kilo</th><th>Günlük toplam sıvı</th><th>Bardak (200 mL)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>50 kg</td><td>1,65 L</td><td>8</td></tr>
+        <tr><td>60 kg</td><td>1,98 L</td><td>10</td></tr>
+        <tr><td>70 kg</td><td>2,31 L</td><td>12</td></tr>
+        <tr><td>80 kg</td><td>2,64 L</td><td>13</td></tr>
+        <tr><td>90 kg</td><td>2,97 L</td><td>15</td></tr>
+        <tr><td>100 kg</td><td>3,30 L</td><td>17</td></tr>
+      </tbody>
+    </table>
+    <p>
+      Bu değerler hareketsiz bir gün ve normal hava için geçerlidir. Referans olarak EFSA, yiyecekler dahil toplam su için yetişkin kadınlara günde 2,0 litre, erkeklere 2,5 litre önermektedir.
     </p>
 
-    <h3>Sıkça Sorulan Sorular</h3>
-    {faq.map(item => (
-      <details>
-        <summary><strong>{item.question}</strong></summary>
-        <p>{item.answer}</p>
-      </details>
-    ))}
+    <h2>Su içmeyi alışkanlık haline getirmek için</h2>
+    <ul>
+      <li>Güne bir bardak suyla başlayın ve her öğünle birlikte bir bardak için.</li>
+      <li>Yanınızda ölçekli bir şişe taşıyın; gün sonunda ne kadar içtiğinizi görmek motivasyon sağlar.</li>
+      <li>İdrar renginizi takip edin: açık saman sarısı hedeftir.</li>
+      <li>Yaşlılar ve çocuklar susama hissini geç fark edebilir; onlara düzenli aralıklarla su hatırlatın.</li>
+    </ul>
   </section>
 </CalcLayout>

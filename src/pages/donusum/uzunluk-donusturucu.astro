@@ -4,216 +4,290 @@ import CalcInput from '../../components/calculator/CalcInput.astro';
 import CalcSelect from '../../components/calculator/CalcSelect.astro';
 import CalcResult from '../../components/calculator/CalcResult.astro';
 
-const birimOptions = [
-  { value: "mm", label: "Milimetre (mm)" },
-  { value: "cm", label: "Santimetre (cm)" },
-  { value: "m", label: "Metre (m)" },
-  { value: "km", label: "Kilometre (km)" },
-  { value: "inc", label: "İnç (in)" },
-  { value: "feet", label: "Feet / Ayak (ft)" },
-  { value: "yard", label: "Yard (yd)" },
-  { value: "mil", label: "Mil (mi)" },
+// Metre cinsinden tam (tanımsal) katsayılar. İnç, feet, yard ve mil 1959 uluslararası
+// yard-pound anlaşmasına, deniz mili 1929 uluslararası tanımına dayanır.
+const units = [
+  { value: "um", label: "Mikrometre (µm)", symbol: "µm", toM: 1e-6 },
+  { value: "mm", label: "Milimetre (mm)", symbol: "mm", toM: 0.001 },
+  { value: "cm", label: "Santimetre (cm)", symbol: "cm", toM: 0.01 },
+  { value: "m", label: "Metre (m)", symbol: "m", toM: 1 },
+  { value: "km", label: "Kilometre (km)", symbol: "km", toM: 1000 },
+  { value: "inc", label: "İnç (in)", symbol: "in", toM: 0.0254 },
+  { value: "feet", label: "Feet / ayak (ft)", symbol: "ft", toM: 0.3048 },
+  { value: "yard", label: "Yarda (yd)", symbol: "yd", toM: 0.9144 },
+  { value: "mil", label: "Kara mili (mi)", symbol: "mi", toM: 1609.344 },
+  { value: "nmi", label: "Deniz mili (nmi)", symbol: "nmi", toM: 1852 },
 ];
+const birimOptions = units.map(u => ({ value: u.value, label: u.label }));
 
 const faq = [
   {
     question: "1 inç kaç santimetredir?",
-    answer: "1 inç tam olarak 2.54 santimetreye eşittir. Bu dönüşüm uluslararası standartlarla kesin olarak belirlenmiştir. Tersine çevrildiğinde 1 santimetre ≈ 0.3937 inç olur. İnç birimi başta ABD, İngiltere ve Kanada olmak üzere bazı ülkelerde uzunluk ölçümünde hâlâ yaygın biçimde kullanılmaktadır."
+    answer: "1 inç tam olarak 2,54 cm'dir. Bu değer 1959'da ABD, İngiltere ve diğer Commonwealth ülkelerinin imzaladığı uluslararası yard ve pound anlaşmasıyla kesinleştirilmiştir; yuvarlanmış bir yaklaşım değildir. Buna göre 1 cm ≈ 0,3937 inç olur. 55 inç bir televizyonun köşegeni 55 × 2,54 = 139,7 cm'dir."
+  },
+  {
+    question: "1 feet kaç metre, boyum feet olarak kaç?",
+    answer: "1 feet tam olarak 0,3048 m, yani 30,48 cm'dir ve 12 inçe eşittir. Boyunuzu feet ve inç olarak bulmak için santimetreyi 2,54'e bölüp inç elde edin, sonra 12'ye bölün. 178 cm ≈ 70,08 inç, bu da 5 feet 10 inç eder. ABD'de boy genellikle 5′10″ şeklinde yazılır."
   },
   {
     question: "1 mil kaç kilometredir?",
-    answer: "1 kara mili (statute mile) tam olarak 1.609344 kilometreye eşittir. Deniz mili (nautical mile) ise bundan farklı olup 1.852 kilometreye karşılık gelir. Bu araçta kara mili kullanılmaktadır. ABD ve İngiltere'de yol mesafeleri mil cinsinden ifade edilirken Türkiye dahil Avrupa ülkelerinin büyük çoğunluğu kilometre kullanmaktadır."
+    answer: "1 kara mili (statute mile) tam olarak 1.609,344 m, yani yaklaşık 1,609 km'dir. Tersine 1 km ≈ 0,6214 mil eder. ABD ve İngiltere'de yol tabelaları ve hız limitleri mil cinsindendir; 60 mph yaklaşık 96,6 km/sa'e karşılık gelir. Denizcilik ve havacılıkta kullanılan deniz mili ise farklı bir birimdir."
   },
   {
-    question: "Feet ve yard arasındaki fark nedir?",
-    answer: "1 yard tam olarak 3 feet'e eşittir; 1 feet ise 12 inçtir. Metre cinsinden ifade edildiğinde: 1 feet ≈ 0.3048 m, 1 yard ≈ 0.9144 m'dir. Feet ve yard özellikle inşaat, tekstil ve spor alanlarında yaygın kullanıma sahiptir. Amerikan futbolunda alan ölçümü yard, ev boyutları ise genellikle feet cinsinden ifade edilir."
+    question: "Deniz mili ile kara mili arasındaki fark nedir?",
+    answer: "Deniz mili tam olarak 1.852 m'dir ve başlangıçta Dünya'nın bir enlem dakikasına karşılık gelecek şekilde tanımlanmıştır. Kara mili ise 1.609,344 m'dir. Yani 1 deniz mili yaklaşık 1,151 kara milidir. Gemi ve uçak hızlarında kullanılan knot (deniz mili/saat) birimi de deniz miline dayanır: 1 knot = 1,852 km/sa."
+  },
+  {
+    question: "1 metre kaç santimetre ve kaç milimetredir?",
+    answer: "1 metre 100 santimetre ve 1.000 milimetredir. Metrik sistemde her basamak 10'un katıdır: 1 cm = 10 mm, 1 dm = 10 cm, 1 m = 10 dm. Kilometreye geçerken 1.000 ile çarpılır: 1 km = 1.000 m = 100.000 cm. Metre, 1983'ten beri ışığın boşlukta 1/299.792.458 saniyede aldığı yol olarak tanımlanır."
+  },
+  {
+    question: "1 yarda kaç metredir?",
+    answer: "1 yarda tam olarak 0,9144 m'dir ve 3 feet ya da 36 inçe eşittir. Futbol sahasında penaltı noktasının kaleye 12 yarda, yani 10,97 m uzaklıkta olması bu birimden gelir. Amerikan futbolunda saha 100 yarda (91,44 m) uzunluğundadır. Kumaş ve golf mesafeleri de sıklıkla yarda ile ölçülür."
   }
 ];
 
 const meta = {
   title: "Uzunluk Dönüştürücü",
-  description: "mm, cm, m, km, inç, feet, yard ve mil arasında uzunluk dönüşümü yapın. Anlık uzunluk birimi çevirici hesaplayıcı.",
+  seoTitle: "Uzunluk Dönüştürücü: cm, Metre, İnç, Feet, Mil",
+  description: "Milimetre, santimetre, metre, kilometre, inç, feet, yarda, mil ve deniz mili arasında kesin katsayılarla anında uzunluk dönüşümü yapın. Dönüşüm tablosuyla.",
+  summary: "Uzunluk dönüşümünde değer önce metreye çevrilip sonra hedef birime bölünür. Tam katsayılar: 1 inç = 2,54 cm, 1 feet = 0,3048 m, 1 yarda = 0,9144 m, 1 mil = 1.609,344 m, 1 deniz mili = 1.852 m; örneğin 10 km ≈ 6,2137 mil'dir.",
+  howTo: [
+    "Dönüştürmek istediğiniz değeri girin.",
+    "Kaynak birimi (girdiğiniz değerin birimi) ve hedef birimi seçin.",
+    "Ana sonuç hedef birimde, diğer tüm birimlerdeki karşılıklar ayrıntılarda görünür.",
+    "Linki Kopyala ile dönüşümü paylaşabilirsiniz."
+  ],
+  sources: [
+    { name: "BIPM: The International System of Units (SI Brochure)", url: "https://www.bipm.org/en/publications/si-brochure" },
+    { name: "NIST Special Publication 811: Guide for the Use of the SI", url: "https://www.nist.gov/pml/special-publication-811" }
+  ],
   category: "donusum",
   slug: "uzunluk-donusturucu",
-  keywords: ["uzunluk dönüştürücü", "uzunluk birimi çevirici", "metre inç dönüşümü", "km mil dönüşümü", "uzunluk hesaplayıcı"],
-  dateModified: "2026-04-01",
-  relatedCalcs: ["agirlik-donusturucu", "sicaklik-donusturucu"],
+  keywords: ["uzunluk dönüştürücü", "inç cm çevirme", "feet metre çevirme", "mil km çevirme", "uzunluk birimleri", "deniz mili km"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["donusum/agirlik-donusturucu", "donusum/sicaklik-donusturucu", "matematik/alan-hesaplama", "matematik/hacim-hesaplama"],
   faq
 };
 ---
 
 <CalcLayout meta={meta}>
-  <form id="calc-form" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
-    <div class="calc-inputs">
-      <CalcInput
-        id="deger"
-        label="Değer"
-        type="number"
-        placeholder="Örn: 100"
-        step="any"
-        helpText="Dönüştürmek istediğiniz sayıyı girin"
-      />
-      <CalcSelect
-        id="birim"
-        label="Kaynak Birim"
-        options={birimOptions}
-        value="m"
-        helpText="Girilen değerin birimini seçin"
-      />
-    </div>
+  <form id="calc-form" class="calc-inputs" novalidate>
+    <CalcInput
+      id="deger"
+      label="Değer"
+      type="number"
+      placeholder="Örn: 178"
+      min={0}
+    />
+    <CalcSelect id="birim" label="Kaynak Birim" options={birimOptions} value="cm" />
+    <CalcSelect id="hedef" label="Hedef Birim" options={birimOptions} value="inc" />
   </form>
+  <p id="calc-error" class="calc-error" role="alert" hidden></p>
 
   <CalcResult>
     <div slot="main">
-      <p class="calc-result-label">Santimetre (cm)</p>
+      <p class="calc-result-label" id="sonuc-etiket">Sonuç</p>
       <p class="calc-result-value" id="sonuc-ana">—</p>
     </div>
     <div slot="details">
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Milimetre (mm)</span>
-        <span class="calc-detail-value" id="detail-mm">—</span>
+        <span class="calc-detail-label">Katsayı</span>
+        <span class="calc-detail-value" id="d-katsayi">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Santimetre (cm)</span>
-        <span class="calc-detail-value" id="detail-cm">—</span>
+        <span class="calc-detail-label">Feet ve inç olarak</span>
+        <span class="calc-detail-value" id="d-ftin">—</span>
       </div>
-      <div class="calc-detail-row">
-        <span class="calc-detail-label">Metre (m)</span>
-        <span class="calc-detail-value" id="detail-m">—</span>
-      </div>
-      <div class="calc-detail-row">
-        <span class="calc-detail-label">Kilometre (km)</span>
-        <span class="calc-detail-value" id="detail-km">—</span>
-      </div>
-      <div class="calc-detail-row">
-        <span class="calc-detail-label">İnç (in)</span>
-        <span class="calc-detail-value" id="detail-inc">—</span>
-      </div>
-      <div class="calc-detail-row">
-        <span class="calc-detail-label">Feet (ft)</span>
-        <span class="calc-detail-value" id="detail-feet">—</span>
-      </div>
-      <div class="calc-detail-row">
-        <span class="calc-detail-label">Yard (yd)</span>
-        <span class="calc-detail-value" id="detail-yard">—</span>
-      </div>
-      <div class="calc-detail-row">
-        <span class="calc-detail-label">Mil (mi)</span>
-        <span class="calc-detail-value" id="detail-mil">—</span>
-      </div>
+      {units.map(u => (
+        <div class="calc-detail-row">
+          <span class="calc-detail-label">{u.label}</span>
+          <span class="calc-detail-value" id={`detail-${u.value}`}>—</span>
+        </div>
+      ))}
     </div>
   </CalcResult>
 
-  <section class="calc-content">
-    <h2>Uzunluk Dönüştürücü Nasıl Kullanılır?</h2>
-    <p>
-      Uzunluk birimleri arasında dönüşüm yapmak; uluslararası ticaret, mühendislik, inşaat, coğrafya ve günlük hayatın pek çok alanında sıklıkla ihtiyaç duyulan bir işlemdir. Türkiye ve Avrupa Birliği ülkelerinde SI (Uluslararası Birimler Sistemi) kapsamında metre ve türevleri kullanılırken, ABD, İngiltere ve bazı diğer ülkeler inç, feet, yard ve mil gibi emperyal birimleri yaygın biçimde kullanmaya devam etmektedir.
-    </p>
-    <p>
-      Bu araç; milimetre (mm), santimetre (cm), metre (m) ve kilometre (km) gibi metrik birimler ile inç (in), feet (ft), yard (yd) ve mil (mi) gibi emperyal birimler arasında anlık dönüşüm yapmanıza olanak tanır. Tek bir alana değer girip birim seçmeniz yeterlidir; araç diğer tüm birimlerdeki karşılıkları otomatik olarak hesaplar.
-    </p>
-    <p>
-      Metrik sistemde birimler arasındaki ilişki 10'un kuvvetlerine dayanır: 1 km = 1000 m = 100.000 cm = 1.000.000 mm. Bu matematiksel düzenlilik metrik sistemi hesaplamalar için çok elverişli kılar. Emperyal birimlerde ise ilişkiler daha karmaşıktır: 1 mil = 1760 yard = 5280 feet = 63.360 inç.
-    </p>
-    <p>
-      Pratik kullanım senaryolarına bakıldığında; bir Amerikalı müşterinin verdiği ölçüleri Türk mühendise aktarmak, yurt dışında araç kiralayacak birinin mesafe birimini anlaması veya online alışverişte ürün boyutlarını değerlendirmek için bu tür dönüşümler sık sık gerekli olmaktadır.
-    </p>
+  <script>
+    const TO_M: Record<string, number> = { um: 1e-6, mm: 0.001, cm: 0.01, m: 1, km: 1000, inc: 0.0254, feet: 0.3048, yard: 0.9144, mil: 1609.344, nmi: 1852 };
+    const SYM: Record<string, string> = { um: 'µm', mm: 'mm', cm: 'cm', m: 'm', km: 'km', inc: 'in', feet: 'ft', yard: 'yd', mil: 'mi', nmi: 'nmi' };
+    const SUP: Record<string, string> = { '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹', '-': '⁻' };
 
-    <h3>Dönüşüm Katsayıları</h3>
-    <p>
-      Metre bazında: mm = 0.001 m, cm = 0.01 m, m = 1 m, km = 1000 m, inç = 0.0254 m, feet = 0.3048 m, yard = 0.9144 m, mil = 1609.344 m. Tüm dönüşümler önce girilen değeri metreye çevirip ardından hedef birime bölme/çarpma yöntemiyle yapılır.
-    </p>
-
-    <h3>Dikkat Edilmesi Gerekenler</h3>
-    <p>
-      Bu araçta kullanılan "mil" değeri kara milidir (statute mile). Deniz mili (nautical mile) farklı bir birim olup 1.852 metreye eşittir ve bu araçta yer almamaktadır. Çok küçük veya çok büyük değerlerde bilimsel gösterim çıkabilir; bu durum normal bir davranıştır. Ondalık sayı girerken nokta veya virgül kullanılabilir.
-    </p>
-
-    <h3>Sıkça Sorulan Sorular</h3>
-    {faq.map((item) => (
-      <div class="faq-item">
-        <h4>{item.question}</h4>
-        <p>{item.answer}</p>
-      </div>
-    ))}
-  </section>
-</CalcLayout>
-
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
-    const resultArea = document.getElementById('calc-result');
-
-    function debounce(fn, d = 150) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), d); }; }
-    function formatNumber(n) {
-      if (Math.abs(n) < 0.0001 || Math.abs(n) >= 1e10) {
-        return n.toExponential(4);
-      }
-      return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 0, maximumFractionDigits: 6 }).format(n);
+    function parseNum(raw: string): number {
+      let s = raw.trim().replace(/\s+/g, '');
+      if (!s) return NaN;
+      s = s.replace(',', '.');
+      if (!/^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/i.test(s)) return NaN;
+      return Number(s);
     }
 
-    const toMeters = { mm: 0.001, cm: 0.01, m: 1, km: 1000, inc: 0.0254, feet: 0.3048, yard: 0.9144, mil: 1609.344 };
-    const labels = { mm: 'mm', cm: 'cm', m: 'm', km: 'km', inc: 'in', feet: 'ft', yard: 'yd', mil: 'mi' };
-
-    const dc = debounce(calculate);
-    inputs.forEach(i => { i.addEventListener('input', dc); i.addEventListener('change', dc); });
-
-    function calculate() {
-      const deger = parseFloat((document.getElementById('deger')).value);
-      const birim = (document.getElementById('birim')).value;
-
-      if (isNaN(deger) || !birim) {
-        if (resultArea) resultArea.classList.add('hidden');
-        return;
+    /** Yaklaşık 10 anlamlı basamakla, kayan nokta gürültüsü olmadan biçimlendirir. */
+    function fmt(n: number): string {
+      if (!Number.isFinite(n)) return '—';
+      if (n === 0) return '0';
+      const abs = Math.abs(n);
+      if (abs >= 1e15 || abs < 1e-6) {
+        const [m, e] = n.toExponential(6).split('e');
+        const mant = new Intl.NumberFormat('tr-TR', { maximumFractionDigits: 6 }).format(Number(m));
+        return `${mant} × 10${String(Number(e)).split('').map(c => SUP[c] ?? c).join('')}`;
       }
+      const clean = Number(n.toPrecision(12));
+      const frac = Math.min(12, Math.max(0, 9 - Math.floor(Math.log10(abs))));
+      return new Intl.NumberFormat('tr-TR', { maximumFractionDigits: frac }).format(clean);
+    }
 
-      const meters = deger * (toMeters[birim] || 1);
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('calc-form') as HTMLFormElement;
+      const inputs = form.querySelectorAll<HTMLInputElement | HTMLSelectElement>('input, select');
+      const resultArea = document.getElementById('calc-result');
+      const errorEl = document.getElementById('calc-error') as HTMLElement;
+      const degerEl = document.getElementById('deger') as HTMLInputElement;
+      const birimEl = document.getElementById('birim') as HTMLSelectElement;
+      const hedefEl = document.getElementById('hedef') as HTMLSelectElement;
 
-      const results = {
-        mm: meters / 0.001,
-        cm: meters / 0.01,
-        m: meters,
-        km: meters / 1000,
-        inc: meters / 0.0254,
-        feet: meters / 0.3048,
-        yard: meters / 0.9144,
-        mil: meters / 1609.344,
+      const setText = (id: string, text: string) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = text;
       };
 
-      // Main result: show cm if input is not cm, else show m
-      const mainUnit = birim === 'cm' ? 'm' : 'cm';
-      document.getElementById('sonuc-ana').textContent = `${formatNumber(results[mainUnit])} ${labels[mainUnit]}`;
-      document.querySelector('#calc-result .calc-result-label') && (
-        (document.querySelector('#calc-result .calc-result-label')).textContent =
-          mainUnit === 'cm' ? 'Santimetre (cm)' : 'Metre (m)'
-      );
+      function debounce<T extends (...args: never[]) => void>(fn: T, delay = 150) {
+        let timer: ReturnType<typeof setTimeout>;
+        return (...args: Parameters<T>) => {
+          clearTimeout(timer);
+          timer = setTimeout(() => fn(...args), delay);
+        };
+      }
 
-      document.getElementById('detail-mm').textContent = `${formatNumber(results.mm)} mm`;
-      document.getElementById('detail-cm').textContent = `${formatNumber(results.cm)} cm`;
-      document.getElementById('detail-m').textContent = `${formatNumber(results.m)} m`;
-      document.getElementById('detail-km').textContent = `${formatNumber(results.km)} km`;
-      document.getElementById('detail-inc').textContent = `${formatNumber(results.inc)} in`;
-      document.getElementById('detail-feet').textContent = `${formatNumber(results.feet)} ft`;
-      document.getElementById('detail-yard').textContent = `${formatNumber(results.yard)} yd`;
-      document.getElementById('detail-mil').textContent = `${formatNumber(results.mil)} mi`;
+      function hide(msg = '') {
+        errorEl.textContent = msg;
+        errorEl.hidden = !msg;
+        resultArea?.classList.add('hidden');
+      }
 
-      if (resultArea) resultArea.classList.remove('hidden');
-      updateURL();
-    }
+      function calculate() {
+        const deger = parseNum(degerEl.value);
+        const from = birimEl.value;
+        const to = hedefEl.value;
+        if (Number.isNaN(deger) || !(from in TO_M) || !(to in TO_M)) return hide();
+        if (deger < 0) return hide('Uzunluk negatif olamaz.');
 
-    function updateURL() {
-      const p = new URLSearchParams();
-      inputs.forEach(i => { if (i.value && i.id) p.set(i.id, i.value); });
-      history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
-    }
+        const meters = deger * TO_M[from];
+        const result = meters / TO_M[to];
 
-    function loadFromURL() {
-      const p = new URLSearchParams(window.location.search);
-      let h = false;
-      inputs.forEach(i => { if (i.id && p.has(i.id)) { i.value = p.get(i.id); h = true; } });
-      if (h) calculate();
-    }
+        errorEl.hidden = true;
+        setText('sonuc-etiket', `${fmt(deger)} ${SYM[from]} =`);
+        setText('sonuc-ana', `${fmt(result)} ${SYM[to]}`);
+        setText('d-katsayi', `1 ${SYM[from]} = ${fmt(TO_M[from] / TO_M[to])} ${SYM[to]}`);
 
-    loadFromURL();
-  });
-</script>
+        const totalIn = meters / 0.0254;
+        let ft = Math.floor(totalIn / 12);
+        let inch = Number((totalIn - ft * 12).toFixed(2));
+        if (inch >= 12) { ft += 1; inch = 0; }
+        setText('d-ftin', `${new Intl.NumberFormat('tr-TR').format(ft)} ft ${fmt(inch)} in`);
+
+        Object.keys(TO_M).forEach(k => setText(`detail-${k}`, `${fmt(meters / TO_M[k])} ${SYM[k]}`));
+
+        resultArea?.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const params = new URLSearchParams();
+        inputs.forEach(el => {
+          if (el.id && el.value !== '') params.set(el.id, el.value);
+        });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+      }
+
+      function loadFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        let hasParams = false;
+        inputs.forEach(el => {
+          if (el.id && params.has(el.id)) {
+            const v = params.get(el.id)!;
+            if (el instanceof HTMLSelectElement) {
+              if (Array.from(el.options).some(o => o.value === v)) el.value = v;
+            } else {
+              const n = parseNum(v);
+              if (!Number.isNaN(n)) el.value = String(n);
+            }
+            hasParams = true;
+          }
+        });
+        // Eski linklerde hedef birim yoktu; kaynakla aynı kalırsa anlamlı bir hedef seç
+        if (!params.has('hedef') && hedefEl.value === birimEl.value) {
+          hedefEl.value = birimEl.value === 'm' ? 'cm' : 'm';
+        }
+        if (hasParams) calculate();
+      }
+
+      const debouncedCalc = debounce(calculate);
+      inputs.forEach(el => {
+        el.addEventListener('input', debouncedCalc);
+        el.addEventListener('change', debouncedCalc);
+      });
+      form.addEventListener('submit', e => { e.preventDefault(); calculate(); });
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>Uzunluk Birimleri Nasıl Dönüştürülür?</h2>
+    <p>
+      Her dönüşüm iki adımda yapılır: girilen değer önce metreye çevrilir, ardından hedef birimin metre karşılığına bölünür. Metre SI sisteminin temel uzunluk birimidir ve ışığın boşlukta 1/299.792.458 saniyede aldığı yol olarak tanımlanır. İnç, feet, yarda ve mil de artık metre üzerinden tanımlandığı için aşağıdaki katsayılar yaklaşık değil, tam değerlerdir.
+    </p>
+
+    <h2>Dönüşüm Katsayıları</h2>
+    <table>
+      <thead>
+        <tr><th>Birim</th><th>Metre karşılığı</th><th>Diğer karşılıklar</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1 milimetre</td><td>0,001 m</td><td>0,0393701 in</td></tr>
+        <tr><td>1 santimetre</td><td>0,01 m</td><td>0,393701 in</td></tr>
+        <tr><td>1 inç</td><td>0,0254 m</td><td>2,54 cm</td></tr>
+        <tr><td>1 feet</td><td>0,3048 m</td><td>12 in = 30,48 cm</td></tr>
+        <tr><td>1 yarda</td><td>0,9144 m</td><td>3 ft = 36 in</td></tr>
+        <tr><td>1 kilometre</td><td>1.000 m</td><td>0,621371 mi</td></tr>
+        <tr><td>1 kara mili</td><td>1.609,344 m</td><td>5.280 ft = 1.760 yd</td></tr>
+        <tr><td>1 deniz mili</td><td>1.852 m</td><td>1,150779 mi</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Örnek Hesaplama</h2>
+    <h3>Boyu feet ve inçe çevirmek</h3>
+    <p>
+      Boyunuz 178 cm ise önce inç bulunur: 178 ÷ 2,54 = 70,0787 inç. 70 inç, 12'ye bölündüğünde 5 feet ve 10 inç eder; sonuç 5′10″ olur. Hesaplayıcıda kaynak birim cm iken "Feet ve inç olarak" satırı bu dönüşümü doğrudan gösterir.
+    </p>
+    <h3>Maraton mesafesi</h3>
+    <p>
+      Maraton 42,195 km'dir. 42.195 m ÷ 1.609,344 = 26,2188 mil eder; bu yüzden ABD'de maraton "26.2 mile" olarak anılır.
+    </p>
+
+    <h2>Hızlı Başvuru Tablosu: İnç ve Santimetre</h2>
+    <table>
+      <thead>
+        <tr><th>İnç</th><th>Santimetre</th><th>Kullanım örneği</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1″</td><td>2,54 cm</td><td>Boru, vida ölçüleri</td></tr>
+        <tr><td>6,1″</td><td>15,49 cm</td><td>Telefon ekranı köşegeni</td></tr>
+        <tr><td>15,6″</td><td>39,62 cm</td><td>Dizüstü bilgisayar ekranı</td></tr>
+        <tr><td>27″</td><td>68,58 cm</td><td>Monitör</td></tr>
+        <tr><td>55″</td><td>139,7 cm</td><td>Televizyon</td></tr>
+        <tr><td>65″</td><td>165,1 cm</td><td>Televizyon</td></tr>
+      </tbody>
+    </table>
+    <p>
+      Ekran boyutları köşegen uzunluğunu verir; genişlik ve yükseklik en-boy oranına göre ayrıca hesaplanır. 16:9 oranındaki 55″ bir televizyonun genişliği yaklaşık 121,8 cm, yüksekliği 68,5 cm'dir.
+    </p>
+
+    <h2>Dikkat Edilmesi Gerekenler</h2>
+    <ul>
+      <li>"Mil" denince karada kara mili (1.609,344 m), denizde ve havacılıkta deniz mili (1.852 m) kastedilir; ikisini karıştırmak yaklaşık %15 hataya yol açar.</li>
+      <li>ABD'nin 2022'ye kadar arazi ölçümünde kullandığı "survey foot" (≈ 0,3048006 m) uluslararası feet'ten çok az farklıdır; günlük kullanımda fark önemsizdir.</li>
+      <li>Ondalık değerleri virgül ya da nokta ile girebilirsiniz.</li>
+    </ul>
+  </section>
+</CalcLayout>

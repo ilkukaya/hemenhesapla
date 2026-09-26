@@ -5,175 +5,316 @@ import CalcResult from '../../components/calculator/CalcResult.astro';
 
 const faq = [
   {
-    question: "Ortalama ile medyan arasındaki fark nedir?",
-    answer: "Ortalama (aritmetik ortalama), tüm sayıların toplamının sayı adedine bölünmesiyle bulunur. Medyan ise sayılar sıralandığında tam ortada kalan değerdir. Medyan, uç değerlerden etkilenmediği için dağılımı daha doğru yansıtabilir. Örneğin 1, 2, 3, 4, 100 serisinin ortalaması 22 iken medyanı 3'tür."
+    question: "Ortalama nasıl hesaplanır?",
+    answer: "Aritmetik ortalama, tüm değerlerin toplamının değer sayısına bölünmesiyle bulunur: x̄ = (x₁ + x₂ + … + xₙ) ÷ n. Örneğin 12, 15, 18 ve 23 sayılarının toplamı 68, sayı adedi 4 olduğundan ortalama 68 ÷ 4 = 17'dir. Günlük dilde 'ortalama' denildiğinde genellikle aritmetik ortalama kastedilir."
   },
   {
-    question: "Kaç sayının ortalaması hesaplanabilir?",
-    answer: "Bu araç ile istediğiniz kadar sayının ortalamasını hesaplayabilirsiniz. Sayıları virgülle ayırarak (örneğin: 10, 25, 38, 47) giriş kutusuna yazmanız yeterlidir. Boşluklar otomatik olarak yok sayılır. Minimum iki sayı girmeniz durumunda ortalama, medyan, minimum, maksimum, toplam ve sayı adedi bilgileri görüntülenir."
+    question: "Medyan nedir, ortalamadan farkı ne?",
+    answer: "Medyan, sayılar küçükten büyüğe sıralandığında tam ortada kalan değerdir; sayı adedi çiftse ortadaki iki değerin ortalaması alınır. 1, 2, 3, 4, 100 dizisinde ortalama 22 iken medyan 3'tür. Medyan uç değerlerden etkilenmediği için gelir, ev fiyatı ve maaş gibi çarpık verilerde daha gerçekçi bir 'tipik değer' verir."
+  },
+  {
+    question: "Mod (tepe değer) nasıl bulunur?",
+    answer: "Mod, veri setinde en sık tekrar eden değerdir. 3, 5, 5, 7, 8, 8, 8 dizisinin modu 8'dir. Birden fazla değer aynı en yüksek sıklıkla geçiyorsa veri çok modludur ve hepsi mod kabul edilir. Hiçbir değer tekrar etmiyorsa mod yoktur. Mod, ayakkabı numarası gibi kategorik ya da kesikli verilerde özellikle kullanışlıdır."
+  },
+  {
+    question: "Geometrik ortalama ne zaman kullanılır?",
+    answer: "Geometrik ortalama, değerlerin çarpımının n'inci dereceden köküdür ve oranların, büyüme hızlarının ortalamasında kullanılır. Bir yatırım bir yıl %50 kazandırıp ertesi yıl %20 kaybettirdiyse ortalama yıllık büyüme √(1,5 × 0,8) − 1 ≈ %9,5'tir; aritmetik ortalamanın verdiği %15 yanıltıcıdır. Tüm değerlerin pozitif olması gerekir."
+  },
+  {
+    question: "Harmonik ortalama ne işe yarar?",
+    answer: "Harmonik ortalama, değer sayısının değerlerin terslerinin toplamına bölünmesidir: H = n ÷ (1/x₁ + … + 1/xₙ). Aynı mesafenin farklı hızlarla gidildiği ortalama hız ve birim fiyat hesaplarında doğru sonucu verir. Gidişte 60 km/sa, dönüşte 90 km/sa giden aracın ortalama hızı 75 değil, 2 ÷ (1/60 + 1/90) = 72 km/sa'tir."
   },
   {
     question: "Ağırlıklı ortalama bu araçla hesaplanabilir mi?",
-    answer: "Bu araç ağırlıksız (basit) aritmetik ortalama hesaplar. Ağırlıklı ortalama için her sayının farklı bir katsayıyla (ağırlıkla) çarpılması gerekir. Ağırlıklı ortalama hesabı yapmak istiyorsanız Not Ortalaması Hesaplama aracımızı kullanabilirsiniz; orada her nota kredi değeri atanabilmektedir."
+    answer: "Bu araç ağırlıksız ortalamaları hesaplar. Ağırlıklı ortalamada her değer kendi ağırlığıyla çarpılıp toplanır ve ağırlıkların toplamına bölünür: Σ(xᵢ × wᵢ) ÷ Σwᵢ. Ders kredisine göre not ortalaması bunun en bilinen örneğidir; bunun için Not Ortalaması Hesaplama aracını kullanabilirsiniz. Örneğin 4 kredilik derste 80, 2 kredilik derste 60 alan öğrencinin ağırlıklı ortalaması 73,3'tür."
   }
 ];
 
 const meta = {
   title: "Ortalama Hesaplama",
-  description: "Sayı dizisinin ortalamasını, medyanını, minimumunu, maksimumunu ve toplamını anında hesaplayın. Virgülle ayrılmış sayılarla hızlı ortalama hesaplayıcı.",
+  seoTitle: "Ortalama Hesaplama: Aritmetik, Medyan, Mod, Geometrik",
+  description: "Sayılarınızın aritmetik, geometrik ve harmonik ortalamasını, medyan ve modunu tek seferde bulun. Virgüllü ondalık girişle uyumlu, formüllü ortalama aracı.",
+  summary: "Aritmetik ortalama, sayıların toplamının sayı adedine bölünmesiyle bulunur: x̄ = (x₁ + … + xₙ) ÷ n. Medyan sıralanmış verinin ortasındaki değer, mod en sık tekrar eden değerdir; oranlar için geometrik ortalama (ⁿ√(x₁ × … × xₙ)), hızlar için harmonik ortalama (n ÷ Σ1/xᵢ) kullanılır.",
+  howTo: [
+    "Sayılarınızı virgül, boşluk, noktalı virgül veya satır sonu ile ayırarak girin.",
+    "Ondalık virgül kullanıyorsanız sayıları noktalı virgül ya da boşlukla ayırın (örn: 7,5; 8; 9,25).",
+    "Aritmetik ortalama ana sonuç olarak, medyan, mod, geometrik ve harmonik ortalama ayrıntılarda görünür.",
+    "Tanınan sayılar satırından girişinizin doğru okunduğunu kontrol edin."
+  ],
+  sources: [
+    { name: "NIST/SEMATECH e-Handbook of Statistical Methods: Measures of Location", url: "https://www.itl.nist.gov/div898/handbook/eda/section3/eda351.htm" },
+    { name: "Wolfram MathWorld: Geometric Mean", url: "https://mathworld.wolfram.com/GeometricMean.html" },
+    { name: "Wolfram MathWorld: Harmonic Mean", url: "https://mathworld.wolfram.com/HarmonicMean.html" }
+  ],
   category: "matematik",
   slug: "ortalama-hesaplama",
-  keywords: ["ortalama hesaplama", "aritmetik ortalama", "medyan hesaplama", "sayı ortalaması", "ortalama hesaplayıcı"],
-  dateModified: "2026-04-01",
-  relatedCalcs: ["standart-sapma-hesaplama", "karekok-hesaplama"],
+  keywords: ["ortalama hesaplama", "aritmetik ortalama", "medyan hesaplama", "mod hesaplama", "geometrik ortalama", "harmonik ortalama", "ortanca"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["matematik/standart-sapma-hesaplama", "egitim/not-ortalamasi-hesaplama", "matematik/yuzde-hesaplama", "matematik/oran-hesaplama"],
   faq
 };
 ---
 
 <CalcLayout meta={meta}>
-  <form id="calc-form" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
-    <div class="calc-inputs">
-      <CalcInput
-        id="sayilar"
-        label="Sayılar"
-        type="text"
-        placeholder="10, 20, 30, 40, 50"
-        helpText="Virgülle ayırarak girin (örn: 10, 20, 30, 40, 50)"
-      />
-    </div>
+  <form id="calc-form" class="calc-inputs" novalidate>
+    <CalcInput
+      id="sayilar"
+      label="Sayılar"
+      type="text"
+      placeholder="12, 15, 18, 23, 15"
+      helpText="Virgül, boşluk veya noktalı virgülle ayırın. Ondalık virgül için: 7,5; 8; 9,25"
+    />
   </form>
+  <p id="calc-error" class="calc-error" role="alert" hidden></p>
 
   <CalcResult>
     <div slot="main">
-      <p class="calc-result-label">Ortalama</p>
+      <p class="calc-result-label">Aritmetik Ortalama</p>
       <p class="calc-result-value" id="sonuc-ortalama">—</p>
     </div>
     <div slot="details">
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Ortalama</span>
-        <span class="calc-detail-value" id="detail-ortalama">—</span>
+        <span class="calc-detail-label">Medyan (ortanca)</span>
+        <span class="calc-detail-value" id="d-medyan">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Medyan</span>
-        <span class="calc-detail-value" id="detail-medyan">—</span>
+        <span class="calc-detail-label">Mod (tepe değer)</span>
+        <span class="calc-detail-value" id="d-mod">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Minimum</span>
-        <span class="calc-detail-value" id="detail-min">—</span>
+        <span class="calc-detail-label">Geometrik ortalama</span>
+        <span class="calc-detail-value" id="d-geo">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Maksimum</span>
-        <span class="calc-detail-value" id="detail-max">—</span>
+        <span class="calc-detail-label">Harmonik ortalama</span>
+        <span class="calc-detail-value" id="d-harm">—</span>
       </div>
       <div class="calc-detail-row">
         <span class="calc-detail-label">Toplam</span>
-        <span class="calc-detail-value" id="detail-toplam">—</span>
+        <span class="calc-detail-value" id="d-toplam">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Sayı Adedi</span>
-        <span class="calc-detail-value" id="detail-adet">—</span>
+        <span class="calc-detail-label">En küçük / en büyük</span>
+        <span class="calc-detail-value" id="d-minmax">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Açıklık (ranj)</span>
+        <span class="calc-detail-value" id="d-ranj">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Değer sayısı (n)</span>
+        <span class="calc-detail-value" id="d-adet">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Tanınan sayılar</span>
+        <span class="calc-detail-value" id="d-liste">—</span>
       </div>
     </div>
   </CalcResult>
 
-  <section class="calc-content">
-    <h2>Ortalama Hesaplama Nasıl Yapılır?</h2>
-    <p>
-      Aritmetik ortalama, bir sayı kümesinin merkezi eğilimini ifade eden en temel istatistiksel ölçüdür. Hesaplaması oldukça basittir: sayıların tümü toplanır ve bu toplam, sayı adedine bölünür. Örneğin 10, 20, 30, 40 ve 50 sayılarının ortalaması (10+20+30+40+50)/5 = 150/5 = 30 eder. Bu araç sayesinde herhangi bir sayı kümesinin ortalamasını, medyanını, minimumunu, maksimumunu ve toplamını tek seferde hesaplayabilirsiniz.
-    </p>
-    <p>
-      Ortalama hesaplama; sınav notlarının değerlendirilmesinde, istatistiksel veri analizinde, spor performanslarının ölçümünde, finansal verilerin değerlendirilmesinde ve günlük hayatın pek çok alanında kullanılır. Öğrenciler dönem not ortalamalarını, araştırmacılar deney sonuçlarını, yöneticiler ise satış verilerini analiz ederken bu hesaplamaya başvurur.
-    </p>
-    <p>
-      Medyan değeri, sayıların büyükten küçüğe ya da küçükten büyüğe sıralanması durumunda tam ortada yer alan sayıdır. Sayı adedi çift ise ortadaki iki sayının ortalaması alınır. Medyan, özellikle aşırı uç değerlerin bulunduğu veri setlerinde ortalamadan daha güvenilir bir merkezi eğilim göstergesi olarak kabul edilir. Gelir dağılımı analizlerinde ortalama gelir yerine medyan gelirin tercih edilmesi bunun en bilinen örneğidir.
-    </p>
-    <p>
-      Minimum ve maksimum değerler, veri setinin yayılım aralığını ortaya koyar. Bu iki değer arasındaki fark "ranj" olarak adlandırılır ve veri setinin dağılımı hakkında hızlı bir fikir verir. Geniş bir ranj, verilerin birbirinden uzak olduğunu; dar bir ranj ise verilerin birbirine yakın olduğunu gösterir.
-    </p>
+  <script>
+    const SUP: Record<string, string> = { '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹', '-': '⁻' };
 
-    <h3>Formül</h3>
-    <p>
-      Aritmetik ortalama formülü: x̄ = (x₁ + x₂ + … + xₙ) / n. Burada x̄ ortalamayı, x₁'den xₙ'e kadar değerler veri noktalarını, n ise toplam veri sayısını temsil eder. Medyan için sayılar sıralanır; tek sayıda eleman varsa ortadaki, çift sayıda eleman varsa ortadaki iki elemanın ortalaması alınır.
-    </p>
-
-    <h3>Dikkat Edilmesi Gerekenler</h3>
-    <p>
-      Sayıları girerken virgül (,) veya noktalı virgül (;) ile ayırabilirsiniz; araç her iki ayırıcıyı da tanır. Boşluklar otomatik olarak yok sayılır. Ondalıklı sayı girerken Türkçe kullanımda virgül (3,14) veya nokta (3.14) kullanılabilir; her ikisi de doğru şekilde işlenir. Hesaplama için en az iki geçerli sayı girilmesi gerekmektedir. Harf veya sembol içeren girişler sayı olarak tanınmaz ve hesaplamaya dahil edilmez.
-    </p>
-
-    <h3>Sıkça Sorulan Sorular</h3>
-    {faq.map((item) => (
-      <div class="faq-item">
-        <h4>{item.question}</h4>
-        <p>{item.answer}</p>
-      </div>
-    ))}
-  </section>
-</CalcLayout>
-
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
-    const resultArea = document.getElementById('calc-result');
-
-    function debounce(fn, d = 150) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), d); }; }
-    function formatNumber(n, d = 4) {
-      return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 0, maximumFractionDigits: d }).format(n);
+    function parseNum(raw: string): number {
+      let s = raw.trim().replace(/\s+/g, '').replace(/[−–]/g, '-');
+      if (!s) return NaN;
+      if (s.includes(',') && s.includes('.')) {
+        s = s.lastIndexOf(',') > s.lastIndexOf('.') ? s.replace(/\./g, '').replace(',', '.') : s.replace(/,/g, '');
+      } else {
+        s = s.replace(',', '.');
+      }
+      if (!/^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/i.test(s)) return NaN;
+      return Number(s);
     }
 
-    const dc = debounce(calculate);
-    inputs.forEach(i => { i.addEventListener('input', dc); i.addEventListener('change', dc); });
-
-    function parseNumbers(str) {
-      return str
-        .replace(/;/g, ',')
-        .split(',')
-        .map(s => parseFloat(s.trim().replace(',', '.')))
-        .filter(n => !isNaN(n));
+    /**
+     * Liste ayrıştırma kuralları (Türkçe ondalık virgülle uyumlu):
+     * 1) Noktalı virgül varsa ayırıcı ; ve boşluktur, virgül ondalıktır.
+     * 2) "virgül + boşluk" veya yalnızca boşluk varsa bunlar ayırıcıdır; bitişik virgül ondalıktır (1,5, 2,5).
+     * 3) Hiç boşluk ve noktalı virgül yoksa virgül ayırıcıdır, ondalık için nokta kullanılır (10,20,30).
+     */
+    function parseList(raw: string): { nums: number[]; invalid: string[] } {
+      const s = raw.replace(/[\r\n\t]+/g, ' ').replace(/[−–]/g, '-').trim();
+      if (!s) return { nums: [], invalid: [] };
+      let tokens: string[];
+      if (s.includes(';')) tokens = s.split(/[;\s]+/);
+      else if (/\s/.test(s)) tokens = s.split(/\s*,\s+|\s+/);
+      else tokens = s.split(',');
+      const nums: number[] = [];
+      const invalid: string[] = [];
+      tokens
+        .map(t => t.replace(/^,+|,+$/g, '').trim())
+        .filter(t => t !== '')
+        .forEach(t => {
+          const n = parseNum(t);
+          if (Number.isFinite(n)) nums.push(n);
+          else invalid.push(t);
+        });
+      return { nums, invalid };
     }
 
-    function calculate() {
-      const raw = (document.getElementById('sayilar')).value;
-      const nums = parseNumbers(raw);
+    function fmt(n: number, maxFrac = 6): string {
+      if (Number.isNaN(n)) return 'Tanımsız';
+      if (!Number.isFinite(n)) return n > 0 ? '∞' : '−∞';
+      if (n === 0) return '0';
+      const abs = Math.abs(n);
+      if (abs >= 1e15 || abs < 1e-6) {
+        const [m, e] = n.toExponential(6).split('e');
+        const mant = new Intl.NumberFormat('tr-TR', { maximumFractionDigits: 6 }).format(Number(m));
+        return `${mant} × 10${String(Number(e)).split('').map(c => SUP[c] ?? c).join('')}`;
+      }
+      const clean = Number(n.toPrecision(12));
+      const extra = abs < 1 ? Math.ceil(-Math.log10(abs)) : 0;
+      return new Intl.NumberFormat('tr-TR', { maximumFractionDigits: Math.min(20, maxFrac + extra) }).format(clean);
+    }
 
-      if (nums.length < 2) {
-        if (resultArea) resultArea.classList.add('hidden');
-        return;
+    function stats(nums: number[]) {
+      const n = nums.length;
+      const sum = nums.reduce((a, b) => a + b, 0);
+      const mean = sum / n;
+      const sorted = [...nums].sort((a, b) => a - b);
+      const mid = Math.floor(n / 2);
+      const median = n % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+
+      const freq = new Map<number, number>();
+      nums.forEach(x => freq.set(x, (freq.get(x) ?? 0) + 1));
+      const maxF = Math.max(...freq.values());
+      const modes = maxF > 1 ? [...freq.entries()].filter(([, f]) => f === maxF).map(([v]) => v).sort((a, b) => a - b) : [];
+
+      const allPositive = nums.every(x => x > 0);
+      // Taşmayı önlemek için logaritma ortalaması ile hesaplanır
+      const geo = allPositive ? Math.exp(nums.reduce((a, x) => a + Math.log(x), 0) / n) : NaN;
+      const harm = allPositive ? n / nums.reduce((a, x) => a + 1 / x, 0) : NaN;
+
+      return { n, sum, mean, median, modes, maxF, geo, harm, min: sorted[0], max: sorted[n - 1] };
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('calc-form') as HTMLFormElement;
+      const inputs = form.querySelectorAll<HTMLInputElement>('input');
+      const resultArea = document.getElementById('calc-result');
+      const errorEl = document.getElementById('calc-error') as HTMLElement;
+      const listEl = document.getElementById('sayilar') as HTMLInputElement;
+
+      const setText = (id: string, text: string) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = text;
+      };
+
+      function debounce<T extends (...args: never[]) => void>(fn: T, delay = 200) {
+        let timer: ReturnType<typeof setTimeout>;
+        return (...args: Parameters<T>) => {
+          clearTimeout(timer);
+          timer = setTimeout(() => fn(...args), delay);
+        };
       }
 
-      const sum = nums.reduce((a, b) => a + b, 0);
-      const mean = sum / nums.length;
-      const sorted = [...nums].sort((a, b) => a - b);
-      const mid = Math.floor(sorted.length / 2);
-      const median = sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
-      const min = sorted[0];
-      const max = sorted[sorted.length - 1];
+      function calculate() {
+        const { nums, invalid } = parseList(listEl.value);
 
-      document.getElementById('sonuc-ortalama').textContent = formatNumber(mean);
-      document.getElementById('detail-ortalama').textContent = formatNumber(mean);
-      document.getElementById('detail-medyan').textContent = formatNumber(median);
-      document.getElementById('detail-min').textContent = formatNumber(min);
-      document.getElementById('detail-max').textContent = formatNumber(max);
-      document.getElementById('detail-toplam').textContent = formatNumber(sum);
-      document.getElementById('detail-adet').textContent = nums.length.toString();
+        if (nums.length === 0) {
+          errorEl.hidden = invalid.length === 0;
+          errorEl.textContent = invalid.length ? `Geçerli sayı bulunamadı: ${invalid.slice(0, 5).join(', ')}` : '';
+          resultArea?.classList.add('hidden');
+          return;
+        }
 
-      if (resultArea) resultArea.classList.remove('hidden');
-      updateURL();
-    }
+        const r = stats(nums);
+        errorEl.hidden = invalid.length === 0;
+        errorEl.textContent = invalid.length ? `Sayı olarak okunamayan ve atlanan girişler: ${invalid.slice(0, 5).join(', ')}${invalid.length > 5 ? '…' : ''}` : '';
 
-    function updateURL() {
-      const p = new URLSearchParams();
-      inputs.forEach(i => { if (i.value && i.id) p.set(i.id, i.value); });
-      history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
-    }
+        setText('sonuc-ortalama', fmt(r.mean));
+        setText('d-medyan', fmt(r.median));
+        setText('d-mod', r.modes.length === 0
+          ? 'Mod yok (tekrar eden değer yok)'
+          : `${r.modes.slice(0, 10).map(x => fmt(x)).join('; ')} (${r.maxF} kez)`);
+        setText('d-geo', Number.isNaN(r.geo) ? 'Tanımsız (tüm değerler pozitif olmalı)' : fmt(r.geo));
+        setText('d-harm', Number.isNaN(r.harm) ? 'Tanımsız (tüm değerler pozitif olmalı)' : fmt(r.harm));
+        setText('d-toplam', fmt(r.sum));
+        setText('d-minmax', `${fmt(r.min)} / ${fmt(r.max)}`);
+        setText('d-ranj', fmt(r.max - r.min));
+        setText('d-adet', String(r.n));
+        setText('d-liste', nums.slice(0, 30).map(x => fmt(x)).join('; ') + (r.n > 30 ? ' …' : ''));
 
-    function loadFromURL() {
-      const p = new URLSearchParams(window.location.search);
-      let h = false;
-      inputs.forEach(i => { if (i.id && p.has(i.id)) { i.value = p.get(i.id); h = true; } });
-      if (h) calculate();
-    }
+        resultArea?.classList.remove('hidden');
+        updateURL();
+      }
 
-    loadFromURL();
-  });
-</script>
+      function updateURL() {
+        const params = new URLSearchParams();
+        inputs.forEach(el => {
+          if (el.id && el.value !== '') params.set(el.id, el.value);
+        });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+      }
+
+      function loadFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        let hasParams = false;
+        inputs.forEach(el => {
+          if (el.id && params.has(el.id)) {
+            el.value = params.get(el.id)!;
+            hasParams = true;
+          }
+        });
+        if (hasParams) calculate();
+      }
+
+      const debouncedCalc = debounce(calculate);
+      inputs.forEach(el => {
+        el.addEventListener('input', debouncedCalc);
+        el.addEventListener('change', debouncedCalc);
+      });
+      form.addEventListener('submit', e => { e.preventDefault(); calculate(); });
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>Ortalama Türleri ve Formülleri</h2>
+    <p>
+      "Ortalama" tek bir işlem değildir. Verinin türüne göre farklı merkez ölçüleri doğru sonucu verir. Bu hesaplayıcı en çok kullanılan beş ölçüyü aynı anda gösterir; hangisini kullanacağınızı aşağıdaki tablo özetliyor.
+    </p>
+    <table>
+      <thead>
+        <tr><th>Ölçü</th><th>Formül</th><th>Ne zaman kullanılır?</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Aritmetik ortalama</td><td>(x₁ + … + xₙ) ÷ n</td><td>Simetrik, uç değeri olmayan veriler; not, sıcaklık, ölçüm</td></tr>
+        <tr><td>Medyan</td><td>Sıralı verinin ortası</td><td>Maaş, kira, ev fiyatı gibi çarpık veriler</td></tr>
+        <tr><td>Mod</td><td>En sık tekrar eden değer</td><td>Beden, numara, en çok satan ürün gibi kesikli veriler</td></tr>
+        <tr><td>Geometrik ortalama</td><td>ⁿ√(x₁ × … × xₙ)</td><td>Büyüme oranları, faiz, getiri, enflasyon endeksleri</td></tr>
+        <tr><td>Harmonik ortalama</td><td>n ÷ (1/x₁ + … + 1/xₙ)</td><td>Hız, birim fiyat, verim gibi oransal büyüklükler</td></tr>
+      </tbody>
+    </table>
+    <p>
+      Pozitif sayılardan oluşan her veri setinde harmonik ≤ geometrik ≤ aritmetik ortalama eşitsizliği geçerlidir; tüm değerler eşitse üçü de aynı çıkar.
+    </p>
+
+    <h2>Örnek Hesaplama</h2>
+    <p>Bir haftada satılan günlük ürün adetleri: 12, 15, 18, 23, 15, 9, 20</p>
+    <ul>
+      <li><strong>Aritmetik ortalama:</strong> Toplam 112, n = 7, ortalama 112 ÷ 7 = 16</li>
+      <li><strong>Medyan:</strong> Sıralı dizi 9, 12, 15, 15, 18, 20, 23; ortadaki (4.) değer 15</li>
+      <li><strong>Mod:</strong> 15 iki kez geçtiği için mod 15</li>
+      <li><strong>Açıklık:</strong> 23 − 9 = 14</li>
+    </ul>
+    <p>
+      Ortalama (16) ile medyanın (15) birbirine yakın olması, verilerde ortalamayı çarpıtan aşırı bir değer olmadığını gösterir. Dizide 200 gibi tek bir aykırı değer olsaydı ortalama belirgin biçimde yükselir, medyan ise neredeyse hiç değişmezdi.
+    </p>
+
+    <h2>Aritmetik Ortalama Ne Zaman Yanıltır?</h2>
+    <p>
+      Beş kişinin aylık geliri 25.000, 28.000, 30.000, 32.000 ve 400.000 TL ise aritmetik ortalama 103.000 TL çıkar; oysa beş kişiden dördü bunun çok altında kazanmaktadır. Medyan (30.000 TL) bu grubu çok daha iyi temsil eder. Bu nedenle TÜİK ve benzeri kurumlar gelir dağılımı istatistiklerinde medyanı da raporlar.
+    </p>
+
+    <h2>Sayı Girerken Dikkat</h2>
+    <ul>
+      <li>Ondalık virgül kullanıyorsanız sayıları noktalı virgülle (7,5; 8; 9,25) veya boşlukla (7,5 8 9,25) ayırın.</li>
+      <li>Aralarında boşluk olmadan yazılan "7,5,8" girişi 7, 5 ve 8 olarak üç ayrı sayı okunur.</li>
+      <li>Binlik ayırıcı kullanmayın: 1.250 yerine 1250 yazın.</li>
+      <li>Geometrik ve harmonik ortalama yalnızca tüm değerler sıfırdan büyükse hesaplanır.</li>
+    </ul>
+  </section>
+</CalcLayout>

@@ -1,205 +1,456 @@
 ---
 import CalcLayout from '../../layouts/CalcLayout.astro';
 import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcSelect from '../../components/calculator/CalcSelect.astro';
 import CalcResult from '../../components/calculator/CalcResult.astro';
+
+// Test tanımları: id, etiket, soru sayısı, hangi alan(lar)da gösterileceği
+const tytTestleri = [
+  { id: 'tytTurkce', label: 'TYT Türkçe', soru: 40, ornekD: 32, ornekY: 5 },
+  { id: 'tytSosyal', label: 'TYT Sosyal Bilimler', soru: 20, ornekD: 13, ornekY: 4 },
+  { id: 'tytMat', label: 'TYT Temel Matematik', soru: 40, ornekD: 25, ornekY: 6 },
+  { id: 'tytFen', label: 'TYT Fen Bilimleri', soru: 20, ornekD: 11, ornekY: 5 }
+];
+
+const aytTestleri = [
+  { id: 'aytMat', label: 'AYT Matematik', soru: 40, alan: 'say ea', ornekD: 22, ornekY: 6 },
+  { id: 'aytFiz', label: 'AYT Fizik', soru: 14, alan: 'say', ornekD: 7, ornekY: 3 },
+  { id: 'aytKim', label: 'AYT Kimya', soru: 13, alan: 'say', ornekD: 8, ornekY: 2 },
+  { id: 'aytBio', label: 'AYT Biyoloji', soru: 13, alan: 'say', ornekD: 9, ornekY: 2 },
+  { id: 'aytEdeb', label: 'AYT Türk Dili ve Edebiyatı', soru: 24, alan: 'ea soz', ornekD: 17, ornekY: 4 },
+  { id: 'aytTar1', label: 'AYT Tarih-1', soru: 10, alan: 'ea soz', ornekD: 6, ornekY: 2 },
+  { id: 'aytCog1', label: 'AYT Coğrafya-1', soru: 6, alan: 'ea soz', ornekD: 4, ornekY: 1 },
+  { id: 'aytTar2', label: 'AYT Tarih-2', soru: 11, alan: 'soz', ornekD: 7, ornekY: 2 },
+  { id: 'aytCog2', label: 'AYT Coğrafya-2', soru: 11, alan: 'soz', ornekD: 6, ornekY: 2 },
+  { id: 'aytFel', label: 'AYT Felsefe Grubu', soru: 12, alan: 'soz', ornekD: 7, ornekY: 2 },
+  { id: 'aytDin', label: 'AYT Din Kültürü (veya ek Felsefe)', soru: 6, alan: 'soz', ornekD: 5, ornekY: 1 },
+  { id: 'ydt', label: 'YDT Yabancı Dil', soru: 80, alan: 'dil', ornekD: 55, ornekY: 10 }
+];
 
 const faq = [
   {
-    question: "YKS puan hesaplama formülü nedir?",
-    answer: "YKS puanı hesaplama resmi formülü ÖSYM tarafından belirlenir ve yıldan yıla değişkenlik gösterebilir. Temel mantık şudur: Net sayısı = Doğru - (Yanlış / 4). Ardından standartlaştırma katsayıları uygulanarak ham puana ulaşılır ve buna ek puan eklenir. Bu araçtaki hesaplama tahmini bir değer olup resmi sonuçtan farklılık gösterebilir."
+    question: "YKS puanı nasıl hesaplanır?",
+    answer: "Önce her testin neti bulunur: Net = Doğru − Yanlış ÷ 4. ÖSYM netleri standart puana çevirip ağırlıklarla toplar ve 100 taban puanı ekler; bu ham puandır. Ortaöğretim başarı puanının (OBP) 0,12 katı eklenince yerleştirme puanı oluşur. SAY, EA, SÖZ ve DİL puanlarında TYT'nin payı %40, alan testlerinin payı %60'tır."
   },
   {
-    question: "TYT ve AYT sınavları kaç sorudan oluşur?",
-    answer: "TYT (Temel Yeterlilik Testi) toplam 120 sorudan oluşur: Türkçe 40, Sosyal Bilimler 20, Matematik 40, Fen Bilimleri 20 soru. AYT (Alan Yeterlilik Testi) ise alan seçimine göre farklılaşmakla birlikte genellikle 40 veya 80 soru içerir. TYT sonuçları hem TYT hem de AYT puanına, AYT ise yalnızca AYT puanına etki eder."
+    question: "TYT'de kaç net kaç puan eder?",
+    answer: "Yaklaşık katsayılarla Türkçe ve Temel Matematik netlerinin her biri 3,3 puan, Sosyal ve Fen netlerinin her biri 3,4 puan değerindedir; üzerine 100 taban puan eklenir. Örneğin 30 Türkçe, 20 Matematik, 10 Sosyal ve 8 Fen neti yaklaşık 100 + 165 + 34 + 27,2 = 326 TYT ham puanı eder. Gerçek değer, o yılın ortalama ve standart sapmasına göre değişir."
   },
   {
-    question: "YKS'de yanlış cevabın puana etkisi nedir?",
-    answer: "YKS'de her 4 yanlış cevap 1 doğruyu götürür. Yani net = doğru - (yanlış / 4) formülüyle hesaplanır. Boş bırakılan sorular puana etkimez. Bu nedenle 4'ten az doğru tahminde bulunduğunuz sorularda boş bırakmak, yanlış cevaplamaktan daha avantajlı olabilir."
+    question: "Hesaplayıcıdaki katsayılar resmi mi?",
+    answer: "Hayır, yaklaşıktır. ÖSYM ham netleri doğrudan sabit katsayılarla çarpmaz; her testte adayların ortalaması ve standart sapmasıyla standart puan hesaplar. Bu yüzden katsayılar her yıl sınavın zorluğuna göre değişir. Buradaki katsayılar önceki yılların sonuçlarından türetilmiş ve yaygın kullanılan değerlerdir; gerçek puanınız birkaç puan farklı çıkabilir."
+  },
+  {
+    question: "OBP puana nasıl eklenir?",
+    answer: "Diploma notunuz 5 ile çarpılarak OBP bulunur (100 üzerinden 80 diploma notu = 400 OBP). OBP'nin 0,12 katı, yani diploma notunun 0,6 katı yerleştirme puanına eklenir; 80 diploma notu 48 puan katkı sağlar. Bir önceki yıl bir programa yerleşmiş adaylarda bu katsayı yarıya (0,06) iner. Ek puanlı programlarda farklı katsayılar uygulanabilir."
+  },
+  {
+    question: "Puanımın hesaplanması için en az kaç net gerekir?",
+    answer: "ÖSYM kılavuzuna göre TYT puanının hesaplanabilmesi için TYT Türkçe veya Temel Matematik testlerinden en az birinde 0,5 net yapılmalıdır. SAY, EA, SÖZ ve DİL puanlarının hesaplanması için de puan türüne giren AYT/YDT testlerinde 0,5 net şartı aranır. 2022'den bu yana genel 150 ve 180 baraj puanları uygulanmamaktadır."
+  },
+  {
+    question: "Kaç yanlış bir doğruyu götürür?",
+    answer: "YKS'de 4 yanlış 1 doğruyu götürür; her yanlış cevap netten 0,25 düşer. Boş bırakılan sorular neti etkilemez. Bu nedenle dört seçenekten en az birini eleyebildiğiniz sorularda tahmin yapmak istatistiksel olarak dezavantaj oluşturmaz; hiç fikriniz olmayan sorularda boş bırakmak daha güvenlidir."
+  },
+  {
+    question: "Hangi bölüme hangi puan türüyle girilir?",
+    answer: "Tıp, mühendislik ve fen bilimleri SAY; hukuk, işletme, iktisat ve psikoloji EA; tarih, Türk dili ve edebiyatı ve sosyoloji gibi bölümler SÖZ; yabancı dil öğretmenliği ve mütercim-tercümanlık DİL puanıyla öğrenci alır. Ön lisans programlarının çoğu ve bazı lisans programları TYT puanıyla yerleştirir. Programların güncel puan türü ÖSYM tercih kılavuzunda yer alır."
   }
 ];
 
 const meta = {
   title: "YKS Puan Hesaplama",
-  description: "TYT ve AYT doğru-yanlış sayılarına göre tahmini YKS puanınızı hesaplayın. Net hesaplama ve puan tahmini hesaplayıcı.",
+  seoTitle: "YKS Puan Hesaplama 2026 – TYT, AYT Net ve Puan Hesapla",
+  description: "TYT, AYT ve YDT doğru-yanlış sayılarınızı ve diploma notunuzu girin; SAY, EA, SÖZ, DİL ve TYT ham ve yerleştirme puanınızı yaklaşık olarak hesaplayın.",
+  summary: "YKS'de net = doğru − yanlış ÷ 4'tür. Yaklaşık TYT puanı = 100 + 3,3 × (Türkçe + Temel Matematik neti) + 3,4 × (Sosyal + Fen neti); SAY, EA, SÖZ ve DİL puanlarında TYT %40, AYT/YDT %60 ağırlıkla hesaplanır. Yerleştirme puanı için diploma notunun 0,6 katı (OBP × 0,12) eklenir.",
+  howTo: [
+    "Hesaplamak istediğiniz puan türünü (TYT, SAY, EA, SÖZ veya DİL) seçin.",
+    "TYT'deki dört testin doğru ve yanlış sayılarını girin.",
+    "Seçtiğiniz puan türüne ait AYT veya YDT testlerinin doğru-yanlış sayılarını girin.",
+    "Yerleştirme puanı için diploma notunuzu (50–100) yazın.",
+    "Ham puanınızı, yerleştirme puanınızı ve netlerinizi sonuç alanında inceleyin."
+  ],
+  sources: [
+    { name: "ÖSYM – 2026 YKS Kılavuzu", url: "https://www.osym.gov.tr/2026yuksekogretim-kurumlari-sinavi-yks-kilavuzu" },
+    { name: "ÖSYM – 2026 YKS Yükseköğretim Programları ve Kontenjanları Kılavuzu", url: "https://www.osym.gov.tr/2026-yuksekogretim-kurumlari-sinavi-yks-yuksekogretim-programlari-ve-kontenjanlari-kilavuzu" },
+    { name: "ÖSYM – Yükseköğretim Kurumları Sınavı sayfası", url: "https://www.osym.gov.tr/SinavGrubu/Index/2" }
+  ],
   category: "egitim",
   slug: "yks-puan-hesaplama",
-  keywords: ["YKS puan hesaplama", "TYT puan hesaplama", "AYT puan hesaplama", "üniversite sınav puanı", "YKS net hesaplama"],
-  dateModified: "2026-04-01",
-  relatedCalcs: ["not-ortalamasi-hesaplama"],
+  keywords: ["YKS puan hesaplama", "TYT puan hesaplama", "AYT puan hesaplama", "YKS net hesaplama", "SAY EA SÖZ puan hesaplama", "OBP hesaplama"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["egitim/not-ortalamasi-hesaplama", "matematik/yuzde-hesaplama", "matematik/ortalama-hesaplama", "gunluk/gun-hesaplama"],
   faq
 };
 ---
 
 <CalcLayout meta={meta}>
-  <form id="calc-form" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
-    <div class="calc-inputs">
-      <p class="text-sm font-semibold text-[var(--color-text-muted)] mb-1 col-span-full">TYT (Temel Yeterlilik Testi — 120 soru)</p>
-      <CalcInput
-        id="tytDogru"
-        label="TYT Doğru Sayısı"
-        type="number"
-        placeholder="Örn: 90"
-        min={0}
-        max={120}
-        step={1}
-        helpText="TYT'de doğru cevap sayısı (0-120)"
-      />
-      <CalcInput
-        id="tytYanlis"
-        label="TYT Yanlış Sayısı"
-        type="number"
-        placeholder="Örn: 15"
-        min={0}
-        max={120}
-        step={1}
-        helpText="TYT'de yanlış cevap sayısı (0-120)"
-      />
-      <p class="text-sm font-semibold text-[var(--color-text-muted)] mb-1 col-span-full">AYT (Alan Yeterlilik Testi — 80 soru)</p>
-      <CalcInput
-        id="aytDogru"
-        label="AYT Doğru Sayısı"
-        type="number"
-        placeholder="Örn: 60"
-        min={0}
-        max={80}
-        step={1}
-        helpText="AYT'de doğru cevap sayısı (0-80)"
-      />
-      <CalcInput
-        id="aytYanlis"
-        label="AYT Yanlış Sayısı"
-        type="number"
-        placeholder="Örn: 10"
-        min={0}
-        max={80}
-        step={1}
-        helpText="AYT'de yanlış cevap sayısı (0-80)"
-      />
-    </div>
-    <p class="text-xs text-[var(--color-text-muted)] mt-4">⚠️ Bu araç tahmini hesaplama yapmaktadır. Resmi ÖSYM sonuçlarından farklılık gösterebilir.</p>
+  <form id="calc-form" class="calc-inputs" novalidate>
+    <CalcSelect
+      id="alan"
+      label="Puan Türü"
+      options={[
+        { value: "say", label: "Sayısal (SAY)" },
+        { value: "ea", label: "Eşit Ağırlık (EA)" },
+        { value: "soz", label: "Sözel (SÖZ)" },
+        { value: "dil", label: "Dil (DİL)" },
+        { value: "tyt", label: "Yalnızca TYT" }
+      ]}
+      value="say"
+    />
+    <CalcInput
+      id="diploma"
+      label="Diploma Notu"
+      type="number"
+      placeholder="82,5"
+      min={50}
+      max={100}
+      step={0.01}
+      required={false}
+      helpText="100'lük sistemde; OBP = diploma × 5"
+    />
+    <CalcSelect
+      id="onceki"
+      label="Geçen Yıl Bir Programa Yerleştiniz mi?"
+      options={[
+        { value: "hayir", label: "Hayır (OBP katsayısı 0,12)" },
+        { value: "evet", label: "Evet (OBP katsayısı 0,06)" }
+      ]}
+      value="hayir"
+    />
+
+    <p class="calc-group-title">TYT – Temel Yeterlilik Testi (120 soru)</p>
+    {tytTestleri.map(t => (
+      <>
+        <CalcInput id={`${t.id}D`} label={`${t.label} Doğru`} type="number" placeholder={String(t.ornekD)} min={0} max={t.soru} step={1} required={false} helpText={`${t.soru} soru`} />
+        <CalcInput id={`${t.id}Y`} label={`${t.label} Yanlış`} type="number" placeholder={String(t.ornekY)} min={0} max={t.soru} step={1} required={false} />
+      </>
+    ))}
+
+    <p class="calc-group-title" id="ayt-baslik">AYT – Alan Yeterlilik Testleri</p>
+    {aytTestleri.map(t => (
+      <>
+        <CalcInput id={`${t.id}D`} label={`${t.label} Doğru`} type="number" placeholder={String(t.ornekD)} min={0} max={t.soru} step={1} required={false} helpText={`${t.soru} soru`} />
+        <CalcInput id={`${t.id}Y`} label={`${t.label} Yanlış`} type="number" placeholder={String(t.ornekY)} min={0} max={t.soru} step={1} required={false} />
+      </>
+    ))}
   </form>
 
   <CalcResult>
     <div slot="main">
-      <p class="calc-result-label">TYT Puanı (Tahmini)</p>
-      <p class="calc-result-value" id="sonuc-tyt">—</p>
+      <p class="calc-result-label" id="ana-etiket">Yerleştirme Puanı (yaklaşık)</p>
+      <p class="calc-result-value" id="ana-puan">—</p>
+      <p class="calc-result-sub" id="ana-alt"></p>
     </div>
     <div slot="details">
       <div class="calc-detail-row">
-        <span class="calc-detail-label">TYT Puanı (tahmini)</span>
-        <span class="calc-detail-value" id="detail-tytpuan">—</span>
+        <span class="calc-detail-label">TYT neti</span>
+        <span class="calc-detail-value" id="d-tyt-net">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">AYT Puanı (tahmini)</span>
-        <span class="calc-detail-value" id="detail-aytpuan">—</span>
+        <span class="calc-detail-label">TYT ham puanı</span>
+        <span class="calc-detail-value" id="d-tyt-ham">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">TYT Net</span>
-        <span class="calc-detail-value" id="detail-tytnet">—</span>
+        <span class="calc-detail-label">TYT yerleştirme puanı</span>
+        <span class="calc-detail-value" id="d-tyt-yer">—</span>
+      </div>
+      <div class="calc-detail-row" id="row-alan-net">
+        <span class="calc-detail-label" id="l-alan-net">AYT neti</span>
+        <span class="calc-detail-value" id="d-alan-net">—</span>
+      </div>
+      <div class="calc-detail-row" id="row-alan-ham">
+        <span class="calc-detail-label" id="l-alan-ham">Ham puan</span>
+        <span class="calc-detail-value" id="d-alan-ham">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">AYT Net</span>
-        <span class="calc-detail-value" id="detail-aytnet">—</span>
+        <span class="calc-detail-label">OBP katkısı</span>
+        <span class="calc-detail-value" id="d-obp">—</span>
       </div>
+      <p class="calc-note hidden" id="yks-uyari"></p>
     </div>
   </CalcResult>
 
+  <p class="calc-note">
+    Sonuçlar yaklaşıktır. ÖSYM puanları sabit katsayılarla değil, her testin o yılki ortalaması ve standart sapmasıyla hesaplanan standart puanlarla belirler; bu yüzden gerçek puanınız birkaç puan farklı olabilir. Resmi sonuç ve tercih işlemleri için ÖSYM'nin yayımladığı kılavuz ve sonuç belgesi esas alınmalıdır.
+  </p>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const inputs = document.querySelectorAll<HTMLInputElement | HTMLSelectElement>('#calc-form input, #calc-form select');
+      const resultArea = document.getElementById('calc-result');
+      const $ = (id: string) => document.getElementById(id) as HTMLElement;
+      const alanEl = document.getElementById('alan') as HTMLSelectElement;
+
+      // Yaklaşık katsayılar (önceki yıl sonuçlarından türetilmiş, yaygın kullanılan değerler)
+      const TYT_K = { tytTurkce: 3.3, tytSosyal: 3.4, tytMat: 3.3, tytFen: 3.4 };
+      const TYT_AGIRLIK = { tytTurkce: 1.32, tytSosyal: 1.36, tytMat: 1.32, tytFen: 1.36 };
+      const ALAN_K: Record<string, Record<string, number>> = {
+        say: { aytMat: 3.0, aytFiz: 2.85, aytKim: 3.07, aytBio: 3.07 },
+        ea: { aytMat: 3.0, aytEdeb: 3.0, aytTar1: 2.8, aytCog1: 3.33 },
+        soz: { aytEdeb: 3.0, aytTar1: 2.8, aytCog1: 3.33, aytTar2: 2.91, aytCog2: 2.91, aytFel: 3.0, aytDin: 3.33 },
+        dil: { ydt: 3.0 }
+      };
+      // 0,5 net şartı için test grupları (en az biri ≥ 0,5 olmalı)
+      const ALAN_SART: Record<string, string[][]> = {
+        say: [['aytMat'], ['aytFiz', 'aytKim', 'aytBio']],
+        ea: [['aytMat'], ['aytEdeb', 'aytTar1', 'aytCog1']],
+        soz: [['aytEdeb', 'aytTar1', 'aytCog1'], ['aytTar2', 'aytCog2', 'aytFel', 'aytDin']],
+        dil: [['ydt']]
+      };
+      const ALAN_AD: Record<string, string> = { say: 'SAY', ea: 'EA', soz: 'SÖZ', dil: 'DİL', tyt: 'TYT' };
+      const SORU: Record<string, number> = {
+        tytTurkce: 40, tytSosyal: 20, tytMat: 40, tytFen: 20,
+        aytMat: 40, aytFiz: 14, aytKim: 13, aytBio: 13, aytEdeb: 24, aytTar1: 10, aytCog1: 6,
+        aytTar2: 11, aytCog2: 11, aytFel: 12, aytDin: 6, ydt: 80
+      };
+      const ETIKET: Record<string, string> = {
+        tytTurkce: 'TYT Türkçe', tytSosyal: 'TYT Sosyal', tytMat: 'TYT Matematik', tytFen: 'TYT Fen',
+        aytMat: 'AYT Matematik', aytFiz: 'Fizik', aytKim: 'Kimya', aytBio: 'Biyoloji', aytEdeb: 'Edebiyat',
+        aytTar1: 'Tarih-1', aytCog1: 'Coğrafya-1', aytTar2: 'Tarih-2', aytCog2: 'Coğrafya-2', aytFel: 'Felsefe', aytDin: 'Din Kültürü', ydt: 'YDT'
+      };
+
+      function debounce(fn: () => void, delay = 150) {
+        let timer: ReturnType<typeof setTimeout>;
+        return () => { clearTimeout(timer); timer = setTimeout(fn, delay); };
+      }
+
+      function val(id: string) {
+        const el = document.getElementById(id) as HTMLInputElement | null;
+        if (!el) return NaN;
+        const raw = el.value.replace(',', '.').trim();
+        return raw === '' ? NaN : parseFloat(raw);
+      }
+
+      function fmt(n: number, d = 2) {
+        return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: d, maximumFractionDigits: d }).format(n);
+      }
+
+      function grupGoster(id: string, goster: boolean) {
+        ['D', 'Y'].forEach(s => {
+          document.getElementById(id + s)?.closest('.calc-input-group')?.classList.toggle('hidden', !goster);
+        });
+      }
+
+      function alanGuncelle() {
+        const alan = alanEl.value;
+        const gorunen = new Set(Object.keys(ALAN_K[alan] ?? {}));
+        Object.keys(SORU).forEach(id => {
+          if (id.startsWith('tyt')) return;
+          grupGoster(id, gorunen.has(id));
+        });
+        $('ayt-baslik').classList.toggle('hidden', alan === 'tyt');
+        $('ayt-baslik').textContent = alan === 'dil' ? 'YDT – Yabancı Dil Testi (80 soru)' : 'AYT – Alan Yeterlilik Testleri';
+        $('row-alan-net').classList.toggle('hidden', alan === 'tyt');
+        $('row-alan-ham').classList.toggle('hidden', alan === 'tyt');
+      }
+
+      // Test neti: girilmemişse 0; hatalıysa null döner
+      function net(id: string, hatalar: string[]) {
+        const d = val(id + 'D');
+        const y = val(id + 'Y');
+        const dogru = isFinite(d) ? d : 0;
+        const yanlis = isFinite(y) ? y : 0;
+        if (dogru < 0 || yanlis < 0 || dogru + yanlis > SORU[id]) {
+          hatalar.push(`${ETIKET[id]}: doğru + yanlış ${SORU[id]} soruyu aşamaz`);
+          return 0;
+        }
+        return dogru - yanlis / 4;
+      }
+
+      function girildiMi(ids: string[]) {
+        return ids.some(id => isFinite(val(id + 'D')) || isFinite(val(id + 'Y')));
+      }
+
+      function calculate() {
+        const alan = alanEl.value;
+        const hatalar: string[] = [];
+        const uyarilar: string[] = [];
+        const uyariEl = $('yks-uyari');
+
+        const tytIds = Object.keys(TYT_K);
+        if (!girildiMi(tytIds)) {
+          resultArea?.classList.add('hidden');
+          return;
+        }
+
+        const tytNet: Record<string, number> = {};
+        tytIds.forEach(id => { tytNet[id] = net(id, hatalar); });
+
+        const alanIds = Object.keys(ALAN_K[alan] ?? {});
+        const alanNet: Record<string, number> = {};
+        alanIds.forEach(id => { alanNet[id] = net(id, hatalar); });
+
+        if (hatalar.length) {
+          uyariEl.textContent = hatalar.join(' · ');
+          uyariEl.classList.remove('hidden');
+          $('ana-puan').textContent = '—';
+          $('ana-alt').textContent = 'Girdileri kontrol edin';
+          resultArea?.classList.remove('hidden');
+          return;
+        }
+
+        const diploma = val('diploma');
+        const obpKatsayi = (document.getElementById('onceki') as HTMLSelectElement).value === 'evet' ? 0.06 : 0.12;
+        const obpGecerli = isFinite(diploma) && diploma >= 50 && diploma <= 100;
+        const obpKatki = obpGecerli ? diploma * 5 * obpKatsayi : 0;
+        if (isFinite(diploma) && !obpGecerli) uyarilar.push('Diploma notu 50 ile 100 arasında olmalıdır; OBP eklenmedi.');
+
+        const toplamTytNet = tytIds.reduce((s, id) => s + tytNet[id], 0);
+        const tytSart = tytNet.tytTurkce >= 0.5 || tytNet.tytMat >= 0.5;
+        const tytHam = 100 + tytIds.reduce((s, id) => s + tytNet[id] * TYT_K[id as keyof typeof TYT_K], 0);
+
+        $('d-tyt-net').textContent = fmt(toplamTytNet);
+        if (tytSart) {
+          $('d-tyt-ham').textContent = fmt(tytHam, 3);
+          $('d-tyt-yer').textContent = fmt(tytHam + obpKatki, 3);
+        } else {
+          $('d-tyt-ham').textContent = 'Hesaplanmaz';
+          $('d-tyt-yer').textContent = 'Hesaplanmaz';
+          uyarilar.push('TYT puanının hesaplanması için Türkçe veya Temel Matematikte en az 0,5 net gerekir.');
+        }
+        $('d-obp').textContent = obpGecerli ? `+${fmt(obpKatki, 3)} (OBP ${fmt(diploma * 5, 1)})` : 'Diploma notu girilmedi';
+
+        if (alan === 'tyt') {
+          $('ana-etiket').textContent = 'TYT Yerleştirme Puanı (yaklaşık)';
+          $('ana-puan').textContent = tytSart ? fmt(tytHam + obpKatki, 3) : '—';
+          $('ana-alt').textContent = tytSart ? `Ham puan: ${fmt(tytHam, 3)}` : 'Puan hesaplanamadı';
+        } else {
+          const tytKatki = tytIds.reduce((s, id) => s + tytNet[id] * TYT_AGIRLIK[id as keyof typeof TYT_AGIRLIK], 0);
+          const alanKatki = alanIds.reduce((s, id) => s + alanNet[id] * ALAN_K[alan][id], 0);
+          const ham = 100 + tytKatki + alanKatki;
+          const alanSart = (ALAN_SART[alan] ?? []).some(grup => grup.reduce((s, id) => s + (alanNet[id] ?? 0), 0) >= 0.5);
+          const toplamAlanNet = alanIds.reduce((s, id) => s + alanNet[id], 0);
+          const ad = ALAN_AD[alan];
+
+          $('l-alan-net').textContent = alan === 'dil' ? 'YDT neti' : `AYT neti (${ad} testleri)`;
+          $('d-alan-net').textContent = fmt(toplamAlanNet);
+          $('l-alan-ham').textContent = `${ad} ham puanı`;
+          $('ana-etiket').textContent = `${ad} Yerleştirme Puanı (yaklaşık)`;
+
+          if (tytSart && alanSart) {
+            $('d-alan-ham').textContent = fmt(ham, 3);
+            $('ana-puan').textContent = fmt(ham + obpKatki, 3);
+            $('ana-alt').textContent = `Ham puan: ${fmt(ham, 3)}`;
+          } else {
+            $('d-alan-ham').textContent = 'Hesaplanmaz';
+            $('ana-puan').textContent = '—';
+            $('ana-alt').textContent = 'Puan hesaplanamadı';
+            if (!alanSart) uyarilar.push(`${ad} puanı için ilgili ${alan === 'dil' ? 'YDT' : 'AYT'} testlerinde en az 0,5 net gerekir.`);
+          }
+        }
+
+        if (uyarilar.length) {
+          uyariEl.textContent = uyarilar.join(' ');
+          uyariEl.classList.remove('hidden');
+        } else {
+          uyariEl.textContent = '';
+          uyariEl.classList.add('hidden');
+        }
+
+        resultArea?.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const params = new URLSearchParams();
+        inputs.forEach(el => { if (el.id && el.value !== '') params.set(el.id, el.value); });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+      }
+
+      function loadFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        let has = false;
+        inputs.forEach(el => {
+          if (!el.id || !params.has(el.id)) return;
+          const v = params.get(el.id) ?? '';
+          if (el instanceof HTMLSelectElement && !Array.from(el.options).some(o => o.value === v)) return;
+          el.value = v;
+          has = true;
+        });
+        alanGuncelle();
+        if (has) calculate();
+      }
+
+      alanEl.addEventListener('change', alanGuncelle);
+      const debounced = debounce(calculate);
+      inputs.forEach(el => {
+        el.addEventListener('input', debounced);
+        el.addEventListener('change', debounced);
+      });
+
+      loadFromURL();
+    });
+  </script>
+
   <section class="calc-content">
-    <h2>YKS Puan Hesaplama Nasıl Yapılır?</h2>
+    <h2>YKS puanı nasıl hesaplanır?</h2>
     <p>
-      Yükseköğretim Kurumları Sınavı (YKS), Türkiye'de üniversiteye giriş için ÖSYM tarafından düzenlenen merkezi sınavdır. İki aşamadan oluşan sınav; Temel Yeterlilik Testi (TYT) ve Alan Yeterlilik Testi (AYT) olarak uygulanmaktadır. Sınav sonuçlarına göre hesaplanan puanlar, adayların tercih yapabileceği bölümleri belirler. Bu hesaplayıcı, TYT ve AYT doğru-yanlış sayılarınıza göre tahmini puan hesaplaması yapar.
+      Yükseköğretim Kurumları Sınavı (YKS) üç oturumdan oluşur: Temel Yeterlilik Testi (TYT), Alan Yeterlilik Testleri (AYT) ve Yabancı Dil Testi (YDT). Puan hesabı dört adımda yapılır:
     </p>
+    <ul>
+      <li><strong>Net:</strong> Her testte Doğru − Yanlış ÷ 4. Boşlar hesaba girmez.</li>
+      <li><strong>Standart puan:</strong> ÖSYM her testin netini, o testteki tüm adayların ortalaması ve standart sapmasıyla standart puana çevirir.</li>
+      <li><strong>Ham puan:</strong> Standart puanlar puan türünün ağırlıklarıyla toplanır ve 100 taban puan eklenir. Ham puan 100 ile 500 arasındadır.</li>
+      <li><strong>Yerleştirme puanı:</strong> Ham puana OBP × 0,12 eklenir (en fazla 60 puan).</li>
+    </ul>
     <p>
-      TYT; Türkçe (40 soru), Temel Matematik (40 soru), Sosyal Bilimler (20 soru) ve Fen Bilimleri (20 soru) olmak üzere toplam 120 sorudan oluşur. AYT ise adayın seçtiği alana göre Sözel, Eşit Ağırlık, Sayısal veya Dil bölümlerinden biri şeklinde uygulanır. Her yanlış cevap, 1/4 doğruyu götürür; bu da 4 yanlışın 1 doğruyu sıfırladığı anlamına gelir.
-    </p>
-    <p>
-      Net hesabı sınav stratejisinin temelini oluşturur. Toplam 120 soruluk TYT'de 90 doğru ve 15 yanlış yapan bir öğrencinin neti: 90 - 15/4 = 90 - 3.75 = 86.25'tir. ÖSYM bu net değerini çeşitli katsayılarla çarparak ve taban puan ekleyerek ham puanı hesaplar. Kullanılan katsayılar her yıl yeniden belirlenebildiğinden bu araçtaki değerler yaklaşık sonuçlar vermektedir.
-    </p>
-    <p>
-      Puan hesaplamasındaki katsayılar ve taban puan değerleri ÖSYM tarafından sınav yılına göre güncellenmektedir. Bu nedenle bu araçta sunulan sonuçlar yalnızca ön değerlendirme amacıyla kullanılmalı, resmi yerleştirme kılavuzundaki katsayılar esas alınmalıdır. Tercih döneminde ise ÖSYM'nin resmi puan hesaplama araçlarını kullanmanız tavsiye edilir.
-    </p>
-
-    <h3>Formül</h3>
-    <p>
-      Net = Doğru − (Yanlış / 4). TYT Puanı ≈ 100 + TYT Net × 3.33. AYT Puanı ≈ 100 + AYT Net × 3.33. Bu formüller yaklaşık değerler içindir; resmi ÖSYM katsayıları farklılık gösterebilir.
+      Standart puan hesabında o yılın sınav verisi kullanıldığı için bir netin kaç puan ettiği her yıl değişir. Hesaplayıcımız bu nedenle önceki yılların sonuçlarından türetilmiş, yaygın kullanılan <strong>yaklaşık katsayılarla</strong> çalışır. 2027 YKS için ÖSYM yeni kılavuzu yayımladığında puan türü yapısı değişirse hesaplayıcı güncellenecektir.
     </p>
 
-    <h3>Dikkat Edilmesi Gerekenler</h3>
-    <p>
-      Doğru ve yanlış sayılarının toplamı ilgili sınavın toplam soru sayısını (TYT: 120, AYT: 80) aşmamalıdır. Bu araç tahmini değerler üretmekte olup ÖSYM'nin resmi sonuçları farklılık gösterebilir. YKS'de puan türleri (SAY, EA, SÖZ, DİL) farklı ağırlıklara sahiptir; belirli bir puan türünü hesaplamak istiyorsanız ÖSYM kılavuzundaki ağırlıkları incelemeniz gerekmektedir.
-    </p>
+    <h2>Puan türleri ve yaklaşık katsayılar</h2>
+    <h3>TYT puanı</h3>
+    <table>
+      <thead>
+        <tr><th>Test</th><th>Soru</th><th>Net başına yaklaşık puan</th><th>Azami katkı</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Türkçe</td><td>40</td><td>3,3</td><td>132</td></tr>
+        <tr><td>Sosyal Bilimler</td><td>20</td><td>3,4</td><td>68</td></tr>
+        <tr><td>Temel Matematik</td><td>40</td><td>3,3</td><td>132</td></tr>
+        <tr><td>Fen Bilimleri</td><td>20</td><td>3,4</td><td>68</td></tr>
+      </tbody>
+    </table>
 
-    <h3>Sıkça Sorulan Sorular</h3>
-    {faq.map((item) => (
-      <div class="faq-item">
-        <h4>{item.question}</h4>
-        <p>{item.answer}</p>
-      </div>
-    ))}
+    <h3>SAY, EA, SÖZ ve DİL puanları</h3>
+    <p>
+      Bu puan türlerinde TYT testlerinin katkısı %40'a indirilir (Türkçe ve Matematik neti başına yaklaşık 1,32; Sosyal ve Fen neti başına 1,36 puan), kalan %60 alan testlerinden gelir.
+    </p>
+    <table>
+      <thead>
+        <tr><th>Puan türü</th><th>AYT/YDT testleri ve net başına yaklaşık puan</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>SAY</td><td>Matematik 3,00 · Fizik 2,85 · Kimya 3,07 · Biyoloji 3,07</td></tr>
+        <tr><td>EA</td><td>Matematik 3,00 · Edebiyat 3,00 · Tarih-1 2,80 · Coğrafya-1 3,33</td></tr>
+        <tr><td>SÖZ</td><td>Edebiyat 3,00 · Tarih-1 2,80 · Coğrafya-1 3,33 · Tarih-2 2,91 · Coğrafya-2 2,91 · Felsefe grubu 3,00 · Din Kültürü 3,33</td></tr>
+        <tr><td>DİL</td><td>YDT (80 soru) 3,00</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Örnek hesaplama (SAY)</h2>
+    <p>
+      TYT'de Türkçe 32 doğru 5 yanlış, Sosyal 13 doğru 4 yanlış, Temel Matematik 25 doğru 6 yanlış, Fen 11 doğru 5 yanlış; AYT'de Matematik 22 doğru 6 yanlış, Fizik 7 doğru 3 yanlış, Kimya 8 doğru 2 yanlış, Biyoloji 9 doğru 2 yanlış yapan ve diploma notu 82,5 olan bir aday için:
+    </p>
+    <ul>
+      <li>TYT netleri: Türkçe 30,75 · Sosyal 12 · Matematik 23,5 · Fen 9,75 (toplam 76)</li>
+      <li>AYT netleri: Matematik 20,5 · Fizik 6,25 · Kimya 7,5 · Biyoloji 8,5 (toplam 42,75)</li>
+      <li>TYT katkısı: 1,32 × (30,75 + 23,5) + 1,36 × (12 + 9,75) = 71,61 + 29,58 = 101,19</li>
+      <li>AYT katkısı: 3 × 20,5 + 2,85 × 6,25 + 3,07 × (7,5 + 8,5) = 61,5 + 17,81 + 49,12 = 128,43</li>
+      <li>SAY ham puanı ≈ 100 + 101,19 + 128,43 = <strong>329,62</strong></li>
+      <li>OBP katkısı: 82,5 × 5 × 0,12 = 49,5 → SAY yerleştirme puanı ≈ <strong>379,12</strong></li>
+    </ul>
+
+    <h2>Puan hesaplanma şartları</h2>
+    <ul>
+      <li>TYT puanı için Türkçe veya Temel Matematik testlerinden en az birinde 0,5 net gerekir.</li>
+      <li>SAY, EA, SÖZ ve DİL puanları için ayrıca puan türüne giren AYT veya YDT testlerinde 0,5 net şartı aranır.</li>
+      <li>2022 YKS'den itibaren genel 150 (TYT) ve 180 (AYT) baraj puanları uygulanmamaktadır; ancak tıp, hukuk, mühendislik ve öğretmenlik gibi programlarda YÖK'ün belirlediği başarı sırası şartları devam eder.</li>
+    </ul>
+
+    <h2>OBP (Ortaöğretim Başarı Puanı)</h2>
+    <p>
+      OBP, diploma notunuzun 5 ile çarpılmasıyla bulunur ve 250 ile 500 arasında değer alır. Yerleştirme puanına OBP'nin 0,12 katı eklenir; bu da diploma notunun 0,6 katına eşittir. Örneğin diploma notu 90 olan bir aday 54, diploma notu 70 olan bir aday 42 puan ekler. Bir önceki yıl bir yükseköğretim programına yerleşen adaylarda katsayı 0,06'ya düşer. Kendi alanında ek puanla tercih yapılabilen meslek lisesi mezunlarında farklı katsayılar uygulanabilir; ayrıntılar ÖSYM kılavuzundadır.
+    </p>
   </section>
 </CalcLayout>
-
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
-    const resultArea = document.getElementById('calc-result');
-
-    function debounce(fn, d = 150) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), d); }; }
-    function formatNumber(n, d = 2) {
-      return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 0, maximumFractionDigits: d }).format(n);
-    }
-
-    const dc = debounce(calculate);
-    inputs.forEach(i => { i.addEventListener('input', dc); i.addEventListener('change', dc); });
-
-    function calculate() {
-      const tytDogru = parseFloat((document.getElementById('tytDogru')).value);
-      const tytYanlis = parseFloat((document.getElementById('tytYanlis')).value) || 0;
-      const aytDogru = parseFloat((document.getElementById('aytDogru')).value);
-      const aytYanlis = parseFloat((document.getElementById('aytYanlis')).value) || 0;
-
-      const hasTYT = !isNaN(tytDogru);
-      const hasAYT = !isNaN(aytDogru);
-
-      if (!hasTYT && !hasAYT) {
-        if (resultArea) resultArea.classList.add('hidden');
-        return;
-      }
-
-      let tytNet = 0, tytPuan = 0, aytNet = 0, aytPuan = 0;
-
-      if (hasTYT) {
-        tytNet = Math.max(0, tytDogru - tytYanlis / 4);
-        tytPuan = 100 + tytNet * 3.33;
-      }
-      if (hasAYT) {
-        aytNet = Math.max(0, aytDogru - aytYanlis / 4);
-        aytPuan = 100 + aytNet * 3.33;
-      }
-
-      document.getElementById('sonuc-tyt').textContent = hasTYT ? formatNumber(tytPuan) : '—';
-      document.getElementById('detail-tytpuan').textContent = hasTYT ? formatNumber(tytPuan) : '—';
-      document.getElementById('detail-aytpuan').textContent = hasAYT ? formatNumber(aytPuan) : '—';
-      document.getElementById('detail-tytnet').textContent = hasTYT ? formatNumber(tytNet) : '—';
-      document.getElementById('detail-aytnet').textContent = hasAYT ? formatNumber(aytNet) : '—';
-
-      if (resultArea) resultArea.classList.remove('hidden');
-      updateURL();
-    }
-
-    function updateURL() {
-      const p = new URLSearchParams();
-      inputs.forEach(i => { if (i.value && i.id) p.set(i.id, i.value); });
-      history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
-    }
-
-    function loadFromURL() {
-      const p = new URLSearchParams(window.location.search);
-      let h = false;
-      inputs.forEach(i => { if (i.id && p.has(i.id)) { i.value = p.get(i.id); h = true; } });
-      if (h) calculate();
-    }
-
-    loadFromURL();
-  });
-</script>

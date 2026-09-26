@@ -5,33 +5,57 @@ import CalcResult from '../../components/calculator/CalcResult.astro';
 
 const faq = [
   {
+    question: "1 kWh elektrik kaç TL? (Eylül 2026)",
+    answer: "EPDK'nın 4 Nisan 2026'da yürürlüğe giren ve Temmuz 2026'da değiştirmediği tarifeye göre meskenlerde günlük 8 kWh'e (30 günlük dönemde 240 kWh) kadar olan tüketimin vergiler dahil birim fiyatı yaklaşık 3,24 TL/kWh'tir. Bu sınırı aşan kısım yüksek kademeden, yaklaşık 4,86 TL/kWh üzerinden faturalanır. Fiyata enerji bedeli, dağıtım bedeli, elektrik tüketim vergisi ve KDV dahildir."
+  },
+  {
     question: "Elektrik faturası nasıl hesaplanır?",
-    answer: "Elektrik faturası; enerji bedeli, dağıtım bedeli, TRT payı, belediye tüketim vergisi ve KDV bileşenlerinden oluşur. Enerji bedeli, tüketilen kWh miktarıyla birim fiyatın çarpımıyla bulunur. Dağıtım bedeli ayrıca hesaplanır. Ardından TRT payı (%2) ve belediye vergisi (%5) enerji bedeli üzerinden, KDV (%20) ise tüm bu bileşenler üzerinden hesaplanır."
+    answer: "Tüketiminiz kademe sınırına kadar düşük kademe birim fiyatıyla, sınırı aşan kısmı yüksek kademe fiyatıyla çarpılır ve iki tutar toplanır. Örneğin 30 günde 300 kWh harcayan bir hane için 240 × 3,24 + 60 × 4,86 = 1.069,20 TL ödenir. Faturada bu tutar enerji bedeli, dağıtım bedeli, %5 elektrik tüketim vergisi ve %10 KDV olarak ayrıştırılmış görünür."
   },
   {
-    question: "Elektrik tüketimimi nasıl azaltabilirim?",
-    answer: "Enerji tasarrufu için LED ampul kullanımı, A sınıfı enerji verimli beyaz eşya tercihi, bekleme modundaki cihazların fişini çekme, klima setpointini yaz aylarında 26°C, kış aylarında 22°C'de tutma ve doğal aydınlatmadan yararlanma başlıca yöntemler arasındadır. Ayrıca bulaşık makinesi ve çamaşır makinesini dolduğunda çalıştırmak ve düşük sıcaklıkta yıkama programı seçmek önemli tasarruf sağlar."
+    question: "Elektrikte kademe sınırı nedir, aşınca ne olur?",
+    answer: "Mesken abonelerinde kademe sınırı günlük ortalama 8 kWh'tir; 30 günlük bir fatura döneminde 240 kWh, 31 günde 248 kWh eder. Sınırı aştığınızda faturanın tamamı değil, yalnızca aşan kısım yüksek kademe fiyatından hesaplanır. Bu nedenle fatura dönemindeki gün sayısını doğru girmek sonucu değiştirir."
   },
   {
-    question: "Türkiye'de mesken elektrik birim fiyatı ne kadardır?",
-    answer: "Türkiye'de EPDK tarafından belirlenen elektrik tarifeleri düzenli olarak güncellenmektedir. 2026 itibarıyla mesken aboneleri için aktif enerji birim fiyatı yaklaşık 4,16 TL/kWh, dağıtım bedeli ise yaklaşık 1,02 TL/kWh düzeyindedir. Bu değerler abone grubuna, tüketim kademesine ve bölgeye göre farklılık gösterebilir. Güncel tarifeleri EPDK'nın resmi web sitesinden veya dağıtım şirketinizden öğrenebilirsiniz."
+    question: "Yıllık 4.000 kWh limiti nedir?",
+    answer: "2026'da yıllık tüketimi 4.000 kWh'i (aylık ortalama yaklaşık 333 kWh) aşan mesken aboneleri, devlet desteği içermeyen son kaynak tedarik tarifesine geçirilir. 2025'te 5.000 kWh'i aşanlar 2026 boyunca bu tarifeden faturalanır. Bu abonelerin birim fiyatı daha yüksek olduğu için hesaplayıcıdaki birim fiyatları faturanızdakiyle değiştirmeniz gerekir."
+  },
+  {
+    question: "Elektrik faturasında TRT payı ve enerji fonu var mı?",
+    answer: "Hayır. TRT payı ve enerji fonu 1 Ocak 2022'den itibaren elektrik faturalarından kaldırıldı. Güncel mesken faturasında enerji bedeli ve dağıtım bedeli üzerine %5 elektrik tüketim vergisi (belediye payı) ile %10 KDV eklenir. Mesken dışı abonelerde KDV oranı %20'dir. Hesaplayıcıdaki birim fiyatlar bu vergilerin tamamını içerir."
+  },
+  {
+    question: "Evdeki cihazların aylık elektrik tüketimi nasıl bulunur?",
+    answer: "Cihazın gücünü (watt) günlük kullanım saatiyle çarpıp 1.000'e bölerseniz günlük kWh'i bulursunuz; bunu 30 ile çarpın. Örneğin 2.000 W'lık bir elektrikli ısıtıcı günde 3 saat çalışırsa 2.000 × 3 ÷ 1.000 × 30 = 180 kWh harcar. Buzdolabı gibi sürekli çalışan cihazlarda enerji etiketindeki yıllık kWh değerini 12'ye bölmek daha doğru sonuç verir."
   }
 ];
 
 const meta = {
   title: "Elektrik Faturası Hesaplama",
-  description: "Aylık elektrik tüketiminize göre fatura tutarınızı hesaplayın. Enerji bedeli, dağıtım bedeli, TRT payı, belediye vergisi ve KDV dahil toplam elektrik faturanızı öğrenin.",
+  seoTitle: "Elektrik Faturası Hesaplama 2026 – 1 kWh Kaç TL?",
+  description: "Aylık kWh tüketiminizi girin, kademeli EPDK tarifesine göre vergiler dahil elektrik faturanızı hesaplayın. Birim fiyatları güncel faturanıza göre düzenleyin.",
+  summary: "Mesken elektrik faturası kademeli hesaplanır: günlük 8 kWh'e (30 günde 240 kWh) kadar olan tüketim düşük kademe, aşan kısım yüksek kademe fiyatıyla çarpılır. Eylül 2026 itibarıyla vergiler dahil birim fiyat düşük kademede yaklaşık 3,24 TL/kWh, yüksek kademede 4,86 TL/kWh'tir; 200 kWh tüketim yaklaşık 648 TL tutar.",
+  howTo: [
+    "Faturanızdaki aylık tüketimi (kWh) girin.",
+    "Fatura dönemindeki gün sayısını yazın; kademe sınırı günlük 8 kWh üzerinden otomatik hesaplanır.",
+    "Varsayılan birim fiyatlar Nisan 2026 EPDK tarifesine göre vergiler dahil değerlerdir; faturanızdaki fiyat farklıysa değiştirin.",
+    "Toplam tutarı, kademe dağılımını, KDV payını ve ortalama birim fiyatı sonuçta inceleyin."
+  ],
+  sources: [
+    { name: "EPDK – Elektrik Faturalarına Esas Tarife Tabloları", url: "https://www.epdk.gov.tr/detay/icerik/3-100/elektrik-faturalarina-esas-tarife-tablolari" },
+    { name: "Anadolu Ajansı Enerji – 12 soruda elektrik tarifesinde yeni limit", url: "https://www.aa.com.tr/tr/enerjiterminali/elektrik/12-soruda-elektrik-tarifesinde-yeni-limit/52592" }
+  ],
   category: "gunluk",
   slug: "elektrik-faturasi-hesaplama",
-  keywords: ["elektrik faturası hesaplama", "elektrik tüketim hesaplama", "kWh hesaplama", "elektrik birim fiyatı", "enerji faturası", "EPDK tarife"],
-  dateModified: "2026-04-01",
-  relatedCalcs: ["dogalgaz-faturasi-hesaplama", "tasarruf-hesaplama"],
+  keywords: ["elektrik faturası hesaplama", "1 kWh kaç TL", "elektrik birim fiyatı 2026", "kademeli elektrik tarifesi", "kWh hesaplama", "EPDK tarife"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["gunluk/dogalgaz-faturasi-hesaplama", "gunluk/yakit-maliyeti-hesaplama", "gunluk/tasarruf-hesaplama", "finans/enflasyon-hesaplama"],
   faq
 };
 ---
 
 <CalcLayout meta={meta}>
-  <form id="calc-form">
+  <form id="calc-form" class="calc-inputs" novalidate>
     <CalcInput
       id="tuketim"
       label="Aylık Tüketim"
@@ -42,152 +66,206 @@ const meta = {
       step={1}
     />
     <CalcInput
-      id="birimFiyat"
-      label="Aktif Enerji Birim Fiyatı"
+      id="gun"
+      label="Fatura Dönemi"
       type="number"
-      prefix="₺"
-      suffix="/kWh"
-      placeholder="4.16"
-      min={0}
-      step={0.01}
-      value={4.16}
-      helpText="2026 mesken tarifesi yaklaşık değeri"
+      suffix="gün"
+      placeholder="30"
+      value={30}
+      min={1}
+      max={62}
+      step={1}
+      helpText="Kademe sınırı = gün × 8 kWh"
     />
     <CalcInput
-      id="dagitimBedeli"
-      label="Dağıtım Bedeli"
+      id="dusukFiyat"
+      label="Düşük Kademe Birim Fiyatı"
       type="number"
-      prefix="₺"
-      suffix="/kWh"
-      placeholder="1.02"
+      suffix="₺/kWh"
+      placeholder="3.24"
+      value={3.24}
       min={0}
       step={0.01}
-      value={1.02}
+      helpText="Vergiler dahil, Nisan 2026 EPDK tarifesi (Eylül 2026'da geçerli)"
+    />
+    <CalcInput
+      id="yuksekFiyat"
+      label="Yüksek Kademe Birim Fiyatı"
+      type="number"
+      suffix="₺/kWh"
+      placeholder="4.86"
+      value={4.86}
+      min={0}
+      step={0.01}
+      helpText="Vergiler dahil, sınırı aşan tüketime uygulanır"
     />
   </form>
 
   <CalcResult>
     <div slot="main">
-      <p class="calc-result-label">Tahmini Toplam Fatura</p>
+      <p class="calc-result-label">Tahmini Fatura Tutarı</p>
       <p class="calc-result-value" id="toplam">—</p>
+      <p class="calc-result-sub" id="toplam-alt"></p>
     </div>
     <div slot="details">
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Enerji Bedeli</span>
-        <span class="calc-detail-value" id="d-enerji">—</span>
+        <span class="calc-detail-label">Kademe sınırı</span>
+        <span class="calc-detail-value" id="d-sinir">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Dağıtım Bedeli</span>
-        <span class="calc-detail-value" id="d-dagitim">—</span>
+        <span class="calc-detail-label">Düşük kademe tutarı</span>
+        <span class="calc-detail-value" id="d-dusuk">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">TRT Payı (%2)</span>
-        <span class="calc-detail-value" id="d-trt">—</span>
+        <span class="calc-detail-label">Yüksek kademe tutarı</span>
+        <span class="calc-detail-value" id="d-yuksek">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Belediye Tüketim Vergisi (%5)</span>
-        <span class="calc-detail-value" id="d-belediye">—</span>
-      </div>
-      <div class="calc-detail-row">
-        <span class="calc-detail-label">KDV (%20)</span>
+        <span class="calc-detail-label">Faturadaki KDV payı (%10)</span>
         <span class="calc-detail-value" id="d-kdv">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Ortalama birim fiyat</span>
+        <span class="calc-detail-value" id="d-ortalama">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Günlük ortalama</span>
+        <span class="calc-detail-value" id="d-gunluk">—</span>
       </div>
     </div>
   </CalcResult>
 
+  <p class="calc-note">Birim fiyatlar yaklaşık ve vergiler dahildir. Yıllık 4.000 kWh'i aşan aboneler son kaynak tedarik tarifesinden faturalanır; bu durumda faturanızdaki birim fiyatı girin.</p>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const inputs = document.querySelectorAll<HTMLInputElement | HTMLSelectElement>('#calc-form input, #calc-form select');
       const resultArea = document.getElementById('calc-result');
+      const $ = (id: string) => document.getElementById(id) as HTMLElement;
 
-      function debounce(fn, delay = 150) {
-        let t;
-        return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), delay); };
+      function debounce(fn: () => void, delay = 150) {
+        let timer: ReturnType<typeof setTimeout>;
+        return () => { clearTimeout(timer); timer = setTimeout(fn, delay); };
       }
 
-      function formatTL(n) {
-        return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+      function num(id: string) {
+        const raw = (document.getElementById(id) as HTMLInputElement).value.replace(',', '.').trim();
+        return raw === '' ? NaN : Number(raw);
       }
 
-      const dc = debounce(calculate);
-      inputs.forEach(i => { i.addEventListener('input', dc); i.addEventListener('change', dc); });
+      const tl = (n: number) => new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+      const fmt = (n: number, d = 0) => new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 0, maximumFractionDigits: d }).format(n);
 
       function calculate() {
-        const tuketim = parseFloat(document.getElementById('tuketim').value);
-        const birimFiyat = parseFloat(document.getElementById('birimFiyat').value);
-        const dagitimBedeli = parseFloat(document.getElementById('dagitimBedeli').value);
+        const tuketim = num('tuketim');
+        const gunRaw = num('gun');
+        const gun = isNaN(gunRaw) ? 30 : gunRaw;
+        const dusuk = num('dusukFiyat');
+        const yuksek = num('yuksekFiyat');
 
-        if (isNaN(tuketim) || isNaN(birimFiyat) || isNaN(dagitimBedeli) || tuketim < 0) {
-          if (resultArea) resultArea.classList.add('hidden');
+        if (!isFinite(tuketim) || !isFinite(dusuk) || !isFinite(yuksek) || tuketim < 0 || dusuk < 0 || yuksek < 0 || gun <= 0) {
+          resultArea?.classList.add('hidden');
           return;
         }
 
-        const enerji = tuketim * birimFiyat;
-        const dagitim = tuketim * dagitimBedeli;
-        const trt = enerji * 0.02;
-        const belediye = enerji * 0.05;
-        const araTop = enerji + dagitim + trt + belediye;
-        const kdv = araTop * 0.20;
-        const toplam = araTop + kdv;
+        const sinir = 8 * gun;
+        const k1 = Math.min(tuketim, sinir);
+        const k2 = Math.max(0, tuketim - sinir);
+        const t1 = k1 * dusuk;
+        const t2 = k2 * yuksek;
+        const toplam = t1 + t2;
+        const kdv = toplam * 10 / 110;
 
-        document.getElementById('toplam').textContent = formatTL(toplam);
-        document.getElementById('d-enerji').textContent = formatTL(enerji);
-        document.getElementById('d-dagitim').textContent = formatTL(dagitim);
-        document.getElementById('d-trt').textContent = formatTL(trt);
-        document.getElementById('d-belediye').textContent = formatTL(belediye);
-        document.getElementById('d-kdv').textContent = formatTL(kdv);
+        $('toplam').textContent = tl(toplam);
+        $('toplam-alt').textContent = k2 > 0 ? `Sınır ${fmt(k2)} kWh aşıldı` : 'Tamamı düşük kademede';
+        $('d-sinir').textContent = `${fmt(sinir)} kWh`;
+        $('d-dusuk').textContent = `${fmt(k1, 2)} kWh × ${fmt(dusuk, 2)} = ${tl(t1)}`;
+        $('d-yuksek').textContent = k2 > 0 ? `${fmt(k2, 2)} kWh × ${fmt(yuksek, 2)} = ${tl(t2)}` : '—';
+        $('d-kdv').textContent = tl(kdv);
+        $('d-ortalama').textContent = tuketim > 0 ? `${fmt(toplam / tuketim, 3)} ₺/kWh` : '—';
+        $('d-gunluk').textContent = `${fmt(tuketim / gun, 1)} kWh · ${tl(toplam / gun)}`;
 
-        if (resultArea) resultArea.classList.remove('hidden');
+        resultArea?.classList.remove('hidden');
         updateURL();
       }
 
       function updateURL() {
-        const p = new URLSearchParams();
-        inputs.forEach(i => { if (i.value && i.id) p.set(i.id, i.value); });
-        history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
+        const params = new URLSearchParams();
+        inputs.forEach(el => { if (el.id && el.value !== '') params.set(el.id, el.value); });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
       }
 
       function loadFromURL() {
-        const p = new URLSearchParams(window.location.search);
-        let h = false;
-        inputs.forEach(i => { if (i.id && p.has(i.id)) { i.value = p.get(i.id); h = true; } });
-        if (h) calculate();
+        const params = new URLSearchParams(window.location.search);
+        let has = false;
+        inputs.forEach(el => {
+          if (el.id && params.has(el.id)) { el.value = params.get(el.id) ?? ''; has = true; }
+        });
+        if (has) calculate();
       }
+
+      const debounced = debounce(calculate);
+      inputs.forEach(el => {
+        el.addEventListener('input', debounced);
+        el.addEventListener('change', debounced);
+      });
 
       loadFromURL();
     });
   </script>
 
   <section class="calc-content">
-    <h2>Elektrik Faturası Nasıl Hesaplanır?</h2>
+    <h2>Elektrik faturası nasıl hesaplanır?</h2>
     <p>
-      Elektrik faturası Türkiye'de mesken aboneleri için birkaç farklı bileşenden oluşmaktadır. Bu bileşenleri tek tek anlamak hem bütçe planlaması hem de tasarruf fırsatlarını değerlendirmek açısından büyük önem taşır. Elektrik tüketim maliyetlerinin son yıllarda sürekli artması, enerji faturasını hanehalkı bütçesinin en önemli kalemlerinden biri haline getirmiştir.
-    </p>
-    <p>
-      Elektrik faturanızın ana bileşenleri şunlardır: aktif enerji bedeli, dağıtım bedeli, TRT (Türkiye Radyo ve Televizyon Kurumu) payı, belediye tüketim vergisi ve KDV. Bu hesap makinesi, tüketim miktarınızı ve güncel birim fiyatları girerek tahmini fatura tutarınızı kolayca hesaplamanıza olanak tanır.
+      Mesken (konut) abonelerinin faturası iki kademeli tarifeye göre hesaplanır. Fatura dönemindeki günlük ortalama tüketim 8 kWh'e kadar olan kısım daha ucuz olan düşük kademeden, bunu aşan kısım yüksek kademeden ücretlendirilir. 30 günlük dönemde sınır 240 kWh, 31 günlük dönemde 248 kWh'tir. Sınırı aşmak faturanın tamamını pahalılaştırmaz; yalnızca aşan kilovatsaatler yüksek fiyattan hesaplanır.
     </p>
 
-    <h3>Formül</h3>
+    <h3>Faturadaki kalemler</h3>
     <ul>
-      <li><strong>Enerji Bedeli:</strong> Tüketim (kWh) × Birim Fiyat (₺/kWh)</li>
-      <li><strong>Dağıtım Bedeli:</strong> Tüketim (kWh) × Dağıtım Birim Fiyatı (₺/kWh)</li>
-      <li><strong>TRT Payı:</strong> Enerji Bedeli × %2</li>
-      <li><strong>Belediye Tüketim Vergisi:</strong> Enerji Bedeli × %5</li>
-      <li><strong>KDV:</strong> (Enerji + Dağıtım + TRT + Belediye) × %20</li>
-      <li><strong>Toplam:</strong> Tüm bileşenlerin toplamı</li>
+      <li><strong>Enerji bedeli:</strong> Tüketilen elektriğin kendisi; tedarik ve YEKDEM maliyetlerini içerir.</li>
+      <li><strong>Dağıtım bedeli:</strong> Elektriğin şebeke üzerinden evinize taşınma maliyeti; bölgeden bağımsız olarak EPDK tarafından tek fiyat belirlenir.</li>
+      <li><strong>Elektrik tüketim vergisi:</strong> Meskenlerde enerji bedelinin %5'i; belediyeye aktarılır.</li>
+      <li><strong>KDV:</strong> Meskenlerde %10, mesken dışı abonelerde %20.</li>
     </ul>
-
-    <h3>Dikkat Edilmesi Gerekenler</h3>
     <p>
-      Hesaplama sonuçları tahmini nitelik taşımaktadır. Gerçek fatura tutarınız; abone grubunuza (tek zamanlı / çok zamanlı), tüketim kademelerine, reaktif güç, güç aşım bedeli ve sayaç okuma dönemine göre farklılık gösterebilir. Ayrıca bazı aboneler için geçerli olan enerji tasarruf desteği ve sosyal tarife uygulamaları fatura tutarını değiştirebilir. Güncel tarife bilgilerine EPDK'nın (Enerji Piyasası Düzenleme Kurumu) resmi web sitesinden veya dağıtım şirketinizin müşteri hizmetlerinden ulaşabilirsiniz.
+      Hesaplayıcıdaki birim fiyatlar bu kalemlerin tamamını içeren "vergiler dahil" fiyatlardır. Bu yüzden sonuç, faturanızın alt satırındaki ödenecek tutara doğrudan karşılık gelir. TRT payı ve enerji fonu 2022 başında kaldırıldığı için faturada yer almaz.
     </p>
 
-    <h3>Sıkça Sorulan Sorular</h3>
-    {faq.map(item => (
-      <details>
-        <summary><strong>{item.question}</strong></summary>
-        <p>{item.answer}</p>
-      </details>
-    ))}
+    <h2>Örnek hesaplama</h2>
+    <p>
+      30 günlük fatura döneminde 300 kWh tüketen bir hane düşünelim. Kademe sınırı 30 × 8 = 240 kWh'tir.
+    </p>
+    <ul>
+      <li>Düşük kademe: 240 kWh × 3,24 TL = 777,60 TL</li>
+      <li>Yüksek kademe: 60 kWh × 4,86 TL = 291,60 TL</li>
+      <li>Toplam fatura: <strong>1.069,20 TL</strong> (içindeki KDV: 97,20 TL)</li>
+    </ul>
+    <p>
+      Ortalama birim fiyat 3,564 TL/kWh olur. Aynı hane tüketimini 240 kWh'e indirseydi faturası 777,60 TL'ye düşecekti; yani son 60 kWh, faturanın %27'sini oluşturuyor.
+    </p>
+
+    <h2>Tüketime göre tahmini fatura tablosu (30 gün)</h2>
+    <table>
+      <thead>
+        <tr><th>Aylık tüketim</th><th>Tahmini fatura</th><th>Ortalama ₺/kWh</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>100 kWh</td><td>324,00 TL</td><td>3,24</td></tr>
+        <tr><td>150 kWh</td><td>486,00 TL</td><td>3,24</td></tr>
+        <tr><td>200 kWh</td><td>648,00 TL</td><td>3,24</td></tr>
+        <tr><td>240 kWh</td><td>777,60 TL</td><td>3,24</td></tr>
+        <tr><td>300 kWh</td><td>1.069,20 TL</td><td>3,56</td></tr>
+        <tr><td>400 kWh</td><td>1.555,20 TL</td><td>3,89</td></tr>
+      </tbody>
+    </table>
+    <p>Tablo Nisan 2026 tarifesinin yaklaşık vergiler dahil fiyatlarıyla hazırlanmıştır; EPDK tarifeleri genellikle Ocak, Nisan, Temmuz ve Ekim aylarında güncellenir.</p>
+
+    <h2>Faturayı düşürmenin etkili yolları</h2>
+    <ul>
+      <li><strong>Kademe sınırını izleyin:</strong> Aylık tüketiminiz 240 kWh civarındaysa ısıtıcı, kurutma makinesi gibi yüksek güçlü cihazların kullanımını azaltmak doğrudan yüksek kademeden tasarruf sağlar.</li>
+      <li><strong>Çok zamanlı tarife:</strong> Çamaşır, bulaşık ve elektrikli araç şarjını gece 22.00–06.00 arasına kaydırabiliyorsanız üç zamanlı tarifeye geçmek avantajlı olabilir.</li>
+      <li><strong>Bekleme modu:</strong> Televizyon, modem ve oyun konsollarının bekleme tüketimi yılda 50–100 kWh'e ulaşabilir.</li>
+      <li><strong>Verimli cihaz:</strong> Buzdolabı ve klima gibi sürekli çalışan cihazlarda yeni enerji etiketinde A–C sınıfı tercih edin.</li>
+    </ul>
   </section>
 </CalcLayout>

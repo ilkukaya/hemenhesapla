@@ -1,46 +1,62 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import PageLayout from '../layouts/PageLayout.astro';
+import { SITE } from '../config/site';
+import { allCalcs } from '../utils/catalog';
 ---
 
-<BaseLayout title="İletişim | Hemen Hesapla" description="hemenhesapla.net ile iletişime geçin. Soru, öneri ve geri bildirimlerinizi bekliyoruz.">
-  <div class="max-w-3xl mx-auto px-4 sm:px-6 py-12">
-    <h1 class="text-2xl sm:text-3xl font-[var(--font-heading)] font-extrabold text-[var(--color-text)] mb-8">İletişim</h1>
+<PageLayout
+  title="İletişim | Hemen Hesapla"
+  h1="İletişim"
+  description="Hata bildirimi, yeni hesaplayıcı önerisi, reklam ve iş birliği talepleriniz için Hemen Hesapla ile iletişime geçin."
+  lede="Hata bildirimi, yeni hesaplayıcı önerisi veya iş birliği için bize yazın. Genellikle iki iş günü içinde yanıt veririz."
+>
+  <form name="iletisim" method="POST" action="/iletisim/tesekkurler/" data-netlify="true" netlify-honeypot="website" class="not-prose card p-5 sm:p-6 mt-6 grid gap-4">
+    <input type="hidden" name="form-name" value="iletisim" />
+    <p class="hidden"><label>Bu alanı boş bırakın <input name="website" /></label></p>
 
-    <div class="space-y-6 text-[var(--color-text-secondary)] leading-relaxed">
-      <p>
-        Sorularınız, önerileriniz, hata bildirimleriniz veya iş birliği teklifleriniz için
-        bize aşağıdaki yollarla ulaşabilirsiniz.
-      </p>
-
-      <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6 space-y-4">
-        <div>
-          <h2 class="font-[var(--font-heading)] font-bold text-[var(--color-text)] mb-1">E-posta</h2>
-          <p>
-            <a href="mailto:iletisim@hemenhesapla.net" class="text-[var(--color-primary)] hover:underline">
-              iletisim@hemenhesapla.net
-            </a>
-          </p>
-        </div>
-      </div>
-
-      <h2 class="text-lg font-[var(--font-heading)] font-bold text-[var(--color-text)] mt-8">Sık Sorulan Konular</h2>
-
-      <div class="space-y-4">
-        <div class="bg-[var(--color-bg)] rounded-lg p-4">
-          <h3 class="font-semibold text-[var(--color-text)] mb-1">Hesaplayıcılarda hata buldum</h3>
-          <p class="text-sm">Hangi hesaplayıcıda, hangi değerlerle hata oluştuğunu belirterek bize e-posta gönderebilirsiniz. En kısa sürede düzelteceğiz.</p>
-        </div>
-
-        <div class="bg-[var(--color-bg)] rounded-lg p-4">
-          <h3 class="font-semibold text-[var(--color-text)] mb-1">Yeni hesaplayıcı önerim var</h3>
-          <p class="text-sm">Önerilerinizi e-posta ile iletebilirsiniz. İhtiyaç duyulan hesaplayıcıları öncelikli olarak ekliyoruz.</p>
-        </div>
-
-        <div class="bg-[var(--color-bg)] rounded-lg p-4">
-          <h3 class="font-semibold text-[var(--color-text)] mb-1">Reklam ve iş birliği</h3>
-          <p class="text-sm">Reklam ve iş birliği teklifleri için lütfen e-posta ile iletişime geçin.</p>
-        </div>
-      </div>
+    <div class="grid gap-4 sm:grid-cols-2">
+      <label class="block">
+        <span class="calc-label">Adınız</span>
+        <span class="calc-input-wrapper"><input class="calc-input" name="ad" autocomplete="name" required /></span>
+      </label>
+      <label class="block">
+        <span class="calc-label">E-posta</span>
+        <span class="calc-input-wrapper"><input class="calc-input" type="email" name="email" autocomplete="email" required /></span>
+      </label>
     </div>
-  </div>
-</BaseLayout>
+
+    <label class="block">
+      <span class="calc-label">Konu</span>
+      <select name="konu" class="calc-select">
+        <option>Hata bildirimi</option>
+        <option>Yeni hesaplayıcı önerisi</option>
+        <option>Reklam / iş birliği</option>
+        <option>Diğer</option>
+      </select>
+    </label>
+
+    <label class="block">
+      <span class="calc-label">İlgili hesaplayıcı (varsa)</span>
+      <select name="hesaplayici" class="calc-select">
+        <option value="">Seçiniz</option>
+        {allCalcs.map((c) => <option value={c.href}>{c.title}</option>)}
+      </select>
+    </label>
+
+    <label class="block">
+      <span class="calc-label">Mesajınız</span>
+      <textarea name="mesaj" rows="5" required class="w-full min-h-32 p-3.5 rounded-[var(--radius-sm)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] text-[1.0625rem] outline-none focus:border-[var(--color-text)]"></textarea>
+      <span class="calc-help-text">Hata bildiriyorsanız girdiğiniz değerleri ve beklediğiniz sonucu yazmanız işimizi hızlandırır.</span>
+    </label>
+
+    <label class="flex items-start gap-2 text-[0.875rem] text-[var(--color-text-secondary)]">
+      <input type="checkbox" required class="mt-1 w-4 h-4 accent-[var(--color-accent)]" />
+      <span><a href="/gizlilik/" class="link">Gizlilik politikasını</a> okudum; mesajımı yanıtlamak amacıyla bilgilerimin işlenmesini kabul ediyorum.</span>
+    </label>
+
+    <div><button type="submit" class="btn-primary">Mesajı gönder</button></div>
+  </form>
+
+  <h2>E-posta</h2>
+  <p>Formu kullanmak istemezseniz doğrudan <a href={`mailto:${SITE.email}`}>{SITE.email}</a> adresine yazabilirsiniz.</p>
+</PageLayout>

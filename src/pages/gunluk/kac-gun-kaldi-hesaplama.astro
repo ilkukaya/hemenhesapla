@@ -1,0 +1,277 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcSelect from '../../components/calculator/CalcSelect.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Kaç gün kaldığı nasıl hesaplanır?",
+    answer: "Hedef tarih ile bugünün tarihi arasındaki takvim günü farkı alınır: Kalan Gün = Hedef Tarih − Bugün. Bugün hesaba katılmaz, hedef gün ise varış günü olarak sayılır. Örneğin 26 Eylül 2026'dan 1 Ocak 2027'ye 97 gün vardır. Hesaplayıcı artık yılları ve ayların farklı gün sayılarını otomatik olarak dikkate alır."
+  },
+  {
+    question: "Yılbaşına kaç gün kaldı?",
+    answer: "Yılbaşına kalan gün sayısı, bugünden 1 Ocak'a kadar olan gün farkıdır. 26 Eylül 2026 itibarıyla 1 Ocak 2027'ye 97 gün, yani 13 hafta 6 gün kalmıştır. Güncel değeri görmek için etkinlik listesinden Yılbaşı seçeneğini seçmeniz yeterlidir; sonuç her gün otomatik olarak güncellenir."
+  },
+  {
+    question: "2027 Ramazan Bayramı ve Kurban Bayramı ne zaman?",
+    answer: "Diyanet İşleri Başkanlığı takvimine göre 2027 yılında Ramazan ayı 8 Şubat 2027'de başlayacak, Ramazan Bayramı 9-11 Mart 2027 tarihlerinde kutlanacaktır. Kurban Bayramı ise 16-19 Mayıs 2027 tarihlerine denk gelmektedir. Hicri takvim güneş yılından yaklaşık 11 gün kısa olduğu için dini bayramlar her yıl öne kayar."
+  },
+  {
+    question: "İş günü sayısı nasıl hesaplanır?",
+    answer: "İş günü sayısı, iki tarih arasındaki günlerden cumartesi ve pazar günleri çıkarılarak bulunur. Bu hesaplayıcı hafta içi günleri sayar; resmi tatiller ve idari izinler dikkate alınmaz. Resmi bir süre hesaplıyorsanız ulusal bayramlar ve dini bayram tatillerini ayrıca düşmeniz gerekir. Yasal süreler için ilgili mevzuattaki sürelerin nasıl işletildiğine de bakın."
+  },
+  {
+    question: "Hesaplamaya bugün dahil mi?",
+    answer: "Hayır. Kalan gün sayısı hesaplanırken bugün başlangıç günü kabul edilir ve sayıma katılmaz; hedef gün ise dahil edilir. Örneğin yarın için sonuç 1 gün olur. İki tarih arasındaki gün sayısını başlangıç ve bitiş dahil olacak şekilde hesaplamak isterseniz sonuca 1 ekleyebilir veya gün hesaplama aracını kullanabilirsiniz."
+  }
+];
+
+const meta = {
+  title: "Kaç Gün Kaldı Hesaplama",
+  seoTitle: "Kaç Gün Kaldı? Tarihe ve Bayrama Kalan Gün Hesaplama",
+  description: "Kaç gün kaldı hesaplama: yılbaşı, bayramlar, özel günler veya seçtiğiniz herhangi bir tarihe kalan gün, hafta, ay ve iş günü sayısını anında öğrenin.",
+  summary: "Kalan gün = Hedef tarih − bugünün tarihi (bugün hariç, hedef gün dahil). 26 Eylül 2026'dan 1 Ocak 2027'ye 97 gün, 9 Mart 2027 Ramazan Bayramı'na 164 gün vardır. Hesaplayıcı kalan süreyi hafta, ay, saat ve hafta içi iş günü olarak da gösterir.",
+  howTo: [
+    "Listeden bir etkinlik seçin ya da 'Özel tarih' seçeneğini bırakın.",
+    "Özel tarih için takvimden hedef tarihi girin.",
+    "Kalan gün, hafta, ay ve iş günü sayısını görün.",
+    "Sonucu paylaşmak için bağlantıyı kopyalayın."
+  ],
+  sources: [
+    { name: "Diyanet İşleri Başkanlığı - Dini Günler (Vakit Hesaplama)", url: "https://vakithesaplama.diyanet.gov.tr/dini_gunler.php" }
+  ],
+  category: "gunluk",
+  slug: "kac-gun-kaldi-hesaplama",
+  keywords: ["kaç gün kaldı", "kaç gün kaldı hesaplama", "yılbaşına kaç gün kaldı", "bayrama kaç gün kaldı", "tarihe kalan gün", "geri sayım"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["gunluk/gun-hesaplama", "gunluk/yas-hesaplama", "gunluk/askerlik-hesaplama", "gunluk/emeklilik-hesaplama"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" class="calc-inputs">
+    <CalcSelect
+      id="etkinlik"
+      label="Etkinlik"
+      options={[
+        { value: "ozel", label: "Özel tarih (aşağıdan seçin)" },
+        { value: "yilbasi", label: "Yılbaşı (1 Ocak)" },
+        { value: "sevgililer", label: "Sevgililer Günü (14 Şubat)" },
+        { value: "ramazan", label: "Ramazan başlangıcı 2027 (8 Şubat)" },
+        { value: "ramazanbayrami", label: "Ramazan Bayramı 2027 (9 Mart)" },
+        { value: "23nisan", label: "23 Nisan Ulusal Egemenlik ve Çocuk Bayramı" },
+        { value: "annelergunu", label: "Anneler Günü (Mayıs'ın 2. pazarı)" },
+        { value: "kurbanbayrami", label: "Kurban Bayramı 2027 (16 Mayıs)" },
+        { value: "19mayis", label: "19 Mayıs Gençlik ve Spor Bayramı" },
+        { value: "babalargunu", label: "Babalar Günü (Haziran'ın 3. pazarı)" },
+        { value: "30agustos", label: "30 Ağustos Zafer Bayramı" },
+        { value: "29ekim", label: "29 Ekim Cumhuriyet Bayramı" }
+      ]}
+      value="ozel"
+    />
+    <CalcInput id="hedef" label="Hedef Tarih" type="date" required={false} />
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label" id="ana-etiket">Kalan Gün</p>
+      <p class="calc-result-value" id="gun">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row"><span class="calc-detail-label">Hedef Tarih</span><span class="calc-detail-value" id="tarih">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Hafta + Gün</span><span class="calc-detail-value" id="hafta">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Ay + Gün</span><span class="calc-detail-value" id="ay">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Hafta İçi (İş) Günü</span><span class="calc-detail-value" id="isgunu">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Hafta Sonu Günü</span><span class="calc-detail-value" id="haftasonu">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Toplam Saat</span><span class="calc-detail-value" id="saat">—</span></div>
+    </div>
+  </CalcResult>
+
+  <script>
+    // Sabit tarihli dini günler (Diyanet takvimi)
+    const DINI: Record<string, string[]> = {
+      ramazan: ['2027-02-08'],
+      ramazanbayrami: ['2027-03-09'],
+      kurbanbayrami: ['2027-05-16'],
+    };
+    const SABIT: Record<string, [number, number]> = {
+      yilbasi: [1, 1], sevgililer: [2, 14], '23nisan': [4, 23], '19mayis': [5, 19], '30agustos': [8, 30], '29ekim': [10, 29],
+    };
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('calc-form');
+      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const resultArea = document.getElementById('calc-result');
+      const hedefEl = document.getElementById('hedef') as HTMLInputElement;
+
+      function debounce(fn: () => void, delay = 150) {
+        let timer: ReturnType<typeof setTimeout>;
+        return () => { clearTimeout(timer); timer = setTimeout(fn, delay); };
+      }
+      const val = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
+      const setText = (id: string, t: string) => { (document.getElementById(id) as HTMLElement).textContent = t; };
+      const nf = new Intl.NumberFormat('tr-TR');
+      const tarihFmt = new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'long', year: 'numeric', weekday: 'long' });
+      const parseDate = (s: string) => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+      const toISO = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      const dayDiff = (a: Date, b: Date) => Math.round((Date.UTC(b.getFullYear(), b.getMonth(), b.getDate()) - Date.UTC(a.getFullYear(), a.getMonth(), a.getDate())) / 86400000);
+      const nthSunday = (y: number, m: number, n: number) => {
+        const first = new Date(y, m, 1);
+        const offset = (7 - first.getDay()) % 7;
+        return new Date(y, m, 1 + offset + 7 * (n - 1));
+      };
+
+      function etkinlikTarihi(key: string, bugun: Date): Date | null {
+        const y = bugun.getFullYear();
+        if (SABIT[key]) {
+          const [m, d] = SABIT[key];
+          let t = new Date(y, m - 1, d);
+          if (t <= bugun) t = new Date(y + 1, m - 1, d);
+          return t;
+        }
+        if (key === 'annelergunu' || key === 'babalargunu') {
+          const f = (yy: number) => key === 'annelergunu' ? nthSunday(yy, 4, 2) : nthSunday(yy, 5, 3);
+          let t = f(y);
+          if (t <= bugun) t = f(y + 1);
+          return t;
+        }
+        if (DINI[key]) {
+          const sonraki = DINI[key].map(parseDate).find(t => t > bugun);
+          return sonraki || null;
+        }
+        return null;
+      }
+
+      form?.addEventListener('submit', (e) => e.preventDefault());
+      const debouncedCalc = debounce(calculate);
+      inputs.forEach(input => {
+        input.addEventListener('input', debouncedCalc);
+        input.addEventListener('change', debouncedCalc);
+      });
+
+      function calculate() {
+        const now = new Date();
+        const bugun = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const key = val('etkinlik');
+        let hedef: Date | null = null;
+        if (key === 'ozel') {
+          if (!hedefEl.value) return;
+          hedef = parseDate(hedefEl.value);
+        } else {
+          hedef = etkinlikTarihi(key, bugun);
+          if (!hedef) { setText('gun', 'Tarih güncelleniyor'); return; }
+          hedefEl.value = toISO(hedef);
+        }
+        if (!hedef || isNaN(hedef.getTime())) return;
+
+        const fark = dayDiff(bugun, hedef);
+        const mutlak = Math.abs(fark);
+        setText('ana-etiket', fark >= 0 ? 'Kalan Gün' : 'Geçen Gün');
+        setText('gun', fark === 0 ? 'Bugün' : `${nf.format(mutlak)} gün`);
+        setText('tarih', tarihFmt.format(hedef));
+        setText('hafta', `${Math.floor(mutlak / 7)} hafta ${mutlak % 7} gün`);
+
+        // Takvim ayı farkı
+        const [bas, son] = fark >= 0 ? [bugun, hedef] : [hedef, bugun];
+        let ay = (son.getFullYear() - bas.getFullYear()) * 12 + (son.getMonth() - bas.getMonth());
+        let ara = new Date(bas.getFullYear(), bas.getMonth() + ay, bas.getDate());
+        if (ara > son) { ay--; ara = new Date(bas.getFullYear(), bas.getMonth() + ay, bas.getDate()); }
+        setText('ay', `${ay} ay ${dayDiff(ara, son)} gün`);
+
+        let isgunu = 0;
+        for (let i = 1; i <= mutlak; i++) {
+          const g = new Date(bas.getFullYear(), bas.getMonth(), bas.getDate() + i).getDay();
+          if (g !== 0 && g !== 6) isgunu++;
+        }
+        setText('isgunu', `${nf.format(isgunu)} gün`);
+        setText('haftasonu', `${nf.format(mutlak - isgunu)} gün`);
+        setText('saat', `${nf.format(mutlak * 24)} saat`);
+
+        if (resultArea) resultArea.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const params = new URLSearchParams();
+        const key = val('etkinlik');
+        params.set('etkinlik', key);
+        if (key === 'ozel' && hedefEl.value) params.set('hedef', hedefEl.value);
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+      }
+
+      function loadFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        let hasParams = false;
+        inputs.forEach(input => {
+          const el = input as HTMLInputElement;
+          if (el.id && params.has(el.id)) { el.value = params.get(el.id)!; hasParams = true; }
+        });
+        if (hasParams) calculate();
+      }
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>Kaç Gün Kaldı Hesaplama Nasıl Çalışır?</h2>
+    <p>
+      Doğum günü, düğün, tatil, sınav, askerlik dönüşü ya da bayram... Beklediğimiz bir güne kaç gün kaldığını bilmek hem planlama yapmayı kolaylaştırır hem de heyecanı artırır. Kaç gün kaldı hesaplama aracı, seçtiğiniz tarihe bugünden itibaren kalan süreyi gün, hafta, ay, saat ve iş günü olarak gösterir. Hazır etkinlik listesinden yılbaşı, resmi bayramlar ve 2027 dini bayramlarını tek tıkla seçebilirsiniz.
+    </p>
+
+    <h2>Hesaplama Yöntemi</h2>
+    <ul>
+      <li><strong>Kalan gün:</strong> Hedef tarih ile bugün arasındaki takvim günü farkı (bugün hariç, hedef gün dahil)</li>
+      <li><strong>Hafta:</strong> Kalan gün / 7; kalan kısım gün olarak gösterilir</li>
+      <li><strong>Ay:</strong> Takvim ayları sayılır, artan günler ayrıca belirtilir</li>
+      <li><strong>İş günü:</strong> Aradaki pazartesi-cuma günleri (resmi tatiller hariç tutulmaz)</li>
+    </ul>
+    <p>
+      Artık yıllar (örneğin 29 Şubat 2028) ve ayların 28, 29, 30 veya 31 gün çekmesi hesaplamada otomatik olarak dikkate alınır.
+    </p>
+
+    <h2>Örnek Hesaplama</h2>
+    <p>
+      26 Eylül 2026 cumartesi günü, 1 Ocak 2027 yılbaşına kalan süre:
+    </p>
+    <ul>
+      <li>Eylül: 4 gün (27-30 Eylül)</li>
+      <li>Ekim: 31 gün, Kasım: 30 gün, Aralık: 31 gün</li>
+      <li>Ocak: 1 gün</li>
+      <li>Toplam: 4 + 31 + 30 + 31 + 1 = 97 gün, yani 13 hafta 6 gün ya da 3 ay 6 gün</li>
+    </ul>
+
+    <h2>2026-2027 Önemli Tarihler</h2>
+    <table>
+      <thead>
+        <tr><th>Etkinlik</th><th>Tarih</th><th>26 Eylül 2026'dan Kalan Gün</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>29 Ekim Cumhuriyet Bayramı</td><td>29 Ekim 2026</td><td>33</td></tr>
+        <tr><td>Yılbaşı</td><td>1 Ocak 2027</td><td>97</td></tr>
+        <tr><td>Ramazan başlangıcı</td><td>8 Şubat 2027</td><td>135</td></tr>
+        <tr><td>Sevgililer Günü</td><td>14 Şubat 2027</td><td>141</td></tr>
+        <tr><td>Ramazan Bayramı</td><td>9 Mart 2027</td><td>164</td></tr>
+        <tr><td>23 Nisan</td><td>23 Nisan 2027</td><td>209</td></tr>
+        <tr><td>Anneler Günü</td><td>9 Mayıs 2027</td><td>225</td></tr>
+        <tr><td>Kurban Bayramı</td><td>16 Mayıs 2027</td><td>232</td></tr>
+        <tr><td>19 Mayıs</td><td>19 Mayıs 2027</td><td>235</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Geri Sayımı Nerelerde Kullanabilirsiniz?</h2>
+    <ul>
+      <li><strong>Sınav hazırlığı:</strong> YKS, LGS veya KPSS'ye kalan günleri bilerek çalışma planınızı haftalara bölebilirsiniz.</li>
+      <li><strong>Tatil ve seyahat:</strong> İzin günlerinizi ve bütçenizi planlamak için kalan hafta sayısını görün.</li>
+      <li><strong>Doğum ve düğün:</strong> Hazırlık listelerini kalan aylara göre sıralayın.</li>
+      <li><strong>Resmi süreler:</strong> Kira sözleşmesi bitişi, garanti süresi veya son başvuru tarihine kalan süreyi takip edin.</li>
+    </ul>
+    <h2>Geçmiş Bir Tarihten Bu Yana Kaç Gün Geçti?</h2>
+    <p>Hesaplayıcı yalnızca ileri tarihler için değil, geçmiş tarihler için de çalışır. Hedef tarih olarak geçmişte bir gün seçtiğinizde sonuç "Geçen Gün" olarak gösterilir. Böylece evlilik yıl dönümünüzden, işe başlama tarihinizden, sigarayı bıraktığınız günden veya bir aboneliğin başladığı tarihten bu yana geçen gün, hafta ve ay sayısını kolayca öğrenebilirsiniz.</p>
+    <p>Belirli bir tarihe gün eklemek ya da iki tarih arasındaki farkı başlangıç ve bitiş günleri dahil hesaplamak istiyorsanız gün hesaplama aracını kullanabilirsiniz. Tam yaşınızı yıl, ay ve gün olarak görmek için ise yaş hesaplama aracı daha uygundur.</p>
+    <p class="calc-note">
+      Not: Dini bayram tarihleri Diyanet İşleri Başkanlığı takvimine göre verilmiştir. İş günü sayısında resmi tatiller ve idari izinler düşülmez. Hesaplama cihazınızın tarihini esas alır.
+    </p>
+  </section>
+</CalcLayout>

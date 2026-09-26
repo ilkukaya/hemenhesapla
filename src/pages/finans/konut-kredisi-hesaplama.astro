@@ -3,52 +3,71 @@ import CalcLayout from '../../layouts/CalcLayout.astro';
 import CalcInput from '../../components/calculator/CalcInput.astro';
 import CalcResult from '../../components/calculator/CalcResult.astro';
 
-const faq = [
-  {
-    question: "Konut kredisi taksiti nasıl hesaplanır?",
-    answer: "Konut kredisi taksiti anüite formülüyle hesaplanır: Aylık Taksit = Anapara × [r × (1+r)^n] / [(1+r)^n − 1]. Burada r aylık faiz oranı, n ise vade (ay sayısı) olup tüm taksitler eşit tutarda kalır. Konut değerleme raporu, tapu harcı ve zorunlu deprem sigortası (DASK) gibi ek masraflar taksit hesaplamasına dahil değildir, ayrıca planlanmalıdır."
-  },
-  {
-    question: "Konut kredisinde sigorta neden önemlidir?",
-    answer: "Bankalar konut kredisi kullandırımında genellikle zorunlu deprem sigortası (DASK) ve hayat sigortası talep eder. Konut sigortası ise isteğe bağlı olmakla birlikte yaygın şekilde önerilir. Bu sigorta bedelleri toplam kredi maliyetini artırır; hesap ederken bu tutarları da dahil etmek gerçekçi bir bütçe planlaması yapmanızı sağlar."
-  },
-  {
-    question: "Konut kredisinde maksimum vade kaç yıldır?",
-    answer: "Türkiye'de konut kredilerinde yasal azami vade 120 aydır (10 yıl). Ancak bazı bankalar belirli koşullarda daha uzun vade sunabilir. Vade uzadıkça aylık taksit düşer fakat toplam ödenecek faiz yükü artar. Kendi finansal durumunuza ve konutun kullanım amacına göre en uygun vadeyi seçmeniz önerilir."
-  }
-];
-
 const meta = {
   title: "Konut Kredisi Hesaplama",
-  description: "Konut kredisi aylık taksit, toplam ödeme ve toplam faiz tutarını anında hesaplayın. Sigorta maliyetini de dahil eden ücretsiz konut kredisi hesaplama aracı.",
+  seoTitle: "Konut Kredisi Hesaplama 2026 – Taksit ve Toplam Maliyet",
+  description: "Konut kredisi hesaplama 2026: kredi tutarı, aylık faiz ve vadeye göre aylık taksiti, toplam faizi, sigorta dahil toplam maliyeti ve ay ay ödeme planını görün.",
+  summary: "Konut kredisi taksiti eşit taksit formülüyle hesaplanır: Taksit = K × r(1+r)^n ÷ ((1+r)^n − 1). Konut kredileri KKDF ve BSMV'den muaf olduğu için r doğrudan aylık faiz oranıdır. Örneğin 2.000.000 TL, aylık %2,79 faiz ve 120 ay vadede taksit 57.932,14 TL, toplam geri ödeme 6.951.856,76 TL'dir.",
+  howTo: [
+    "Çekmek istediğiniz kredi tutarını girin.",
+    "Bankanın konut kredisi için verdiği aylık faiz oranını yazın.",
+    "Vadeyi ay olarak girin (ör. 60, 120, 180).",
+    "İsterseniz DASK, konut ve hayat sigortası ile ekspertiz gibi ek masrafların toplamını ekleyin.",
+    "Aylık taksiti, toplam maliyeti ve ödeme planını inceleyin."
+  ],
+  sources: [
+    { name: "TCMB – Para Politikası Kurulu kararları (2026)", url: "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Main+Menu/Temel+Faaliyetler/Para+Politikasi/PPK/2026" },
+    { name: "BDDK", url: "https://www.bddk.org.tr/" }
+  ],
   category: "finans",
   slug: "konut-kredisi-hesaplama",
-  keywords: ["konut kredisi hesaplama", "mortgage hesaplama", "ev kredisi taksit", "konut kredisi faiz", "konut kredisi toplam maliyet"],
-  dateModified: "2026-04-01",
-  relatedCalcs: ["tasit-kredisi-hesaplama", "kredi-hesaplama", "mevduat-faizi-hesaplama"],
-  faq,
+  keywords: ["konut kredisi hesaplama", "ev kredisi hesaplama", "konut kredisi taksit", "mortgage hesaplama", "konut kredisi faiz 2026", "konut kredisi ödeme planı"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["finans/kredi-hesaplama", "finans/tasit-kredisi-hesaplama", "finans/kira-artis-hesaplama", "finans/tapu-harci-hesaplama"],
+  faq: [
+    {
+      question: "Konut kredisi taksiti nasıl hesaplanır?",
+      answer: "Konut kredisinde taksit, eşit taksit (annüite) formülüyle bulunur: Taksit = Kredi × r × (1+r)^n ÷ ((1+r)^n − 1). r aylık faiz oranı, n vadedir. İhtiyaç kredisinden farklı olarak konut kredisinde KKDF ve BSMV alınmaz, bu nedenle aynı faiz oranında taksit daha düşük çıkar."
+    },
+    {
+      question: "Konut kredisinde KKDF ve BSMV var mı?",
+      answer: "Hayır. Bireysel konut kredileri KKDF ve BSMV'den muaftır. Bu, ihtiyaç kredisine göre önemli bir avantajdır: ihtiyaç kredisinde faiz üzerine toplam %30 vergi eklenirken, konut kredisinde taksit yalnızca faiz ve ana paradan oluşur. Sigorta ve ekspertiz gibi masraflar ise ayrıca ödenir."
+    },
+    {
+      question: "Konut kredisi ile evin yüzde kaçı finanse edilebilir?",
+      answer: "BDDK düzenlemeleri, konut kredisinde kullandırılabilecek tutarı konutun ekspertiz değerine ve enerji sınıfına, ilk el ya da ikinci el olmasına göre sınırlar. Oranlar dönem dönem değiştiği için kredi başvurusu öncesinde bankanızdan güncel kredi/değer oranını öğrenin; kalan kısım peşinat olarak ödenir."
+    },
+    {
+      question: "Konut kredisi çekerken hangi masraflar ödenir?",
+      answer: "Başlıca masraflar ekspertiz ücreti, zorunlu deprem sigortası (DASK), bankanın talep ettiği konut ve hayat sigortaları ve tapu harcıdır; konut finansmanı kapsamındaki ipotek işlemleri harçtan istisnadır. Tapu harcı alıcı ve satıcı için ayrı ayrı %2'dir. Kredi tahsis ücreti de kredi tutarının binde 5'ini geçemez."
+    },
+    {
+      question: "Konut kredisini erken kapatmak avantajlı mı?",
+      answer: "Erken kapatmada kalan dönemlerin faizi alınmaz, bu yüzden özellikle ilk yıllarda faiz yükü ciddi azalır. Sabit faizli konut kredilerinde banka, kalan vadeye bağlı olarak sınırlı bir erken ödeme tazminatı isteyebilir. Kesin tutarı öğrenmek için bankanızdan erken kapama bakiyesi isteyin."
+    }
+  ]
 };
 ---
 
 <CalcLayout meta={meta}>
-  <form id="calc-form" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
+  <form id="calc-form" class="calc-inputs" novalidate>
     <CalcInput
       id="tutar"
       label="Kredi Tutarı"
       type="number"
       suffix="₺"
-      placeholder="500000"
-      step={1000}
-      min={50000}
+      placeholder="2000000"
+      step="any"
+      min={0}
     />
     <CalcInput
       id="faiz"
       label="Aylık Faiz Oranı"
       type="number"
       suffix="%"
-      placeholder="3.50"
-      step={0.01}
-      min={0.01}
+      placeholder="2.79"
+      step="any"
+      min={0}
     />
     <CalcInput
       id="vade"
@@ -56,31 +75,31 @@ const meta = {
       type="number"
       suffix="ay"
       placeholder="120"
-      step={12}
-      min={12}
+      step={1}
+      min={1}
       max={360}
     />
     <CalcInput
       id="sigorta"
-      label="Sigorta Bedeli"
+      label="Sigorta ve Ek Masraflar (toplam)"
       type="number"
       suffix="₺"
       placeholder="0"
-      step={100}
+      step="any"
       min={0}
-      value="0"
-      helpText="İsteğe bağlı"
+      required={false}
+      helpText="İsteğe bağlı: DASK, hayat/konut sigortası, ekspertiz"
     />
   </form>
 
   <CalcResult>
     <div slot="main">
-      <span class="calc-result-label">Aylık Taksit</span>
-      <span class="calc-result-value" id="aylik-taksit">—</span>
+      <p class="calc-result-label">Aylık Taksit</p>
+      <p class="calc-result-value" id="aylik-taksit">—</p>
     </div>
     <div slot="details">
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Toplam Ödeme</span>
+        <span class="calc-detail-label">Toplam Geri Ödeme</span>
         <span class="calc-detail-value" id="toplam-odeme">—</span>
       </div>
       <div class="calc-detail-row">
@@ -88,111 +107,69 @@ const meta = {
         <span class="calc-detail-value" id="toplam-faiz">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Sigorta Dahil Toplam Maliyet</span>
+        <span class="calc-detail-label">Ek Masraflar Dahil Toplam Maliyet</span>
         <span class="calc-detail-value" id="toplam-maliyet">—</span>
       </div>
+      <div class="calc-table-wrap">
+        <table class="calc-table">
+          <caption>Ödeme planı</caption>
+          <thead>
+            <tr><th scope="col">Ay</th><th scope="col">Taksit</th><th scope="col">Ana para</th><th scope="col">Faiz</th><th scope="col">Vergi</th><th scope="col">Kalan</th></tr>
+          </thead>
+          <tbody id="odeme-plani"></tbody>
+        </table>
+      </div>
+      <p class="calc-note">Konut kredileri KKDF ve BSMV'den muaftır. Tapu harcı ve kredi tahsis ücreti dahil değildir.</p>
     </div>
   </CalcResult>
 
-  <section class="calc-content">
-    <h2>Konut Kredisi Hesaplama Nasıl Yapılır?</h2>
-    <p>
-      Konut kredisi, bir ev veya daire satın almak için bankalardan uzun vadeli olarak kullanılan bir finansman aracıdır. Türkiye'de konut kredileri genellikle 12 ila 120 ay (1-10 yıl) arasında vadelendirilir ve sabit ya da değişken faizli olabilir. Aylık taksit tutarını önceden bilmek, bütçenizi doğru planlamanız açısından kritik önem taşır.
-    </p>
-    <h3>Konut Kredisi Taksit Formülü</h3>
-    <p>
-      Bankalar konut kredisi taksitini <strong>anüite yöntemi</strong> ile hesaplar. Formül şu şekildedir:
-    </p>
-    <p>
-      <strong>Aylık Taksit = P × [r × (1+r)^n] / [(1+r)^n − 1]</strong>
-    </p>
-    <p>
-      Bu formülde P kredi tutarını, r aylık faiz oranını (yüzde / 100), n ise vadeyi (ay) temsil eder. Tüm taksitler eşit tutarda olup her taksitte ödenen faiz payı giderek azalırken anapara payı artar.
-    </p>
-    <h3>Sigorta Maliyetinin Önemi</h3>
-    <p>
-      Konut kredisi kullanırken DASK (zorunlu deprem sigortası) ve banka tarafından talep edilen konut sigortası ile hayat sigortası gibi ek kalemler toplam maliyeti önemli ölçüde artırabilir. Hesap aracımızdaki sigorta bedeli alanına bu masrafları girerek gerçek toplam maliyeti görebilirsiniz. Sigorta poliçesi tek seferlik ödeme yerine yıllık ya da kredi süresine yayılmış şekilde de ödenebilir.
-    </p>
-    <h3>Dikkat Edilmesi Gerekenler</h3>
-    <p>
-      Konut kredisi seçerken yalnızca aylık taksit miktarına odaklanmak yanıltıcı olabilir. Dosya masrafı, ekspertiz ücreti, tapu harcı ve ipotek tesis ücreti gibi başlangıç giderleri de bütçenize eklenmesi gereken kalemlerdir. Farklı bankaların tekliflerini karşılaştırırken <strong>Yıllık Maliyet Oranı (YMO)</strong> en doğru karşılaştırma ölçütüdür; çünkü tüm masrafları tek bir orana yansıtır.
-    </p>
-    <h3>Sıkça Sorulan Sorular</h3>
-    {faq.map((item) => (
-      <div class="faq-item">
-        <h4>{item.question}</h4>
-        <p>{item.answer}</p>
-      </div>
-    ))}
-  </section>
-</CalcLayout>
+  <script>
+    import { formatTL, readNumber, setText, showResult, initCalculator } from './_shared';
+    import { amortize, renderSchedule } from './_loan';
 
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
-    const resultArea = document.getElementById('calc-result');
+    function calculate(): boolean {
+      const tutar = readNumber('tutar');
+      const faiz = readNumber('faiz');
+      const vade = Math.round(readNumber('vade'));
+      const sigorta = Math.max(0, readNumber('sigorta') || 0);
 
-    function debounce(fn: (...args: unknown[]) => void, delay = 150) {
-      let timer: ReturnType<typeof setTimeout>;
-      return (...args: unknown[]) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), delay); };
-    }
-
-    function formatTL(num: number) {
-      return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
-    }
-
-    const debouncedCalc = debounce(calculate);
-    inputs.forEach(input => {
-      input.addEventListener('input', debouncedCalc);
-      input.addEventListener('change', debouncedCalc);
-    });
-
-    function calculate() {
-      const tutar = parseFloat((document.getElementById('tutar') as HTMLInputElement).value);
-      const faiz = parseFloat((document.getElementById('faiz') as HTMLInputElement).value);
-      const vade = parseInt((document.getElementById('vade') as HTMLInputElement).value);
-      const sigorta = parseFloat((document.getElementById('sigorta') as HTMLInputElement).value) || 0;
-
-      if (!tutar || !faiz || !vade || tutar <= 0 || faiz <= 0 || vade <= 0) {
-        if (resultArea) resultArea.classList.add('hidden');
-        return;
+      if (!(tutar > 0) || !(faiz >= 0) || !(vade >= 1) || vade > 600) {
+        showResult(false);
+        return false;
       }
 
-      const r = faiz / 100;
-      const pow = Math.pow(1 + r, vade);
-      const aylikTaksit = tutar * r * pow / (pow - 1);
-      const toplamOdeme = aylikTaksit * vade;
-      const toplamFaiz = toplamOdeme - tutar;
-      const toplamMaliyet = toplamOdeme + sigorta;
+      const r = amortize(tutar, faiz, vade);
+      setText('aylik-taksit', formatTL(r.payment));
+      setText('toplam-odeme', formatTL(r.totalPayment));
+      setText('toplam-faiz', formatTL(r.totalInterest));
+      setText('toplam-maliyet', formatTL(r.totalPayment + sigorta));
+      renderSchedule('odeme-plani', r.rows, formatTL, false);
 
-      (document.getElementById('aylik-taksit') as HTMLElement).textContent = formatTL(aylikTaksit);
-      (document.getElementById('toplam-odeme') as HTMLElement).textContent = formatTL(toplamOdeme);
-      (document.getElementById('toplam-faiz') as HTMLElement).textContent = formatTL(toplamFaiz);
-      (document.getElementById('toplam-maliyet') as HTMLElement).textContent = formatTL(toplamMaliyet);
-
-      if (resultArea) resultArea.classList.remove('hidden');
-      updateURL();
+      showResult(true);
+      return true;
     }
 
-    function updateURL() {
-      const params = new URLSearchParams();
-      inputs.forEach(input => {
-        const el = input as HTMLInputElement;
-        if (el.value && el.id) params.set(el.id, el.value);
-      });
-      history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
-    }
+    initCalculator({ calculate });
+  </script>
 
-    function loadFromURL() {
-      const params = new URLSearchParams(window.location.search);
-      let hasParams = false;
-      inputs.forEach(input => {
-        const el = input as HTMLInputElement;
-        if (el.id && params.has(el.id)) { el.value = params.get(el.id)!; hasParams = true; }
-      });
-      if (hasParams) calculate();
-    }
+  <section class="calc-content">
+    <h2>Konut Kredisi Nasıl Hesaplanır?</h2>
+    <p>
+      Konut kredileri eşit taksitle geri ödenir. Taksit tutarı; kredi tutarı, aylık faiz oranı ve vadeye bağlıdır. İhtiyaç kredilerinden farklı olarak konut kredisinde faiz üzerinden KKDF ve BSMV alınmaz, bu yüzden taksit doğrudan akdi faizle hesaplanır.
+    </p>
+    <p><strong>Taksit = Kredi × r × (1 + r)<sup>n</sup> ÷ ((1 + r)<sup>n</sup> − 1)</strong></p>
 
-    loadFromURL();
-  });
-</script>
+    <h2>Örnek Hesaplama</h2>
+    <p>
+      2.000.000 TL konut kredisi, aylık %2,79 faiz ve 120 ay vade için aylık taksit <strong>57.932,14 TL</strong> olur. On yılın sonunda toplam 6.951.856,76 TL geri ödenir; bunun 4.951.856,76 TL'si faizdir. Vadeyi 180 aya uzatmak taksiti yalnızca 56.196,79 TL'ye düşürür ama toplam faiz 8.115.421,36 TL'ye çıkar. Yüksek faiz ortamında uzun vade, taksiti çok az azaltırken toplam maliyeti belirgin biçimde artırır.
+    </p>
+
+    <h2>Toplam Maliyeti Etkileyen Kalemler</h2>
+    <ul>
+      <li><strong>Peşinat:</strong> BDDK'nın kredi/değer sınırları nedeniyle konut bedelinin bir kısmını kendiniz karşılamanız gerekir.</li>
+      <li><strong>Sigortalar:</strong> DASK zorunludur; bankalar genellikle konut ve hayat sigortası da ister.</li>
+      <li><strong>Tapu harcı:</strong> Satış bedeli üzerinden alıcı ve satıcı için ayrı ayrı %2.</li>
+      <li><strong>Ekspertiz:</strong> Bankanın değerleme raporu için ekspertiz ücreti alınır.</li>
+    </ul>
+  </section>
+</CalcLayout>

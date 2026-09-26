@@ -4,65 +4,92 @@ import CalcInput from '../../components/calculator/CalcInput.astro';
 import CalcSelect from '../../components/calculator/CalcSelect.astro';
 import CalcResult from '../../components/calculator/CalcResult.astro';
 
-const faq = [
-  {
-    question: "Stopaj nedir ve kim öder?",
-    answer: "Stopaj (kaynakta vergi kesintisi), bir gelir veya ödeme üzerinden ödeme yapılırken doğrudan kesilen vergidir. Ödemeyi yapan taraf (işveren, şirket vb.) bu vergiyi keserek devlete yatırmakla yükümlüdür. Stopaj; kira, serbest meslek kazancı, mevduat faizi, temettü, ücret gibi pek çok gelir türüne uygulanabilir."
-  },
-  {
-    question: "Stopaj oranları neye göre belirlenir?",
-    answer: "Stopaj oranları gelirin türüne ve ödemenin yapıldığı kişi/kuruma göre değişir. Türkiye'de en yaygın stopaj oranları şunlardır: Kira geliri için %20, serbest meslek makbuzu için %20, mevduat faizi için %15, temettü için %10, işçi ücretleri içinse gelir vergisi dilimlerine göre farklı oranlar uygulanır."
-  },
-  {
-    question: "Stopaj brüt tutardan mı hesaplanır?",
-    answer: "Evet, stopaj her zaman brüt tutar üzerinden hesaplanır. Örneğin serbest meslek sahibine yapılan 10.000 TL brüt ödemede %20 stopaj uygulanırsa, 2.000 TL devlete kesilir ve kişiye 8.000 TL net ödeme yapılır. Yıllık gelir vergisi beyannamesi verildiğinde ise ödenen stopaj, hesaplanan vergiden mahsup edilir."
-  }
+const stopajOranlari = [
+  { value: "20", label: "%20 – Serbest meslek, işyeri kirası" },
+  { value: "17.5", label: "%17,5 – 6 aya kadar TL mevduat" },
+  { value: "15", label: "%15 – Kâr payı (temettü), 1 yıla kadar mevduat" },
+  { value: "10", label: "%10 – 1 yıldan uzun vadeli mevduat" },
+  { value: "5", label: "%5 – Yıllara yaygın inşaat hakedişi" },
+  { value: "0", label: "%0" },
 ];
 
 const meta = {
   title: "Stopaj Hesaplama",
-  description: "Brüt tutardan stopaj vergisini ve net tutarı anında hesaplayın. Kira, serbest meslek ve diğer gelir türleri için stopaj hesaplama aracı.",
+  seoTitle: "Stopaj Hesaplama 2026 – Brütten Nete, Netten Brüte",
+  description: "Stopaj hesaplama 2026: serbest meslek, işyeri kirası, temettü ve mevduat için güncel stopaj oranlarıyla brütten nete ve netten brüte tutarı anında bulun.",
+  summary: "Stopaj, ödeme yapılırken brüt tutardan kesilen vergidir: Stopaj = Brüt × Oran, Net = Brüt − Stopaj. Netten brüte geçmek için Brüt = Net ÷ (1 − Oran) kullanılır. 2026'da serbest meslek ve işyeri kirasında oran %20'dir; örneğin 10.000 TL net kira için brüt 12.500 TL, stopaj 2.500 TL'dir.",
+  howTo: [
+    "Elinizdeki tutarın brüt mü net mi olduğunu seçin.",
+    "Tutarı girin.",
+    "Gelir türüne uygun stopaj oranını seçin.",
+    "Brüt tutarı, stopaj kesintisini ve net ödemeyi görün."
+  ],
+  sources: [
+    { name: "193 sayılı Gelir Vergisi Kanunu md. 94 (mevzuat.gov.tr)", url: "https://www.mevzuat.gov.tr/mevzuatmetin/1.4.193.pdf" },
+    { name: "10041 sayılı Cumhurbaşkanı Kararı – mevduat stopaj oranları (Resmî Gazete)", url: "https://www.resmigazete.gov.tr/eskiler/2025/07/20250709-6.pdf" },
+    { name: "Gelir İdaresi Başkanlığı", url: "https://www.gib.gov.tr/" }
+  ],
   category: "finans",
   slug: "stopaj-hesaplama",
-  keywords: ["stopaj hesaplama", "stopaj vergisi", "kaynakta vergi kesintisi", "serbest meslek stopaj", "kira stopaj", "net brüt hesaplama"],
-  dateModified: "2026-04-01",
-  relatedCalcs: ["kdv-hesaplama", "net-brut-maas-hesaplama", "kredi-hesaplama"],
-  faq
+  keywords: ["stopaj hesaplama", "stopaj oranları 2026", "kira stopajı hesaplama", "serbest meslek stopaj", "netten brüte stopaj", "temettü stopajı"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["finans/kdv-hesaplama", "finans/gelir-vergisi-hesaplama", "finans/mevduat-faizi-hesaplama", "finans/kira-artis-hesaplama"],
+  faq: [
+    {
+      question: "İşyeri kira stopajı nasıl hesaplanır?",
+      answer: "Bir şirket veya işletme, gerçek kişiden işyeri kiraladığında brüt kira üzerinden %20 stopaj keser ve vergi dairesine öder. Sözleşmede net kira yazıyorsa brüt kira = net ÷ 0,80 formülüyle bulunur. Örneğin 40.000 TL net kira için brüt kira 50.000 TL, stopaj 10.000 TL'dir."
+    },
+    {
+      question: "Serbest meslek makbuzunda stopaj oranı kaç?",
+      answer: "Avukat, mali müşavir, doktor, mimar gibi serbest meslek erbabına işletmelerin yaptığı ödemelerde gelir vergisi stopajı %20'dir. Makbuzda brüt ücret, %20 stopaj ve net ödeme ayrı ayrı gösterilir. Ayrıca KDV mükellefi olan serbest meslek erbabı brüt ücret üzerinden %20 KDV hesaplar."
+    },
+    {
+      question: "2026 mevduat faizi stopaj oranları nedir?",
+      answer: "Temmuz 2025'te yürürlüğe giren ve süresi 31 Aralık 2026'ya uzatılan Cumhurbaşkanı Kararı'na göre TL mevduatta stopaj; 6 aya kadar vadelerde %17,5, 1 yıla kadar vadelerde %15, 1 yıldan uzun vadelerde %10'dur. Oranlar, hesap açılış veya vade yenileme tarihinde geçerli olan karara göre uygulanır."
+    },
+    {
+      question: "Temettü stopajı yüzde kaç?",
+      answer: "22 Aralık 2024'te yayımlanan 9286 sayılı Cumhurbaşkanı Kararı ile tam mükellef kurumların gerçek kişi ortaklara dağıttığı kâr payları üzerindeki stopaj oranı %10'dan %15'e çıkarıldı. 2026'da da %15 uygulanmaktadır. Örneğin 10.000 TL brüt temettüden 1.500 TL stopaj kesilir ve ortağa 8.500 TL net ödenir."
+    },
+    {
+      question: "Konut kirasında stopaj var mı?",
+      answer: "Bireyin bireye kiraladığı konutta stopaj yoktur; ev sahibi kira gelirini yıllık beyannameyle bildirir. Stopaj, kiracının şirket, esnaf ya da kamu kurumu gibi bir vergi sorumlusu olduğu ve kiralamanın bu kişinin faaliyetiyle ilgili olduğu durumlarda uygulanır; tipik örnek işyeri kiralarıdır. Özel durumlarda (ör. şirketin personeline lojman kiralaması) mali müşavirinize danışın."
+    }
+  ]
 };
 ---
 
 <CalcLayout meta={meta}>
-  <form id="calc-form">
+  <form id="calc-form" class="calc-inputs" novalidate>
+    <CalcSelect
+      id="hesapTuru"
+      label="Girilen Tutar"
+      options={[
+        { value: "brut", label: "Brüt tutar (stopaj dahil)" },
+        { value: "net", label: "Net tutar (ele geçen)" },
+      ]}
+      value="brut"
+    />
     <CalcInput
       id="brutTutar"
-      label="Brüt Tutar"
+      label="Tutar"
       type="number"
       suffix="₺"
-      placeholder="10000"
-      step={100}
+      placeholder="50000"
+      step="any"
       min={0}
     />
     <CalcSelect
       id="stopajOrani"
       label="Stopaj Oranı"
-      options={[
-        { value: "0", label: "%0" },
-        { value: "5", label: "%5" },
-        { value: "10", label: "%10" },
-        { value: "15", label: "%15" },
-        { value: "20", label: "%20" },
-        { value: "25", label: "%25" },
-        { value: "30", label: "%30" },
-        { value: "35", label: "%35" },
-        { value: "40", label: "%40" }
-      ]}
-      value="15"
+      options={stopajOranlari}
+      value="20"
     />
   </form>
 
   <CalcResult>
     <div slot="main">
-      <p class="calc-result-label">Net Tutar</p>
+      <p class="calc-result-label" id="ana-etiket">Net Tutar</p>
       <p class="calc-result-value" id="net-tutar">—</p>
     </div>
     <div slot="details">
@@ -78,113 +105,81 @@ const meta = {
         <span class="calc-detail-label">Stopaj Tutarı</span>
         <span class="calc-detail-value" id="stopaj-tutari">—</span>
       </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Net Tutar</span>
+        <span class="calc-detail-value" id="net-tutar-result">—</span>
+      </div>
     </div>
   </CalcResult>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
-      const resultArea = document.getElementById('calc-result');
+    import { formatTL, formatNumber, readNumber, readValue, setText, showResult, initCalculator, round2 } from './_shared';
 
-      function debounce(fn: (...args: unknown[]) => void, delay = 150) {
-        let timer: ReturnType<typeof setTimeout>;
-        return (...args: unknown[]) => {
-          clearTimeout(timer);
-          timer = setTimeout(() => fn(...args), delay);
-        };
+    function calculate(): boolean {
+      const tutar = readNumber('brutTutar');
+      const oran = readNumber('stopajOrani');
+      const mod = readValue('hesapTuru') === 'net' ? 'net' : 'brut';
+
+      if (!(tutar > 0) || !(oran >= 0) || oran >= 100) {
+        showResult(false);
+        return false;
       }
 
-      function formatTL(num: number) {
-        return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
-      }
+      const brut = mod === 'net' ? round2(tutar / (1 - oran / 100)) : tutar;
+      const stopaj = round2(brut * oran / 100);
+      const net = round2(brut - stopaj);
 
-      const debouncedCalc = debounce(calculate);
-      inputs.forEach(input => {
-        input.addEventListener('input', debouncedCalc);
-        input.addEventListener('change', debouncedCalc);
-      });
+      setText('ana-etiket', mod === 'net' ? 'Brüt Tutar' : 'Net Tutar');
+      setText('net-tutar', formatTL(mod === 'net' ? brut : net));
+      setText('brut-tutar-result', formatTL(brut));
+      setText('stopaj-oran-result', `%${formatNumber(oran, 0, 2)}`);
+      setText('stopaj-tutari', formatTL(stopaj));
+      setText('net-tutar-result', formatTL(net));
 
-      function calculate() {
-        const brutTutar = parseFloat((document.getElementById('brutTutar') as HTMLInputElement).value);
-        const oran = parseFloat((document.getElementById('stopajOrani') as HTMLSelectElement).value);
+      showResult(true);
+      return true;
+    }
 
-        if (isNaN(brutTutar) || brutTutar <= 0) return;
-
-        const stopajTutari = brutTutar * oran / 100;
-        const netTutar = brutTutar - stopajTutari;
-
-        (document.getElementById('net-tutar') as HTMLElement).textContent = formatTL(netTutar);
-        (document.getElementById('brut-tutar-result') as HTMLElement).textContent = formatTL(brutTutar);
-        (document.getElementById('stopaj-oran-result') as HTMLElement).textContent = `%${oran}`;
-        (document.getElementById('stopaj-tutari') as HTMLElement).textContent = formatTL(stopajTutari);
-
-        if (resultArea) resultArea.classList.remove('hidden');
-        updateURL();
-      }
-
-      function updateURL() {
-        const params = new URLSearchParams();
-        inputs.forEach(input => {
-          const el = input as HTMLInputElement;
-          if (el.value && el.value !== '' && el.id) {
-            params.set(el.id, el.value);
-          }
-        });
-        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
-      }
-
-      function loadFromURL() {
-        const params = new URLSearchParams(window.location.search);
-        let hasParams = false;
-        inputs.forEach(input => {
-          const el = input as HTMLInputElement;
-          if (el.id && params.has(el.id)) {
-            el.value = params.get(el.id)!;
-            hasParams = true;
-          }
-        });
-        if (hasParams) calculate();
-      }
-
-      loadFromURL();
-    });
+    initCalculator({ calculate });
   </script>
 
   <section class="calc-content">
     <h2>Stopaj Nedir?</h2>
     <p>
-      Stopaj, Türk vergi mevzuatında "kaynakta kesilen vergi" olarak da bilinir. Bir ödeme yapılırken alıcıya para aktarılmadan önce belirli bir oranda vergi kesilerek devlete yatırılması işlemine stopaj denir. Bu sistemin amacı vergi tahsilatını güvence altına almak ve vergi kaçakçılığını önlemektir.
-    </p>
-    <h2>Stopaj Hangi Gelir Türlerine Uygulanır?</h2>
-    <p>
-      Türkiye'de stopaj çok geniş bir gelir yelpazesine uygulanmaktadır:
-    </p>
-    <ul>
-      <li><strong>Kira gelirleri:</strong> İş yeri kira ödemelerinde %20 stopaj uygulanır.</li>
-      <li><strong>Serbest meslek kazançları:</strong> Avukat, mimar, danışman gibi serbest meslek erbabına yapılan ödemelerde %20 oranında stopaj kesilir.</li>
-      <li><strong>Mevduat faizleri:</strong> Banka mevduatı faizleri üzerinden %15 stopaj uygulanır.</li>
-      <li><strong>Temettü (kâr payı) gelirleri:</strong> Şirket kâr payı dağıtımında %10 stopaj söz konusudur.</li>
-      <li><strong>Ücret gelirleri:</strong> Çalışan ücretlerinde gelir vergisi stopajı, dilim oranlarına göre kesilir.</li>
-    </ul>
-    <h2>Stopaj Nasıl Hesaplanır?</h2>
-    <p>
-      Stopaj hesaplama oldukça basittir: <strong>Stopaj Tutarı = Brüt Tutar × Stopaj Oranı / 100</strong>. Net tutar ise brüt tutardan stopaj tutarının çıkarılmasıyla bulunur. Örneğin 15.000 TL brüt serbest meslek ödemesinde %20 stopaj uygulandığında 3.000 TL kesilir ve kişiye 12.000 TL net ödeme yapılır.
-    </p>
-    <h2>Yıllık Beyanname ve Mahsup</h2>
-    <p>
-      Yıl içinde ödenen stopaj tutarları, yıllık gelir vergisi beyannamesi verildiğinde hesaplanan vergiden düşülür. Fazla stopaj ödenmişse vergi dairesi bu tutarı iade eder. Bu nedenle stopaj, kesin bir vergi değil; yıl sonunda nihai vergi borcu hesaplanana kadar devlete yapılan bir ön ödeme niteliğindedir.
-    </p>
-    <h2>Stopaj Beyanı ve Sorumluluğu</h2>
-    <p>
-      Stopajı kesmek ve devlete ödemekle yükümlü olan taraf, ödemeyi gerçekleştiren kişi ya da kurumdur. Muhtasar ve prim hizmetleri beyannamesi aracılığıyla her ay veya üç ayda bir vergi dairesine bildirilir. Stopaj yükümlülüğünü yerine getirmeyen işverenler veya şirketler cezai yaptırımlarla karşılaşabilir.
+      Stopaj (vergi tevkifatı), bir ödemeyi yapan kişinin ya da kurumun, karşı tarafın vergisini ödeme anında kesip vergi dairesine yatırmasıdır. Kesilen tutar muhtasar ve prim hizmet beyannamesiyle beyan edilir. Parayı alan taraf yıllık beyanname veriyorsa, yıl içinde kesilen stopajı hesaplanan gelir vergisinden mahsup eder.
     </p>
 
-    <h2>Sık Sorulan Sorular</h2>
-    {faq.map(item => (
-      <details>
-        <summary><strong>{item.question}</strong></summary>
-        <p>{item.answer}</p>
-      </details>
-    ))}
+    <h2>2026 Başlıca Stopaj Oranları</h2>
+    <div class="calc-table-wrap">
+      <table class="calc-table">
+        <thead><tr><th scope="col">Ödeme türü</th><th scope="col">Oran</th></tr></thead>
+        <tbody>
+          <tr><td>Serbest meslek ödemeleri (GVK 94/2-b)</td><td>%20</td></tr>
+          <tr><td>Gerçek kişiden kiralanan işyeri kirası (GVK 94/5-a)</td><td>%20</td></tr>
+          <tr><td>Kâr payı (temettü) dağıtımı</td><td>%15</td></tr>
+          <tr><td>TL mevduat faizi – 6 aya kadar vade</td><td>%17,5</td></tr>
+          <tr><td>TL mevduat faizi – 1 yıla kadar vade</td><td>%15</td></tr>
+          <tr><td>TL mevduat faizi – 1 yıldan uzun vade</td><td>%10</td></tr>
+          <tr><td>Yıllara yaygın inşaat ve onarım hakedişleri</td><td>%5</td></tr>
+          <tr><td>Ücretler</td><td>Gelir vergisi tarifesine göre (%15–%40)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Formüller</h2>
+    <ul>
+      <li><strong>Brütten nete:</strong> Stopaj = Brüt × Oran; Net = Brüt − Stopaj</li>
+      <li><strong>Netten brüte:</strong> Brüt = Net ÷ (1 − Oran)</li>
+    </ul>
+
+    <h2>Örnek Hesaplama</h2>
+    <p>
+      Bir şirket, dükkân sahibine her ay eline 40.000 TL geçecek şekilde kira ödemek istiyor. %20 stopajlı işyeri kirasında brüt kira 40.000 ÷ 0,80 = <strong>50.000 TL</strong> olur. Şirket 10.000 TL stopajı ertesi ayın 26'sına kadar muhtasar beyannameyle öder, 40.000 TL'yi mülk sahibine aktarır. Mülk sahibi yıllık beyannamesinde 600.000 TL brüt kira gelirini beyan eder ve kesilen 120.000 TL'yi vergisinden düşer.
+    </p>
+
+    <h3>Stopaj ile KDV Aynı Şey mi?</h3>
+    <p>
+      Hayır. Stopaj gelir üzerinden alınan gelir vergisinin peşin tahsilidir ve net ödemeyi azaltır. KDV ise tüketim vergisidir ve brüt tutarın üzerine eklenir. Serbest meslek makbuzunda ikisi birlikte görülür: 10.000 TL brüt ücrete 2.000 TL KDV eklenir, 2.000 TL stopaj düşülür.
+    </p>
   </section>
 </CalcLayout>

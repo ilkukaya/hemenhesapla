@@ -1,0 +1,257 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcSelect from '../../components/calculator/CalcSelect.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Kredi kartı gecikme faizi nasıl hesaplanır?",
+    answer: "Asgari ödeme tutarının ödenmeyen kısmına aylık gecikme faizi, dönem borcunun geri kalan ödenmemiş kısmına ise akdi faiz uygulanır. Faiz günlük olarak hesaplanır: Faiz = Tutar × Aylık Oran × Gün / 30. Hesaplanan faizin üzerine %15 KKDF ve %15 BSMV eklenir; yani faiz tutarı vergilerle birlikte 1,30 katına çıkar."
+  },
+  {
+    question: "2026 kredi kartı faiz oranları nedir?",
+    answer: "TCMB'nin Eylül 2026'da da değiştirmediği azami oranlara göre dönem borcu 30.000 TL'nin altındaysa aylık akdi faiz %3,25, gecikme faizi %3,55'tir. 30.000-180.000 TL arasında akdi faiz %3,75, gecikme faizi %4,05; 180.000 TL üzerinde ise akdi faiz %4,25, gecikme faizi %4,55'tir. Bankalar bu oranların altında faiz uygulayabilir."
+  },
+  {
+    question: "Kredi kartı asgari ödeme tutarı nasıl hesaplanır?",
+    answer: "BDDK düzenlemesine göre kart limiti 50.000 TL ve altındaysa asgari ödeme tutarı dönem borcunun %20'si, limiti 50.000 TL'nin üzerindeyse %40'ıdır. Örneğin limiti 80.000 TL olan kartta 30.000 TL dönem borcu varsa asgari ödeme 12.000 TL, limiti 40.000 TL olan kartta ise 6.000 TL olur."
+  },
+  {
+    question: "Asgari ödeme yaparsam faiz işler mi?",
+    answer: "Evet. Asgari tutarı ödemeniz gecikme faizini ve yasal takibi önler, ancak ödenmeyen kalan borca akdi faiz işler. Faiz, hesap kesim tarihinden itibaren gün sayısına göre hesaplanır ve bir sonraki ekstreye yansır. Borç tamamen kapatılmadıkça her ay faiz eklendiğinden sürekli asgari ödeme yapmak toplam maliyeti ciddi şekilde artırır."
+  },
+  {
+    question: "Kredi kartı borcu ödenmezse ne olur?",
+    answer: "Bir yıl içinde üç kez asgari ödeme yapılmazsa kart nakit çekime ve yeni harcamalara kapatılabilir; borç kapatılmadan veya yapılandırılmadan yeni kart almak zorlaşır. Borç ödenmemeye devam ederse banka yasal takip başlatabilir ve kredi notunuz (KKB/Findeks) olumsuz etkilenir. Gecikme 90 günü aşarsa kayıt takibe düşer ve beş yıl boyunca kredi siciline yansır."
+  },
+  {
+    question: "KKDF ve BSMV nedir?",
+    answer: "KKDF (Kaynak Kullanımını Destekleme Fonu) ve BSMV (Banka ve Sigorta Muameleleri Vergisi), bireysel kredi ve kredi kartı faizleri üzerinden alınan yasal kesintilerdir. Kredi kartı faizlerinde her ikisi de %15 oranında uygulanır. Bu nedenle 1.000 TL faiz tahakkuk ettiğinde ekstreye 150 TL KKDF ve 150 TL BSMV ile birlikte 1.300 TL yansır."
+  }
+];
+
+const meta = {
+  title: "Kredi Kartı Gecikme Faizi Hesaplama",
+  seoTitle: "Kredi Kartı Gecikme Faizi ve Asgari Ödeme Hesaplama 2026",
+  description: "Kredi kartı gecikme faizi, akdi faiz ve asgari ödeme tutarını 2026 TCMB azami oranlarıyla hesaplayın. KKDF ve BSMV dahil toplam faiz maliyetini görün.",
+  summary: "Kredi kartında asgari tutarın ödenmeyen kısmına gecikme faizi, kalan borca akdi faiz işler: Faiz = Tutar × Aylık Oran × Gün / 30, üzerine %15 KKDF ve %15 BSMV eklenir. Eylül 2026 TCMB azami oranları 30.000 TL altı borçta %3,25 akdi ve %3,55 gecikme faizidir. Asgari ödeme, limiti 50.000 TL'ye kadar kartlarda borcun %20'si, üzerinde %40'ıdır.",
+  howTo: [
+    "Ekstredeki dönem borcunu ve kart limitinizi girin.",
+    "Son ödeme tarihine kadar ödediğiniz tutarı yazın (hiç ödemediyseniz 0).",
+    "Faizin işleyeceği gün sayısını girin (bir sonraki hesap kesimine kadar genellikle 30).",
+    "Oranlar borç tutarına göre otomatik gelir; bankanızın oranı farklıysa değiştirin."
+  ],
+  sources: [
+    { name: "TCMB - Kredi Kartı İşlemlerinde Uygulanacak Azami Faiz Oranları", url: "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Main+Menu/Istatistikler/Bankacilik+Verileri/Kredi_Karti_Islemlerinde_Uygulanacak_Azami_Faiz_Oranlari" },
+    { name: "BDDK - Kredi Kartı Limiti ve Asgari Ödeme Basın Açıklaması", url: "https://www.bddk.org.tr/Duyuru/Detay/701" }
+  ],
+  category: "finans",
+  slug: "kredi-karti-gecikme-faizi-hesaplama",
+  keywords: ["kredi kartı gecikme faizi hesaplama", "kredi kartı asgari ödeme hesaplama", "kredi kartı faiz hesaplama", "akdi faiz", "kredi kartı faiz oranları 2026", "asgari ödeme tutarı"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["finans/kredi-hesaplama", "finans/bilesik-faiz-hesaplama", "finans/enflasyon-hesaplama", "gunluk/tasarruf-hesaplama"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" class="calc-inputs">
+    <CalcInput id="borc" label="Dönem Borcu" type="number" suffix="₺" placeholder="30000" step={1} min={0} />
+    <CalcInput id="limit" label="Kart Limiti" type="number" suffix="₺" placeholder="60000" step={1000} min={0} />
+    <CalcInput id="odenen" label="Ödenen Tutar" type="number" suffix="₺" placeholder="0" step={1} min={0} required={false} />
+    <CalcInput id="gun" label="Faiz Gün Sayısı" type="number" suffix="gün" placeholder="30" value="30" step={1} min={1} max={365} />
+    <CalcSelect
+      id="oranMod"
+      label="Faiz Oranları"
+      options={[
+        { value: "otomatik", label: "TCMB azami oranları (otomatik)" },
+        { value: "manuel", label: "Kendim gireceğim" }
+      ]}
+      value="otomatik"
+    />
+    <CalcInput id="akdi" label="Aylık Akdi Faiz" type="number" suffix="%" placeholder="3.25" step={0.01} min={0} required={false} />
+    <CalcInput id="gecikme" label="Aylık Gecikme Faizi" type="number" suffix="%" placeholder="3.55" step={0.01} min={0} required={false} />
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">Toplam Faiz Maliyeti (KKDF + BSMV dahil)</p>
+      <p class="calc-result-value" id="toplam">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row"><span class="calc-detail-label">Asgari Ödeme Tutarı</span><span class="calc-detail-value" id="asgari">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Ödenmeyen Asgari Tutar</span><span class="calc-detail-value" id="odenmeyen-asgari">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Gecikme Faizi</span><span class="calc-detail-value" id="gecikme-faizi">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Akdi Faiz</span><span class="calc-detail-value" id="akdi-faiz">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">KKDF (%15)</span><span class="calc-detail-value" id="kkdf">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">BSMV (%15)</span><span class="calc-detail-value" id="bsmv">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Kullanılan Oranlar (akdi / gecikme)</span><span class="calc-detail-value" id="oranlar">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Sonraki Ekstreye Devreden Borç</span><span class="calc-detail-value" id="devreden">—</span></div>
+    </div>
+  </CalcResult>
+
+  <script>
+    // TCMB azami oranları (Eylül 2026 itibarıyla geçerli, aylık %)
+    function azamiOranlar(borc: number) {
+      if (borc < 30000) return { akdi: 3.25, gecikme: 3.55 };
+      if (borc <= 180000) return { akdi: 3.75, gecikme: 4.05 };
+      return { akdi: 4.25, gecikme: 4.55 };
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('calc-form');
+      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const resultArea = document.getElementById('calc-result');
+      const akdiEl = document.getElementById('akdi') as HTMLInputElement;
+      const gecikmeEl = document.getElementById('gecikme') as HTMLInputElement;
+
+      function debounce(fn: () => void, delay = 150) {
+        let timer: ReturnType<typeof setTimeout>;
+        return () => { clearTimeout(timer); timer = setTimeout(fn, delay); };
+      }
+      const val = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
+      const setText = (id: string, t: string) => { (document.getElementById(id) as HTMLElement).textContent = t; };
+      const tl = (n: number) => new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+      const pct = (n: number) => '%' + n.toLocaleString('tr-TR', { minimumFractionDigits: 2 });
+
+      form?.addEventListener('submit', (e) => e.preventDefault());
+      const debouncedCalc = debounce(calculate);
+      inputs.forEach(input => {
+        input.addEventListener('input', debouncedCalc);
+        input.addEventListener('change', debouncedCalc);
+      });
+
+      function calculate() {
+        const borc = parseFloat(val('borc'));
+        const limit = parseFloat(val('limit'));
+        const odenen = Math.max(0, parseFloat(val('odenen')) || 0);
+        const gun = parseInt(val('gun'), 10) || 30;
+        if (!borc || borc <= 0 || !limit || limit <= 0) return;
+
+        let oran = azamiOranlar(borc);
+        const manuel = val('oranMod') === 'manuel';
+        akdiEl.readOnly = !manuel;
+        gecikmeEl.readOnly = !manuel;
+        if (manuel) {
+          const a = parseFloat(akdiEl.value);
+          const g = parseFloat(gecikmeEl.value);
+          oran = { akdi: isNaN(a) ? oran.akdi : a, gecikme: isNaN(g) ? oran.gecikme : g };
+        } else {
+          akdiEl.value = String(oran.akdi);
+          gecikmeEl.value = String(oran.gecikme);
+        }
+
+        const asgariOran = limit <= 50000 ? 0.20 : 0.40;
+        const asgari = borc * asgariOran;
+        const kalan = Math.max(0, borc - odenen);
+        const odenmeyenAsgari = Math.min(kalan, Math.max(0, asgari - odenen));
+        const akdiMatrah = kalan - odenmeyenAsgari;
+        const gecikmeFaizi = odenmeyenAsgari * (oran.gecikme / 100) * gun / 30;
+        const akdiFaiz = akdiMatrah * (oran.akdi / 100) * gun / 30;
+        const faiz = gecikmeFaizi + akdiFaiz;
+        const kkdf = faiz * 0.15;
+        const bsmv = faiz * 0.15;
+        const toplam = faiz + kkdf + bsmv;
+
+        setText('asgari', `${tl(asgari)} (%${asgariOran * 100})`);
+        setText('odenmeyen-asgari', tl(odenmeyenAsgari));
+        setText('gecikme-faizi', tl(gecikmeFaizi));
+        setText('akdi-faiz', tl(akdiFaiz));
+        setText('kkdf', tl(kkdf));
+        setText('bsmv', tl(bsmv));
+        setText('oranlar', `${pct(oran.akdi)} / ${pct(oran.gecikme)}`);
+        setText('toplam', tl(toplam));
+        setText('devreden', tl(kalan + toplam));
+
+        if (resultArea) resultArea.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const params = new URLSearchParams();
+        inputs.forEach(input => {
+          const el = input as HTMLInputElement;
+          if (el.value && el.id) params.set(el.id, el.value);
+        });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+      }
+
+      function loadFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        let hasParams = false;
+        inputs.forEach(input => {
+          const el = input as HTMLInputElement;
+          if (el.id && params.has(el.id)) { el.value = params.get(el.id)!; hasParams = true; }
+        });
+        akdiEl.readOnly = val('oranMod') !== 'manuel';
+        gecikmeEl.readOnly = val('oranMod') !== 'manuel';
+        if (hasParams) calculate();
+      }
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>Kredi Kartı Gecikme Faizi Nedir?</h2>
+    <p>
+      Kredi kartı gecikme faizi, son ödeme tarihine kadar asgari ödeme tutarının ödenmemesi halinde ödenmeyen asgari kısım için uygulanan faizdir. Asgari tutarın üzerindeki ödenmemiş borca ise akdi faiz (alışveriş faizi) işler. Her iki faiz türünün azami oranı Türkiye Cumhuriyet Merkez Bankası (TCMB) tarafından belirlenir ve bankalar bu oranların üzerinde faiz uygulayamaz.
+    </p>
+
+    <h2>2026 Kredi Kartı Azami Faiz Oranları</h2>
+    <p>TCMB'nin 1 Eylül 2026 itibarıyla değiştirmeden sürdürdüğü aylık azami oranlar:</p>
+    <table>
+      <thead>
+        <tr><th>Dönem Borcu</th><th>Aylık Akdi Faiz</th><th>Aylık Gecikme Faizi</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>30.000 TL altı</td><td>%3,25</td><td>%3,55</td></tr>
+        <tr><td>30.000 - 180.000 TL</td><td>%3,75</td><td>%4,05</td></tr>
+        <tr><td>180.000 TL üzeri</td><td>%4,25</td><td>%4,55</td></tr>
+        <tr><td>Nakit çekim ve KMH</td><td>%4,25</td><td>%4,55</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Asgari Ödeme Tutarı</h2>
+    <p>
+      BDDK'nın 2024'te güncellediği düzenlemeye göre kart limiti <strong>50.000 TL ve altındaysa</strong> asgari ödeme tutarı dönem borcunun <strong>%20</strong>'si, limiti <strong>50.000 TL'nin üzerindeyse %40</strong>'ıdır. Asgari tutarı ödemek kartınızın kullanıma kapanmasını ve gecikme faizini önler; ancak kalan borca akdi faiz işlemeye devam eder.
+    </p>
+
+    <h2>Hesaplama Yöntemi</h2>
+    <ul>
+      <li><strong>Asgari ödeme:</strong> Dönem Borcu × (%20 veya %40)</li>
+      <li><strong>Gecikme faizi:</strong> Ödenmeyen Asgari Tutar × Aylık Gecikme Oranı × Gün / 30</li>
+      <li><strong>Akdi faiz:</strong> (Kalan Borç − Ödenmeyen Asgari) × Aylık Akdi Oran × Gün / 30</li>
+      <li><strong>Vergiler:</strong> Faiz × %15 KKDF + Faiz × %15 BSMV</li>
+    </ul>
+
+    <h2>Örnek Hesaplama</h2>
+    <p>
+      Limiti 60.000 TL olan bir kartta 30.000 TL dönem borcu bulunduğunu ve son ödeme tarihinde hiç ödeme yapılmadığını varsayalım. Borç 30.000 TL olduğu için ikinci dilim oranları (%3,75 akdi, %4,05 gecikme) uygulanır.
+    </p>
+    <ul>
+      <li>Asgari ödeme: 30.000 × %40 = 12.000 TL (limit 50.000 TL'nin üzerinde)</li>
+      <li>Gecikme faizi (30 gün): 12.000 × %4,05 = 486 TL</li>
+      <li>Akdi faiz (30 gün): 18.000 × %3,75 = 675 TL</li>
+      <li>Toplam faiz: 1.161 TL; KKDF 174,15 TL; BSMV 174,15 TL</li>
+      <li>Toplam faiz maliyeti: 1.509,30 TL</li>
+    </ul>
+    <p>
+      Aynı kişi asgari tutar olan 12.000 TL'yi zamanında ödeseydi yalnızca 18.000 TL'ye akdi faiz işleyecek ve toplam maliyet 877,50 TL olacaktı.
+    </p>
+
+    <h2>Kredi Kartı Borcunu Yönetmek İçin Öneriler</h2>
+    <ul>
+      <li>Mümkünse dönem borcunun tamamını ödeyin; faiz yalnızca eksik ödemede işler.</li>
+      <li>En azından asgari tutarı zamanında ödeyerek daha yüksek olan gecikme faizinden kaçının.</li>
+      <li>Uzun süre kapatamayacağınız borçlar için ihtiyaç kredisi veya bankanın yapılandırma seçeneklerini karşılaştırın.</li>
+      <li>Nakit çekim ve kredili mevduat hesabının en yüksek dilim faiziyle çalıştığını unutmayın.</li>
+    </ul>
+    <h2>Sürekli Asgari Ödemenin Maliyeti</h2>
+    <p>Her ay yalnızca asgari tutarı ödemek kısa vadede bütçeyi rahatlatsa da borcun kapanma süresini uzatır ve toplam faiz yükünü artırır. Örneğin 30.000 TL borcun kalan 18.000 TL'lik kısmına aylık %3,75 akdi faiz ve vergiler eklendiğinde bir sonraki ekstreye yaklaşık 877,50 TL faiz yansır. Yıllık bazda düşünüldüğünde bu, vergilerle birlikte %4,875 aylık maliyet demektir ve bileşik etkisiyle yıllık %75'in üzerinde bir maliyete karşılık gelir. Bu nedenle kapatılamayan kart borcu için daha düşük faizli bir ihtiyaç kredisiyle borç kapatma seçeneğini karşılaştırmak mantıklı olabilir.</p>
+    <p>Taksitli alışverişlerde ise yalnızca o ay ekstreye yansıyan taksit tutarı dönem borcuna dahil edilir. Kalan taksitler gelecek ekstrelerde ayrı ayrı yer alır ve faiz işlemez; faiz yalnızca vadesi gelen ekstre borcunun ödenmeyen kısmına uygulanır.</p>
+    <p class="calc-note">
+      Not: Hesaplama TCMB azami oranlarıyla yapılır; bankanızın uyguladığı oran daha düşük olabilir. Bankalar faizi hesap kesim ve ödeme tarihlerine göre günlük işletir; ekstrenizdeki tutar küçük farklılıklar gösterebilir.
+    </p>
+  </section>
+</CalcLayout>

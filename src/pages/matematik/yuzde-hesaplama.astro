@@ -1,209 +1,372 @@
 ---
 import CalcLayout from '../../layouts/CalcLayout.astro';
 import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcSelect from '../../components/calculator/CalcSelect.astro';
 import CalcResult from '../../components/calculator/CalcResult.astro';
 
 const faq = [
   {
-    question: "Yüzde hesaplama nasıl yapılır?",
-    answer: "Yüzde hesaplamak için temel formül şudur: Sonuç = Sayı × Yüzde / 100. Örneğin 200'ün %25'ini bulmak için 200 × 25 / 100 = 50 hesaplaması yapılır."
+    question: "Bir sayının yüzdesi nasıl hesaplanır?",
+    answer: "Sayıyı yüzde oranıyla çarpıp 100'e bölmeniz yeterlidir: Sonuç = Sayı × Oran ÷ 100. Örneğin 350'nin %12'si 350 × 12 ÷ 100 = 42 eder. Pratik bir yol olarak oranı ondalığa çevirip (%12 = 0,12) sayıyla doğrudan çarpabilirsiniz. Zihinden hesapta %10'u bulup katlamak da işe yarar."
   },
   {
-    question: "Bir sayıya yüzde eklemek nasıl hesaplanır?",
-    answer: "Bir sayıya yüzde eklemek için şu formül kullanılır: Sonuç = Sayı + (Sayı × Yüzde / 100). Örneğin 500 TL'ye %20 zam yapıldığında 500 + (500 × 20 / 100) = 500 + 100 = 600 TL olur."
+    question: "Bir sayı diğerinin yüzde kaçıdır, nasıl bulunur?",
+    answer: "Parçayı bütüne bölüp 100 ile çarpın: Yüzde = Parça ÷ Bütün × 100. Örneğin 80 soruluk sınavda 68 doğru yapan öğrenci soruların 68 ÷ 80 × 100 = %85'ini doğru cevaplamıştır. Parça bütünden büyükse sonuç %100'ü aşar. Bütün sıfır olursa bölme tanımsız olduğundan sonuç hesaplanamaz."
   },
   {
-    question: "Bir sayıdan yüzde çıkarmak nasıl hesaplanır?",
-    answer: "Bir sayıdan yüzde çıkarmak için şu formül kullanılır: Sonuç = Sayı - (Sayı × Yüzde / 100). Örneğin 800 TL'lik bir üründe %10 indirim yapıldığında 800 - (800 × 10 / 100) = 800 - 80 = 720 TL olur."
+    question: "Yüzde artış veya azalış nasıl hesaplanır?",
+    answer: "Yüzde değişim = (Yeni Değer − Eski Değer) ÷ Eski Değer × 100 formülüyle bulunur. Sonuç pozitifse artış, negatifse azalış vardır. Örneğin fiyatı 40 TL'den 46 TL'ye çıkan ürün için (46 − 40) ÷ 40 × 100 = %15 artış olmuştur. Eski değer sıfırsa yüzde değişim tanımsızdır."
+  },
+  {
+    question: "%20 zam yapılıp sonra %20 indirim yapılırsa eski fiyata dönülür mü?",
+    answer: "Hayır. 100 TL'lik ürüne %20 zam yapılınca fiyat 120 TL olur; bunun %20'si 24 TL olduğu için indirim sonrası fiyat 96 TL'ye düşer. Yüzdeler her seferinde farklı bir tabana uygulandığı için art arda yapılan zam ve indirim birbirini götürmez. Net etki 1,20 × 0,80 = 0,96, yani %4 kayıptır."
+  },
+  {
+    question: "Yüzde ile yüzde puan arasındaki fark nedir?",
+    answer: "Yüzde puan, iki yüzde oranı arasındaki aritmetik farktır. Faiz %40'tan %50'ye çıktığında artış 10 yüzde puandır; ancak göreli artış (50 − 40) ÷ 40 × 100 = %25'tir. Enflasyon, faiz ve seçim sonuçları yorumlanırken bu iki kavramın karıştırılması sık yapılan bir hatadır."
+  },
+  {
+    question: "KDV dahil fiyattan KDV hariç fiyat nasıl bulunur?",
+    answer: "KDV dahil fiyatı (1 + KDV oranı ÷ 100) değerine bölmeniz gerekir. 1.200 TL'lik %20 KDV dahil tutarın hariç fiyatı 1.200 ÷ 1,20 = 1.000 TL'dir. Dahil fiyattan %20 düşmek (960 TL) yanlış sonuç verir. Hesaplayıcıdaki 'Yüzde eklenmeden önceki değer' modu bu işlemi yapar."
   }
 ];
 
 const meta = {
   title: "Yüzde Hesaplama",
-  description: "Yüzde hesaplama aracı ile bir sayının yüzdesini, yüzde eklenmiş veya çıkarılmış değerini anında hesaplayın. Formül ve örneklerle kolay yüzde hesaplama.",
+  seoTitle: "Yüzde Hesaplama: Yüzde Kaç, Artış ve Azalış Bulma",
+  description: "Bir sayının yüzdesini, bir sayının diğerinin yüzde kaçı olduğunu, yüzde artış ve azalışı tek araçla hesaplayın. Formüller ve çözümlü örneklerle.",
+  summary: "Bir sayının yüzdesi Sayı × Oran ÷ 100 ile bulunur; örneğin 200'ün %15'i 30'dur. Bir sayının diğerinin yüzde kaçı olduğu Parça ÷ Bütün × 100, yüzde değişim ise (Yeni − Eski) ÷ Eski × 100 formülüyle hesaplanır.",
+  howTo: [
+    "Hesaplama türünü seçin: yüzdesini bulma, yüzde kaç, yüzde değişim, yüzde ekleme veya çıkarma.",
+    "Seçtiğiniz moda göre değişen iki alana sayılarınızı girin.",
+    "Sonuç, kullanılan formül ve ek değerler yazdıkça anında güncellenir.",
+    "Linki Kopyala düğmesiyle hesabınızı aynı değerlerle paylaşabilirsiniz."
+  ],
+  sources: [
+    { name: "Wolfram MathWorld: Percent", url: "https://mathworld.wolfram.com/Percent.html" }
+  ],
   category: "matematik",
   slug: "yuzde-hesaplama",
-  keywords: ["yüzde hesaplama", "yüzde hesaplayıcı", "yüzde formülü", "yüzde bulma", "oran hesaplama"],
-  dateModified: "2026-04-01",
+  keywords: ["yüzde hesaplama", "yüzde kaç hesaplama", "yüzde artış hesaplama", "yüzde azalış hesaplama", "yüzde değişim", "yüzde bulma", "yüzde formülü"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["matematik/oran-hesaplama", "finans/kdv-hesaplama", "finans/enflasyon-hesaplama", "matematik/ortalama-hesaplama"],
   faq
 };
 ---
 
 <CalcLayout meta={meta}>
-  <form id="calc-form" novalidate>
-    <div class="calc-inputs">
-      <CalcInput
-        id="sayi"
-        label="Sayı"
-        type="number"
-        placeholder="Örn: 200"
-        helpText="Yüzdesini hesaplamak istediğiniz sayıyı girin"
-      />
-      <CalcInput
-        id="yuzde"
-        label="Yüzde"
-        type="number"
-        placeholder="Örn: 25"
-        suffix="%"
-        min={0}
-        helpText="Hesaplamak istediğiniz yüzde oranını girin"
-      />
-    </div>
+  <form id="calc-form" class="calc-inputs" novalidate>
+    <CalcSelect
+      id="mod"
+      label="Hesaplama Türü"
+      options={[
+        { value: "yuzdesi", label: "X sayısının %Y'si kaçtır?" },
+        { value: "kaci", label: "X, Y'nin yüzde kaçıdır?" },
+        { value: "degisim", label: "X'ten Y'ye yüzde değişim (artış/azalış)" },
+        { value: "ekle", label: "X'e %Y ekle (zam)" },
+        { value: "cikar", label: "X'ten %Y çıkar (indirim)" },
+        { value: "ters", label: "%Y eklenmiş X'in önceki değeri" },
+      ]}
+      value="yuzdesi"
+    />
+    <CalcInput id="a" label="Sayı (X)" type="number" placeholder="Örn: 1250" />
+    <CalcInput id="b" label="Yüzde Oranı (Y)" type="number" placeholder="Örn: 18" />
   </form>
+  <p id="calc-error" class="calc-error" role="alert" hidden></p>
 
   <CalcResult>
     <div slot="main">
-      <p class="calc-result-label">Sayının Yüzdesi</p>
+      <p class="calc-result-label" id="sonuc-etiket">Sonuç</p>
       <p class="calc-result-value" id="sonuc-ana">—</p>
     </div>
     <div slot="details">
       <div class="calc-detail-row">
-        <span class="calc-detail-label">X'in Y%'si</span>
-        <span class="calc-detail-value" id="sonuc-yuzde">—</span>
+        <span class="calc-detail-label">Hesaplama</span>
+        <span class="calc-detail-value" id="d-formul">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">X'e Y% eklenmiş</span>
-        <span class="calc-detail-value" id="sonuc-ekle">—</span>
+        <span class="calc-detail-label" id="d-ek1-label">—</span>
+        <span class="calc-detail-value" id="d-ek1">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">X'ten Y% çıkarılmış</span>
-        <span class="calc-detail-value" id="sonuc-cikar">—</span>
+        <span class="calc-detail-label" id="d-ek2-label">—</span>
+        <span class="calc-detail-value" id="d-ek2">—</span>
       </div>
     </div>
   </CalcResult>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
-      const resultArea = document.getElementById('calc-result');
+    type Mode = 'yuzdesi' | 'kaci' | 'degisim' | 'ekle' | 'cikar' | 'ters';
 
-      function debounce(fn, delay = 150) {
-        let timer;
-        return (...args) => {
+    const LABELS: Record<Mode, { a: string; b: string; pa: string; pb: string; sonuc: string }> = {
+      yuzdesi: { a: 'Sayı (X)', b: 'Yüzde Oranı (Y)', pa: 'Örn: 1250', pb: 'Örn: 18', sonuc: "X'in %Y'si" },
+      kaci: { a: 'Parça (X)', b: 'Bütün (Y)', pa: 'Örn: 68', pb: 'Örn: 80', sonuc: "X, Y'nin yüzde kaçı" },
+      degisim: { a: 'Eski Değer (X)', b: 'Yeni Değer (Y)', pa: 'Örn: 40', pb: 'Örn: 46', sonuc: 'Yüzde Değişim' },
+      ekle: { a: 'Sayı (X)', b: 'Eklenecek Yüzde (Y)', pa: 'Örn: 15000', pb: 'Örn: 25', sonuc: 'Yüzde Eklenmiş Değer' },
+      cikar: { a: 'Sayı (X)', b: 'Çıkarılacak Yüzde (Y)', pa: 'Örn: 1200', pb: 'Örn: 30', sonuc: 'Yüzde Çıkarılmış Değer' },
+      ters: { a: 'Yüzde Eklenmiş Değer (X)', b: 'Eklenmiş Yüzde (Y)', pa: 'Örn: 1200', pb: 'Örn: 20', sonuc: 'Önceki (Yüzde Hariç) Değer' },
+    };
+
+    const SUP: Record<string, string> = { '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹', '-': '⁻' };
+
+    function parseNum(raw: string | null | undefined): number {
+      if (raw == null) return NaN;
+      let s = String(raw).trim().replace(/\s+/g, '');
+      if (!s) return NaN;
+      if (s.includes(',') && s.includes('.')) {
+        s = s.lastIndexOf(',') > s.lastIndexOf('.') ? s.replace(/\./g, '').replace(',', '.') : s.replace(/,/g, '');
+      } else {
+        s = s.replace(',', '.');
+      }
+      if (!/^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/i.test(s)) return NaN;
+      return Number(s);
+    }
+
+    function fmt(n: number, maxFrac = 4): string {
+      if (Number.isNaN(n)) return 'Tanımsız';
+      if (!Number.isFinite(n)) return n > 0 ? '∞' : '−∞';
+      if (n === 0) return '0';
+      const abs = Math.abs(n);
+      if (abs >= 1e15 || abs < 1e-6) {
+        const [m, e] = n.toExponential(6).split('e');
+        const mant = new Intl.NumberFormat('tr-TR', { maximumFractionDigits: 6 }).format(Number(m));
+        return `${mant} × 10${String(Number(e)).split('').map(c => SUP[c] ?? c).join('')}`;
+      }
+      const clean = Number(n.toPrecision(12));
+      const extra = abs < 1 ? Math.ceil(-Math.log10(abs)) : 0;
+      return new Intl.NumberFormat('tr-TR', { maximumFractionDigits: Math.min(20, maxFrac + extra) }).format(clean);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('calc-form') as HTMLFormElement;
+      const inputs = form.querySelectorAll<HTMLInputElement | HTMLSelectElement>('input, select');
+      const resultArea = document.getElementById('calc-result');
+      const errorEl = document.getElementById('calc-error') as HTMLElement;
+      const modEl = document.getElementById('mod') as HTMLSelectElement;
+      const aEl = document.getElementById('a') as HTMLInputElement;
+      const bEl = document.getElementById('b') as HTMLInputElement;
+      const aLabel = aEl.closest('.calc-input-group')?.querySelector('.calc-label');
+      const bLabel = bEl.closest('.calc-input-group')?.querySelector('.calc-label');
+      const bSuffix = bEl.closest('.calc-input-group')?.querySelector('.calc-input-suffix');
+
+      const setText = (id: string, text: string) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = text;
+      };
+
+      function showError(msg: string) {
+        errorEl.textContent = msg;
+        errorEl.hidden = false;
+        resultArea?.classList.add('hidden');
+      }
+
+      function updateLabels() {
+        const m = modEl.value as Mode;
+        const l = LABELS[m] ?? LABELS.yuzdesi;
+        if (aLabel) aLabel.textContent = l.a;
+        if (bLabel) bLabel.textContent = l.b;
+        aEl.placeholder = l.pa;
+        bEl.placeholder = l.pb;
+        if (bSuffix) bSuffix.textContent = m === 'kaci' || m === 'degisim' ? '' : '%';
+      }
+
+      function debounce<T extends (...args: never[]) => void>(fn: T, delay = 150) {
+        let timer: ReturnType<typeof setTimeout>;
+        return (...args: Parameters<T>) => {
           clearTimeout(timer);
           timer = setTimeout(() => fn(...args), delay);
         };
       }
 
-      function formatNumber(num, decimals = 2) {
-        return new Intl.NumberFormat('tr-TR', {
-          minimumFractionDigits: decimals,
-          maximumFractionDigits: decimals
-        }).format(num);
-      }
-
-      const debouncedCalc = debounce(calculate);
-      inputs.forEach(input => {
-        input.addEventListener('input', debouncedCalc);
-        input.addEventListener('change', debouncedCalc);
-      });
-
       function calculate() {
-        const sayiEl = document.getElementById('sayi');
-        const yuzdeEl = document.getElementById('yuzde');
+        const mode = modEl.value as Mode;
+        const x = parseNum(aEl.value);
+        const y = parseNum(bEl.value);
 
-        const sayi = parseFloat(sayiEl.value);
-        const yuzde = parseFloat(yuzdeEl.value);
-
-        if (isNaN(sayi) || isNaN(yuzde)) {
-          if (resultArea) resultArea.classList.add('hidden');
+        if (Number.isNaN(x) || Number.isNaN(y)) {
+          errorEl.hidden = true;
+          resultArea?.classList.add('hidden');
           return;
         }
 
-        const yuzdesonuc = sayi * yuzde / 100;
-        const ekle = sayi + yuzdesonuc;
-        const cikar = sayi - yuzdesonuc;
+        let sonuc = NaN;
+        let ana = '';
+        let formul = '';
+        let ek1Label = '';
+        let ek1 = '';
+        let ek2Label = '';
+        let ek2 = '';
 
-        const anaEl = document.getElementById('sonuc-ana');
-        const yuzdeEl2 = document.getElementById('sonuc-yuzde');
-        const ekleEl = document.getElementById('sonuc-ekle');
-        const cikarEl = document.getElementById('sonuc-cikar');
+        switch (mode) {
+          case 'yuzdesi': {
+            sonuc = (x * y) / 100;
+            ana = fmt(sonuc);
+            formul = `${fmt(x)} × ${fmt(y)} ÷ 100 = ${fmt(sonuc)}`;
+            ek1Label = `%${fmt(y)} eklenmiş hali`;
+            ek1 = fmt(x + sonuc);
+            ek2Label = `%${fmt(y)} çıkarılmış hali`;
+            ek2 = fmt(x - sonuc);
+            break;
+          }
+          case 'kaci': {
+            if (y === 0) return showError('Bütün (Y) sıfır olamaz; sıfıra bölme tanımsızdır.');
+            sonuc = (x / y) * 100;
+            ana = `%${fmt(sonuc)}`;
+            formul = `${fmt(x)} ÷ ${fmt(y)} × 100 = %${fmt(sonuc)}`;
+            ek1Label = 'Ondalık oran (X ÷ Y)';
+            ek1 = fmt(x / y, 6);
+            ek2Label = 'Kalan kısım (Y − X)';
+            ek2 = `${fmt(y - x)} (%${fmt(100 - sonuc)})`;
+            break;
+          }
+          case 'degisim': {
+            if (x === 0) return showError('Eski değer sıfırken yüzde değişim tanımsızdır. Yalnızca mutlak fark hesaplanabilir.');
+            sonuc = ((y - x) / Math.abs(x)) * 100;
+            const yon = sonuc > 0 ? 'artış' : sonuc < 0 ? 'azalış' : 'değişim yok';
+            ana = sonuc === 0 ? '%0' : `%${fmt(Math.abs(sonuc))} ${yon}`;
+            formul = `(${fmt(y)} − ${fmt(x)}) ÷ ${fmt(Math.abs(x))} × 100 = %${fmt(sonuc)}`;
+            ek1Label = 'Mutlak fark (Y − X)';
+            ek1 = fmt(y - x);
+            ek2Label = 'Katsayı (Y ÷ X)';
+            ek2 = `${fmt(y / x, 6)} kat`;
+            break;
+          }
+          case 'ekle': {
+            const tutar = (x * y) / 100;
+            sonuc = x + tutar;
+            ana = fmt(sonuc);
+            formul = `${fmt(x)} × (1 + ${fmt(y)} ÷ 100) = ${fmt(sonuc)}`;
+            ek1Label = 'Eklenen tutar';
+            ek1 = fmt(tutar);
+            ek2Label = 'Çarpan';
+            ek2 = fmt(1 + y / 100, 6);
+            break;
+          }
+          case 'cikar': {
+            const tutar = (x * y) / 100;
+            sonuc = x - tutar;
+            ana = fmt(sonuc);
+            formul = `${fmt(x)} × (1 − ${fmt(y)} ÷ 100) = ${fmt(sonuc)}`;
+            ek1Label = 'Düşülen tutar';
+            ek1 = fmt(tutar);
+            ek2Label = 'Çarpan';
+            ek2 = fmt(1 - y / 100, 6);
+            break;
+          }
+          case 'ters': {
+            if (y <= -100) return showError('Eklenmiş yüzde −100 veya daha küçük olamaz.');
+            sonuc = x / (1 + y / 100);
+            ana = fmt(sonuc);
+            formul = `${fmt(x)} ÷ (1 + ${fmt(y)} ÷ 100) = ${fmt(sonuc)}`;
+            ek1Label = 'İçindeki yüzde tutarı';
+            ek1 = fmt(x - sonuc);
+            ek2Label = `Yanlış yöntem (X'ten %${fmt(y)} düşmek)`;
+            ek2 = fmt(x - (x * y) / 100);
+            break;
+          }
+        }
 
-        if (anaEl) anaEl.textContent = formatNumber(yuzdesonuc);
-        if (yuzdeEl2) yuzdeEl2.textContent = formatNumber(yuzdesonuc);
-        if (ekleEl) ekleEl.textContent = formatNumber(ekle);
-        if (cikarEl) cikarEl.textContent = formatNumber(cikar);
+        errorEl.hidden = true;
+        setText('sonuc-etiket', LABELS[mode]?.sonuc ?? 'Sonuç');
+        setText('sonuc-ana', ana);
+        setText('d-formul', formul);
+        setText('d-ek1-label', ek1Label);
+        setText('d-ek1', ek1);
+        setText('d-ek2-label', ek2Label);
+        setText('d-ek2', ek2);
 
-        if (resultArea) resultArea.classList.remove('hidden');
+        resultArea?.classList.remove('hidden');
         updateURL();
       }
 
       function updateURL() {
         const params = new URLSearchParams();
-        inputs.forEach(input => {
-          if (input.value && input.value !== '' && input.id) {
-            params.set(input.id, input.value);
-          }
+        inputs.forEach(el => {
+          if (el.id && el.value !== '') params.set(el.id, el.value);
         });
-        const newURL = `${window.location.pathname}?${params.toString()}`;
-        history.replaceState(null, '', newURL);
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
       }
 
       function loadFromURL() {
         const params = new URLSearchParams(window.location.search);
+        // Eski paylaşım linkleri (?sayi=..&yuzde=..) ile uyumluluk
+        if (params.has('sayi') && !params.has('a')) params.set('a', params.get('sayi')!);
+        if (params.has('yuzde') && !params.has('b')) params.set('b', params.get('yuzde')!);
         let hasParams = false;
-        inputs.forEach(input => {
-          if (input.id && params.has(input.id)) {
-            input.value = params.get(input.id);
+        inputs.forEach(el => {
+          if (el.id && params.has(el.id)) {
+            const v = params.get(el.id)!;
+            if (el instanceof HTMLSelectElement) {
+              if (Array.from(el.options).some(o => o.value === v)) el.value = v;
+            } else {
+              const n = parseNum(v);
+              if (!Number.isNaN(n)) el.value = String(n);
+            }
             hasParams = true;
           }
         });
+        updateLabels();
         if (hasParams) calculate();
       }
+
+      const debouncedCalc = debounce(calculate);
+      inputs.forEach(el => {
+        el.addEventListener('input', debouncedCalc);
+        el.addEventListener('change', debouncedCalc);
+      });
+      modEl.addEventListener('change', updateLabels);
+      form.addEventListener('submit', e => { e.preventDefault(); calculate(); });
 
       loadFromURL();
     });
   </script>
 
   <section class="calc-content">
-    <h2>Yüzde Hesaplama Nedir?</h2>
+    <h2>Yüzde Nedir?</h2>
     <p>
-      Yüzde (%), bir bütünün yüzde kaçının belirli bir parçaya karşılık geldiğini ifade eden matematiksel bir kavramdır. Günlük hayatımızda alışverişteki indirimlerden vergi hesaplamalarına, sınav notlarından faiz oranlarına kadar pek çok alanda yüzde hesaplaması kullanılmaktadır. Bu araç ile saniyeler içinde doğru ve hızlı yüzde hesapları yapabilirsiniz.
+      Yüzde, bir miktarın 100 eşit parçaya bölünmüş bir bütüne göre ne kadar olduğunu gösterir. %25 demek "her 100 birimde 25 birim", yani 25/100 = 0,25 demektir. Bu yüzden her yüzde hesabı aslında bir çarpma ya da bölme işlemidir; zor olan, hangi sayının "bütün" (taban) olduğunu doğru seçmektir.
     </p>
 
     <h2>Yüzde Hesaplama Formülleri</h2>
+    <table>
+      <thead>
+        <tr><th>Soru</th><th>Formül</th><th>Örnek</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>X'in %Y'si kaçtır?</td><td>X × Y ÷ 100</td><td>250'nin %12'si = 30</td></tr>
+        <tr><td>X, Y'nin yüzde kaçıdır?</td><td>X ÷ Y × 100</td><td>45, 180'in %25'idir</td></tr>
+        <tr><td>X'ten Y'ye yüzde değişim</td><td>(Y − X) ÷ X × 100</td><td>80'den 92'ye %15 artış</td></tr>
+        <tr><td>X'e %Y eklemek</td><td>X × (1 + Y ÷ 100)</td><td>15.000 + %25 = 18.750</td></tr>
+        <tr><td>X'ten %Y çıkarmak</td><td>X × (1 − Y ÷ 100)</td><td>1.200 − %30 = 840</td></tr>
+        <tr><td>%Y eklenmiş X'in önceki değeri</td><td>X ÷ (1 + Y ÷ 100)</td><td>1.200 ÷ 1,20 = 1.000</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Örnek Hesaplama</h2>
+    <h3>İndirimli fiyat</h3>
     <p>
-      Yüzde hesaplamada kullanılan temel matematiksel formüller şunlardır:
+      Etiket fiyatı 2.450 TL olan bir montta %35 indirim var. İndirim tutarı 2.450 × 35 ÷ 100 = 857,50 TL, ödenecek tutar ise 2.450 × 0,65 = 1.592,50 TL'dir. Hesaplayıcıda "X'ten %Y çıkar" modunu seçip X = 2450, Y = 35 girmeniz yeterli.
     </p>
+    <h3>Maaş artışının yüzdesi</h3>
+    <p>
+      Maaşınız 32.000 TL'den 38.400 TL'ye yükseldiyse artış oranı (38.400 − 32.000) ÷ 32.000 × 100 = %20'dir. "Yüzde değişim" modunda eski değer olarak 32000, yeni değer olarak 38400 girin. Değer düşmüşse sonuç "azalış" olarak gösterilir.
+    </p>
+    <h3>Sınav başarı yüzdesi</h3>
+    <p>
+      120 soruluk denemede 87 doğru yapan öğrencinin başarı oranı 87 ÷ 120 × 100 = %72,5'tir. Bunun için "X, Y'nin yüzde kaçıdır?" modunu kullanın.
+    </p>
+
+    <h2>Sık Yapılan Yüzde Hataları</h2>
     <ul>
-      <li><strong>Bir sayının yüzdesini bulmak:</strong> Sonuç = Sayı × Yüzde ÷ 100</li>
-      <li><strong>Bir sayıya yüzde eklemek:</strong> Sonuç = Sayı × (1 + Yüzde ÷ 100)</li>
-      <li><strong>Bir sayıdan yüzde çıkarmak:</strong> Sonuç = Sayı × (1 − Yüzde ÷ 100)</li>
+      <li><strong>Yanlış taban seçmek:</strong> Fiyat 100'den 80'e düştüğünde azalış %20'dir; ama 80'den 100'e çıkış %25'tir. Değişim her zaman eski değere göre hesaplanır.</li>
+      <li><strong>Art arda yüzdeleri toplamak:</strong> Önce %10, sonra %20 zam toplamda %30 değil, 1,10 × 1,20 = 1,32 yani %32 artış eder.</li>
+      <li><strong>KDV'yi dahil fiyattan düşmek:</strong> %20 KDV dahil fiyattan %20 çıkarmak hariç fiyatı vermez; dahil fiyatı 1,20'ye bölmek gerekir.</li>
+      <li><strong>Yüzde ile yüzde puanı karıştırmak:</strong> %8'den %10'a çıkan bir oran 2 yüzde puan, göreli olarak ise %25 artmıştır.</li>
     </ul>
 
-    <h2>Yüzde Hesaplama Örnekleri</h2>
+    <h2>Negatif Değerlerle Yüzde Değişim</h2>
     <p>
-      Günlük hayattan birkaç örnek vererek yüzde hesaplamasını daha iyi anlayalım:
+      Eski değer negatifse (örneğin zarardan kâra geçen bir şirket) klasik formül yanıltıcı işaret üretir. Bu araç paydada eski değerin mutlak değerini kullanır: −50'den 25'e geçiş (25 − (−50)) ÷ 50 × 100 = %150 artış olarak gösterilir. Eski değer sıfırsa yüzde değişim tanımlı değildir; bu durumda yalnızca mutlak farkı yorumlayın.
     </p>
-    <p>
-      <strong>Örnek 1 – İndirim Hesabı:</strong> 1.200 TL değerindeki bir ürün %30 indirime girdiğinde indirim tutarı: 1.200 × 30 ÷ 100 = 360 TL, indirimli fiyat ise 1.200 − 360 = 840 TL olur.
-    </p>
-    <p>
-      <strong>Örnek 2 – Zam Hesabı:</strong> Aylık 15.000 TL maaş alan bir çalışana %25 zam yapıldığında zam tutarı: 15.000 × 25 ÷ 100 = 3.750 TL, yeni maaş ise 15.000 + 3.750 = 18.750 TL olur.
-    </p>
-    <p>
-      <strong>Örnek 3 – Not Hesabı:</strong> 80 soruluk bir sınavda 64 soruyu doğru yanıtlayan öğrencinin başarı yüzdesi: 64 ÷ 80 × 100 = %80 olur.
-    </p>
-
-    <h2>Yüzde Hesaplamanın Kullanım Alanları</h2>
-    <p>
-      Yüzde hesaplama pek çok alanda günlük hayatın vazgeçilmez bir parçasıdır:
-    </p>
-    <ul>
-      <li><strong>Ticaret ve alışveriş:</strong> İndirim, zam, kâr ve zarar oranlarının hesaplanması</li>
-      <li><strong>Finans ve bankacılık:</strong> Faiz oranları, kredi geri ödemeleri, yatırım getirileri</li>
-      <li><strong>Vergi ve muhasebe:</strong> KDV, gelir vergisi, stopaj gibi vergi hesaplamaları</li>
-      <li><strong>Sağlık:</strong> Vücut yağ oranı, kalori hesaplamaları, ilaç dozaj oranları</li>
-      <li><strong>Eğitim:</strong> Sınav başarı yüzdeleri, öğrenci değerlendirme sistemleri</li>
-      <li><strong>İstatistik:</strong> Araştırma sonuçlarının yüzde dağılımları, anket verileri</li>
-    </ul>
-
-    <h2>Sıkça Sorulan Sorular</h2>
-    {faq.map(item => (
-      <details>
-        <summary><strong>{item.question}</strong></summary>
-        <p>{item.answer}</p>
-      </details>
-    ))}
   </section>
 </CalcLayout>

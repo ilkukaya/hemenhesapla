@@ -1,0 +1,228 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcSelect from '../../components/calculator/CalcSelect.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "İndirimli fiyat nasıl hesaplanır?",
+    answer: "İndirimli fiyat, Fiyat × (1 − İndirim Oranı / 100) formülüyle bulunur. Örneğin 1.200 TL'lik bir ürüne %25 indirim uygulanırsa indirim tutarı 1.200 × 0,25 = 300 TL, indirimli fiyat 900 TL olur. Pratik bir yol olarak %25 indirimli fiyat, etiket fiyatının %75'i alınarak da hesaplanabilir."
+  },
+  {
+    question: "İndirim yüzdesi nasıl bulunur?",
+    answer: "Eski ve yeni fiyatı biliyorsanız indirim yüzdesi (Eski Fiyat − Yeni Fiyat) / Eski Fiyat × 100 formülüyle hesaplanır. Örneğin 800 TL'lik ürün 560 TL'ye düştüyse indirim 240 TL, indirim oranı 240 / 800 × 100 = %30'dur. Bu formül, mağazaların duyurduğu indirim oranlarını kontrol etmek için de kullanılabilir."
+  },
+  {
+    question: "%20 + %10 indirim %30 indirim mi demektir?",
+    answer: "Hayır. Art arda uygulanan indirimler toplanmaz, çarpılır. %20 indirimden sonra kalan fiyata %10 daha indirim yapıldığında toplam indirim 1 − (0,80 × 0,90) = %28 olur. Örneğin 1.000 TL'lik ürün önce 800 TL'ye, sonra 720 TL'ye düşer. Sepette ek indirim kampanyalarında bu farkı dikkate almak gerekir."
+  },
+  {
+    question: "İndirimli fiyattan eski fiyat nasıl hesaplanır?",
+    answer: "İndirimli fiyatı ve indirim oranını biliyorsanız orijinal fiyat, İndirimli Fiyat / (1 − İndirim Oranı / 100) formülüyle bulunur. Örneğin %40 indirimle 600 TL'ye satılan ürünün etiket fiyatı 600 / 0,60 = 1.000 TL'dir. İndirimli fiyatı indirim oranı kadar artırmak (600 × 1,40 = 840 TL) yanlış sonuç verir."
+  },
+  {
+    question: "İndirimli ürünlerde fiyat kontrolü nasıl yapılır?",
+    answer: "Haksız Fiyat Değerlendirme Kurulu düzenlemelerine göre indirim duyurularında indirim öncesi fiyat olarak son 30 gün içindeki en düşük satış fiyatı gösterilmelidir. İndirim oranını kendiniz hesaplayıp satıcının duyurduğu oranla karşılaştırarak yanıltıcı kampanyaları fark edebilirsiniz. Şüpheli durumlarda Ticaret Bakanlığı'na şikayette bulunabilirsiniz."
+  },
+  {
+    question: "KDV indirimden önce mi sonra mı hesaplanır?",
+    answer: "Perakende satışlarda etiket fiyatları KDV dahildir ve indirim bu KDV dahil fiyat üzerinden uygulanır; indirimli fiyatın içinde de KDV bulunur. Faturalı ticari satışlarda ise indirim genellikle KDV hariç tutara yapılır, ardından KDV eklenir. İki yöntem de oranlar aynı olduğu sürece aynı nihai fiyatı verir."
+  }
+];
+
+const meta = {
+  title: "İndirim Hesaplama",
+  seoTitle: "İndirim Hesaplama - İndirimli Fiyat ve İndirim Yüzdesi",
+  description: "İndirim hesaplama aracı: indirimli fiyatı, indirim yüzdesini, art arda indirimleri ve indirimli fiyattan etiket fiyatını saniyeler içinde hesaplayın.",
+  summary: "İndirimli fiyat = Fiyat × (1 − İndirim % / 100). 1.200 TL'lik ürüne %25 indirimde yeni fiyat 900 TL olur. İndirim yüzdesi = (Eski − Yeni) / Eski × 100. Art arda indirimler çarpılır: %20 + %10 indirim toplamda %28 eder.",
+  howTo: [
+    "Hesaplama türünü seçin: indirimli fiyat, indirim yüzdesi veya eski fiyat.",
+    "Etiket fiyatını veya indirimli fiyatı girin.",
+    "İndirim oranını ya da yeni fiyatı yazın; varsa ek indirim ekleyin.",
+    "İndirim tutarını, yeni fiyatı ve toplam indirim oranını görün."
+  ],
+  sources: [],
+  category: "finans",
+  slug: "indirim-hesaplama",
+  keywords: ["indirim hesaplama", "indirimli fiyat hesaplama", "indirim yüzdesi hesaplama", "yüzde indirim hesaplama", "kampanya indirimi", "eski fiyat hesaplama"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["matematik/yuzde-hesaplama", "finans/kdv-hesaplama", "finans/kar-marji-hesaplama", "gunluk/bahsis-hesaplama"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" class="calc-inputs">
+    <CalcSelect
+      id="mod"
+      label="Hesaplama Türü"
+      options={[
+        { value: "fiyat", label: "İndirimli fiyatı hesapla" },
+        { value: "oran", label: "İndirim yüzdesini bul" },
+        { value: "eski", label: "İndirimli fiyattan eski fiyatı bul" }
+      ]}
+      value="fiyat"
+    />
+    <CalcInput id="fiyat" label="Fiyat" type="number" suffix="₺" placeholder="1200" step={0.01} min={0} helpText="İlk iki türde etiket fiyatı, üçüncü türde indirimli fiyat." />
+    <CalcInput id="deger" label="İndirim Oranı / Yeni Fiyat" type="number" placeholder="25" step={0.01} min={0} helpText="İndirim yüzdesini bulurken indirimli fiyatı (₺), diğer türlerde indirim oranını (%) girin." />
+    <CalcInput id="ek" label="Ek İndirim (isteğe bağlı)" type="number" suffix="%" placeholder="0" step={0.01} min={0} max={100} required={false} helpText="Sepette ek indirim gibi ikinci bir indirim varsa girin." />
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label" id="ana-etiket">İndirimli Fiyat</p>
+      <p class="calc-result-value" id="ana-sonuc">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row"><span class="calc-detail-label">Etiket Fiyatı</span><span class="calc-detail-value" id="etiket">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Son Fiyat</span><span class="calc-detail-value" id="son">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Toplam İndirim Tutarı</span><span class="calc-detail-value" id="tutar">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Toplam İndirim Oranı</span><span class="calc-detail-value" id="toplam-oran">—</span></div>
+    </div>
+  </CalcResult>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('calc-form');
+      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const resultArea = document.getElementById('calc-result');
+
+      function debounce(fn: () => void, delay = 150) {
+        let timer: ReturnType<typeof setTimeout>;
+        return () => { clearTimeout(timer); timer = setTimeout(fn, delay); };
+      }
+      const val = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
+      const setText = (id: string, t: string) => { (document.getElementById(id) as HTMLElement).textContent = t; };
+      const tl = (n: number) => new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+      const pct = (n: number) => '%' + new Intl.NumberFormat('tr-TR', { maximumFractionDigits: 2 }).format(n);
+
+      form?.addEventListener('submit', (e) => e.preventDefault());
+      const debouncedCalc = debounce(calculate);
+      inputs.forEach(input => {
+        input.addEventListener('input', debouncedCalc);
+        input.addEventListener('change', debouncedCalc);
+      });
+
+      function calculate() {
+        const mod = val('mod');
+        const fiyat = parseFloat(val('fiyat'));
+        const deger = parseFloat(val('deger'));
+        const ek = Math.min(100, Math.max(0, parseFloat(val('ek')) || 0));
+        if (!fiyat || fiyat <= 0 || isNaN(deger) || deger < 0) return;
+
+        let etiket: number, son: number;
+        if (mod === 'fiyat') {
+          if (deger > 100) return;
+          etiket = fiyat;
+          son = fiyat * (1 - deger / 100) * (1 - ek / 100);
+          setText('ana-etiket', 'İndirimli Fiyat');
+          setText('ana-sonuc', tl(son));
+        } else if (mod === 'oran') {
+          etiket = fiyat;
+          son = deger * (1 - ek / 100);
+          setText('ana-etiket', 'İndirim Oranı');
+          setText('ana-sonuc', pct((etiket - son) / etiket * 100));
+        } else {
+          if (deger >= 100) return;
+          son = fiyat;
+          const carpan = (1 - deger / 100) * (1 - ek / 100);
+          if (carpan <= 0) return;
+          etiket = fiyat / carpan;
+          setText('ana-etiket', 'İndirim Öncesi Fiyat');
+          setText('ana-sonuc', tl(etiket));
+        }
+        const tutar = etiket - son;
+        setText('etiket', tl(etiket));
+        setText('son', tl(son));
+        setText('tutar', tl(tutar));
+        setText('toplam-oran', pct(tutar / etiket * 100));
+
+        if (resultArea) resultArea.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const params = new URLSearchParams();
+        inputs.forEach(input => {
+          const el = input as HTMLInputElement;
+          if (el.value && el.id) params.set(el.id, el.value);
+        });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+      }
+
+      function loadFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        let hasParams = false;
+        inputs.forEach(input => {
+          const el = input as HTMLInputElement;
+          if (el.id && params.has(el.id)) { el.value = params.get(el.id)!; hasParams = true; }
+        });
+        if (hasParams) calculate();
+      }
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>İndirim Hesaplama Nasıl Yapılır?</h2>
+    <p>
+      Kampanya dönemlerinde, Efsane Cuma ve sezon sonu indirimlerinde bir ürünün gerçekte kaça düştüğünü hızlıca görmek alışveriş kararını kolaylaştırır. İndirim hesaplama aracı üç farklı soruya cevap verir: indirimli fiyat ne kadar, bu indirim yüzde kaç ve indirimli fiyatı bilinen bir ürünün etiket fiyatı neydi. Ayrıca "sepette ek %10" gibi art arda uygulanan indirimleri de doğru şekilde birleştirir.
+    </p>
+
+    <h2>İndirim Formülleri</h2>
+    <ul>
+      <li><strong>İndirim tutarı:</strong> Fiyat × İndirim % / 100</li>
+      <li><strong>İndirimli fiyat:</strong> Fiyat × (1 − İndirim % / 100)</li>
+      <li><strong>İndirim yüzdesi:</strong> (Eski Fiyat − Yeni Fiyat) / Eski Fiyat × 100</li>
+      <li><strong>Eski fiyat:</strong> İndirimli Fiyat / (1 − İndirim % / 100)</li>
+      <li><strong>Art arda indirim:</strong> Toplam İndirim = 1 − (1 − a) × (1 − b)</li>
+    </ul>
+
+    <h2>Örnek Hesaplama</h2>
+    <p>
+      Etiket fiyatı 2.500 TL olan bir montta %30 indirim ve sepette ek %10 indirim olduğunu düşünelim.
+    </p>
+    <ul>
+      <li>İlk indirim sonrası: 2.500 × 0,70 = 1.750 TL</li>
+      <li>Ek indirim sonrası: 1.750 × 0,90 = 1.575 TL</li>
+      <li>Toplam indirim tutarı: 2.500 − 1.575 = 925 TL</li>
+      <li>Toplam indirim oranı: 925 / 2.500 = %37 (%40 değil)</li>
+    </ul>
+
+    <h2>Sık Kullanılan İndirim Oranları Tablosu</h2>
+    <table>
+      <thead>
+        <tr><th>Etiket Fiyatı</th><th>%10</th><th>%20</th><th>%25</th><th>%30</th><th>%50</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>100 TL</td><td>90 TL</td><td>80 TL</td><td>75 TL</td><td>70 TL</td><td>50 TL</td></tr>
+        <tr><td>250 TL</td><td>225 TL</td><td>200 TL</td><td>187,50 TL</td><td>175 TL</td><td>125 TL</td></tr>
+        <tr><td>500 TL</td><td>450 TL</td><td>400 TL</td><td>375 TL</td><td>350 TL</td><td>250 TL</td></tr>
+        <tr><td>1.000 TL</td><td>900 TL</td><td>800 TL</td><td>750 TL</td><td>700 TL</td><td>500 TL</td></tr>
+        <tr><td>2.500 TL</td><td>2.250 TL</td><td>2.000 TL</td><td>1.875 TL</td><td>1.750 TL</td><td>1.250 TL</td></tr>
+        <tr><td>5.000 TL</td><td>4.500 TL</td><td>4.000 TL</td><td>3.750 TL</td><td>3.500 TL</td><td>2.500 TL</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Kafadan İndirim Hesaplama Pratikleri</h2>
+    <ul>
+      <li><strong>%10 indirim:</strong> Fiyatın virgülünü bir basamak sola kaydırıp fiyattan çıkarın (450 TL için 45 TL indirim).</li>
+      <li><strong>%25 indirim:</strong> Fiyatı 4'e bölüp çıkarın ya da fiyatın dörtte üçünü alın.</li>
+      <li><strong>%50 indirim:</strong> Fiyatın yarısı.</li>
+      <li><strong>%20 indirim:</strong> %10'u bulup ikiyle çarpın.</li>
+    </ul>
+
+    <h2>Gerçek İndirimi Nasıl Anlarsınız?</h2>
+    <p>
+      Türkiye'de indirimli satış duyurularında, indirim öncesi fiyat olarak son 30 gün içinde uygulanan en düşük fiyatın gösterilmesi gerekir. Kampanyadan birkaç gün önce fiyatı yükseltip ardından "indirim" yapmak yanıltıcı uygulama sayılır. Ürün fiyatını birkaç hafta takip edip gerçekleşen indirim oranını bu araçla hesaplamak, gerçek fırsatları ayırt etmenize yardımcı olur.
+    </p>
+    <h2>İndirim ile Zam Arasındaki Asimetri</h2>
+    <p>Yüzdelerin asimetrik davranması, indirim hesaplarında en sık karşılaşılan yanılgılardan biridir. Bir ürünün fiyatı önce %20 artırılıp sonra %20 indirilirse başlangıç fiyatına dönülmez. 1.000 TL'lik ürün %20 zamla 1.200 TL'ye çıkar, ardından %20 indirimle 960 TL'ye düşer. Benzer şekilde %50 indirimle yarıya inen bir fiyatın eski haline dönmesi için %100 zam gerekir.</p>
+    <p>Bu nedenle kampanya öncesinde fiyatı artırılan ürünlerde duyurulan indirim oranı, gerçek fiyat düşüşünü yansıtmayabilir. Ürünün birkaç hafta önceki fiyatını not edip indirimli fiyatla birlikte hesaplayıcıya girerseniz gerçek indirim oranını görebilirsiniz. Taksitli alışverişlerde ise vade farkı eklenen toplam tutarı esas almayı unutmayın.</p>
+    <p class="calc-note">
+      Not: Hesaplamalar KDV dahil etiket fiyatı üzerinden yapılır. Kargo ücreti, taksit farkı veya kupon kodu gibi ek kalemler son ödeyeceğiniz tutarı değiştirebilir.
+    </p>
+  </section>
+</CalcLayout>

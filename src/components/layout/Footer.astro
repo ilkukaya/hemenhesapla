@@ -1,73 +1,58 @@
 ---
-import categoriesData from '../../data/categories.json';
-const categories = categoriesData.categories;
-
-const popularCalcs = categories.flatMap(cat =>
-  cat.calculators
-    .filter(c => c.popular)
-    .map(c => ({ ...c, categorySlug: cat.slug }))
-);
+import Logo from '../ui/Logo.astro';
+import { categories, popularCalcs } from '../../utils/catalog';
+import { SITE, INTEGRATIONS, hasAds } from '../../config/site';
+const needsConsent = Boolean(INTEGRATIONS.gaId || hasAds);
 ---
 
-<footer class="bg-[var(--color-primary-dark)] text-white mt-16">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-12">
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-      <!-- Brand -->
-      <div>
-        <a href="/" class="flex items-center gap-2 mb-4">
-          <img src="/favicon.svg" alt="" width="28" height="28" />
-          <span class="font-[var(--font-heading)] font-bold text-lg">
-            Hemen<span class="text-[var(--color-accent)]">Hesapla</span>
-          </span>
-        </a>
-        <p class="text-sm text-white/60 leading-relaxed">
-          Türkiye'nin en kapsamlı online hesaplayıcı platformu. Hızlı, güvenilir ve ücretsiz hesaplama araçları.
+<footer class="mt-20 border-t border-[var(--color-border)] bg-[var(--color-surface)]">
+  <div class="container-page py-12">
+    <div class="grid gap-10 lg:grid-cols-[1.2fr_2fr]">
+      <div class="max-w-sm">
+        <a href="/" aria-label="Ana sayfa"><Logo /></a>
+        <p class="mt-4 text-[0.9375rem] text-[var(--color-text-secondary)] leading-relaxed">
+          Günlük hayatta ihtiyaç duyduğunuz hesapları; güncel mevzuat, açık formüller ve kaynak göstererek, ücretsiz yapmanızı sağlıyoruz.
+        </p>
+        <p class="mt-4 text-[0.8125rem] text-[var(--color-text-muted)] leading-relaxed">
+          Sonuçlar bilgilendirme amaçlıdır; resmî işlemlerde ilgili kurumdan teyit ediniz.
         </p>
       </div>
 
-      <!-- Kategoriler -->
-      <div>
-        <h3 class="font-[var(--font-heading)] font-bold text-sm uppercase tracking-wider mb-4 text-white/80">Kategoriler</h3>
-        <ul class="space-y-2">
-          {categories.map((cat) => (
-            <li>
-              <a href={`/${cat.slug}/`} class="text-sm text-white/60 hover:text-white transition-colors">
-                {cat.icon} {cat.name}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <!-- Popüler Hesaplayıcılar -->
-      <div>
-        <h3 class="font-[var(--font-heading)] font-bold text-sm uppercase tracking-wider mb-4 text-white/80">Popüler</h3>
-        <ul class="space-y-2">
-          {popularCalcs.slice(0, 8).map((calc) => (
-            <li>
-              <a href={`/${calc.categorySlug}/${calc.slug}/`} class="text-sm text-white/60 hover:text-white transition-colors">
-                {calc.title}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <!-- Bilgi -->
-      <div>
-        <h3 class="font-[var(--font-heading)] font-bold text-sm uppercase tracking-wider mb-4 text-white/80">Bilgi</h3>
-        <ul class="space-y-2">
-          <li><a href="/hakkimizda/" class="text-sm text-white/60 hover:text-white transition-colors">Hakkımızda</a></li>
-          <li><a href="/iletisim/" class="text-sm text-white/60 hover:text-white transition-colors">İletişim</a></li>
-          <li><a href="/gizlilik/" class="text-sm text-white/60 hover:text-white transition-colors">Gizlilik Politikası</a></li>
-        </ul>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-8">
+        <div>
+          <h2 class="eyebrow mb-3">Kategoriler</h2>
+          <ul class="space-y-2">
+            {categories.map((cat) => (
+              <li><a href={`/${cat.slug}/`} class="text-[0.9375rem] text-[var(--color-text-secondary)] hover:text-[var(--color-text)]">{cat.name}</a></li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <h2 class="eyebrow mb-3">Popüler</h2>
+          <ul class="space-y-2">
+            {popularCalcs.slice(0, 8).map((c) => (
+              <li><a href={c.href} class="text-[0.9375rem] text-[var(--color-text-secondary)] hover:text-[var(--color-text)]">{c.title}</a></li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <h2 class="eyebrow mb-3">Kurumsal</h2>
+          <ul class="space-y-2">
+            <li><a href="/hakkimizda/" class="text-[0.9375rem] text-[var(--color-text-secondary)] hover:text-[var(--color-text)]">Hakkımızda</a></li>
+            <li><a href="/metodoloji/" class="text-[0.9375rem] text-[var(--color-text-secondary)] hover:text-[var(--color-text)]">Hesaplama yöntemi</a></li>
+            <li><a href="/iletisim/" class="text-[0.9375rem] text-[var(--color-text-secondary)] hover:text-[var(--color-text)]">İletişim</a></li>
+            <li><a href="/gizlilik/" class="text-[0.9375rem] text-[var(--color-text-secondary)] hover:text-[var(--color-text)]">Gizlilik politikası</a></li>
+            <li><a href="/cerez-politikasi/" class="text-[0.9375rem] text-[var(--color-text-secondary)] hover:text-[var(--color-text)]">Çerez politikası</a></li>
+            <li><a href="/kullanim-kosullari/" class="text-[0.9375rem] text-[var(--color-text-secondary)] hover:text-[var(--color-text)]">Kullanım koşulları</a></li>
+            {needsConsent && <li><button type="button" data-consent-open class="text-[0.9375rem] text-[var(--color-text-secondary)] hover:text-[var(--color-text)]">Çerez tercihleri</button></li>}
+          </ul>
+        </div>
       </div>
     </div>
 
-    <div class="border-t border-white/10 mt-10 pt-6 text-center">
-      <p class="text-sm text-white/40">
-        &copy; {new Date().getFullYear()} hemenhesapla.net — Tüm hakları saklıdır.
-      </p>
+    <div class="mt-10 pt-6 border-t border-[var(--color-border)] flex flex-col sm:flex-row gap-2 justify-between text-[0.8125rem] text-[var(--color-text-muted)]">
+      <p>© {new Date().getFullYear()} {SITE.name}. Tüm hakları saklıdır.</p>
+      <p>Türkiye için hazırlanmıştır · Veriler güncel mevzuata göre düzenli olarak güncellenir.</p>
     </div>
   </div>
 </footer>

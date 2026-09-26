@@ -2,175 +2,169 @@
 import CalcLayout from '../../layouts/CalcLayout.astro';
 import CalcInput from '../../components/calculator/CalcInput.astro';
 import CalcResult from '../../components/calculator/CalcResult.astro';
+import legal from '../../data/legal-2026.json';
 
-const faq = [
-  {
-    question: "Kira artışında TÜFE hangi oran kullanılmalıdır?",
-    answer: "Kira artışında, sözleşme yenileme tarihinden önceki 12 aylık TÜFE (Tüketici Fiyat Endeksi) ortalaması esas alınmaktadır. TÜİK her ay açıkladığı TÜFE verilerinin son 12 aylık ortalamasını hesaplayarak bu oranı bulabilirsiniz. Türkiye Cumhuriyet Merkez Bankası ve TÜİK'in resmi web sitelerinde güncel TÜFE oranlarına ulaşabilirsiniz. Yasal düzenlemeye göre kira artışı bu oranı aşamaz.",
-  },
-  {
-    question: "Kira artış sınırlaması ne zaman sona eriyor?",
-    answer: "6098 sayılı Türk Borçlar Kanunu'nda yapılan geçici değişiklikle konut kiralarında yüzde 25 artış sınırı getirilmişti. Bu düzenleme belirli dönemler için uzatılmış olup güncel yasal durumu takip etmek önemlidir. Mevcut uygulamada konut kiralarında yıllık artış oranı 12 aylık TÜFE ortalamasını aşamaz. En güncel yasal düzenlemeyi Resmi Gazete'den veya bir avukattan öğrenmeniz tavsiye edilir.",
-  },
-  {
-    question: "Ev sahibi TÜFE'den fazla zam yapabilir mi?",
-    answer: "Türk Borçlar Kanunu'nun ilgili hükümleri çerçevesinde konut kiralarında yıllık artış oranı, bir önceki kira yılında geçerli olan 12 aylık TÜFE ortalamasını aşamaz. Ev sahibi bu oranın üzerinde zam yapamazken, tarafların anlaşmasıyla TÜFE'nin altında bir artış da belirlenebilir. Yasal sınırı aşan artış talepleri geçersiz sayılır ve kiracı bu artışa uymak zorunda değildir. Uyuşmazlık durumunda sulh hukuk mahkemesine başvurulabilir.",
-  },
-];
+const kira = legal.kiraArtis;
+const fmt = (n: number) => new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
 
 const meta = {
-  title: "Kira Artış Hesaplama 2026 — TÜFE ile Yeni Kira",
-  description: "Mevcut kiranızı ve TÜFE oranını girerek yeni kira bedelini ve artış tutarını hesaplayın. Yasal kira artış sınırını öğrenin.",
+  title: "Kira Artış Hesaplama",
+  seoTitle: `Kira Artış Hesaplama ${kira.period} – Oran %${fmt(kira.rate)}`,
+  description: `Kira artış hesaplama: ${kira.period} için yasal azami oran %${fmt(kira.rate)} (TÜFE 12 aylık ortalama). Mevcut kiranızı girin, yeni kira ve artış tutarını anında görün.`,
+  summary: `Konut ve işyeri kiralarında yıllık artış, bir önceki kira yılının TÜFE 12 aylık ortalamalara göre değişim oranını geçemez (TBK md. 344). ${kira.period}'de yenilenen sözleşmeler için bu oran %${fmt(kira.rate)}'dir; 20.000 TL kira en fazla ${fmt(20000 * (1 + kira.rate / 100))} TL'ye çıkarılabilir. Konutlardaki %25 sınırı 1 Temmuz 2024'te sona erdi.`,
+  howTo: [
+    "Mevcut aylık kira bedelinizi girin.",
+    `Kira yenileme ayınızdan önceki ayın TÜFE 12 aylık ortalama değişimini yazın (${kira.period} için %${fmt(kira.rate)} önceden doldurulmuştur).`,
+    "Sözleşmede daha düşük bir oran varsa o oranı girin; yasal sınırın üstündeki oranlar geçersizdir.",
+    "Yeni kira bedelini ve aylık/yıllık artış tutarını görün."
+  ],
+  sources: [
+    { name: "TÜİK – Tüketici Fiyat Endeksi", url: "https://data.tuik.gov.tr/" },
+    { name: "6098 sayılı Türk Borçlar Kanunu md. 344 (mevzuat.gov.tr)", url: "https://www.mevzuat.gov.tr/mevzuatmetin/1.5.6098.pdf" }
+  ],
   category: "finans",
   slug: "kira-artis-hesaplama",
-  keywords: ["kira artış hesaplama", "TÜFE kira artış", "kira artış oranı 2026", "yeni kira hesaplama", "kira zam hesaplama"],
-  dateModified: "2026-04-01",
-  relatedCalcs: ["enflasyon-hesaplama", "konut-kredisi-hesaplama", "bilesik-faiz-hesaplama"],
-  faq,
+  keywords: ["kira artış hesaplama", "kira artış oranı eylül 2026", "kira zammı hesaplama", "TÜFE 12 aylık ortalama", "yasal kira artışı", "kira artış oranı 2026"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["finans/enflasyon-hesaplama", "finans/stopaj-hesaplama", "finans/gelir-vergisi-hesaplama", "finans/konut-kredisi-hesaplama"],
+  faq: [
+    {
+      question: `${kira.period} kira artış oranı ne kadar?`,
+      answer: `TÜİK'in ${kira.announced.split('-').reverse().join('.')} tarihinde açıkladığı verilere göre TÜFE'nin 12 aylık ortalamalara göre değişimi %${fmt(kira.rate)} oldu. Bu oran, ${kira.period} ayında yenilenen konut ve çatılı işyeri kira sözleşmelerinde uygulanabilecek en yüksek artış oranıdır. Önceki ay bu oran %${fmt(kira.previous[0].rate)} idi.`
+    },
+    {
+      question: "Kira artışında %25 sınırı devam ediyor mu?",
+      answer: "Hayır. Konut kiralarına getirilen %25 geçici sınırı 1 Temmuz 2024'te sona erdi. Bu tarihten sonraki yenilemelerde konut ve işyeri için tek ölçü, bir önceki kira yılındaki TÜFE 12 aylık ortalama değişimidir. Taraflar daha düşük bir artış üzerinde anlaşabilir, daha yükseği ise geçersizdir."
+    },
+    {
+      question: "Kira artış oranı hangi aya göre belirlenir?",
+      answer: "Kira dönemi hangi ay yenileniyorsa, o aydan önce açıklanan son TÜFE verisi esas alınır. TÜİK verileri her ayın 3'ünde açıklandığından, örneğin Eylül yenilemelerinde Ağustos ayı TÜFE'sinin 12 aylık ortalaması kullanılır. Yıllık TÜFE ya da aylık TÜFE değil, 12 aylık ortalama değişim oranı esas alınır."
+    },
+    {
+      question: "Ev sahibi 5 yıl sonra kirayı istediği kadar artırabilir mi?",
+      answer: "Beş yıldan uzun süreli veya beş yıldan sonra yenilenen sözleşmelerde her beş yılın sonunda kira bedeli, hakim tarafından emsal kiralar ve TÜFE dikkate alınarak hakkaniyete uygun şekilde yeniden belirlenebilir. Ev sahibi bunu tek taraflı yapamaz; anlaşma olmazsa arabuluculuk ve kira tespit davası yoluna gidilir."
+    },
+    {
+      question: "Döviz cinsinden kira nasıl artırılır?",
+      answer: "Kira bedeli yabancı para üzerinden kararlaştırılmışsa, beş yıl geçmedikçe bedel değiştirilemez. Ancak Türkiye'de yerleşik kişiler arasındaki konut ve işyeri kira sözleşmelerinde döviz cinsinden bedel kararlaştırılması, istisnalar dışında Türk Parası Kıymetini Koruma mevzuatına göre yasaktır. Mevcut dövizli sözleşmeler TL'ye çevrilmelidir."
+    }
+  ]
 };
 ---
 
 <CalcLayout meta={meta}>
-  <form id="calc-form" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
+  <form id="calc-form" class="calc-inputs" novalidate>
     <CalcInput
       id="mevcutKira"
-      label="Mevcut Kira Bedeli"
+      label="Mevcut Aylık Kira"
       type="number"
       suffix="₺"
-      placeholder="10000"
-      step={100}
+      placeholder="20000"
+      step="any"
       min={0}
     />
     <CalcInput
       id="tufeOrani"
-      label="12 Aylık TÜFE Ortalaması"
+      label="Artış Oranı (TÜFE 12 aylık ortalama)"
       type="number"
       suffix="%"
-      placeholder="58.51"
-      step={0.01}
+      placeholder={String(kira.rate)}
+      value={String(kira.rate)}
+      step="any"
       min={0}
-      helpText="TÜİK'in açıkladığı son 12 aylık TÜFE ortalamasını girin"
+      helpText={`${kira.period} yenilemeleri için yasal azami oran %${fmt(kira.rate)}`}
     />
   </form>
 
   <CalcResult>
     <div slot="main">
-      <span class="calc-result-label">Yeni Kira Bedeli</span>
-      <span class="calc-result-value" id="yeni-kira">—</span>
+      <p class="calc-result-label">Yeni Aylık Kira</p>
+      <p class="calc-result-value" id="yeni-kira">—</p>
     </div>
     <div slot="details">
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Artış Tutarı</span>
+        <span class="calc-detail-label">Aylık Artış Tutarı</span>
         <span class="calc-detail-value" id="artis-tutari">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Artış Oranı</span>
+        <span class="calc-detail-label">Uygulanan Oran</span>
         <span class="calc-detail-value" id="artis-orani">—</span>
       </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Yeni Yıllık Kira Toplamı</span>
+        <span class="calc-detail-value" id="yillik-kira">—</span>
+      </div>
+      <p class="calc-note" id="kira-uyari"></p>
     </div>
   </CalcResult>
 
-  <section class="calc-content">
-    <h2>Kira Artış Hesaplama Nasıl Yapılır?</h2>
-    <p>
-      Kira artışı hesaplama, kiracı ve ev sahiplerinin yıllık kira yenileme dönemlerinde sıkça ihtiyaç duyduğu bir işlemdir. Türkiye'de kira artışları, Türk Borçlar Kanunu kapsamında belirli kurallara bağlıdır. Konut kiralarında yıllık artış oranı, bir önceki kira yılının 12 aylık TÜFE (Tüketici Fiyat Endeksi) ortalamasını geçemez. Bu kural hem kiracıyı yüksek zamlardan korur hem de ev sahibinin haklarını güvence altına alır.
-    </p>
-    <p>
-      TÜFE oranı, Türkiye İstatistik Kurumu (TÜİK) tarafından her ay düzenli olarak yayımlanmaktadır. 12 aylık ortalama TÜFE değeri, kira sözleşmesinin yenileneceği tarihten geriye doğru hesaplanan bir yıllık dönem için belirlenen enflasyon oranını ifade eder. Bu oranı TÜİK'in resmi web sitesinden veya Merkez Bankası'nın açıkladığı verilerden öğrenebilirsiniz.
-    </p>
-    <p>
-      Kira artış hesaplayıcımız sayesinde mevcut kiranızı ve güncel TÜFE oranını girerek yeni kira bedelini, artış tutarını ve artış oranını anında hesaplayabilirsiniz. Bu araç hem kiracıların hakkını koruması hem de ev sahiplerinin yasal sınırlar içinde hareket etmesi için tasarlanmıştır.
-    </p>
-    <h3>Kira Artış Formülü</h3>
-    <p>
-      Kira artışı hesaplama formülü oldukça basittir:
-    </p>
-    <p>
-      <strong>Yeni Kira = Mevcut Kira × (1 + TÜFE Oranı / 100)</strong>
-    </p>
-    <p>
-      <strong>Artış Tutarı = Yeni Kira − Mevcut Kira</strong>
-    </p>
-    <p>
-      Örneğin mevcut kiranız 10.000 TL ve 12 aylık TÜFE ortalaması %58,51 ise: Yeni Kira = 10.000 × (1 + 58,51/100) = 10.000 × 1,5851 = 15.851 TL olarak hesaplanır. Artış tutarı ise 5.851 TL'dir.
-    </p>
-    <h3>Dikkat Edilmesi Gerekenler</h3>
-    <p>
-      Kira artışı hesaplanırken kullanılacak TÜFE oranının kira sözleşmesinin yenileme tarihine uygun dönemde olmasına dikkat edilmelidir. Yanlış dönem TÜFE'si kullanılması hatalı hesaplama sonuçları doğurabilir. Ayrıca kira sözleşmesinde özel bir artış oranı belirlenmişse bu oran yasal sınırı aşmamak kaydıyla geçerli olabilir. Uyuşmazlık durumunda her zaman bir hukuk uzmanına danışmanız tavsiye edilir. Hesaplama aracımız bilgilendirme amaçlı olup hukuki bağlayıcılığı yoktur.
-    </p>
-    <h3>Sıkça Sorulan Sorular</h3>
-    {faq.map((item) => (
-      <div class="faq-item">
-        <h4>{item.question}</h4>
-        <p>{item.answer}</p>
-      </div>
-    ))}
-  </section>
-</CalcLayout>
+  <script type="application/json" id="kira-data" set:html={JSON.stringify({ rate: kira.rate, period: kira.period })}></script>
 
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
-    const resultArea = document.getElementById('calc-result');
+  <script>
+    import { formatTL, formatPercent, readNumber, readJSON, setText, showResult, initCalculator, round2 } from './_shared';
 
-    function debounce(fn: (...args: unknown[]) => void, delay = 150) {
-      let timer: ReturnType<typeof setTimeout>;
-      return (...args: unknown[]) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), delay); };
-    }
+    const data = readJSON<{ rate: number; period: string }>('kira-data');
 
-    function formatTL(num: number) {
-      return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
-    }
+    function calculate(): boolean {
+      const kira = readNumber('mevcutKira');
+      const oran = readNumber('tufeOrani');
 
-    function formatPercent(num: number) {
-      return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num) + '%';
-    }
-
-    const debouncedCalc = debounce(calculate);
-    inputs.forEach(i => {
-      i.addEventListener('input', debouncedCalc);
-      i.addEventListener('change', debouncedCalc);
-    });
-
-    function calculate() {
-      const mevcutKira = parseFloat((document.getElementById('mevcutKira') as HTMLInputElement).value);
-      const tufeOrani = parseFloat((document.getElementById('tufeOrani') as HTMLInputElement).value);
-
-      if (!mevcutKira || mevcutKira <= 0 || isNaN(tufeOrani) || tufeOrani < 0) {
-        if (resultArea) resultArea.classList.add('hidden');
-        return;
+      if (!(kira > 0) || !(oran >= 0)) {
+        showResult(false);
+        return false;
       }
 
-      const yeniKira = mevcutKira * (1 + tufeOrani / 100);
-      const artisTutari = yeniKira - mevcutKira;
+      const yeni = round2(kira * (1 + oran / 100));
+      setText('yeni-kira', formatTL(yeni));
+      setText('artis-tutari', formatTL(yeni - kira));
+      setText('artis-orani', formatPercent(oran));
+      setText('yillik-kira', formatTL(yeni * 12));
+      setText(
+        'kira-uyari',
+        oran > data.rate
+          ? `Girdiğiniz oran, ${data.period} için yasal üst sınır olan ${formatPercent(data.rate)} değerinden yüksek. Yenileme ayınızın oranını TÜİK verisinden kontrol edin.`
+          : 'Kiracı ile ev sahibi daha düşük bir artış oranında anlaşabilir.'
+      );
 
-      (document.getElementById('yeni-kira') as HTMLElement).textContent = formatTL(yeniKira);
-      (document.getElementById('artis-tutari') as HTMLElement).textContent = formatTL(artisTutari);
-      (document.getElementById('artis-orani') as HTMLElement).textContent = formatPercent(tufeOrani);
-
-      if (resultArea) resultArea.classList.remove('hidden');
-      updateURL();
+      showResult(true);
+      return true;
     }
 
-    function updateURL() {
-      const params = new URLSearchParams();
-      inputs.forEach(i => {
-        const el = i as HTMLInputElement;
-        if (el.value && el.id) params.set(el.id, el.value);
-      });
-      history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
-    }
+    initCalculator({ calculate });
+  </script>
 
-    function loadFromURL() {
-      const params = new URLSearchParams(window.location.search);
-      let hasParams = false;
-      inputs.forEach(i => {
-        const el = i as HTMLInputElement;
-        if (el.id && params.has(el.id)) { el.value = params.get(el.id)!; hasParams = true; }
-      });
-      if (hasParams) calculate();
-    }
+  <section class="calc-content">
+    <h2>Kira Artışı Nasıl Hesaplanır?</h2>
+    <p>
+      Türk Borçlar Kanunu'nun 344. maddesine göre yenilenen kira dönemlerinde uygulanacak artış, bir önceki kira yılında TÜİK'in açıkladığı tüketici fiyat endeksinin <strong>12 aylık ortalamalara göre değişim oranını</strong> geçemez. Kural hem konutlar hem de çatılı işyerleri için geçerlidir. Sözleşmede oran yazmasa bile ev sahibi en fazla bu oranda artış isteyebilir.
+    </p>
+    <p><strong>Formül:</strong> Yeni kira = Mevcut kira × (1 + TÜFE 12 aylık ortalama ÷ 100)</p>
 
-    loadFromURL();
-  });
-</script>
+    <h2>Son Açıklanan Kira Artış Oranları</h2>
+    <div class="calc-table-wrap">
+      <table class="calc-table">
+        <thead><tr><th scope="col">Yenileme ayı</th><th scope="col">Azami artış oranı</th></tr></thead>
+        <tbody>
+          <tr><td>{kira.period}</td><td>%{fmt(kira.rate)}</td></tr>
+          {kira.previous.map((p) => (
+            <tr><td>{p.period}</td><td>%{fmt(p.rate)}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p>Yeni oranlar her ayın 3'ünde TÜİK tarafından açıklanır; sözleşme yenileme ayınızdan önceki ayın verisine bakın.</p>
+
+    <h2>Örnek Hesaplama</h2>
+    <p>
+      Eylül 2026'da yenilenen bir sözleşmede aylık kira 20.000 TL ise artış en fazla 20.000 × %{fmt(kira.rate)} = {fmt(20000 * kira.rate / 100)} TL olabilir. Yeni kira <strong>{fmt(20000 * (1 + kira.rate / 100))} TL</strong>, yıllık toplam kira {fmt(12 * 20000 * (1 + kira.rate / 100))} TL olur. Taraflar örneğin %25 artışta anlaşırsa yeni kira 25.000 TL olur; bu oran yasal sınırın altında olduğu için geçerlidir.
+    </p>
+
+    <h2>Bilmeniz Gerekenler</h2>
+    <ul>
+      <li>Konut kiralarındaki %25 geçici üst sınır 1 Temmuz 2024'te sona ermiştir.</li>
+      <li>Artış ancak kira yılı dolduğunda, yeni kira dönemi için uygulanabilir; yıl içinde tek taraflı zam yapılamaz.</li>
+      <li>Beş yılı dolduran sözleşmelerde kira bedeli, anlaşma olmazsa kira tespit davasıyla emsal kiralara göre belirlenebilir.</li>
+      <li>Kira uyuşmazlıklarında dava açmadan önce arabulucuya başvurmak zorunludur.</li>
+    </ul>
+  </section>
+</CalcLayout>

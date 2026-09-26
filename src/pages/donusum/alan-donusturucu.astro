@@ -1,0 +1,233 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcSelect from '../../components/calculator/CalcSelect.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const birimler = [
+  { value: 'm2', label: 'Metrekare (m²)' },
+  { value: 'donum', label: 'Dönüm (1.000 m²)' },
+  { value: 'dekar', label: 'Dekar (da)' },
+  { value: 'hektar', label: 'Hektar (ha)' },
+  { value: 'ar', label: 'Ar (a)' },
+  { value: 'evlek', label: 'Evlek (250 m²)' },
+  { value: 'eskidonum', label: 'Eski dönüm (919,3 m²)' },
+  { value: 'km2', label: 'Kilometrekare (km²)' },
+  { value: 'cm2', label: 'Santimetrekare (cm²)' },
+  { value: 'acre', label: 'Akre / Acre' },
+  { value: 'ft2', label: 'Fitkare (ft²)' },
+  { value: 'yd2', label: 'Yardakare (yd²)' },
+  { value: 'in2', label: 'İnçkare (in²)' },
+];
+
+const faq = [
+  {
+    question: "1 dönüm kaç metrekare?",
+    answer: "Türkiye'de resmi olarak kullanılan 1 dönüm (yeni dönüm) 1.000 metrekaredir ve dekara eşittir. Tapu kayıtlarında ve Tarım ve Orman Bakanlığı verilerinde dekar ifadesi kullanılır. Osmanlı döneminden kalan eski dönüm ise yaklaşık 919,3 metrekaredir; bazı yörelerde bu ölçü hâlâ geleneksel olarak kullanılabilir. Bir arazinin kesin büyüklüğü için tapudaki metrekare değeri esas alınmalıdır."
+  },
+  {
+    question: "1 hektar kaç dönüm?",
+    answer: "1 hektar 10.000 metrekaredir ve 10 dönüme (10 dekara) eşittir. Ters yönde 1 dönüm 0,1 hektardır. Hektar özellikle büyük tarım arazileri, orman alanları ve uluslararası istatistiklerde kullanılır. Örneğin 25 dönümlük bir tarla 2,5 hektar, 25.000 metrekaredir. 1 kilometrekare ise 100 hektar ve 1.000 dönüme karşılık gelir."
+  },
+  {
+    question: "Dönüm ile dekar aynı mı?",
+    answer: "Evet. Türkiye'de günümüzde kullanılan dönüm, 1.000 metrekareye eşit olan dekar ile aynıdır. Dekar, metrik sistemde 10 ar veya 0,1 hektar anlamına gelir. Resmi belgelerde dekar, günlük konuşmada ise dönüm ifadesi daha yaygındır. Karışıklık yalnızca eski dönüm (yaklaşık 919 m²) kullanıldığında ortaya çıkar."
+  },
+  {
+    question: "Evlek nedir, kaç metrekare?",
+    answer: "Evlek, dönümün dörtte biri olarak kullanılan geleneksel bir alan ölçüsüdür. 1.000 metrekarelik dönüm esas alındığında 1 evlek 250 metrekaredir; yani 4 evlek 1 dönüm eder. Özellikle bahçe, bağ ve küçük tarla satışlarında bazı yörelerde hâlâ kullanılır. Eski dönüm esas alınırsa evlek yaklaşık 230 metrekareye karşılık gelir."
+  },
+  {
+    question: "1 acre kaç metrekare ve kaç dönüm?",
+    answer: "1 acre (akre), İngiliz ve Amerikan ölçü sisteminde kullanılan bir alan birimidir ve tam olarak 4.046,8564224 metrekareye eşittir. Bu yaklaşık 4,05 dönüm veya 0,4047 hektar demektir. Yabancı emlak ilanlarında veya tarım raporlarında karşılaşılan acre değerlerini dönüme çevirmek için 4,047 ile çarpmanız yeterlidir."
+  },
+  {
+    question: "Metrekare nasıl hesaplanır?",
+    answer: "Dikdörtgen veya kare bir alanın metrekaresi, metre cinsinden uzunluk ile genişliğin çarpılmasıyla bulunur. Örneğin 25 m × 40 m ölçülerindeki bir arsa 1.000 m², yani 1 dönümdür. Düzensiz şekilli araziler üçgenlere veya dikdörtgenlere bölünerek hesaplanır. Farklı geometrik şekillerin alanı için alan hesaplama aracını kullanabilirsiniz."
+  }
+];
+
+const meta = {
+  title: "Alan Dönüştürücü",
+  seoTitle: "Dönüm Metrekare Hesaplama - Alan Birimi Dönüştürücü",
+  description: "Dönüm, metrekare, hektar, dekar, ar, evlek, acre ve km² arasında alan birimi dönüştürün. 1 dönüm = 1.000 m², 1 hektar = 10 dönüm. Anında sonuç.",
+  summary: "Türkiye'de 1 dönüm = 1 dekar = 1.000 m²'dir. 1 hektar = 10 dönüm = 10.000 m², 1 ar = 100 m², 1 evlek = 250 m², 1 km² = 1.000 dönüm ve 1 acre = 4.046,86 m² (yaklaşık 4,05 dönüm). Eski (Osmanlı) dönüm ise yaklaşık 919,3 m²'dir.",
+  howTo: [
+    "Dönüştürmek istediğiniz alan değerini girin.",
+    "Değerin birimini seçin (ör. dönüm, metrekare, hektar).",
+    "Sonuç tablosunda değerin tüm alan birimlerindeki karşılığını görün.",
+    "İsterseniz ana sonuç için hedef birimi değiştirin."
+  ],
+  sources: [
+    { name: "BIPM - SI Broşürü (Uluslararası Birimler Sistemi)", url: "https://www.bipm.org/en/publications/si-brochure" }
+  ],
+  category: "donusum",
+  slug: "alan-donusturucu",
+  keywords: ["dönüm metrekare hesaplama", "1 dönüm kaç metrekare", "hektar dönüm çevirme", "alan dönüştürücü", "dekar metrekare", "acre metrekare"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["donusum/uzunluk-donusturucu", "matematik/alan-hesaplama", "donusum/agirlik-donusturucu", "finans/tapu-harci-hesaplama"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" class="calc-inputs">
+    <CalcInput id="deger" label="Değer" type="number" placeholder="1" value="1" step="any" min={0} />
+    <CalcSelect id="kaynak" label="Kaynak Birim" options={birimler} value="donum" />
+    <CalcSelect id="hedef" label="Hedef Birim" options={birimler} value="m2" />
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label" id="ana-etiket">Sonuç</p>
+      <p class="calc-result-value" id="sonuc">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-table-wrapper">
+        <table class="calc-table">
+          <thead><tr><th>Birim</th><th>Değer</th></tr></thead>
+          <tbody id="tablo"></tbody>
+        </table>
+      </div>
+    </div>
+  </CalcResult>
+
+  <script>
+    // Her birimin metrekare karşılığı
+    const M2: Record<string, number> = {
+      m2: 1, donum: 1000, dekar: 1000, hektar: 10000, ar: 100, evlek: 250, eskidonum: 919.3, km2: 1e6, cm2: 1e-4,
+      acre: 4046.8564224, ft2: 0.09290304, yd2: 0.83612736, in2: 0.00064516,
+    };
+    const AD: Record<string, string> = {
+      m2: 'Metrekare (m²)', donum: 'Dönüm', dekar: 'Dekar (da)', hektar: 'Hektar (ha)', ar: 'Ar (a)', evlek: 'Evlek',
+      eskidonum: 'Eski dönüm', km2: 'Kilometrekare (km²)', cm2: 'Santimetrekare (cm²)', acre: 'Acre', ft2: 'Fitkare (ft²)',
+      yd2: 'Yardakare (yd²)', in2: 'İnçkare (in²)',
+    };
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('calc-form');
+      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const resultArea = document.getElementById('calc-result');
+
+      function debounce(fn: () => void, delay = 150) {
+        let timer: ReturnType<typeof setTimeout>;
+        return () => { clearTimeout(timer); timer = setTimeout(fn, delay); };
+      }
+      const val = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
+      const setText = (id: string, t: string) => { (document.getElementById(id) as HTMLElement).textContent = t; };
+      const fmt = (n: number) => {
+        if (n !== 0 && (Math.abs(n) < 1e-6 || Math.abs(n) >= 1e15)) return n.toExponential(6).replace('.', ',');
+        return new Intl.NumberFormat('tr-TR', { maximumSignificantDigits: 10 }).format(n);
+      };
+
+      form?.addEventListener('submit', (e) => e.preventDefault());
+      const debouncedCalc = debounce(calculate);
+      inputs.forEach(input => {
+        input.addEventListener('input', debouncedCalc);
+        input.addEventListener('change', debouncedCalc);
+      });
+
+      function calculate() {
+        const deger = parseFloat(val('deger'));
+        const kaynak = val('kaynak');
+        const hedef = val('hedef');
+        if (isNaN(deger) || deger < 0 || !M2[kaynak] || !M2[hedef]) return;
+        const m2 = deger * M2[kaynak];
+        setText('ana-etiket', `${fmt(deger)} ${AD[kaynak]} =`);
+        setText('sonuc', `${fmt(m2 / M2[hedef])} ${AD[hedef]}`);
+
+        const tbody = document.getElementById('tablo') as HTMLElement;
+        tbody.innerHTML = '';
+        Object.keys(M2).forEach(k => {
+          const tr = document.createElement('tr');
+          const a = document.createElement('td'); a.textContent = AD[k];
+          const b = document.createElement('td'); b.textContent = fmt(m2 / M2[k]);
+          tr.append(a, b);
+          tbody.appendChild(tr);
+        });
+
+        if (resultArea) resultArea.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const params = new URLSearchParams();
+        inputs.forEach(input => {
+          const el = input as HTMLInputElement;
+          if (el.value && el.id) params.set(el.id, el.value);
+        });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+      }
+
+      function loadFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        inputs.forEach(input => {
+          const el = input as HTMLInputElement;
+          if (el.id && params.has(el.id)) el.value = params.get(el.id)!;
+        });
+        calculate();
+      }
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>Alan Birimleri Nasıl Dönüştürülür?</h2>
+    <p>
+      Arsa, tarla, bahçe veya daire alırken karşınıza metrekare, dönüm, dekar, hektar ve evlek gibi farklı alan birimleri çıkar. Tapu kayıtları metrekare cinsinden tutulurken tarım arazileri çoğunlukla dönüm veya dekarla, orman ve büyük araziler hektarla, yabancı ilanlar ise acre veya fitkareyle ifade edilir. Alan dönüştürücü, girdiğiniz değeri tek adımda tüm bu birimlere çevirir.
+    </p>
+    <p>
+      Dönüşümün mantığı basittir: Değer önce metrekareye çevrilir, ardından hedef birimin metrekare karşılığına bölünür. Örneğin 3 dönüm = 3 × 1.000 = 3.000 m² ve 3.000 / 10.000 = 0,3 hektardır.
+    </p>
+
+    <h2>Alan Birimleri Dönüşüm Tablosu</h2>
+    <table>
+      <thead>
+        <tr><th>Birim</th><th>Metrekare Karşılığı</th><th>Dönüm Karşılığı</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1 metrekare (m²)</td><td>1 m²</td><td>0,001 dönüm</td></tr>
+        <tr><td>1 ar</td><td>100 m²</td><td>0,1 dönüm</td></tr>
+        <tr><td>1 evlek</td><td>250 m²</td><td>0,25 dönüm</td></tr>
+        <tr><td>1 dönüm / 1 dekar</td><td>1.000 m²</td><td>1 dönüm</td></tr>
+        <tr><td>1 hektar</td><td>10.000 m²</td><td>10 dönüm</td></tr>
+        <tr><td>1 kilometrekare</td><td>1.000.000 m²</td><td>1.000 dönüm</td></tr>
+        <tr><td>1 acre</td><td>4.046,86 m²</td><td>4,047 dönüm</td></tr>
+        <tr><td>1 fitkare (ft²)</td><td>0,0929 m²</td><td>0,0000929 dönüm</td></tr>
+        <tr><td>Eski dönüm</td><td>yaklaşık 919,3 m²</td><td>0,919 dönüm</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Örnek Hesaplama</h2>
+    <p>
+      Tapuda 7.850 m² olarak kayıtlı bir tarlanın dönüm ve hektar karşılığını bulalım:
+    </p>
+    <ul>
+      <li>Dönüm: 7.850 / 1.000 = 7,85 dönüm (7 dönüm 3,4 evlek)</li>
+      <li>Hektar: 7.850 / 10.000 = 0,785 hektar</li>
+      <li>Ar: 7.850 / 100 = 78,5 ar</li>
+      <li>Acre: 7.850 / 4.046,86 ≈ 1,94 acre</li>
+    </ul>
+    <p>
+      Dönüm başına 750.000 TL'den satılan bu tarlanın değeri 7,85 × 750.000 = 5.887.500 TL, metrekare birim fiyatı ise 750 TL olur.
+    </p>
+
+    <h2>Dönüm, Dekar ve Eski Dönüm Farkı</h2>
+    <p>
+      Osmanlı döneminde kullanılan dönüm, 40 × 40 standart arşınlık bir kare olarak tanımlanıyordu ve yaklaşık 919,3 metrekareye karşılık geliyordu. Metrik sisteme geçişle birlikte dönüm 1.000 metrekareye yuvarlanarak dekarla eşitlendi. Günümüzde resmi işlemlerde, tapuda ve tarımsal desteklerde 1.000 m²'lik dönüm (dekar) kullanılır. Eski dönüm hesabı yalnızca bazı yörelerde geleneksel ifade olarak karşınıza çıkabilir; alım satımda mutlaka tapudaki metrekare değerini esas alın.
+    </p>
+
+    <h2>Alan Birimleri Nerelerde Kullanılır?</h2>
+    <ul>
+      <li><strong>Metrekare:</strong> Daire, dükkan, arsa ve imar hesaplarında temel birimdir.</li>
+      <li><strong>Dönüm / dekar:</strong> Tarla, bağ, bahçe ve tarımsal üretim verilerinde kullanılır; destekleme ödemeleri dekar başına hesaplanır.</li>
+      <li><strong>Hektar:</strong> Orman, mera, büyük tarım işletmeleri ve uluslararası istatistiklerde tercih edilir.</li>
+      <li><strong>Acre ve fitkare:</strong> ABD ve İngiltere'deki emlak ilanlarında kullanılır.</li>
+    </ul>
+    <h2>Arazi Alım Satımında Dikkat Edilmesi Gerekenler</h2>
+    <p>İlanlarda dönüm üzerinden verilen fiyatları karşılaştırırken arazinin tapudaki metrekare değerini mutlaka kontrol edin. Hisseli tapularda satın aldığınız pay, toplam alanın yalnızca bir bölümünü ifade eder; örneğin 12.000 m² parselde 1/6 hisse 2 dönüme karşılık gelir. İmar durumu, yola cephe ve eğim gibi özellikler de birim fiyatı doğrudan etkiler. Tarım arazilerinde miras yoluyla bölünmeyi sınırlayan asgari tarımsal arazi büyüklükleri uygulanır; bu nedenle küçük parçalı alımlarda il tarım müdürlüğünden bilgi almak faydalıdır.</p>
+    <p class="calc-note">
+      Not: Acre, fitkare, yardakare ve inçkare değerleri uluslararası tanımlı tam değerlerle hesaplanır. Eski dönüm değeri yaklaşık olup yöreye göre küçük farklılıklar gösterebilir.
+    </p>
+  </section>
+</CalcLayout>

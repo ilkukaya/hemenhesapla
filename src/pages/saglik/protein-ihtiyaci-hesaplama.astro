@@ -6,54 +6,90 @@ import CalcResult from '../../components/calculator/CalcResult.astro';
 
 const faq = [
   {
-    question: "Günlük protein ihtiyacım nasıl hesaplanır?",
-    answer: "Günlük protein ihtiyacı vücut ağırlığına ve aktivite düzeyine göre hesaplanır. Hareketsiz bireyler için kilogram başına 0,8 g protein yeterli olurken, düzenli spor yapanlar için bu değer 1,2–1,6 g'a çıkar. Vücut geliştirme veya ağır spor yapanlar için ise 1,6–2,2 g/kg önerilmektedir. Formül: Günlük Protein (g) = Vücut Ağırlığı (kg) × Aktivite Faktörü."
+    question: "Günlük protein ihtiyacı nasıl hesaplanır?",
+    answer: "Protein ihtiyacı vücut ağırlığı ile kilogram başına gereken miktarın çarpılmasıyla bulunur. Sağlıklı, hareketsiz yetişkinler için DSÖ/FAO referansı 0,8 g/kg'dır; 70 kg biri için bu 56 g eder. Düzenli egzersiz yapanlar için Uluslararası Spor Beslenmesi Derneği (ISSN) 1,4–2,0 g/kg önerir. Hesaplayıcı seçtiğiniz hedefe göre bir aralık verir."
   },
   {
-    question: "Protein neden önemlidir?",
-    answer: "Protein; kas dokusunun yapımı ve onarımı, enzim ve hormon üretimi, bağışıklık sistemi işlevi ve enerji üretimi gibi pek çok hayati görevi üstlenir. Yeterli protein almak kas kaybını önler, tokluk hissini artırır ve metabolizmanın hızlı çalışmasına katkı sağlar. Kaliteli protein kaynakları arasında et, balık, yumurta, süt ürünleri, baklagiller ve soya ürünleri yer alır."
+    question: "Kas yapmak için günde kaç gram protein almalıyım?",
+    answer: "Direnç antrenmanı yapanlarda kas kazanımı için günde kilo başına 1,6–2,0 g protein yeterlidir; 1,6 g/kg'ın üzerindeki alımların ek faydası çalışmalarda giderek azalır. 75 kg bir kişi için bu günde yaklaşık 120–150 g demektir. Proteini günde 3–5 öğüne, her öğünde kilo başına yaklaşık 0,4 g olacak şekilde dağıtmak kas protein sentezini destekler."
   },
   {
-    question: "Protein öğünlere nasıl bölünmelidir?",
-    answer: "Araştırmalar, protein alımını gün içine dağıtmanın tek seferde büyük miktarda tüketmekten daha etkili olduğunu göstermektedir. Her öğünde 20–40 g protein tüketmek, kas protein sentezini optimum düzeyde tetikler. Günlük proteini 3–5 öğüne yaymak, hem sindirimi kolaylaştırır hem de gün boyunca sürekli amino asit akışı sağlar."
+    question: "Kilo verirken protein ihtiyacı artar mı?",
+    answer: "Evet. Kalori açığında vücut kas dokusunu da enerji için kullanmaya başlar. Direnç antrenmanıyla birlikte kilo başına 1,6–2,2 g protein almak kas kaybını azaltır ve tokluk hissini artırır. Fazla kilolu kişilerde hesaplamayı mevcut kilo yerine hedef kilo veya ideal kilo üzerinden yapmak, gereğinden yüksek sonuçları önler."
+  },
+  {
+    question: "Yaşlılarda protein ihtiyacı farklı mı?",
+    answer: "Yaşla birlikte kas proteinini yapma verimliliği azalır. Bu nedenle uzman grupları 65 yaş üstü sağlıklı bireyler için kilo başına günde 1,0–1,2 g, akut veya kronik hastalığı olanlar için 1,2–1,5 g protein önermektedir. Böbrek fonksiyonu azalmış yaşlılarda miktar mutlaka hekimle belirlenmelidir."
+  },
+  {
+    question: "Fazla protein böbreklere zarar verir mi?",
+    answer: "Böbrek fonksiyonu normal olan sağlıklı kişilerde 2,0 g/kg civarına kadar olan alımların böbreğe zarar verdiğine dair güçlü bir kanıt yoktur. Ancak kronik böbrek hastalığı, diyabetik böbrek hasarı veya tek böbreği olanlarda yüksek protein hastalığın ilerlemesini hızlandırabilir. Bu durumdaysanız protein miktarını nefroloğunuz veya diyetisyeninizle belirleyin."
+  },
+  {
+    question: "Hangi besinlerde ne kadar protein var?",
+    answer: "Yaklaşık değerler: 100 g pişmiş tavuk göğsü 30 g, 100 g pişmiş kırmızı et 26 g, 1 yumurta 6 g, 200 g süzme yoğurt 18–20 g, 100 g beyaz peynir 15–17 g, 1 su bardağı pişmiş mercimek 17–18 g, 100 g ton balığı 25 g. Hayvansal ve bitkisel kaynakları birlikte tüketmek amino asit dengesini iyileştirir."
   }
 ];
 
 const meta = {
-  title: "Günlük Protein İhtiyacı Hesaplama",
-  description: "Vücut ağırlığınıza ve aktivite düzeyinize göre günlük protein ihtiyacınızı hesaplayın. Kas gelişimi ve sağlıklı beslenme için doğru protein miktarını öğrenin.",
+  title: "Protein İhtiyacı Hesaplama",
+  seoTitle: "Günlük Protein İhtiyacı Hesaplama 2026 – Kaç Gram?",
+  description: "Kilonuza ve hedefinize göre günlük protein ihtiyacınızı gram olarak hesaplayın. Spor, kas yapma, kilo verme ve 65 yaş üstü için öğün başı miktarı görün.",
+  summary: "Günlük protein ihtiyacı, kilonun g/kg değeriyle çarpılmasıyla bulunur. Hareketsiz yetişkinler için referans 0,8 g/kg (70 kg için 56 g), düzenli egzersiz yapanlar için 1,4–2,0 g/kg, kilo verirken kas korumak için 1,6–2,2 g/kg, 65 yaş üstü için 1,0–1,2 g/kg önerilir.",
+  howTo: [
+    "Vücut ağırlığınızı kilogram cinsinden girin.",
+    "Aktivite düzeyinize veya hedefinize en uygun seçeneği işaretleyin.",
+    "Günde kaç öğün yediğinizi seçin.",
+    "Günlük protein aralığınızı ve öğün başına düşen miktarı sonuçta görün."
+  ],
+  sources: [
+    { name: "DSÖ/FAO/UNU (2007) – Protein and amino acid requirements in human nutrition (TRS 935)", url: "https://www.who.int/publications/i/item/9789241209359" },
+    { name: "Jäger R ve ark. (2017), ISSN Position Stand: protein and exercise", url: "https://pubmed.ncbi.nlm.nih.gov/28642676/" }
+  ],
   category: "saglik",
   slug: "protein-ihtiyaci-hesaplama",
-  keywords: ["protein ihtiyacı hesaplama", "günlük protein", "kas gelişimi protein", "sporcu protein ihtiyacı", "protein hesaplama", "beslenme"],
-  dateModified: "2026-04-01",
-  relatedCalcs: ["kalori-hesaplama", "baz-metabolizma-hizi", "ideal-kilo-hesaplama"],
+  keywords: ["protein ihtiyacı hesaplama", "günlük protein ihtiyacı", "kaç gram protein", "kas yapmak için protein", "sporcu protein ihtiyacı", "kilo başına protein"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["saglik/kalori-hesaplama", "saglik/baz-metabolizma-hizi", "saglik/yag-orani-hesaplama", "saglik/ideal-kilo-hesaplama"],
   faq
 };
 ---
 
 <CalcLayout meta={meta}>
-  <form id="calc-form">
+  <form id="calc-form" class="calc-inputs" novalidate>
     <CalcInput
       id="kilo"
       label="Vücut Ağırlığı"
       type="number"
       suffix="kg"
-      placeholder="70"
+      placeholder="75"
       min={30}
       max={300}
       step={0.1}
+      helpText="Fazla kiloluysanız hedef kilonuzu girebilirsiniz"
     />
     <CalcSelect
       id="aktivite"
-      label="Aktivite Düzeyi"
+      label="Aktivite / Hedef"
       options={[
-        { value: "0.8", label: "Hareketsiz (masa başı, spor yok)" },
-        { value: "1.0", label: "Hafif aktif (haftada 1-2 gün spor)" },
-        { value: "1.2", label: "Orta aktif (haftada 3-5 gün spor)" },
-        { value: "1.6", label: "Sporcu (günlük antrenman)" },
-        { value: "2.0", label: "Ağır sporcu (günde 2 antrenman)" }
+        { value: "sedanter", label: "Hareketsiz yetişkin (0,8–1,0 g/kg)" },
+        { value: "yasli", label: "65 yaş üstü (1,0–1,2 g/kg)" },
+        { value: "hafif", label: "Hafif aktif, haftada 1-3 gün (1,0–1,2 g/kg)" },
+        { value: "dayaniklilik", label: "Düzenli kardiyo / dayanıklılık (1,2–1,4 g/kg)" },
+        { value: "kuvvet", label: "Ağırlık antrenmanı, kas kazanımı (1,6–2,0 g/kg)" },
+        { value: "diyet", label: "Kilo verirken kas koruma (1,6–2,2 g/kg)" }
       ]}
-      value="1.0"
+      value="hafif"
+    />
+    <CalcSelect
+      id="ogun"
+      label="Günlük Öğün Sayısı"
+      options={[
+        { value: "3", label: "3 öğün" },
+        { value: "4", label: "4 öğün" },
+        { value: "5", label: "5 öğün" }
+      ]}
+      value="3"
     />
   </form>
 
@@ -64,107 +100,154 @@ const meta = {
     </div>
     <div slot="details">
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Öğün Başına (÷3)</span>
+        <span class="calc-detail-label">Öğün başına</span>
         <span class="calc-detail-value" id="d-ogun">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Aktivite Faktörü</span>
+        <span class="calc-detail-label">Kilo başına</span>
         <span class="calc-detail-value" id="d-faktor">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Vücut Ağırlığı</span>
-        <span class="calc-detail-value" id="d-kilo">—</span>
+        <span class="calc-detail-label">Enerji karşılığı (1 g = 4 kcal)</span>
+        <span class="calc-detail-value" id="d-kcal">—</span>
       </div>
     </div>
   </CalcResult>
 
+  <p class="calc-note">
+    Sonuçlar sağlıklı yetişkinler için genel önerilerdir. Böbrek veya karaciğer hastalığınız varsa, gebelik ya da emzirme dönemindeyseniz veya özel bir diyet uyguluyorsanız protein miktarını hekiminiz veya diyetisyeninizle birlikte belirleyin.
+  </p>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const inputs = document.querySelectorAll<HTMLInputElement | HTMLSelectElement>('#calc-form input, #calc-form select');
       const resultArea = document.getElementById('calc-result');
+      const $ = (id: string) => document.getElementById(id) as HTMLElement;
 
-      function debounce(fn, delay = 150) {
-        let t;
-        return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), delay); };
+      const ARALIK: Record<string, [number, number]> = {
+        sedanter: [0.8, 1.0],
+        yasli: [1.0, 1.2],
+        hafif: [1.0, 1.2],
+        dayaniklilik: [1.2, 1.4],
+        kuvvet: [1.6, 2.0],
+        diyet: [1.6, 2.2]
+      };
+
+      function debounce(fn: () => void, delay = 150) {
+        let timer: ReturnType<typeof setTimeout>;
+        return () => { clearTimeout(timer); timer = setTimeout(fn, delay); };
       }
 
-      function formatNumber(n, d = 0) {
+      function num(id: string) {
+        const raw = (document.getElementById(id) as HTMLInputElement).value.replace(',', '.');
+        return raw.trim() === '' ? NaN : parseFloat(raw);
+      }
+
+      function fmt(n: number, d = 0) {
         return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: d, maximumFractionDigits: d }).format(n);
       }
 
-      const dc = debounce(calculate);
-      inputs.forEach(i => { i.addEventListener('input', dc); i.addEventListener('change', dc); });
-
       function calculate() {
-        const kilo = parseFloat(document.getElementById('kilo').value);
-        const faktor = parseFloat(document.getElementById('aktivite').value);
+        const kilo = num('kilo');
+        const aktivite = (document.getElementById('aktivite') as HTMLSelectElement).value;
+        const ogun = parseInt((document.getElementById('ogun') as HTMLSelectElement).value, 10) || 3;
+        const aralik = ARALIK[aktivite];
 
-        if (isNaN(kilo) || kilo <= 0) {
-          if (resultArea) resultArea.classList.add('hidden');
+        if (!isFinite(kilo) || kilo < 20 || kilo > 400 || !aralik) {
+          resultArea?.classList.add('hidden');
           return;
         }
 
-        const protein = kilo * faktor;
-        const ogunBasina = protein / 3;
+        const [alt, ust] = aralik;
+        const minG = kilo * alt;
+        const maxG = kilo * ust;
 
-        document.getElementById('protein-sonuc').textContent = formatNumber(protein, 0) + ' g';
-        document.getElementById('d-ogun').textContent = formatNumber(ogunBasina, 0) + ' g';
-        document.getElementById('d-faktor').textContent = formatNumber(faktor, 1) + ' g/kg';
-        document.getElementById('d-kilo').textContent = formatNumber(kilo, 1) + ' kg';
+        $('protein-sonuc').textContent = `${fmt(minG)} – ${fmt(maxG)} g`;
+        $('d-ogun').textContent = `${fmt(minG / ogun)} – ${fmt(maxG / ogun)} g`;
+        $('d-faktor').textContent = `${fmt(alt, 1)} – ${fmt(ust, 1)} g/kg`;
+        $('d-kcal').textContent = `${fmt(minG * 4)} – ${fmt(maxG * 4)} kcal`;
 
-        if (resultArea) resultArea.classList.remove('hidden');
+        resultArea?.classList.remove('hidden');
         updateURL();
       }
 
       function updateURL() {
-        const p = new URLSearchParams();
-        inputs.forEach(i => { if (i.value && i.id) p.set(i.id, i.value); });
-        history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
+        const params = new URLSearchParams();
+        inputs.forEach(el => { if (el.id && el.value !== '') params.set(el.id, el.value); });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
       }
 
       function loadFromURL() {
-        const p = new URLSearchParams(window.location.search);
-        let h = false;
-        inputs.forEach(i => { if (i.id && p.has(i.id)) { i.value = p.get(i.id); h = true; } });
-        if (h) calculate();
+        const params = new URLSearchParams(window.location.search);
+        let has = false;
+        inputs.forEach(el => {
+          if (!el.id || !params.has(el.id)) return;
+          const v = params.get(el.id) ?? '';
+          // Select için yalnızca geçerli seçenekleri kabul et
+          if (el instanceof HTMLSelectElement && !Array.from(el.options).some(o => o.value === v)) return;
+          el.value = v;
+          has = true;
+        });
+        if (has) calculate();
       }
+
+      const debounced = debounce(calculate);
+      inputs.forEach(el => {
+        el.addEventListener('input', debounced);
+        el.addEventListener('change', debounced);
+      });
 
       loadFromURL();
     });
   </script>
 
   <section class="calc-content">
-    <h2>Günlük Protein İhtiyacı Nasıl Hesaplanır?</h2>
+    <h2>Protein ihtiyacı neden kişiye göre değişir?</h2>
     <p>
-      Protein, vücudumuzun yapı taşlarından biri olan ve yaşamsal öneme sahip bir makro besindir. Kasların, organların, hormonların, enzimlerin ve bağışıklık sisteminin temel bileşeni olan proteinleri yeterli miktarda almak; hem genel sağlık hem de spor performansı açısından kritik önem taşır. Günlük protein ihtiyacı kişinin vücut ağırlığı ve aktivite düzeyine göre değişmektedir.
-    </p>
-    <p>
-      Dünya Sağlık Örgütü'nün temel önerisi hareketsiz yetişkinler için kilogram başına 0,8 gram proteindir. Ancak bu değer minimum ihtiyacı karşılar; spor yapanlar, yaşlılar ve belirli sağlık durumundaki bireyler için protein ihtiyacı önemli ölçüde artabilir. Güncel araştırmalar, kas gelişimi ve korunması için sporcuların kilogram başına 1,6–2,0 gram protein tüketmesi gerektiğini ortaya koymaktadır.
+      Protein; kas, bağ dokusu, enzim, hormon ve bağışıklık hücrelerinin yapı taşıdır. Vücut proteini depolayamadığı için her gün yeterli miktarda alınması gerekir. Hareketsiz bir yetişkinde temel ihtiyacı karşılamak için kilo başına 0,8 g yeterliyken, düzenli antrenman yapan, kilo veren veya yaşı ilerlemiş kişilerde kas kütlesini korumak için bu miktar artar.
     </p>
 
-    <h3>Formül</h3>
+    <h2>Kilo başına protein önerileri</h2>
+    <table>
+      <thead>
+        <tr><th>Grup / hedef</th><th>g/kg/gün</th><th>70 kg için</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Hareketsiz sağlıklı yetişkin (DSÖ/FAO referansı)</td><td>0,8</td><td>56 g</td></tr>
+        <tr><td>65 yaş üstü sağlıklı birey</td><td>1,0 – 1,2</td><td>70 – 84 g</td></tr>
+        <tr><td>Dayanıklılık sporcusu</td><td>1,2 – 1,4</td><td>84 – 98 g</td></tr>
+        <tr><td>Kuvvet antrenmanı, kas kazanımı</td><td>1,6 – 2,0</td><td>112 – 140 g</td></tr>
+        <tr><td>Kalori açığında kas koruma</td><td>1,6 – 2,2</td><td>112 – 154 g</td></tr>
+      </tbody>
+    </table>
     <p>
-      <strong>Günlük Protein (g) = Vücut Ağırlığı (kg) × Aktivite Faktörü (g/kg)</strong>
+      Uluslararası Spor Beslenmesi Derneği (ISSN), egzersiz yapan bireylerin çoğu için 1,4–2,0 g/kg aralığının hem yeterli hem güvenli olduğunu belirtir. Öğün başına kilo başına yaklaşık 0,25–0,4 g protein (çoğu yetişkin için 20–40 g) kas protein sentezini en verimli şekilde uyarır.
+    </p>
+
+    <h2>Örnek hesaplama</h2>
+    <p>
+      75 kg ağırlığında, haftada dört gün ağırlık antrenmanı yapan ve kas kazanmak isteyen biri için:
     </p>
     <ul>
-      <li><strong>Hareketsiz (0,8 g/kg):</strong> Spor yapmayan, masa başı çalışan bireyler</li>
-      <li><strong>Hafif aktif (1,0 g/kg):</strong> Haftada 1–2 gün düzenli egzersiz yapanlar</li>
-      <li><strong>Orta aktif (1,2 g/kg):</strong> Haftada 3–5 gün egzersiz yapanlar</li>
-      <li><strong>Sporcu (1,6 g/kg):</strong> Günlük antrenman yapan bireyler</li>
-      <li><strong>Ağır sporcu (2,0 g/kg):</strong> Günde iki antrenman yapan performans sporcuları</li>
+      <li>Alt sınır: 75 × 1,6 = <strong>120 g</strong></li>
+      <li>Üst sınır: 75 × 2,0 = <strong>150 g</strong></li>
+      <li>4 öğüne bölündüğünde öğün başına 30–38 g protein</li>
+      <li>Enerji karşılığı: 480–600 kcal (günlük 2.500 kcal'lik bir beslenmede yaklaşık %19–24)</li>
     </ul>
-
-    <h3>Dikkat Edilmesi Gerekenler</h3>
     <p>
-      Proteini tek öğünde toplu almak yerine gün içine yaymak daha verimlidir. Her öğünde 20–40 gram protein tüketmek, kas protein sentezini optimize eder. Protein kalitesi de önemlidir; hayvansal kaynaklar tam amino asit profili sunarken bitkisel kaynakları çeşitlendirerek tam amino asit alımı sağlanabilir. Böbrek hastalığı gibi sağlık sorunlarınız varsa yüksek protein alımından önce doktorunuza danışmanızı öneririz.
+      Bu miktar örneğin kahvaltıda 3 yumurta ve 50 g beyaz peynir (yaklaşık 26 g), öğlen 150 g tavuk (45 g), ara öğünde 200 g süzme yoğurt (20 g) ve akşam bir kase mercimek çorbası ile 120 g balıktan (35–40 g) karşılanabilir.
     </p>
 
-    <h3>Sıkça Sorulan Sorular</h3>
-    {faq.map(item => (
-      <details>
-        <summary><strong>{item.question}</strong></summary>
-        <p>{item.answer}</p>
-      </details>
-    ))}
+    <h2>Fazla kilolu kişilerde hangi kilo kullanılmalı?</h2>
+    <p>
+      Kilo başına öneriler, yağ dokusunun az protein gerektirdiği gerçeğini hesaba katmaz. VKİ'si 30'un üzerindeyseniz hesaplamayı mevcut kilonuz yerine hedef kilonuz veya <a href="/saglik/ideal-kilo-hesaplama/">ideal kilonuz</a> üzerinden yapmanız daha gerçekçi sonuç verir.
+    </p>
+
+    <h2>İyi protein kaynakları</h2>
+    <ul>
+      <li><strong>Hayvansal:</strong> Tavuk, hindi, kırmızı et, balık, yumurta, süt, yoğurt, peynir</li>
+      <li><strong>Bitkisel:</strong> Mercimek, nohut, kuru fasulye, soya ve tofu, bulgur ile baklagil kombinasyonları, kuruyemişler</li>
+      <li><strong>Pratik seçenekler:</strong> Süzme yoğurt, lor peyniri, ton balığı konservesi, kefir</li>
+    </ul>
   </section>
 </CalcLayout>

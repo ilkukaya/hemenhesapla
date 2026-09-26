@@ -1,186 +1,354 @@
 ---
 import CalcLayout from '../../layouts/CalcLayout.astro';
 import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcSelect from '../../components/calculator/CalcSelect.astro';
 import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const DERS_SAYISI = 8;
+const dersler = Array.from({ length: DERS_SAYISI }, (_, i) => i + 1);
+
+const harfSecenekleri = [
+  { value: "", label: "Seçin" },
+  { value: "4", label: "AA (4,00)" },
+  { value: "3.5", label: "BA (3,50)" },
+  { value: "3", label: "BB (3,00)" },
+  { value: "2.5", label: "CB (2,50)" },
+  { value: "2", label: "CC (2,00)" },
+  { value: "1.5", label: "DC (1,50)" },
+  { value: "1", label: "DD (1,00)" },
+  { value: "0.5", label: "FD (0,50)" },
+  { value: "0", label: "FF (0,00)" }
+];
+
+// Örnek değerler (placeholder)
+const ornekNot = [85, 72, 90, 64, 78, 88, 55, 81];
+const ornekKredi = [6, 5, 4, 3, 5, 4, 2, 3];
 
 const faq = [
   {
     question: "Ağırlıklı not ortalaması nasıl hesaplanır?",
-    answer: "Ağırlıklı not ortalaması, her dersin notunun o dersin kredi değeriyle çarpılması ve bu çarpımların toplamının toplam krediye bölünmesiyle hesaplanır. Formül: Ortalama = Σ(Not × Kredi) / Σ(Kredi). Örneğin 80 puanlık 3 kredili ders ve 90 puanlık 5 kredili dersin ortalaması (80×3 + 90×5)/(3+5) = (240+450)/8 = 86.25 olur."
+    answer: "Her dersin notu (veya harf notunun katsayısı) o dersin AKTS ya da kredi değeriyle çarpılır, bu çarpımlar toplanır ve toplam AKTS'ye bölünür: Ortalama = Σ(Not × AKTS) ÷ Σ AKTS. Örneğin 6 AKTS'lik dersten BA (3,5) ve 4 AKTS'lik dersten CB (2,5) alan öğrencinin ortalaması (21 + 10) ÷ 10 = 3,10 olur."
   },
   {
-    question: "4.0'lık GPA sistemi nasıl çalışır?",
-    answer: "Amerikan üniversitelerinde yaygın olan 4.0 GPA sisteminde notlar harf karşılıklarına dönüştürülür: A (4.0), A- (3.7), B+ (3.3), B (3.0), B- (2.7), C+ (2.3), C (2.0) gibi. Bu araçta kullanılan dönüşüm tablosu: 90-100 = 4.0 (A), 85-89 = 3.5, 80-84 = 3.0 (B), 75-79 = 2.5, 70-74 = 2.0 (C), 65-69 = 1.5, 60-64 = 1.0 (D), 0-59 = 0 (F)."
+    question: "Harf notlarının 4'lük karşılıkları nedir?",
+    answer: "Türkiye'deki üniversitelerin çoğunda AA = 4,00, BA = 3,50, BB = 3,00, CB = 2,50, CC = 2,00, DC = 1,50, DD = 1,00, FD = 0,50 ve FF = 0,00 katsayısı kullanılır. Hangi puan aralığının hangi harfe karşılık geldiği ise üniversiteden üniversiteye, hatta bağıl değerlendirmede dersten derse değişir; kesin tablo için kendi üniversitenizin yönetmeliğine bakın."
   },
   {
-    question: "5'ten fazla ders için ortalama nasıl hesaplanır?",
-    answer: "Bu araç 5 derse kadar not girişine izin vermektedir. Daha fazla ders için (Not₁×Kredi₁ + Not₂×Kredi₂ + … + Notₙ×Krediₙ) / (Kredi₁ + Kredi₂ + … + Krediₙ) formülünü kendiniz uygulayabilirsiniz. Alternatif olarak notları ve kredileri gruplara bölerek her grubu ayrı hesaplayabilirsiniz."
+    question: "4'lük not ortalaması 100'lük sisteme nasıl çevrilir?",
+    answer: "Resmi dönüşüm için YÖK'ün '4'lük Sistemdeki Notların 100'lük Sistemdeki Karşılıkları' tablosu kullanılır. Tablo doğrusaldır: 1,00 = 30; 2,00 = 53,33; 2,50 = 65,00; 3,00 = 76,66; 3,50 = 88,33; 4,00 = 100. Hesaplayıcı 4'lük ortalamanızın YÖK tablosundaki karşılığını otomatik gösterir. ALES, KPSS ve lisansüstü başvurularında bu tablo esas alınır."
+  },
+  {
+    question: "AKTS ile kredi arasındaki fark nedir?",
+    answer: "Ulusal kredi, dersin haftalık teorik ve uygulama saatlerine göre belirlenir. AKTS (Avrupa Kredi Transfer Sistemi) ise öğrencinin derse harcadığı toplam iş yükünü ölçer; bir dönem genellikle 30 AKTS'dir. Günümüzde Türk üniversitelerinin çoğu not ortalamasını AKTS ile ağırlıklandırır. Transkriptinizde hangisi kullanılıyorsa onu girin."
+  },
+  {
+    question: "Lise not ortalaması nasıl hesaplanır?",
+    answer: "Lisede her dersin dönem puanı, o dersin haftalık ders saatiyle ağırlıklandırılır: Ortalama = Σ(Ders puanı × Haftalık ders saati) ÷ Σ Haftalık ders saati. Hesaplayıcıda '100'lük not' seçip kredi alanına haftalık ders saatini girerek hesaplayabilirsiniz. Ortalaması 70–84,99 olan öğrenciler teşekkür, 85 ve üzeri olanlar takdir belgesine aday olur."
+  },
+  {
+    question: "Dönem ortalamasıyla genel not ortalaması (GNO) arasındaki fark nedir?",
+    answer: "Dönem not ortalaması (DNO veya YNO) yalnızca o dönem alınan derslerle hesaplanır. Genel not ortalaması (GNO) ise öğrenime başladığınızdan bu yana alınan tüm derslerin ağırlıklı ortalamasıdır. Tekrar edilen derslerde çoğu üniversite son alınan notu geçerli sayar. GNO'nuzu hesaplamak için tüm dönemlerin derslerini ya da her dönemin ortalamasını AKTS toplamıyla girin."
   }
 ];
 
 const meta = {
   title: "Not Ortalaması Hesaplama",
-  description: "Üniversite veya lise not ortalamanızı ve GPA değerinizi hesaplayın. Kredili ağırlıklı not ortalaması ve 4.0 GPA hesaplayıcı.",
+  seoTitle: "Not Ortalaması Hesaplama 2026 – GNO, AKTS, 4'lük ve 100'lük",
+  description: "Harf notu ve AKTS ile üniversite GNO'nuzu, 100'lük notlarla lise veya üniversite ortalamanızı hesaplayın. YÖK tablosuna göre 4'lük–100'lük karşılığını görün.",
+  summary: "Ağırlıklı not ortalaması = Σ(Not × AKTS) ÷ Σ AKTS formülüyle hesaplanır. Üniversitelerde AA = 4,00, BA = 3,50, BB = 3,00, CB = 2,50, CC = 2,00, DC = 1,50, DD = 1,00 katsayıları kullanılır; YÖK tablosuna göre 4'lük 3,00 ortalama 100'lük sistemde 76,66'ya karşılık gelir.",
+  howTo: [
+    "Not sisteminizi seçin: harf notu (4'lük) veya 100'lük not.",
+    "Her ders için harf notunu ya da 100 üzerinden notu girin.",
+    "Her dersin AKTS'sini, ulusal kredisini veya lisede haftalık ders saatini yazın.",
+    "Boş bıraktığınız satırlar hesaba katılmaz; ortalamanızı ve YÖK karşılığını anında görün."
+  ],
+  sources: [
+    { name: "YÖK – 4'lük Sistemdeki Notların 100'lük Sistemdeki Karşılıkları", url: "https://oyp.yok.gov.tr/Documents/Anasayfa/4lukSistem.pdf" },
+    { name: "YÖK ÖYP – Eşdeğerlikler", url: "https://oyp.yok.gov.tr/esdegerlikler" }
+  ],
   category: "egitim",
   slug: "not-ortalamasi-hesaplama",
-  keywords: ["not ortalaması hesaplama", "GPA hesaplama", "ağırlıklı not ortalaması", "vize final ortalaması", "üniversite not ortalaması"],
-  dateModified: "2026-04-01",
-  relatedCalcs: ["yks-puan-hesaplama"],
+  keywords: ["not ortalaması hesaplama", "GNO hesaplama", "AKTS ortalama hesaplama", "4'lük sistem 100'lük karşılığı", "harf notu ortalama", "lise not ortalaması"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["egitim/yks-puan-hesaplama", "matematik/ortalama-hesaplama", "matematik/yuzde-hesaplama", "matematik/oran-hesaplama"],
   faq
 };
 ---
 
 <CalcLayout meta={meta}>
-  <form id="calc-form" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
-    <div class="calc-inputs">
-      <div class="grid grid-cols-2 gap-x-4 gap-y-0">
-        <CalcInput id="notu1" label="Ders 1 — Not" type="number" placeholder="85" min={0} max={100} step={1} helpText="" />
-        <CalcInput id="kredi1" label="Ders 1 — Kredi" type="number" placeholder="3" min={1} max={10} step={1} helpText="" />
-        <CalcInput id="notu2" label="Ders 2 — Not" type="number" placeholder="90" min={0} max={100} step={1} helpText="" />
-        <CalcInput id="kredi2" label="Ders 2 — Kredi" type="number" placeholder="4" min={1} max={10} step={1} helpText="" />
-        <CalcInput id="notu3" label="Ders 3 — Not" type="number" placeholder="75" min={0} max={100} step={1} helpText="" />
-        <CalcInput id="kredi3" label="Ders 3 — Kredi" type="number" placeholder="2" min={1} max={10} step={1} helpText="" />
-        <CalcInput id="notu4" label="Ders 4 — Not" type="number" placeholder="80" min={0} max={100} step={1} helpText="" />
-        <CalcInput id="kredi4" label="Ders 4 — Kredi" type="number" placeholder="3" min={1} max={10} step={1} helpText="" />
-        <CalcInput id="notu5" label="Ders 5 — Not" type="number" placeholder="95" min={0} max={100} step={1} helpText="" />
-        <CalcInput id="kredi5" label="Ders 5 — Kredi" type="number" placeholder="5" min={1} max={10} step={1} helpText="" />
-      </div>
-    </div>
+  <form id="calc-form" class="calc-inputs" novalidate>
+    <CalcSelect
+      id="sistem"
+      label="Not Sistemi"
+      options={[
+        { value: "harf", label: "Üniversite – harf notu (4'lük)" },
+        { value: "yuzluk", label: "100'lük not (lise veya üniversite)" }
+      ]}
+      value="harf"
+    />
+    <p class="calc-note" id="sistem-aciklama">Her ders için harf notunu ve AKTS/kredi değerini girin. Boş satırlar hesaba katılmaz.</p>
+
+    {dersler.map(i => (
+      <>
+        <CalcSelect id={`harf${i}`} label={`Ders ${i} – Harf Notu`} options={harfSecenekleri} value="" />
+        <CalcInput id={`not${i}`} label={`Ders ${i} – Not (0–100)`} type="number" placeholder={String(ornekNot[i - 1])} min={0} max={100} step={0.01} required={false} />
+        <CalcInput id={`kredi${i}`} label={`Ders ${i} – AKTS / Kredi`} type="number" placeholder={String(ornekKredi[i - 1])} min={0.5} max={30} step={0.5} required={false} />
+      </>
+    ))}
   </form>
 
   <CalcResult>
     <div slot="main">
-      <p class="calc-result-label">Ortalama (/100)</p>
+      <p class="calc-result-label" id="ana-etiket">Ağırlıklı Not Ortalaması</p>
       <p class="calc-result-value" id="sonuc-ortalama">—</p>
+      <p class="calc-result-sub" id="sonuc-alt"></p>
     </div>
     <div slot="details">
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Not Ortalaması</span>
-        <span class="calc-detail-value" id="detail-ortalama">—</span>
+        <span class="calc-detail-label" id="l-donusum">100'lük karşılığı (YÖK tablosu)</span>
+        <span class="calc-detail-value" id="detail-donusum">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">GPA (4.0 Ölçeği)</span>
-        <span class="calc-detail-value" id="detail-gpa">—</span>
+        <span class="calc-detail-label">Durum</span>
+        <span class="calc-detail-value" id="detail-durum">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Toplam Kredi</span>
+        <span class="calc-detail-label">Toplam AKTS / kredi</span>
         <span class="calc-detail-value" id="detail-kredi">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Aktif Ders Sayısı</span>
+        <span class="calc-detail-label">Hesaba katılan ders</span>
         <span class="calc-detail-value" id="detail-ders">—</span>
       </div>
     </div>
   </CalcResult>
 
+  <p class="calc-note">
+    Harf notu aralıkları, başarı sınırları ve onur/yüksek onur koşulları üniversiteden üniversiteye değişir. Resmi işlemlerde transkriptinizdeki ortalama ve kurumunuzun yönetmeliği esas alınır.
+  </p>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const DERS_SAYISI = 8;
+      const inputs = document.querySelectorAll<HTMLInputElement | HTMLSelectElement>('#calc-form input, #calc-form select');
+      const resultArea = document.getElementById('calc-result');
+      const $ = (id: string) => document.getElementById(id) as HTMLElement;
+      const sistemEl = document.getElementById('sistem') as HTMLSelectElement;
+
+      function debounce(fn: () => void, delay = 150) {
+        let timer: ReturnType<typeof setTimeout>;
+        return () => { clearTimeout(timer); timer = setTimeout(fn, delay); };
+      }
+
+      function val(id: string) {
+        const el = document.getElementById(id) as HTMLInputElement | HTMLSelectElement | null;
+        if (!el) return NaN;
+        const raw = el.value.replace(',', '.').trim();
+        return raw === '' ? NaN : parseFloat(raw);
+      }
+
+      function fmt(n: number, d = 2) {
+        return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: d, maximumFractionDigits: d }).format(n);
+      }
+
+      // YÖK tablosu: 4'lük 1,00–4,00 → 100'lük 30–100 (doğrusal, iki basamağa kesilmiş)
+      function yokDortlukToYuzluk(g: number) {
+        if (g < 1) return null;
+        const v = 30 + (Math.min(g, 4) - 1) * 70 / 3;
+        return Math.floor(v * 100 + 1e-6) / 100;
+      }
+
+      // YÖK tablosunun tersinden yaklaşık 4'lük karşılık (resmi tablo değildir)
+      function yuzlukToDortluk(p: number) {
+        if (p < 30) return null;
+        return 1 + (Math.min(p, 100) - 30) * 3 / 70;
+      }
+
+      function grupGoster(id: string, goster: boolean) {
+        document.getElementById(id)?.closest('.calc-input-group')?.classList.toggle('hidden', !goster);
+      }
+
+      function sistemGuncelle() {
+        const harf = sistemEl.value === 'harf';
+        for (let i = 1; i <= DERS_SAYISI; i++) {
+          grupGoster(`harf${i}`, harf);
+          grupGoster(`not${i}`, !harf);
+        }
+        $('sistem-aciklama').textContent = harf
+          ? 'Her ders için harf notunu ve AKTS/kredi değerini girin. Boş satırlar hesaba katılmaz.'
+          : 'Her ders için 100 üzerinden notu ve AKTS/kredi (lisede haftalık ders saati) değerini girin. Boş satırlar hesaba katılmaz.';
+      }
+
+      function calculate() {
+        const harf = sistemEl.value === 'harf';
+        let toplamAgirlikli = 0;
+        let toplamKredi = 0;
+        let dersSayisi = 0;
+
+        for (let i = 1; i <= DERS_SAYISI; i++) {
+          const not = harf ? val(`harf${i}`) : val(`not${i}`);
+          const kredi = val(`kredi${i}`);
+          const gecerliNot = harf ? isFinite(not) && not >= 0 && not <= 4 : isFinite(not) && not >= 0 && not <= 100;
+          if (gecerliNot && isFinite(kredi) && kredi > 0) {
+            toplamAgirlikli += not * kredi;
+            toplamKredi += kredi;
+            dersSayisi++;
+          }
+        }
+
+        if (dersSayisi === 0) {
+          resultArea?.classList.add('hidden');
+          return;
+        }
+
+        const ort = toplamAgirlikli / toplamKredi;
+
+        if (harf) {
+          // Transkriptlerde olduğu gibi iki basamağa yuvarlanmış ortalama dönüştürülür
+          const gno = Math.round(ort * 100 + 1e-9) / 100;
+          const yuzluk = yokDortlukToYuzluk(gno);
+          $('ana-etiket').textContent = 'Not Ortalaması (4,00 üzerinden)';
+          $('sonuc-ortalama').textContent = fmt(gno);
+          $('sonuc-alt').textContent = yuzluk !== null ? `100'lük karşılığı: ${fmt(yuzluk)}` : '';
+          $('l-donusum').textContent = "100'lük karşılığı (YÖK tablosu)";
+          $('detail-donusum').textContent = yuzluk !== null ? fmt(yuzluk) : 'Tabloda karşılığı yok (1,00 altı)';
+          let durum = 'Başarısız (2,00 altı)';
+          if (gno >= 3.5) durum = 'Yüksek onur (çoğu üniversitede)';
+          else if (gno >= 3) durum = 'Onur (çoğu üniversitede)';
+          else if (gno >= 2) durum = 'Başarılı';
+          $('detail-durum').textContent = durum;
+        } else {
+          const dortluk = yuzlukToDortluk(ort);
+          $('ana-etiket').textContent = 'Ağırlıklı Not Ortalaması (100 üzerinden)';
+          $('sonuc-ortalama').textContent = fmt(ort);
+          $('sonuc-alt').textContent = dortluk !== null ? `Yaklaşık 4'lük karşılığı: ${fmt(dortluk)}` : '';
+          $('l-donusum').textContent = "4'lük karşılığı (YÖK tablosunun tersi, yaklaşık)";
+          $('detail-donusum').textContent = dortluk !== null ? fmt(dortluk) : '1,00 altı';
+          let durum = 'Başarısız (lisede 50 altı)';
+          if (ort >= 85) durum = 'Takdir belgesi düzeyi (lise, diğer şartlarla)';
+          else if (ort >= 70) durum = 'Teşekkür belgesi düzeyi (lise, diğer şartlarla)';
+          else if (ort >= 50) durum = 'Başarılı';
+          $('detail-durum').textContent = durum;
+        }
+
+        $('detail-kredi').textContent = fmt(toplamKredi, toplamKredi % 1 === 0 ? 0 : 1);
+        $('detail-ders').textContent = `${dersSayisi} ders`;
+
+        resultArea?.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const params = new URLSearchParams();
+        inputs.forEach(el => { if (el.id && el.value !== '') params.set(el.id, el.value); });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+      }
+
+      function loadFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        let has = false;
+        inputs.forEach(el => {
+          if (!el.id || !params.has(el.id)) return;
+          const v = params.get(el.id) ?? '';
+          if (el instanceof HTMLSelectElement && !Array.from(el.options).some(o => o.value === v)) return;
+          el.value = v;
+          has = true;
+        });
+        // Eski bağlantılar (notu1 / kredi1 …) 100'lük sisteme aktarılır
+        let eski = false;
+        for (let i = 1; i <= 5; i++) {
+          const n = params.get(`notu${i}`);
+          if (n !== null) {
+            (document.getElementById(`not${i}`) as HTMLInputElement).value = n;
+            eski = true;
+          }
+        }
+        if (eski && !params.has('sistem')) sistemEl.value = 'yuzluk';
+        sistemGuncelle();
+        if (has || eski) calculate();
+      }
+
+      sistemEl.addEventListener('change', sistemGuncelle);
+      const debounced = debounce(calculate);
+      inputs.forEach(el => {
+        el.addEventListener('input', debounced);
+        el.addEventListener('change', debounced);
+      });
+
+      loadFromURL();
+    });
+  </script>
+
   <section class="calc-content">
-    <h2>Not Ortalaması Hesaplama Nasıl Yapılır?</h2>
+    <h2>Not ortalaması nasıl hesaplanır?</h2>
     <p>
-      Öğrencilerin dönem sonu not ortalamasını hesaplaması, sınıf geçme, burs başvurusu, yüksek lisans başvurusu veya şartlı kayıt gibi pek çok süreçte kritik öneme sahiptir. Özellikle üniversitelerde farklı derslerin farklı kredi değerlerine sahip olması, hesaplamayı basit bir aritmetik ortalamadan daha karmaşık hale getirir. Bu araç, her ders için not ve kredi değerini girerek ağırlıklı not ortalamasını ve buna karşılık gelen GPA değerini hesaplar.
+      Üniversitede ve lisede not ortalaması basit aritmetik ortalama değil, <strong>ağırlıklı ortalamadır</strong>. Her dersin notu o dersin ağırlığıyla (üniversitede AKTS veya ulusal kredi, lisede haftalık ders saati) çarpılır; çarpımların toplamı toplam ağırlığa bölünür. Böylece 6 AKTS'lik bir dersin ortalamaya etkisi, 2 AKTS'lik bir dersin üç katı olur.
     </p>
+    <p><strong>Ortalama = Σ(Not × AKTS) ÷ Σ AKTS</strong></p>
+
+    <h2>Harf notları ve katsayıları</h2>
     <p>
-      Ağırlıklı not ortalaması, her dersin notunu o dersin kredisiyle orantılı biçimde değerlendirir. Bu sayede 5 kredili bir dersin ortalamanıza etkisi, 1 kredili bir dersten çok daha fazla olur. Örneğin 4 ve 5 kredili derslerde yüksek not almak, 1-2 kredili derslerdeki düşük notun etkisini büyük ölçüde dengeler.
+      Türkiye'deki üniversitelerin büyük çoğunluğu aşağıdaki katsayıları kullanır. Puan aralıkları ise örnektir; mutlak değerlendirme yapan bir üniversitede sık görülen aralıklardır ve bağıl değerlendirmede sınıf ortalamasına göre değişir.
     </p>
+    <table>
+      <thead>
+        <tr><th>Harf</th><th>Katsayı</th><th>Örnek puan aralığı</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>AA</td><td>4,00</td><td>90 – 100</td></tr>
+        <tr><td>BA</td><td>3,50</td><td>85 – 89</td></tr>
+        <tr><td>BB</td><td>3,00</td><td>80 – 84</td></tr>
+        <tr><td>CB</td><td>2,50</td><td>75 – 79</td></tr>
+        <tr><td>CC</td><td>2,00</td><td>70 – 74</td></tr>
+        <tr><td>DC</td><td>1,50</td><td>65 – 69</td></tr>
+        <tr><td>DD</td><td>1,00</td><td>60 – 64</td></tr>
+        <tr><td>FD</td><td>0,50</td><td>50 – 59</td></tr>
+        <tr><td>FF</td><td>0,00</td><td>0 – 49</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Örnek hesaplama</h2>
+    <p>Bir dönemde aşağıdaki dersleri alan öğrenci için:</p>
+    <table>
+      <thead>
+        <tr><th>Ders</th><th>Harf</th><th>Katsayı</th><th>AKTS</th><th>Katsayı × AKTS</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Matematik I</td><td>BA</td><td>3,50</td><td>6</td><td>21,0</td></tr>
+        <tr><td>Fizik I</td><td>CB</td><td>2,50</td><td>5</td><td>12,5</td></tr>
+        <tr><td>Programlamaya Giriş</td><td>AA</td><td>4,00</td><td>5</td><td>20,0</td></tr>
+        <tr><td>Kimya</td><td>CC</td><td>2,00</td><td>4</td><td>8,0</td></tr>
+        <tr><td>Türk Dili I</td><td>BB</td><td>3,00</td><td>2</td><td>6,0</td></tr>
+        <tr><td><strong>Toplam</strong></td><td></td><td></td><td><strong>22</strong></td><td><strong>67,5</strong></td></tr>
+      </tbody>
+    </table>
     <p>
-      4.0 GPA sistemi, özellikle yurt dışı üniversite başvurularında yaygın olarak kullanılmaktadır. Türkiye'deki 100'lük not sistemi bu skala üzerinden değerlendirilerek yurt dışındaki eşdeğer not belirlenir. Pek çok yabancı üniversite ve burs programı başvurularında minimum GPA şartı aramaktadır; bu araç sayesinde mevcut durumunuzu hızlıca değerlendirebilirsiniz.
-    </p>
-    <p>
-      Boş bırakılan satırlar otomatik olarak atlanır; yalnızca hem not hem de kredi girişi yapılan dersler hesaba dahil edilir. Bu sayede daha az ders için de doğru hesaplama yapılabilmektedir. Beşten az ders girerseniz araç yalnızca dolu satırları kullanarak sonucu hesaplar.
+      Dönem ortalaması = 67,5 ÷ 22 = 3,068 → iki basamağa yuvarlanınca <strong>3,07</strong>. YÖK tablosuna göre 3,07'nin 100'lük karşılığı 30 + 2,07 × 70 ÷ 3 = <strong>78,30</strong>'dur. Aynı derslerin basit ortalaması (3,00) ağırlıklı ortalamadan düşük çıkar; çünkü yüksek not alınan dersler daha fazla AKTS'ye sahiptir.
     </p>
 
-    <h3>Formül</h3>
+    <h2>YÖK 4'lük–100'lük dönüşüm tablosu</h2>
     <p>
-      Ağırlıklı Ortalama = Σ(Notᵢ × Krediᵢ) / Σ(Krediᵢ). GPA Dönüşümü: 90-100 → 4.0, 85-89 → 3.5, 80-84 → 3.0, 75-79 → 2.5, 70-74 → 2.0, 65-69 → 1.5, 60-64 → 1.0, 0-59 → 0.0.
+      YÖK'ün dönüşüm tablosu 1,00–4,00 aralığında doğrusaldır ve her 0,01'lik artış yaklaşık 0,233 puana denk gelir: <strong>100'lük = 30 + (4'lük − 1) × 70 ÷ 3</strong>. Tablodaki değerler iki basamağa kesilerek yazılır.
+    </p>
+    <table>
+      <thead>
+        <tr><th>4'lük</th><th>100'lük</th><th>4'lük</th><th>100'lük</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1,00</td><td>30,00</td><td>2,75</td><td>70,83</td></tr>
+        <tr><td>1,50</td><td>41,66</td><td>3,00</td><td>76,66</td></tr>
+        <tr><td>2,00</td><td>53,33</td><td>3,25</td><td>82,50</td></tr>
+        <tr><td>2,25</td><td>59,16</td><td>3,50</td><td>88,33</td></tr>
+        <tr><td>2,50</td><td>65,00</td><td>4,00</td><td>100,00</td></tr>
+      </tbody>
+    </table>
+    <p>
+      Bu tablo ALES, KPSS, yatay geçiş ve lisansüstü başvurularında kullanılır. 100'lük notunuzu 4'lük sisteme çevirmek için tablonun tersi (4'lük = 1 + (100'lük − 30) × 3 ÷ 70) yaklaşık bir karşılık verir; ancak bu yönde resmi bir YÖK tablosu yoktur ve kurumlar kendi tablolarını kullanabilir.
     </p>
 
-    <h3>Dikkat Edilmesi Gerekenler</h3>
+    <h2>Lise not ortalaması</h2>
     <p>
-      Bu araç maksimum 5 ders için hesaplama yapar. Notlar 0 ile 100 arasında olmalıdır. Kredi değerleri 1-10 arasında tam sayı olarak girilmelidir. GPA dönüşümü yaklaşık bir değer olup kurumdan kuruma farklılık gösterebilir; resmi başvurularda üniversitenizin resmi not dönüşüm tablosunu kullanın. Bütünleme notu veya mazeret sınavı gibi özel durumlar için ilgili kurumun yönetmeliğine başvurmanız gerekmektedir.
+      Lisede her dersin yıl sonu puanı, haftalık ders saatiyle ağırlıklandırılarak ortalama bulunur. Hesaplayıcıda "100'lük not" sistemini seçip kredi alanına haftalık ders saatini yazmanız yeterlidir. Lisede ders geçme notu 50'dir. Dönem puanı ortalaması 70–84,99 olan öğrenciler teşekkür, 85 ve üzeri olanlar takdir belgesi almaya hak kazanabilir; bunun için başarısız dersinin bulunmaması ve davranış şartlarının sağlanması gerekir. Diploma notunuzun YKS'ye etkisini <a href="/egitim/yks-puan-hesaplama/">YKS puan hesaplama</a> aracında görebilirsiniz.
     </p>
-
-    <h3>Sıkça Sorulan Sorular</h3>
-    {faq.map((item) => (
-      <div class="faq-item">
-        <h4>{item.question}</h4>
-        <p>{item.answer}</p>
-      </div>
-    ))}
   </section>
 </CalcLayout>
-
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
-    const resultArea = document.getElementById('calc-result');
-
-    function debounce(fn, d = 150) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), d); }; }
-    function formatNumber(n, d = 2) {
-      return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 0, maximumFractionDigits: d }).format(n);
-    }
-
-    const dc = debounce(calculate);
-    inputs.forEach(i => { i.addEventListener('input', dc); i.addEventListener('change', dc); });
-
-    function toGPA(avg) {
-      if (avg >= 90) return 4.0;
-      if (avg >= 85) return 3.5;
-      if (avg >= 80) return 3.0;
-      if (avg >= 75) return 2.5;
-      if (avg >= 70) return 2.0;
-      if (avg >= 65) return 1.5;
-      if (avg >= 60) return 1.0;
-      return 0.0;
-    }
-
-    function calculate() {
-      let totalWeighted = 0;
-      let totalKredi = 0;
-      let dersCount = 0;
-
-      for (let i = 1; i <= 5; i++) {
-        const notuEl = document.getElementById(`notu${i}`);
-        const krediEl = document.getElementById(`kredi${i}`);
-        const not = parseFloat(notuEl.value);
-        const kredi = parseFloat(krediEl.value);
-
-        if (!isNaN(not) && !isNaN(kredi) && kredi > 0) {
-          totalWeighted += not * kredi;
-          totalKredi += kredi;
-          dersCount++;
-        }
-      }
-
-      if (dersCount === 0 || totalKredi === 0) {
-        if (resultArea) resultArea.classList.add('hidden');
-        return;
-      }
-
-      const ortalama = totalWeighted / totalKredi;
-      const gpa = toGPA(ortalama);
-
-      document.getElementById('sonuc-ortalama').textContent = formatNumber(ortalama);
-      document.getElementById('detail-ortalama').textContent = `${formatNumber(ortalama)} / 100`;
-      document.getElementById('detail-gpa').textContent = formatNumber(gpa);
-      document.getElementById('detail-kredi').textContent = formatNumber(totalKredi, 0);
-      document.getElementById('detail-ders').textContent = `${dersCount} ders`;
-
-      if (resultArea) resultArea.classList.remove('hidden');
-      updateURL();
-    }
-
-    function updateURL() {
-      const p = new URLSearchParams();
-      inputs.forEach(i => { if (i.value && i.id) p.set(i.id, i.value); });
-      history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
-    }
-
-    function loadFromURL() {
-      const p = new URLSearchParams(window.location.search);
-      let h = false;
-      inputs.forEach(i => { if (i.id && p.has(i.id)) { i.value = p.get(i.id); h = true; } });
-      if (h) calculate();
-    }
-
-    loadFromURL();
-  });
-</script>

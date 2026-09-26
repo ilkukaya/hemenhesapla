@@ -1,90 +1,143 @@
 ---
-import categoriesData from '../../data/categories.json';
-const categories = categoriesData.categories;
+import Logo from '../ui/Logo.astro';
+import Icon from '../ui/Icon.astro';
+import SearchDialog from './SearchDialog.astro';
+import { categories } from '../../utils/catalog';
+
+const path = Astro.url.pathname;
+const currentCat = path.split('/').filter(Boolean)[0];
 ---
 
-<header class="bg-[var(--color-surface)] border-b border-[var(--color-border)] sticky top-0 z-50">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6">
-    <div class="flex items-center justify-between h-16">
-      <!-- Logo -->
-      <a href="/" class="flex items-center gap-2 shrink-0">
-        <img src="/favicon.svg" alt="" width="32" height="32" />
-        <span class="font-[var(--font-heading)] font-extrabold text-xl text-[var(--color-primary)]">
-          Hemen<span class="text-[var(--color-accent)]">Hesapla</span>
-        </span>
-      </a>
+<header id="site-header" class="sticky top-0 z-50 border-b border-[var(--color-border)] bg-[color-mix(in_srgb,var(--color-bg)_88%,transparent)] backdrop-blur-md supports-[not(backdrop-filter:blur(1px))]:bg-[var(--color-bg)]">
+  <div class="container-page flex h-[var(--header-h)] items-center gap-3">
+    <a href="/" class="shrink-0 rounded-lg" aria-label="Hemen Hesapla ana sayfa">
+      <Logo />
+    </a>
 
-      <!-- Desktop Nav -->
-      <nav class="hidden md:flex items-center gap-1">
-        {categories.slice(0, 5).map((cat) => (
-          <a
-            href={`/${cat.slug}/`}
-            class="px-3 py-2 text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] rounded-lg hover:bg-[var(--color-bg)] transition-colors"
-          >
-            {cat.name}
-          </a>
-        ))}
-        <div class="relative group">
-          <button class="px-3 py-2 text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] rounded-lg hover:bg-[var(--color-bg)] transition-colors">
-            Diğer ▾
-          </button>
-          <div class="absolute right-0 top-full mt-1 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg shadow-lg py-1 hidden group-hover:block min-w-[160px]">
-            {categories.slice(5).map((cat) => (
-              <a
-                href={`/${cat.slug}/`}
-                class="block px-4 py-2 text-sm text-[var(--color-text-secondary)] hover:bg-[var(--color-bg)] hover:text-[var(--color-primary)]"
-              >
-                {cat.icon} {cat.name}
-              </a>
-            ))}
-          </div>
-        </div>
-      </nav>
-
-      <!-- Mobile Menu Button -->
-      <button
-        id="menu-toggle"
-        class="md:hidden p-2 rounded-lg hover:bg-[var(--color-bg)] transition-colors"
-        aria-label="Menüyü aç"
-        aria-expanded="false"
-      >
-        <svg class="w-6 h-6 text-[var(--color-text)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
-      </button>
-    </div>
-  </div>
-
-  <!-- Mobile Menu -->
-  <div id="mobile-menu" class="hidden md:hidden border-t border-[var(--color-border)] bg-[var(--color-surface)]">
-    <nav class="px-4 py-3 space-y-1">
+    <nav aria-label="Kategoriler" class="ml-4 hidden xl:flex items-center gap-0.5">
       {categories.map((cat) => (
         <a
           href={`/${cat.slug}/`}
-          class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] rounded-lg hover:bg-[var(--color-bg)] transition-colors"
+          class:list={[
+            'px-3 py-2 rounded-full text-[0.9rem] font-medium whitespace-nowrap transition-colors',
+            currentCat === cat.slug
+              ? 'bg-[var(--color-surface-2)] text-[var(--color-text)]'
+              : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-2)]',
+          ]}
+          aria-current={currentCat === cat.slug ? 'page' : undefined}
         >
-          <span>{cat.icon}</span>
-          <span>{cat.name}</span>
+          {cat.name}
         </a>
       ))}
     </nav>
+
+    <div class="ml-auto flex items-center gap-1">
+      <button
+        type="button"
+        data-open-search
+        class="hidden md:flex items-center gap-2 h-10 w-56 xl:w-60 pl-3 pr-2 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] text-[0.9rem] text-[var(--color-text-muted)] hover:border-[var(--color-border-strong)] transition-colors"
+        aria-label="Hesaplayıcı ara"
+      >
+        <Icon name="search" size={17} />
+        <span class="flex-1 text-left">Hesaplayıcı ara…</span>
+        <kbd class="hidden xl:inline-flex items-center rounded-md border border-[var(--color-border)] px-1.5 py-0.5 text-[0.7rem] font-sans text-[var(--color-text-muted)]">/</kbd>
+      </button>
+      <button type="button" data-open-search class="icon-btn md:hidden" aria-label="Hesaplayıcı ara">
+        <Icon name="search" size={21} />
+      </button>
+      <button type="button" id="theme-toggle" class="icon-btn" aria-label="Koyu / açık tema">
+        <span class="theme-icon-light"><Icon name="moon" size={19} /></span>
+        <span class="theme-icon-dark"><Icon name="sun" size={19} /></span>
+      </button>
+      <button type="button" id="menu-open" class="icon-btn xl:hidden" aria-label="Menüyü aç" aria-controls="mobile-menu" aria-expanded="false">
+        <Icon name="menu" size={22} />
+      </button>
+    </div>
   </div>
 </header>
 
+<!-- Mobil menü -->
+<dialog id="mobile-menu" class="sheet" aria-label="Menü">
+  <div class="flex items-center justify-between h-[var(--header-h)] px-4 border-b border-[var(--color-border)]">
+    <a href="/" aria-label="Ana sayfa"><Logo /></a>
+    <button type="button" class="icon-btn" data-close aria-label="Menüyü kapat" autofocus><Icon name="x" size={22} /></button>
+  </div>
+  <div class="p-4 overflow-y-auto">
+    <button type="button" data-open-search class="w-full flex items-center gap-2 h-12 px-4 mb-4 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-muted)]">
+      <Icon name="search" size={18} /> Hesaplayıcı ara…
+    </button>
+    <ul class="space-y-1">
+      {categories.map((cat) => (
+        <li>
+          <details class="menu-cat" style={`--cat:${cat.color}`}>
+            <summary class="flex items-center gap-3 px-2 py-2.5 rounded-xl cursor-pointer list-none">
+              <span class="tool-icon grid place-items-center w-9 h-9 rounded-[10px]" style={`color:${cat.color};background:color-mix(in srgb, ${cat.color} 11%, transparent)`}><Icon name={cat.icon} size={19} /></span>
+              <span class="flex-1 font-semibold">{cat.name}</span>
+              <span class="text-xs text-[var(--color-text-muted)] mr-1">{cat.calculators.length}</span>
+              <Icon name="chevron-down" size={18} class="menu-chevron text-[var(--color-text-muted)] transition-transform" />
+            </summary>
+            <ul class="pl-14 pb-2">
+              <li><a href={`/${cat.slug}/`} class="block py-2 text-[0.95rem] font-semibold text-[var(--color-text)]">Tüm {cat.name.toLocaleLowerCase('tr-TR')} araçları</a></li>
+              {cat.calculators.map((c) => (
+                <li><a href={c.href} class="block py-2 text-[0.95rem] text-[var(--color-text-secondary)]">{c.title}</a></li>
+              ))}
+            </ul>
+          </details>
+        </li>
+      ))}
+    </ul>
+    <div class="mt-6 pt-4 border-t border-[var(--color-border)] grid grid-cols-2 gap-2 text-sm text-[var(--color-text-secondary)]">
+      <a href="/hakkimizda/" class="py-2">Hakkımızda</a>
+      <a href="/iletisim/" class="py-2">İletişim</a>
+      <a href="/metodoloji/" class="py-2">Hesaplama yöntemi</a>
+      <a href="/gizlilik/" class="py-2">Gizlilik</a>
+    </div>
+  </div>
+</dialog>
+
+<SearchDialog />
+
+<style is:global>
+  .sheet {
+    margin: 0;
+    width: 100%;
+    max-width: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
+    padding: 0;
+    border: 0;
+    background: var(--color-bg);
+    color: var(--color-text);
+  }
+  .sheet[open] { display: flex; flex-direction: column; animation: sheet-in .2s ease-out; }
+  .sheet::backdrop { background: rgb(0 0 0 / .4); }
+  @keyframes sheet-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .menu-cat[open] .menu-chevron { transform: rotate(180deg); }
+  .menu-cat summary::-webkit-details-marker { display: none; }
+  .menu-cat summary:hover { background: var(--color-surface-2); }
+  .theme-icon-dark { display: none; }
+  [data-theme="dark"] .theme-icon-dark { display: inline; }
+  [data-theme="dark"] .theme-icon-light { display: none; }
+</style>
+
 <script>
-  const menuBtn = document.getElementById('menu-toggle');
-  const mobileMenu = document.getElementById('mobile-menu');
-
-  menuBtn?.addEventListener('click', () => {
-    mobileMenu?.classList.toggle('hidden');
-    const isOpen = !mobileMenu?.classList.contains('hidden');
-    menuBtn.setAttribute('aria-expanded', String(isOpen));
+  const menu = document.getElementById('mobile-menu') as HTMLDialogElement | null;
+  const openBtn = document.getElementById('menu-open');
+  openBtn?.addEventListener('click', () => {
+    menu?.showModal();
+    openBtn.setAttribute('aria-expanded', 'true');
   });
+  menu?.addEventListener('close', () => openBtn?.setAttribute('aria-expanded', 'false'));
+  menu?.querySelector('[data-close]')?.addEventListener('click', () => menu.close());
+  menu?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => menu.close()));
+  menu?.querySelector('[data-open-search]')?.addEventListener('click', () => menu.close());
 
-  document.addEventListener('click', (e) => {
-    if (!menuBtn?.contains(e.target as Node) && !mobileMenu?.contains(e.target as Node)) {
-      mobileMenu?.classList.add('hidden');
-      menuBtn?.setAttribute('aria-expanded', 'false');
-    }
+  document.getElementById('theme-toggle')?.addEventListener('click', () => {
+    const root = document.documentElement;
+    const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    root.dataset.theme = next;
+    try { localStorage.setItem('hh-theme', next); } catch {}
+    const meta = document.querySelector('meta[name="theme-color"]:not([media])');
+    meta?.setAttribute('content', next === 'dark' ? '#0F1114' : '#F7F7F4');
   });
 </script>

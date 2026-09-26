@@ -1,0 +1,21 @@
+---
+interface Props {
+  size?: number;
+  withText?: boolean;
+  class?: string;
+}
+const { size = 30, withText = true, class: className = '' } = Astro.props;
+---
+
+<span class={`inline-flex items-center gap-2 ${className}`}>
+  <svg width={size} height={size} viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+    <rect width="32" height="32" rx="9" fill="var(--color-text)" />
+    <path d="M9 9.5v13M9 16h7.5M16.5 9.5v13" stroke="var(--color-bg)" stroke-width="2.6" stroke-linecap="round" />
+    <path d="M20.5 16h4.5M22.75 13.75v4.5" stroke="var(--color-accent)" stroke-width="2.6" stroke-linecap="round" />
+  </svg>
+  {withText && (
+    <span class="font-[family-name:var(--font-heading)] font-bold text-[1.1875rem] tracking-[-0.02em] leading-none text-[var(--color-text)]">
+      hemen<span class="text-[var(--color-accent)]">hesapla</span>
+    </span>
+  )}
+</span>

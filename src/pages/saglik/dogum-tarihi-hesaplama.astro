@@ -1,42 +1,90 @@
 ---
 import CalcLayout from '../../layouts/CalcLayout.astro';
 import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcSelect from '../../components/calculator/CalcSelect.astro';
 import CalcResult from '../../components/calculator/CalcResult.astro';
 
 const faq = [
   {
     question: "Tahmini doğum tarihi nasıl hesaplanır?",
-    answer: "Tahmini doğum tarihi (TDT), Naegele kuralı kullanılarak hesaplanır. Son adet tarihinizin ilk gününe 280 gün (40 hafta) eklenir. Bir diğer yöntemle: son adet tarihinin ayından 3 çıkarılır, gününe 7 eklenir ve yılına 1 eklenir. Ancak bu tarih bir tahminden ibaret olup bebeklerin yalnızca %4'ü tam bu günde doğar. Gebeliklerin büyük çoğunluğu 38. ile 42. haftalar arasında gerçekleşir."
+    answer: "En yaygın yöntem Naegele kuralıdır: son adet tarihinin (SAT) ilk gününe 280 gün (40 hafta) eklenir. Pratik yolu, SAT'a 7 gün ekleyip 3 ay geri gitmek ve yılı bir artırmaktır. Örneğin SAT 1 Mart 2026 ise 280 gün sonrası 6 Aralık 2026'dır; kısa yol ay uzunlukları nedeniyle 8 Aralık verir. Döngünüz 28 günden farklıysa aradaki fark tarihe eklenir veya çıkarılır."
   },
   {
-    question: "Gebelik haftalarına göre trimesterler nelerdir?",
-    answer: "Gebelik üç trimestere ayrılır. Birinci trimester 1. haftadan 12. haftanın sonuna kadar sürer ve organların gelişiminin başladığı dönemdir. İkinci trimester 13. haftadan 26. haftanın sonuna kadar uzanır; bebeğin hareketlerinin hissedilmeye başladığı bu dönemde ultrason ile cinsiyet belirlenebilir. Üçüncü trimester ise 27. haftadan doğuma dek sürer ve bebeğin büyüme ile olgunlaşma dönemidir."
+    question: "Bebek tam tahmini doğum tarihinde mi doğar?",
+    answer: "Çoğunlukla hayır. Bebeklerin yalnızca yaklaşık %4–5'i tam tahmini tarihte doğar. 37 hafta 0 gün ile 41 hafta 6 gün arasındaki doğumlar 'miadında' kabul edilir; ACOG bu aralığı erken miat (37–38+6), tam miat (39–40+6) ve geç miat (41–41+6) olarak ayırır. Tahmini tarih, gebelik takibinde referans alınan bir orta noktadır."
   },
   {
-    question: "Son adet tarihi neden kullanılır?",
-    answer: "Yumurtlama ve döllenme tarihleri genellikle kesin olarak bilinmediğinden son adet tarihi (SAT), gebelik hesaplamalarında standart başlangıç noktası olarak kullanılır. 28 günlük düzenli adet döngüsü varsayılarak adet başlangıcından yaklaşık 14 gün sonra yumurtlama gerçekleştiği kabul edilir. Ultrason ile belirlenen ölçümler, özellikle ilk trimesterde yapılanlar, daha hassas gebelik yaşı tespiti sağlar."
+    question: "Döllenme tarihinden doğum tarihi nasıl hesaplanır?",
+    answer: "Döllenme (ilişki veya yumurtlama) tarihini kesin biliyorsanız bu tarihe 266 gün (38 hafta) eklenir. Bu, 28 günlük döngüde SAT + 280 gün ile aynı sonucu verir; çünkü yumurtlama SAT'tan yaklaşık 14 gün sonra olur. Hesaplayıcıda yöntem olarak 'Döllenme tarihi'ni seçerek bu hesabı yapabilirsiniz."
+  },
+  {
+    question: "Tüp bebek (IVF) gebeliğinde doğum tarihi nasıl hesaplanır?",
+    answer: "ACOG'a göre IVF gebeliklerinde tarih embriyonun yaşı ve transfer günü ile belirlenir. 5 günlük embriyo (blastokist) transferinde transfer tarihine 261 gün, 3 günlük embriyo transferinde 263 gün eklenir. Bu yöntem SAT'a dayalı hesaptan daha kesindir; hesaplayıcıda ilgili IVF seçeneğini kullanabilirsiniz."
+  },
+  {
+    question: "Ultrason doğum tarihimi değiştirebilir mi?",
+    answer: "Evet. İlk trimesterde (13 hafta 6 gün ve öncesi) yapılan baş-popo mesafesi ölçümü tarihlendirmede en doğru yöntemdir. ACOG'a göre bu dönemde ultrason ile SAT'a göre hesap arasındaki fark 9. haftadan önce 5 günden, 9–13+6 hafta arasında 7 günden fazlaysa tahmini doğum tarihi ultrasona göre güncellenir."
+  },
+  {
+    question: "40 hafta geçerse ne olur?",
+    answer: "Tahmini tarihin geçmesi sık görülür ve tek başına sorun değildir. 41. haftadan itibaren hekimler bebeğin iyilik halini daha sık izler; 41–42. haftalarda doğumun başlatılması (indüksiyon) önerilebilir. 42 haftayı aşan gebelikler 'miadı geçmiş' kabul edilir. Bebek hareketlerinde azalma fark ederseniz beklemeden hastaneye başvurun."
   }
 ];
 
 const meta = {
-  title: "Gebelik ve Tahmini Doğum Tarihi Hesaplama",
-  description: "Son adet tarihinize göre tahmini doğum tarihinizi, gebelik haftanızı ve trimesterinizi hesaplayın. Naegele kuralı ile anında gebelik takibi yapın.",
+  title: "Tahmini Doğum Tarihi Hesaplama",
+  seoTitle: "Doğum Tarihi Hesaplama 2026 – Tahmini Doğum Tarihi",
+  description: "Son adet tarihi, döllenme tarihi veya tüp bebek transfer tarihine göre tahmini doğum tarihinizi hesaplayın. Gebelik haftanızı ve miat aralığını görün.",
+  summary: "Tahmini doğum tarihi, Naegele kuralına göre son adet tarihinin ilk gününe 280 gün (40 hafta) eklenerek bulunur. Döllenme tarihi biliniyorsa 266 gün, 5 günlük IVF transferinde 261 gün, 3 günlük transferde 263 gün eklenir. Doğumların çoğu 37+0 ile 41+6 hafta arasında gerçekleşir.",
+  howTo: [
+    "Hesaplama yöntemini seçin: son adet tarihi, döllenme tarihi veya IVF transfer tarihi.",
+    "İlgili tarihi girin.",
+    "Son adet tarihi yönteminde döngünüz 28 günden farklıysa ortalama döngü sürenizi yazın.",
+    "Tahmini doğum tarihinizi, gebelik haftanızı ve miadında doğum aralığını görün."
+  ],
+  sources: [
+    { name: "ACOG Committee Opinion No. 700 – Methods for Estimating the Due Date", url: "https://www.acog.org/clinical/clinical-guidance/committee-opinion/articles/2017/05/methods-for-estimating-the-due-date" },
+    { name: "ACOG – Methods for Estimating the Due Date (PDF)", url: "https://www.acog.org/-/media/project/acog/acogorg/clinical/files/committee-opinion/articles/2017/05/methods-for-estimating-the-due-date.pdf" }
+  ],
   category: "saglik",
   slug: "dogum-tarihi-hesaplama",
-  keywords: ["tahmini doğum tarihi", "gebelik haftası hesaplama", "Naegele kuralı", "trimester hesaplama", "son adet tarihi", "doğum hesaplama"],
-  dateModified: "2026-04-01",
-  relatedCalcs: ["gebelik-haftasi-hesaplama", "ideal-kilo-hesaplama"],
+  keywords: ["tahmini doğum tarihi", "doğum tarihi hesaplama", "Naegele kuralı", "ne zaman doğuracağım", "tüp bebek doğum tarihi", "son adet tarihi"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["saglik/gebelik-haftasi-hesaplama", "saglik/su-ihtiyaci-hesaplama", "saglik/kalori-hesaplama", "gunluk/gun-hesaplama"],
   faq
 };
 ---
 
 <CalcLayout meta={meta}>
-  <form id="calc-form">
+  <form id="calc-form" class="calc-inputs" novalidate>
+    <CalcSelect
+      id="yontem"
+      label="Hesaplama Yöntemi"
+      options={[
+        { value: "sat", label: "Son adet tarihi (SAT)" },
+        { value: "dollenme", label: "Döllenme / yumurtlama tarihi" },
+        { value: "ivf5", label: "Tüp bebek – 5 günlük embriyo transferi" },
+        { value: "ivf3", label: "Tüp bebek – 3 günlük embriyo transferi" }
+      ]}
+      value="sat"
+    />
     <CalcInput
       id="sonAdetTarihi"
-      label="Son Adet Tarihi (İlk Gün)"
+      label="Tarih"
       type="date"
-      helpText="Adet kanamanızın başladığı ilk günü girin"
+      helpText="SAT için adetin başladığı ilk gün"
+    />
+    <CalcInput
+      id="dongu"
+      label="Ortalama Döngü Süresi"
+      type="number"
+      suffix="gün"
+      placeholder="28"
+      min={20}
+      max={45}
+      step={1}
+      required={false}
+      helpText="Yalnızca SAT yönteminde; boşsa 28 gün"
     />
   </form>
 
@@ -47,7 +95,7 @@ const meta = {
     </div>
     <div slot="details">
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Gebelik Haftası</span>
+        <span class="calc-detail-label">Bugünkü gebelik yaşı</span>
         <span class="calc-detail-value" id="d-hafta">—</span>
       </div>
       <div class="calc-detail-row">
@@ -55,136 +103,195 @@ const meta = {
         <span class="calc-detail-value" id="d-trimester">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Tahmini Doğuma Kalan</span>
+        <span class="calc-detail-label">Doğuma kalan</span>
         <span class="calc-detail-value" id="d-kalan">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Miadında doğum aralığı (37+0 – 41+6)</span>
+        <span class="calc-detail-value" id="d-miat">—</span>
       </div>
     </div>
   </CalcResult>
 
+  <p class="calc-note">
+    Hesaplanan tarih bir tahmindir; tıbbi muayene ve ultrason değerlendirmesinin yerini tutmaz. Hekiminiz erken ultrasona göre farklı bir tarih belirlediyse onu esas alın. Kanama, sıvı gelmesi, düzenli kasılmalar veya bebek hareketlerinde azalma olursa hemen sağlık kuruluşuna başvurun.
+  </p>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const inputs = document.querySelectorAll<HTMLInputElement | HTMLSelectElement>('#calc-form input, #calc-form select');
       const resultArea = document.getElementById('calc-result');
+      const $ = (id: string) => document.getElementById(id) as HTMLElement;
+      const yontemEl = document.getElementById('yontem') as HTMLSelectElement;
+      const tarihEl = document.getElementById('sonAdetTarihi') as HTMLInputElement;
+      const donguGroup = document.getElementById('dongu')?.closest('.calc-input-group');
+      const tarihLabel = document.querySelector('label[for="sonAdetTarihi"]');
 
-      function debounce(fn, delay = 150) {
-        let t;
-        return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), delay); };
+      // Seçilen tarihten "SAT eşdeğeri"ne gün farkı (ACOG CO 700)
+      const YONTEM: Record<string, { fark: number; etiket: string }> = {
+        sat: { fark: 0, etiket: 'Son Adet Tarihi (ilk gün)' },
+        dollenme: { fark: -14, etiket: 'Döllenme / Yumurtlama Tarihi' },
+        ivf5: { fark: -19, etiket: 'Embriyo Transfer Tarihi (5. gün)' },
+        ivf3: { fark: -17, etiket: 'Embriyo Transfer Tarihi (3. gün)' }
+      };
+
+      function debounce(fn: () => void, delay = 150) {
+        let timer: ReturnType<typeof setTimeout>;
+        return () => { clearTimeout(timer); timer = setTimeout(fn, delay); };
       }
 
-      function formatNumber(n, d = 0) {
-        return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: d, maximumFractionDigits: d }).format(n);
+      // "YYYY-MM-DD" değerini yerel saatle çözer; toISOString/UTC kullanılmaz
+      function parseLocalDate(s: string): Date | null {
+        const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
+        if (!m) return null;
+        const y = +m[1], mo = +m[2] - 1, d = +m[3];
+        const date = new Date(y, mo, d);
+        return date.getFullYear() === y && date.getMonth() === mo && date.getDate() === d ? date : null;
       }
 
-      function formatDate(date) {
-        return new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' }).format(date);
+      function addDays(d: Date, n: number) {
+        return new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
       }
 
-      const dc = debounce(calculate);
-      inputs.forEach(i => { i.addEventListener('input', dc); i.addEventListener('change', dc); });
+      function diffDays(a: Date, b: Date) {
+        return Math.round((Date.UTC(b.getFullYear(), b.getMonth(), b.getDate()) - Date.UTC(a.getFullYear(), a.getMonth(), a.getDate())) / 86400000);
+      }
+
+      function formatDate(d: Date, gunAdi = false) {
+        return new Intl.DateTimeFormat('tr-TR', gunAdi
+          ? { day: 'numeric', month: 'long', year: 'numeric', weekday: 'long' }
+          : { day: 'numeric', month: 'long', year: 'numeric' }).format(d);
+      }
+
+      function yontemGuncelle() {
+        const y = YONTEM[yontemEl.value] ?? YONTEM.sat;
+        if (tarihLabel) tarihLabel.textContent = y.etiket;
+        donguGroup?.classList.toggle('hidden', yontemEl.value !== 'sat');
+      }
 
       function calculate() {
-        const satVal = document.getElementById('sonAdetTarihi').value;
-        if (!satVal) {
-          if (resultArea) resultArea.classList.add('hidden');
+        const secilen = parseLocalDate(tarihEl.value);
+        const y = YONTEM[yontemEl.value] ?? YONTEM.sat;
+
+        if (!secilen) {
+          resultArea?.classList.add('hidden');
           return;
         }
 
-        const sat = new Date(satVal);
-        if (isNaN(sat.getTime())) {
-          if (resultArea) resultArea.classList.add('hidden');
-          return;
+        let fark = y.fark;
+        if (yontemEl.value === 'sat') {
+          const d = parseInt((document.getElementById('dongu') as HTMLInputElement).value, 10);
+          if (isFinite(d) && d >= 20 && d <= 45) fark = d - 28;
         }
 
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        // SAT eşdeğeri: gebelik yaşının 0. günü
+        const sat0 = addDays(secilen, fark);
+        const dogum = addDays(sat0, 280);
+        const now = new Date();
+        const bugun = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const gecen = diffDays(sat0, bugun);
+        const kalan = diffDays(bugun, dogum);
 
-        // Naegele: SAT + 280 days
-        const dogumTarihi = new Date(sat.getTime() + 280 * 24 * 60 * 60 * 1000);
+        $('dogum-tarihi').textContent = formatDate(dogum, true);
+        $('d-miat').textContent = `${formatDate(addDays(sat0, 259))} – ${formatDate(addDays(sat0, 293))}`;
 
-        // Gebelik süresi (bugüne kadar)
-        const gecenMs = today.getTime() - sat.getTime();
-        const gecenGun = Math.floor(gecenMs / (24 * 60 * 60 * 1000));
-        const haftaSayisi = Math.floor(gecenGun / 7);
-        const kalanGunHafta = gecenGun % 7;
-
-        // Trimester
-        let trimester = '';
-        if (haftaSayisi <= 12) trimester = '1. Trimester';
-        else if (haftaSayisi <= 26) trimester = '2. Trimester';
-        else trimester = '3. Trimester';
-
-        // Doğuma kalan
-        const kalanMs = dogumTarihi.getTime() - today.getTime();
-        const kalanGun = Math.ceil(kalanMs / (24 * 60 * 60 * 1000));
-
-        document.getElementById('dogum-tarihi').textContent = formatDate(dogumTarihi);
-
-        if (gecenGun < 0) {
-          document.getElementById('d-hafta').textContent = 'Henüz başlamadı';
-          document.getElementById('d-trimester').textContent = '—';
+        if (diffDays(secilen, bugun) < 0) {
+          $('d-hafta').textContent = 'Seçilen tarih ileri bir tarih';
+          $('d-trimester').textContent = '—';
+        } else if (gecen > 44 * 7) {
+          $('d-hafta').textContent = '44 haftadan fazla – tarihi kontrol edin';
+          $('d-trimester').textContent = '—';
         } else {
-          document.getElementById('d-hafta').textContent = haftaSayisi + '. hafta ' + kalanGunHafta + ' gün';
-          document.getElementById('d-trimester').textContent = trimester;
+          const g = Math.max(0, gecen);
+          $('d-hafta').textContent = `${Math.floor(g / 7)} hafta ${g % 7} gün (${Math.floor(g / 7) + 1}. hafta)`;
+          $('d-trimester').textContent = g < 98 ? '1. trimester' : g < 196 ? '2. trimester' : '3. trimester';
         }
 
-        if (kalanGun > 0) {
-          document.getElementById('d-kalan').textContent = formatNumber(kalanGun) + ' gün';
-        } else {
-          document.getElementById('d-kalan').textContent = 'Doğum tarihi geçti';
-        }
+        $('d-kalan').textContent = kalan > 0 ? `${kalan} gün` : kalan === 0 ? 'Bugün' : `${-kalan} gün geçti`;
 
-        if (resultArea) resultArea.classList.remove('hidden');
+        resultArea?.classList.remove('hidden');
         updateURL();
       }
 
       function updateURL() {
-        const p = new URLSearchParams();
-        inputs.forEach(i => { if (i.value && i.id) p.set(i.id, i.value); });
-        history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
+        const params = new URLSearchParams();
+        inputs.forEach(el => { if (el.id && el.value !== '') params.set(el.id, el.value); });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
       }
 
       function loadFromURL() {
-        const p = new URLSearchParams(window.location.search);
-        let h = false;
-        inputs.forEach(i => { if (i.id && p.has(i.id)) { i.value = p.get(i.id); h = true; } });
-        if (h) calculate();
+        const params = new URLSearchParams(window.location.search);
+        let has = false;
+        inputs.forEach(el => {
+          if (!el.id || !params.has(el.id)) return;
+          const v = params.get(el.id) ?? '';
+          if (el instanceof HTMLSelectElement && !Array.from(el.options).some(o => o.value === v)) return;
+          el.value = v;
+          has = true;
+        });
+        yontemGuncelle();
+        if (has) calculate();
       }
+
+      yontemEl.addEventListener('change', yontemGuncelle);
+      const debounced = debounce(calculate);
+      inputs.forEach(el => {
+        el.addEventListener('input', debounced);
+        el.addEventListener('change', debounced);
+      });
 
       loadFromURL();
     });
   </script>
 
   <section class="calc-content">
-    <h2>Tahmini Doğum Tarihi Nasıl Hesaplanır?</h2>
+    <h2>Tahmini doğum tarihi nasıl bulunur?</h2>
     <p>
-      Gebelik hesaplaması, beklentili ebeveynler için en heyecanlı merak konularından biridir. Tahmini doğum tarihi (TDT), gebeliğin seyrine dair önemli bir referans noktası olup antenatal takip planlamasında kilit rol oynar. Türkiye'de ve dünya genelinde en yaygın kullanılan hesaplama yöntemi Naegele Kuralı'dır.
-    </p>
-    <p>
-      Bu hesap makinesi, son adet tarihinizin (SAT) ilk gününü baz alarak gebelik haftanızı, trimesterinizi ve tahmini doğum tarihinizi saniyeler içinde hesaplar. Sonuçlar tamamen bilgilendirme amaçlıdır; kesin gebelik takibi için mutlaka bir jinekolog veya kadın doğum uzmanı ile görüşülmelidir.
+      Tahmini doğum tarihi (TDT), gebeliğin 40. haftasının tamamlandığı gündür. Hesaplamanın başlangıç noktası çoğunlukla son adet tarihinin (SAT) ilk günüdür, çünkü döllenme tarihi genellikle kesin bilinmez. Tüp bebek gebeliklerinde ise embriyonun yaşı ve transfer günü bilindiğinden tarih çok daha kesin hesaplanır.
     </p>
 
-    <h3>Naegele Kuralı ile Hesaplama Formülü</h3>
+    <h2>Yöntemlere göre formüller</h2>
+    <table>
+      <thead>
+        <tr><th>Başlangıç tarihi</th><th>Eklenecek süre</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Son adet tarihi (28 günlük döngü)</td><td>280 gün (40 hafta)</td></tr>
+        <tr><td>Son adet tarihi (farklı döngü)</td><td>280 gün + (döngü süresi − 28)</td></tr>
+        <tr><td>Döllenme / yumurtlama tarihi</td><td>266 gün (38 hafta)</td></tr>
+        <tr><td>IVF – 5 günlük embriyo transferi</td><td>261 gün</td></tr>
+        <tr><td>IVF – 3 günlük embriyo transferi</td><td>263 gün</td></tr>
+      </tbody>
+    </table>
     <p>
-      <strong>Tahmini Doğum Tarihi = Son Adet Tarihi + 280 Gün (40 Hafta)</strong>
-    </p>
-    <p>
-      Naegele kuralının pratik hesaplaması şöyle yapılır: Son adet tarihinin ayından 3 çıkarın, gününe 7 ekleyin, yılına ise 1 ekleyin. Örneğin son adet tarihiniz 1 Ocak 2026 ise tahmini doğum tarihiniz 8 Ekim 2026'dır.
-    </p>
-    <p>
-      Trimester sınıflandırması: 1. trimester 1–12. hafta, 2. trimester 13–26. hafta, 3. trimester ise 27–40. haftalar arasındadır. Her trimesterin kendine özgü gelişim aşamaları ve önerilen muayene takvimleri vardır.
+      Naegele kuralının pratik hali şöyledir: SAT'a 7 gün ekleyin, 3 ay geri gidin, yılı bir artırın. Bu kısa yol ayların farklı uzunlukları nedeniyle 280 gün eklemekten 1–3 gün sapabilir; hesaplayıcı her zaman tam 280 günü ekler.
     </p>
 
-    <h3>Dikkat Edilmesi Gerekenler</h3>
+    <h2>Örnek hesaplama</h2>
     <p>
-      Naegele kuralı, 28 günlük düzenli adet döngüsünü esas alır. Adet düzensizliği olan, polikistik over sendromu (PKOS) olan veya doğum kontrol hapı bırakma sonrası gebe kalan bireylerde son adet tarihi her zaman güvenilir bir referans olmayabilir. Bu durumlarda ilk trimesterde yapılan ultrason ölçümleri (CRL – baş-popo mesafesi) daha doğru bir gebelik yaşı tahmini sağlar. Bebekler yalnızca %4 ihtimalle tam TDT'de doğar; gebeliklerin büyük çoğunluğu 38.–42. haftalar arasında sonuçlanır.
+      Son adetinin ilk günü 1 Mart 2026 olan ve 28 günlük düzenli döngüsü olan biri için: 1 Mart 2026 + 280 gün = <strong>6 Aralık 2026</strong>. Miadında doğum aralığı (37+0 – 41+6 hafta) 15 Kasım 2026 ile 19 Aralık 2026 arasıdır.
+    </p>
+    <p>
+      Aynı kişinin döngüsü 31 gün olsaydı yumurtlama yaklaşık 3 gün geç olacağı için tahmini doğum tarihi 9 Aralık 2026'ya kayardı. 5 günlük embriyo transferi 10 Nisan 2026'da yapılan bir tüp bebek gebeliğinde ise TDT, 10 Nisan + 261 gün = 27 Aralık 2026 olur.
     </p>
 
-    <h3>Sıkça Sorulan Sorular</h3>
-    {faq.map(item => (
-      <details>
-        <summary><strong>{item.question}</strong></summary>
-        <p>{item.answer}</p>
-      </details>
-    ))}
+    <h2>Miat kavramları</h2>
+    <table>
+      <thead>
+        <tr><th>Tanım</th><th>Gebelik haftası</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Erken doğum (preterm)</td><td>37+0 haftadan önce</td></tr>
+        <tr><td>Erken miat</td><td>37+0 – 38+6</td></tr>
+        <tr><td>Tam miat</td><td>39+0 – 40+6</td></tr>
+        <tr><td>Geç miat</td><td>41+0 – 41+6</td></tr>
+        <tr><td>Miadı geçmiş (postterm)</td><td>42+0 ve sonrası</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Tarih neden değişebilir?</h2>
+    <p>
+      İlk trimester ultrasonunda ölçülen baş-popo mesafesi, gebelik yaşını belirlemenin en güvenilir yoludur. SAT'a göre hesap ile ultrason arasında belirgin fark varsa hekiminiz tahmini doğum tarihinizi ultrasona göre günceller ve takibin geri kalanında bu tarih kullanılır. Bugün kaçıncı haftada olduğunuzu ayrıntılı görmek için <a href="/saglik/gebelik-haftasi-hesaplama/">gebelik haftası hesaplama</a> aracını kullanabilirsiniz.
+    </p>
   </section>
 </CalcLayout>

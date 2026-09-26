@@ -1,11 +1,19 @@
 ---
+import Icon from '../ui/Icon.astro';
+
 interface Props {
   id?: string;
+  emptyText?: string;
 }
-const { id = 'calc-result' } = Astro.props;
+const { id = 'calc-result', emptyText = 'Değerleri girin; sonuç siz yazdıkça burada görünür.' } = Astro.props;
 ---
 
-<div id={id} class="calc-result hidden">
+<div class="calc-empty" aria-hidden="true">
+  <Icon name="calculator" size={20} />
+  <span>{emptyText}</span>
+</div>
+
+<div id={id} class="calc-result hidden" aria-live="polite">
   <div class="calc-result-main">
     <slot name="main" />
   </div>
@@ -14,22 +22,15 @@ const { id = 'calc-result' } = Astro.props;
     <slot name="details" />
   </div>
 
-  <div class="calc-result-actions">
-    <button id="copy-link-btn" class="btn-secondary" title="Sonuç linkini kopyala">
-      🔗 Linki Kopyala
+  <div class="calc-result-actions no-print">
+    <button type="button" class="btn-secondary" data-action="copy-result">
+      <Icon name="copy" size={16} /> Sonucu kopyala
+    </button>
+    <button type="button" class="btn-secondary" data-action="share">
+      <Icon name="share-2" size={16} /> Paylaş
+    </button>
+    <button type="button" class="btn-ghost" data-action="reset">
+      <Icon name="rotate-ccw" size={16} /> Temizle
     </button>
   </div>
 </div>
-
-<script>
-  document.getElementById('copy-link-btn')?.addEventListener('click', () => {
-    navigator.clipboard.writeText(window.location.href).then(() => {
-      const btn = document.getElementById('copy-link-btn');
-      if (btn) {
-        const original = btn.textContent;
-        btn.textContent = '✅ Kopyalandı!';
-        setTimeout(() => { btn.textContent = original; }, 2000);
-      }
-    });
-  });
-</script>

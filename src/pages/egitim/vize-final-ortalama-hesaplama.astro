@@ -1,0 +1,272 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcSelect from '../../components/calculator/CalcSelect.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Vize final ortalaması nasıl hesaplanır?",
+    answer: "Ortalama, vize ve final notlarının ağırlıklarıyla çarpılıp toplanmasıyla bulunur. Formül: Ortalama = Vize × (vize ağırlığı / 100) + Final × (final ağırlığı / 100). Örneğin vize %40, final %60 ağırlıklıysa ve vizeden 50, finalden 70 aldıysanız ortalamanız 50 × 0,40 + 70 × 0,60 = 20 + 42 = 62 olur."
+  },
+  {
+    question: "Finalden kaç almalıyım?",
+    answer: "Geçmek için gereken final notu şu formülle bulunur: Gerekli Final = (Geçme Notu − Vize × vize ağırlığı) / final ağırlığı. Vize ağırlığı %40, geçme notu 50 ve vize notunuz 40 ise gerekli final = (50 − 16) / 0,60 = 56,67 olur. Üniversitenizde final barajı varsa bu nottan düşük olamaz."
+  },
+  {
+    question: "Vize yüzde 40 final yüzde 60 ne demek?",
+    answer: "Dönem sonu başarı notunuzun %40'ının ara sınavdan (vize), %60'ının dönem sonu sınavından (final) geldiği anlamına gelir. Türkiye'deki üniversitelerin çoğunda en yaygın ağırlık budur; ancak bazı fakültelerde %30-%70 veya %50-%50 gibi farklı oranlar kullanılır. Doğru oranı ders izlencesinden veya yönetmelikten kontrol edin."
+  },
+  {
+    question: "Final barajı nedir?",
+    answer: "Final barajı, ortalamanız geçme notunun üzerinde olsa bile finalden alınması zorunlu olan asgari nottur. Birçok üniversitede bu sınır 45 veya 50'dir. Örneğin vizeden 100 alıp finalden 30 alırsanız ortalamanız 58 olsa bile, final barajı 50 ise dersten kalırsınız. Hesaplayıcıdaki final barajı alanını üniversitenize göre doldurun."
+  },
+  {
+    question: "Bütünleme sınavında vize notu geçerli mi?",
+    answer: "Çoğu üniversitede bütünleme sınavı final sınavının yerine geçer; vize notu aynen korunur ve ortalama bütünleme notuyla yeniden hesaplanır. Bu nedenle bütünlemeden kaç almanız gerektiğini bulmak için bütünleme notunu final alanına yazabilir veya 'Finalden kaç almalıyım' modunu kullanabilirsiniz. Kurala ilişkin kesin bilgi için üniversitenizin önlisans ve lisans eğitim yönetmeliğine bakın."
+  },
+  {
+    question: "Geçme notu kaç olmalı?",
+    answer: "Geçme notu üniversiteye göre değişir. Birçok devlet üniversitesinde 100 üzerinden 50 veya 60, bazılarında ise harf notu sisteminde DD veya CC şartı aranır. Bağıl değerlendirme uygulanan derslerde geçme sınırı sınıf ortalamasına göre de değişebilir. Kendi okulunuzun eğitim-öğretim yönetmeliğindeki 'başarı notu' maddesini kontrol ederek hesaplayıcıdaki geçme notunu güncelleyin."
+  }
+];
+
+const meta = {
+  title: "Vize Final Ortalama Hesaplama",
+  seoTitle: "Vize Final Ortalama Hesaplama 2026 - Finalden Kaç Almalıyım",
+  description: "Vize ve final notlarınızla dönem sonu ortalamanızı hesaplayın, geçmek için finalden kaç almanız gerektiğini öğrenin. %40-%60 ve özel ağırlık desteği.",
+  summary: "Vize final ortalaması = Vize × vize ağırlığı + Final × final ağırlığı formülüyle bulunur. En yaygın dağılım %40 vize, %60 finaldir; bu durumda 50 vize ve 70 final notu 62 ortalama eder. Geçmek için gereken final notu ise (Geçme Notu − Vize × 0,40) / 0,60 ile hesaplanır.",
+  howTo: [
+    "Hesaplama türünü seçin: ortalama hesaplama veya finalden kaç almalıyım.",
+    "Vize notunuzu ve vizenin yüzde ağırlığını girin (genellikle %40).",
+    "Ortalama modunda final notunuzu yazın; diğer modda geçme notunu girin.",
+    "Varsa üniversitenizin final barajını ekleyin ve sonucu inceleyin."
+  ],
+  sources: [
+    { name: "YÖK - Mevzuat", url: "https://www.yok.gov.tr/tr/page/mevzuat-aYrMB" }
+  ],
+  category: "egitim",
+  slug: "vize-final-ortalama-hesaplama",
+  keywords: ["vize final ortalama hesaplama", "finalden kaç almalıyım", "vize final hesaplama", "ders ortalaması hesaplama", "üniversite not hesaplama", "bütünleme hesaplama"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["egitim/not-ortalamasi-hesaplama", "egitim/yks-puan-hesaplama", "matematik/ortalama-hesaplama", "matematik/yuzde-hesaplama"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" class="calc-inputs">
+    <CalcSelect
+      id="mod"
+      label="Hesaplama Türü"
+      options={[
+        { value: "ortalama", label: "Ortalamamı hesapla" },
+        { value: "gerekli", label: "Finalden kaç almalıyım?" }
+      ]}
+      value="ortalama"
+    />
+    <CalcInput id="vize" label="Vize Notu" type="number" placeholder="50" step={0.01} min={0} max={100} />
+    <CalcInput id="vizeAgirlik" label="Vize Ağırlığı" type="number" suffix="%" placeholder="40" value="40" step={1} min={0} max={100} helpText="Final ağırlığı otomatik olarak 100 − vize ağırlığı alınır." />
+    <div id="final-group">
+      <CalcInput id="final" label="Final Notu" type="number" placeholder="70" step={0.01} min={0} max={100} required={false} />
+    </div>
+    <CalcInput id="gecme" label="Geçme Notu" type="number" placeholder="50" value="50" step={1} min={0} max={100} />
+    <CalcInput id="baraj" label="Final Barajı (varsa)" type="number" placeholder="0" step={1} min={0} max={100} required={false} helpText="Finalden alınması zorunlu en düşük not. Yoksa boş bırakın." />
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label" id="ana-etiket">Dönem Sonu Ortalaması</p>
+      <p class="calc-result-value" id="ana-sonuc">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Durum</span>
+        <span class="calc-detail-value" id="durum">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Vize Katkısı</span>
+        <span class="calc-detail-value" id="vize-katki">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Final Katkısı</span>
+        <span class="calc-detail-value" id="final-katki">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Ağırlıklar (Vize / Final)</span>
+        <span class="calc-detail-value" id="agirliklar">—</span>
+      </div>
+    </div>
+  </CalcResult>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('calc-form');
+      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const resultArea = document.getElementById('calc-result');
+      const finalGroup = document.getElementById('final-group');
+
+      function debounce(fn: () => void, delay = 150) {
+        let timer: ReturnType<typeof setTimeout>;
+        return () => { clearTimeout(timer); timer = setTimeout(fn, delay); };
+      }
+      const val = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
+      const setText = (id: string, t: string) => { (document.getElementById(id) as HTMLElement).textContent = t; };
+      const fmt = (n: number) => new Intl.NumberFormat('tr-TR', { maximumFractionDigits: 2 }).format(n);
+
+      form?.addEventListener('submit', (e) => e.preventDefault());
+      const debouncedCalc = debounce(calculate);
+      inputs.forEach(input => {
+        input.addEventListener('input', debouncedCalc);
+        input.addEventListener('change', debouncedCalc);
+      });
+
+      function toggleMode() {
+        if (finalGroup) finalGroup.hidden = val('mod') === 'gerekli';
+      }
+
+      function calculate() {
+        toggleMode();
+        const mod = val('mod');
+        const vize = parseFloat(val('vize'));
+        const w = parseFloat(val('vizeAgirlik'));
+        const gecme = parseFloat(val('gecme'));
+        const barajRaw = parseFloat(val('baraj'));
+        const baraj = isNaN(barajRaw) ? 0 : barajRaw;
+        if (isNaN(vize) || isNaN(w) || w < 0 || w >= 100 || vize < 0 || vize > 100) return;
+        const wv = w / 100;
+        const wf = 1 - wv;
+        setText('agirliklar', `%${fmt(w)} / %${fmt(100 - w)}`);
+        setText('vize-katki', fmt(vize * wv) + ' puan');
+
+        if (mod === 'ortalama') {
+          const final = parseFloat(val('final'));
+          if (isNaN(final) || final < 0 || final > 100) return;
+          const ort = vize * wv + final * wf;
+          setText('ana-etiket', 'Dönem Sonu Ortalaması');
+          setText('ana-sonuc', fmt(ort));
+          setText('final-katki', fmt(final * wf) + ' puan');
+          let durum = 'Geçtiniz';
+          if (!isNaN(gecme) && ort < gecme) durum = `Kaldınız (geçme notu ${fmt(gecme)})`;
+          else if (final < baraj) durum = `Kaldınız (final barajı ${fmt(baraj)} altında)`;
+          setText('durum', durum);
+        } else {
+          if (isNaN(gecme)) return;
+          let gerekli = (gecme - vize * wv) / wf;
+          gerekli = Math.max(gerekli, baraj, 0);
+          setText('ana-etiket', 'Finalden Almanız Gereken En Düşük Not');
+          if (gerekli > 100) {
+            setText('ana-sonuc', 'Mümkün değil');
+            setText('durum', `Finalden 100 alsanız bile ortalama ${fmt(vize * wv + 100 * wf)} olur`);
+            setText('final-katki', fmt(100 * wf) + ' puan (en fazla)');
+          } else {
+            const hedef = Math.ceil(gerekli * 100 - 1e-6) / 100;
+            setText('ana-sonuc', fmt(hedef));
+            setText('durum', gerekli <= 0 ? 'Finalden herhangi bir not yeterli' : `Final ${fmt(hedef)} ve üzeri ile geçersiniz`);
+            setText('final-katki', fmt(hedef * wf) + ' puan');
+          }
+        }
+        if (resultArea) resultArea.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const params = new URLSearchParams();
+        inputs.forEach(input => {
+          const el = input as HTMLInputElement;
+          if (el.value && el.id) params.set(el.id, el.value);
+        });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+      }
+
+      function loadFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        let hasParams = false;
+        inputs.forEach(input => {
+          const el = input as HTMLInputElement;
+          if (el.id && params.has(el.id)) { el.value = params.get(el.id)!; hasParams = true; }
+        });
+        toggleMode();
+        if (hasParams) calculate();
+      }
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>Vize Final Ortalaması Nedir?</h2>
+    <p>
+      Üniversitelerde bir dersin dönem sonu başarı notu, genellikle dönem ortasında yapılan ara sınav (vize) ile dönem sonunda yapılan final sınavının ağırlıklı ortalamasıyla belirlenir. Her sınavın nota katkısı farklıdır: çoğu üniversitede vize %40, final %60 oranında etkilidir. Bu yüzden iki notun basit aritmetik ortalamasını almak yanıltıcı olur; doğru sonuç için ağırlıklı ortalama kullanılmalıdır.
+    </p>
+    <p>
+      Vize final ortalama hesaplama aracı, iki soruya birden cevap verir: "Bu notlarla ortalamam kaç oldu?" ve "Dersi geçmek için finalden kaç almalıyım?". Final barajı olan okullar için baraj kontrolü de yapılır.
+    </p>
+
+    <h2>Vize Final Ortalaması Formülü</h2>
+    <p>
+      <strong>Ortalama = Vize × (Vize Ağırlığı / 100) + Final × (Final Ağırlığı / 100)</strong>
+    </p>
+    <p>
+      Final ağırlığı, 100'den vize ağırlığı çıkarılarak bulunur. Vize %40 ise final %60, vize %30 ise final %70 olur. Ters yönde, geçmek için gereken final notu şu formülle hesaplanır:
+    </p>
+    <p>
+      <strong>Gerekli Final = (Geçme Notu − Vize × Vize Ağırlığı) / Final Ağırlığı</strong>
+    </p>
+
+    <h2>Örnek Hesaplama</h2>
+    <p>
+      Vize ağırlığı %40, final ağırlığı %60 olan bir derste vizeden 45 aldığınızı ve geçme notunun 50 olduğunu varsayalım.
+    </p>
+    <ul>
+      <li>Vize katkısı: 45 × 0,40 = 18 puan</li>
+      <li>Geçmek için gereken final katkısı: 50 − 18 = 32 puan</li>
+      <li>Gerekli final notu: 32 / 0,60 = 53,33</li>
+    </ul>
+    <p>
+      Finalden 54 alırsanız ortalamanız 18 + 32,4 = 50,4 olur ve dersi geçersiniz. Üniversitenizde final barajı 50 ise bu senaryoda baraj da aşılmış olur.
+    </p>
+
+    <h2>Farklı Vize Notlarına Göre Gereken Final Notu</h2>
+    <p>Aşağıdaki tablo, vize %40 ve final %60 ağırlıklı, geçme notu 50 olan bir ders için hazırlanmıştır.</p>
+    <table>
+      <thead>
+        <tr><th>Vize Notu</th><th>Vize Katkısı</th><th>Gereken Final (Geçme 50)</th><th>Gereken Final (Geçme 60)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>20</td><td>8</td><td>70</td><td>86,67</td></tr>
+        <tr><td>30</td><td>12</td><td>63,33</td><td>80</td></tr>
+        <tr><td>40</td><td>16</td><td>56,67</td><td>73,33</td></tr>
+        <tr><td>50</td><td>20</td><td>50</td><td>66,67</td></tr>
+        <tr><td>60</td><td>24</td><td>43,33</td><td>60</td></tr>
+        <tr><td>70</td><td>28</td><td>36,67</td><td>53,33</td></tr>
+        <tr><td>80</td><td>32</td><td>30</td><td>46,67</td></tr>
+        <tr><td>100</td><td>40</td><td>16,67</td><td>33,33</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Üniversitelerde Yaygın Ağırlık Oranları</h2>
+    <ul>
+      <li><strong>%40 vize – %60 final:</strong> Türkiye'deki devlet ve vakıf üniversitelerinde en sık kullanılan orandır.</li>
+      <li><strong>%30 vize – %70 final:</strong> Bazı mühendislik ve tıp dışı fakültelerde tercih edilir.</li>
+      <li><strong>%50 vize – %50 final:</strong> Uygulamalı derslerde ve bazı meslek yüksekokullarında görülür.</li>
+      <li><strong>Birden fazla vize veya ödev:</strong> İki vize ya da proje notu varsa önce bunların kendi içindeki ortalamasını alıp vize notu alanına yazabilirsiniz.</li>
+    </ul>
+
+    <h2>Final Barajı ve Harf Notu</h2>
+    <p>
+      Pek çok üniversite, ortalamadan bağımsız olarak finalden en az 45 veya 50 almayı zorunlu tutar. Bu kurala final barajı denir ve ortalamanız geçme notunun üzerinde olsa bile barajın altında kalırsanız dersten başarısız sayılırsınız. Hesaplayıcı, girdiğiniz barajı hem ortalama modunda hem de gerekli final hesabında dikkate alır.
+    </p>
+    <p>
+      Harf notu sistemine geçen üniversitelerde 100'lük ortalama, AA, BA, BB, CB, CC, DC, DD, FD ve FF gibi harflere dönüştürülür. Mutlak değerlendirmede aralıklar yönetmelikte sabittir; bağıl değerlendirmede ise sınıfın not dağılımına göre değişir. Bu nedenle harf karşılığını kendi üniversitenizin yönetmeliğinden kontrol etmeniz önemlidir.
+    </p>
+
+    <h2>Bütünleme ve Tek Ders Sınavı</h2>
+    <p>
+      Finalden kalan öğrenciler genellikle bütünleme sınavına girer. Bütünleme notu çoğu okulda final notunun yerine geçer ve vize notu korunur. Bu durumda "Finalden kaç almalıyım?" modunu kullanarak bütünlemeden almanız gereken notu da öğrenebilirsiniz.
+    </p>
+    <p class="calc-note">
+      Not: Ağırlık oranları, geçme notu ve baraj kuralları üniversiteden üniversiteye, hatta dersten derse değişebilir. Kesin sonuç için dersin izlencesini ve kurumunuzun eğitim-öğretim yönetmeliğini esas alın.
+    </p>
+  </section>
+</CalcLayout>

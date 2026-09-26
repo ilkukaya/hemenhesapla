@@ -1,132 +1,286 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import CalcCard from '../components/calculator/CalcCard.astro';
-import categoriesData from '../data/categories.json';
+import Icon from '../components/ui/Icon.astro';
+import AdBanner from '../components/ads/AdBanner.astro';
+import { categories, popularCalcs, allCalcs } from '../utils/catalog';
+import { SITE, absoluteUrl } from '../config/site';
 
-const categories = categoriesData.categories;
-const popularCalcs = categories.flatMap(cat =>
-  cat.calculators
-    .filter(c => c.popular)
-    .map(c => ({ ...c, categorySlug: cat.slug, categoryColor: cat.color }))
-);
+const total = allCalcs.length;
+const quick = popularCalcs.slice(0, 8);
+const featured = popularCalcs.slice(0, 9);
 
-const allCalcs = categories.flatMap(cat =>
-  cat.calculators.map(c => ({ ...c, categorySlug: cat.slug, categoryColor: cat.color }))
-);
-
-const websiteSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'WebSite',
-  name: 'Hemen Hesapla',
-  url: 'https://hemenhesapla.net',
-  description: "Türkiye'nin en kapsamlı online hesaplayıcı platformu",
-  potentialAction: {
-    '@type': 'SearchAction',
-    target: 'https://hemenhesapla.net/?q={search_term_string}',
-    'query-input': 'required name=search_term_string',
+const faq = [
+  {
+    question: 'Hemen Hesapla ücretsiz mi?',
+    answer: 'Evet. Sitedeki tüm hesaplayıcılar ücretsizdir, üyelik gerektirmez. Site, sayfalarda gösterilen reklamlarla ayakta kalır.',
   },
-};
+  {
+    question: 'Hesaplamalar güncel mi?',
+    answer: 'Vergi dilimleri, asgari ücret, SGK oranları ve kıdem tazminatı tavanı gibi yasal değerler 2026 yılı için güncellenmiştir. Her sayfada son güncelleme tarihi ve dayanak aldığımız resmî kaynaklar yer alır.',
+  },
+  {
+    question: 'Girdiğim bilgiler kaydediliyor mu?',
+    answer: 'Hayır. Hesaplamalar tamamen tarayıcınızda yapılır; girdiğiniz tutarlar, tarihler veya sağlık bilgileri sunucularımıza gönderilmez.',
+  },
+  {
+    question: 'Sonucu başkasıyla nasıl paylaşırım?',
+    answer: 'Hesaplama sonrası "Paylaş" düğmesine dokunun. Girdiğiniz değerler bağlantıya eklenir; bağlantıyı açan kişi aynı sonucu görür.',
+  },
+];
+
+const schema = [
+  {
+    '@type': 'WebPage',
+    '@id': `${SITE.url}/#webpage`,
+    url: SITE.url + '/',
+    name: `${SITE.name} – Online Hesaplama Araçları`,
+    inLanguage: 'tr-TR',
+    isPartOf: { '@id': `${SITE.url}/#website` },
+    about: { '@id': `${SITE.url}/#organization` },
+  },
+  {
+    '@type': 'ItemList',
+    name: 'Popüler hesaplayıcılar',
+    itemListElement: popularCalcs.map((c, i) => ({ '@type': 'ListItem', position: i + 1, url: absoluteUrl(c.href), name: c.title })),
+  },
+  {
+    '@type': 'FAQPage',
+    mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.question, acceptedAnswer: { '@type': 'Answer', text: f.answer } })),
+  },
+];
+
+const recentData = Object.fromEntries(allCalcs.map((c) => [`${c.category}/${c.slug}`, { t: c.title, h: c.href }]));
 ---
 
 <BaseLayout
-  title="Hemen Hesapla | Türkiye'nin Online Hesaplayıcı Platformu"
-  description="Kredi, vergi, maaş, sağlık, matematik ve daha fazlası — hızlı, güvenilir ve ücretsiz online hesaplama araçları. Anında sonuç alın."
+  title="Hemen Hesapla – Kredi, Maaş, Vergi ve Tüm Hesaplamalar (2026)"
+  description={`Kredi, net maaş, KDV, vize-final, BMI ve gebelik haftası dahil ${total}+ ücretsiz hesaplayıcı. 2026 güncel vergi ve SGK verileriyle anında, doğru sonuç.`}
+  schema={schema}
 >
-  <Fragment slot="head">
-    <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
-  </Fragment>
+  <!-- Giriş -->
+  <section class="border-b border-[var(--color-border)]">
+    <div class="container-page pt-10 pb-10 sm:pt-16 sm:pb-14 grid lg:grid-cols-[minmax(0,1fr)_400px] gap-12 items-center">
+      <div class="max-w-3xl min-w-0">
+        <p class="eyebrow mb-4 flex items-center gap-2">
+          <span class="inline-block w-2 h-2 rounded-full bg-[var(--color-accent)]"></span>
+          2026 verileriyle güncel · {total} ücretsiz araç
+        </p>
+        <h1 class="text-[2.375rem] leading-[1.05] sm:text-[3.5rem] font-extrabold tracking-[-0.035em]">
+          Aradığın hesap,<br class="hidden sm:block" /> <span class="text-[var(--color-accent)]">saniyeler</span> içinde.
+        </h1>
+        <p class="mt-4 text-[1.0625rem] sm:text-[1.1875rem] text-[var(--color-text-secondary)] max-w-2xl leading-relaxed">
+          Kredi taksitinden net maaşa, vize-final ortalamasından gebelik haftasına kadar günlük hayatın bütün hesapları. Kayıt yok, formül açık, kaynak belli.
+        </p>
 
-  <!-- Hero -->
-  <section class="bg-gradient-to-b from-[var(--color-primary-dark)] to-[var(--color-primary)] text-white py-16 sm:py-20">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-      <h1 class="font-[var(--font-heading)] font-extrabold text-3xl sm:text-4xl lg:text-5xl mb-4">
-        Hemen <span class="text-[var(--color-accent)]">Hesapla</span>
-      </h1>
-      <p class="text-white/70 text-lg sm:text-xl mb-8 max-w-2xl mx-auto">
-        Kredi, vergi, maaş, sağlık ve daha fazlası — ihtiyacınız olan hesaplamayı anında yapın.
-      </p>
+        <form action="/ara/" method="get" role="search" class="mt-7 relative max-w-2xl" id="hero-search">
+          <label for="hero-q" class="sr-only">Hesaplayıcı ara</label>
+          <Icon name="search" size={22} class="absolute left-5 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] pointer-events-none" />
+          <input
+            id="hero-q"
+            name="q"
+            type="search"
+            autocomplete="off"
+            enterkeyhint="search"
+            placeholder="Ne hesaplamak istiyorsun?"
+            class="w-full h-16 pl-14 pr-24 sm:pr-28 rounded-full border border-[var(--color-border-strong)] bg-[var(--color-surface)] text-[1.0625rem] text-[var(--color-text)] shadow-[var(--shadow-md)] outline-none focus:border-[var(--color-text)] focus:shadow-[0_0_0_4px_var(--color-accent-soft)] placeholder:text-[var(--color-text-muted)]"
+          />
+          <button type="submit" class="btn-primary absolute right-2 top-1/2 -translate-y-1/2 !min-h-12 !px-4 sm:!px-5">Ara</button>
+        </form>
 
-      <!-- Search -->
-      <div class="max-w-xl mx-auto relative">
-        <input
-          id="search-input"
-          type="text"
-          placeholder="Hesaplayıcı ara... (örn: kredi, kalori, KDV)"
-          class="w-full px-5 py-3.5 rounded-xl text-[var(--color-text)] bg-white shadow-lg text-base outline-none placeholder:text-[var(--color-text-muted)]"
-          autocomplete="off"
-        />
-        <svg class="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--color-text-muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
+        <div class="mt-5 scroll-row -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap">
+          {quick.map((c) => (
+            <a href={c.href} class="chip">{c.title.replace(/ Hesaplama$/, '')}</a>
+          ))}
+        </div>
       </div>
+
+      <!-- Hızlı kredi hesabı: ziyaretçiyi ilk saniyede araca sokar -->
+      <aside class="hidden lg:block card p-6 shadow-[var(--shadow-md)]" aria-labelledby="hizli-kredi">
+        <div class="flex items-center justify-between mb-4">
+          <h2 id="hizli-kredi" class="text-lg">Hızlı kredi hesabı</h2>
+          <span class="cat-badge" style="--cat:var(--color-cat-finans)">Finans</span>
+        </div>
+        <form id="quick-loan" class="grid gap-3">
+          <label class="block">
+            <span class="calc-label">Kredi tutarı</span>
+            <span class="calc-input-wrapper"><input class="calc-input" id="ql-tutar" type="number" inputmode="decimal" value="200000" min="0" step="1000" /><span class="calc-input-suffix">₺</span></span>
+          </label>
+          <div class="grid grid-cols-2 gap-3">
+            <label class="block">
+              <span class="calc-label">Aylık faiz</span>
+              <span class="calc-input-wrapper"><input class="calc-input" id="ql-faiz" type="number" inputmode="decimal" value="3.29" min="0" step="0.01" /><span class="calc-input-suffix">%</span></span>
+            </label>
+            <label class="block">
+              <span class="calc-label">Vade</span>
+              <span class="calc-input-wrapper"><input class="calc-input" id="ql-vade" type="number" inputmode="numeric" value="24" min="1" step="1" /><span class="calc-input-suffix">ay</span></span>
+            </label>
+          </div>
+        </form>
+        <div class="mt-4 calc-result-main">
+          <p class="calc-result-label">Aylık taksit</p>
+          <p class="calc-result-value" id="ql-sonuc">—</p>
+          <p class="mt-1 text-[0.875rem] text-[var(--color-text-muted)] num" id="ql-toplam"></p>
+        </div>
+        <a id="ql-link" href="/finans/kredi-hesaplama/" class="mt-4 inline-flex items-center gap-1 text-[0.9rem] font-semibold">
+          Ödeme planı ve ayrıntılar <Icon name="arrow-right" size={15} />
+        </a>
+      </aside>
     </div>
   </section>
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+  <div class="container-page">
+    <!-- Son kullanılanlar (yalnızca geri dönen ziyaretçilerde görünür) -->
+    <section id="recent" class="hidden pt-10" aria-labelledby="son-kullanilan">
+      <h2 id="son-kullanilan" class="eyebrow mb-3 flex items-center gap-1.5"><Icon name="history" size={14} /> Son kullandıkların</h2>
+      <div id="recent-list" class="scroll-row"></div>
+    </section>
+
+    <!-- Popüler -->
+    <section class="pt-10 sm:pt-14" aria-labelledby="populer">
+      <div class="flex items-end justify-between mb-5">
+        <h2 id="populer" class="text-[1.5rem] sm:text-[1.875rem] font-extrabold tracking-[-0.02em]">En çok kullanılanlar</h2>
+      </div>
+      <ul class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {featured.map((c) => {
+          const color = categories.find((k) => k.slug === c.category)?.color;
+          return (
+            <li>
+              <a href={c.href} class="group card flex items-start gap-4 h-full p-5 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-md)] transition-all">
+                <span class="grid place-items-center w-11 h-11 rounded-xl shrink-0" style={`color:${color};background:color-mix(in srgb, ${color} 11%, transparent)`}>
+                  <Icon name={c.icon} size={21} />
+                </span>
+                <span class="min-w-0">
+                  <span class="block font-[family-name:var(--font-heading)] font-bold text-[1.0625rem] leading-snug text-[var(--color-text)]">{c.title}</span>
+                  <span class="block mt-1 text-[0.875rem] text-[var(--color-text-muted)] leading-relaxed line-clamp-2">{c.description}</span>
+                </span>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+
+    <AdBanner variant="in-content" />
+
     <!-- Kategoriler -->
-    <section class="py-12">
-      <h2 class="font-[var(--font-heading)] font-bold text-xl sm:text-2xl text-[var(--color-text)] mb-6">Kategoriler</h2>
-      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+    <section class="pt-10 sm:pt-14" aria-labelledby="kategoriler">
+      <h2 id="kategoriler" class="text-[1.5rem] sm:text-[1.875rem] font-extrabold tracking-[-0.02em] mb-5">Tüm hesaplayıcılar</h2>
+      <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {categories.map((cat) => (
-          <a
-            href={`/${cat.slug}/`}
-            class="group flex flex-col items-center gap-2 p-5 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl hover:shadow-md hover:border-transparent transition-all duration-200"
-            style={`--cat-color: ${cat.color}`}
-          >
-            <span class="text-3xl">{cat.icon}</span>
-            <span class="font-[var(--font-heading)] font-bold text-sm text-[var(--color-text)] group-hover:text-[var(--cat-color)] transition-colors">{cat.name}</span>
-            <span class="text-xs text-[var(--color-text-muted)] text-center">{cat.shortDescription}</span>
-          </a>
+          <section class="card p-5 flex flex-col" style={`--cat:${cat.color}`} aria-labelledby={`cat-${cat.slug}`}>
+            <div class="flex items-center gap-3 mb-3">
+              <span class="grid place-items-center w-10 h-10 rounded-xl" style={`color:${cat.color};background:color-mix(in srgb, ${cat.color} 11%, transparent)`}>
+                <Icon name={cat.icon} size={20} />
+              </span>
+              <h3 id={`cat-${cat.slug}`} class="text-lg">
+                <a href={`/${cat.slug}/`} class="hover:underline underline-offset-4">{cat.name}</a>
+              </h3>
+              <span class="ml-auto text-[0.8125rem] text-[var(--color-text-muted)] num">{cat.calculators.length}</span>
+            </div>
+            <ul class="flex-1 -mx-2">
+              {cat.calculators.slice(0, 7).map((c) => (
+                <li>
+                  <a href={c.href} class="flex items-center justify-between gap-2 px-2 py-2 rounded-lg text-[0.9375rem] text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-text)]">
+                    <span class="truncate">{c.title}</span>
+                    {c.popular && <span class="text-[0.6875rem] font-semibold uppercase tracking-wide text-[var(--color-accent-ink)]">Popüler</span>}
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <a href={`/${cat.slug}/`} class="mt-3 inline-flex items-center gap-1 text-[0.875rem] font-semibold text-[var(--color-text)]">
+              {cat.calculators.length > 7 ? `Tümünü gör (${cat.calculators.length})` : 'Kategoriye git'} <Icon name="arrow-right" size={15} />
+            </a>
+          </section>
         ))}
       </div>
     </section>
 
-    <!-- Popüler Hesaplayıcılar -->
-    <section class="pb-12">
-      <h2 class="font-[var(--font-heading)] font-bold text-xl sm:text-2xl text-[var(--color-text)] mb-6">Popüler Hesaplayıcılar</h2>
-      <div id="calc-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {popularCalcs.map((calc) => (
-          <CalcCard
-            title={calc.title}
-            description={calc.description}
-            href={`/${calc.categorySlug}/${calc.slug}/`}
-            icon={calc.icon}
-            categoryColor={calc.categoryColor}
-          />
-        ))}
-      </div>
+    <!-- Güven -->
+    <section class="pt-14" aria-labelledby="neden">
+      <h2 id="neden" class="sr-only">Neden Hemen Hesapla?</h2>
+      <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <li class="flex gap-3">
+          <Icon name="badge-check" size={22} class="text-[var(--color-accent)] mt-0.5" />
+          <div><p class="font-semibold">2026 mevzuatına göre güncel</p><p class="text-[0.9rem] text-[var(--color-text-muted)] mt-1">Vergi dilimi, asgari ücret ve SGK oranları resmî kaynaklardan.</p></div>
+        </li>
+        <li class="flex gap-3">
+          <Icon name="square-function" size={22} class="text-[var(--color-accent)] mt-0.5" />
+          <div><p class="font-semibold">Formül açık</p><p class="text-[0.9rem] text-[var(--color-text-muted)] mt-1">Her sonucun nasıl hesaplandığını örnekle anlatıyoruz.</p></div>
+        </li>
+        <li class="flex gap-3">
+          <Icon name="lock" size={22} class="text-[var(--color-accent)] mt-0.5" />
+          <div><p class="font-semibold">Verin sende kalır</p><p class="text-[0.9rem] text-[var(--color-text-muted)] mt-1">Hesaplar tarayıcında yapılır, hiçbir değer sunucuya gitmez.</p></div>
+        </li>
+        <li class="flex gap-3">
+          <Icon name="zap" size={22} class="text-[var(--color-accent)] mt-0.5" />
+          <div><p class="font-semibold">Anında, kayıtsız</p><p class="text-[0.9rem] text-[var(--color-text-muted)] mt-1">Siz yazdıkça sonuç çıkar; paylaşılabilir bağlantıyla.</p></div>
+        </li>
+      </ul>
     </section>
 
-    <!-- Tüm Hesaplayıcılar -->
-    <section class="pb-12">
-      <h2 class="font-[var(--font-heading)] font-bold text-xl sm:text-2xl text-[var(--color-text)] mb-6">Tüm Hesaplayıcılar</h2>
-      <div id="all-calc-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {allCalcs.map((calc) => (
-          <CalcCard
-            title={calc.title}
-            description={calc.description}
-            href={`/${calc.categorySlug}/${calc.slug}/`}
-            icon={calc.icon}
-            categoryColor={calc.categoryColor}
-          />
+    <!-- SSS -->
+    <section class="pt-14 max-w-3xl" aria-labelledby="ana-sss">
+      <h2 id="ana-sss" class="text-[1.5rem] sm:text-[1.875rem] font-extrabold tracking-[-0.02em] mb-4">Sık sorulan sorular</h2>
+      <div class="faq-list">
+        {faq.map((f) => (
+          <details>
+            <summary>{f.question}</summary>
+            <div><p>{f.answer}</p></div>
+          </details>
         ))}
       </div>
     </section>
   </div>
 </BaseLayout>
 
+<script define:vars={{ recentData }} is:inline>
+  (function () {
+    try {
+      var list = JSON.parse(localStorage.getItem('hh-recent') || '[]').filter(function (r) { return recentData[r]; });
+      if (!list.length) return;
+      var wrap = document.getElementById('recent-list');
+      list.forEach(function (r) {
+        var a = document.createElement('a');
+        a.className = 'chip';
+        a.href = recentData[r].h;
+        a.textContent = recentData[r].t;
+        wrap.appendChild(a);
+      });
+      document.getElementById('recent').classList.remove('hidden');
+    } catch (e) {}
+  })();
+</script>
+
 <script>
-  const searchInput = document.getElementById('search-input') as HTMLInputElement;
-  const calcCards = document.querySelectorAll('.calc-card');
+  // Hızlı kredi hesabı (BSMV/KKDF dahil değil; ayrıntılı hesap kredi sayfasında)
+  const fmt = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', maximumFractionDigits: 0 });
+  const qv = (id: string) => parseFloat((document.getElementById(id) as HTMLInputElement | null)?.value || '');
+  function quickLoan() {
+    const P = qv('ql-tutar'), r = qv('ql-faiz') / 100, n = Math.round(qv('ql-vade'));
+    const out = document.getElementById('ql-sonuc');
+    const tot = document.getElementById('ql-toplam');
+    const link = document.getElementById('ql-link') as HTMLAnchorElement | null;
+    if (!out || !(P > 0) || !(n > 0) || !(r >= 0)) { if (out) out.textContent = '—'; return; }
+    const m = r === 0 ? P / n : (P * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+    out.textContent = fmt.format(m);
+    if (tot) tot.textContent = `Toplam geri ödeme ${fmt.format(m * n)}`;
+    if (link) link.href = `/finans/kredi-hesaplama/?tutar=${P}&faiz=${qv('ql-faiz')}&vade=${n}`;
+  }
+  document.getElementById('quick-loan')?.addEventListener('input', quickLoan);
+  quickLoan();
 
-  searchInput?.addEventListener('input', (e) => {
-    const query = (e.target as HTMLInputElement).value.toLowerCase().trim();
-
-    calcCards.forEach((card) => {
-      const title = card.getAttribute('data-title')?.toLowerCase() || '';
-      const desc = card.getAttribute('data-description')?.toLowerCase() || '';
-      const match = title.includes(query) || desc.includes(query);
-      (card as HTMLElement).style.display = match || query === '' ? '' : 'none';
-    });
+  // JS varsa arama kutusu anında sonuç veren arama penceresini açar
+  const form = document.getElementById('hero-search') as HTMLFormElement | null;
+  const q = document.getElementById('hero-q') as HTMLInputElement | null;
+  const openSearch = (value: string) => (window as any).hhOpenSearch?.(value);
+  q?.addEventListener('input', () => {
+    if (q.value.trim().length >= 1) {
+      openSearch(q.value);
+      q.value = '';
+    }
+  });
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    openSearch(q?.value || '');
   });
 </script>

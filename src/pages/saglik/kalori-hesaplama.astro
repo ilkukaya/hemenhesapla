@@ -7,32 +7,58 @@ import CalcResult from '../../components/calculator/CalcResult.astro';
 const faq = [
   {
     question: "Günlük kalori ihtiyacı nasıl hesaplanır?",
-    answer: "Günlük kalori ihtiyacı, önce bazal metabolizma hızı (BMR) hesaplanarak bulunur. BMR, vücudun tamamen dinlenme halinde harcadığı kalori miktarıdır. Ardından BMR, aktivite seviyesine göre belirlenen bir katsayıyla çarpılarak toplam günlük enerji harcaması (TDEE) elde edilir. Bu hesaplama için yaygın olarak Harris-Benedict formülü kullanılmaktadır."
+    answer: "Önce bazal metabolizma hızı (BMH) hesaplanır; bu, vücudun tam dinlenmede harcadığı enerjidir. Ardından BMH, aktivite katsayısıyla (1,2 ile 1,9 arası) çarpılarak toplam günlük enerji harcaması (TDEE) bulunur. Örneğin BMH'si 1.600 kcal olan orta aktif biri için ihtiyaç 1.600 × 1,55 = 2.480 kcal'dir. Bu değer kilonuzu korumanız için gereken yaklaşık kaloridir."
   },
   {
-    question: "Kilo vermek için günde kaç kalori yemek gerekir?",
-    answer: "Genel kural olarak günlük kalori ihtiyacınızdan 500 kalori eksik tüketirseniz haftada yaklaşık 0,5 kg verirsiniz. Bu hesap makinesi size bu değeri otomatik olarak göstermektedir. Ancak kalori kısıtlamasının çok fazla olmamasına dikkat edilmeli; kadınlar günde 1200, erkekler ise 1500 kalorinin altına düşmemelidir."
+    question: "Hangi formül daha doğru: Mifflin-St Jeor mu Harris-Benedict mi?",
+    answer: "Amerikan Diyetisyenler Derneği'nin 2005 tarihli sistematik derlemesi, sağlıklı yetişkinlerde Mifflin-St Jeor denkleminin ölçülen değere en yakın sonucu en fazla kişide verdiğini göstermiştir. Harris-Benedict (1984 revizyonu) de yaygın kullanılır ancak ortalama olarak birkaç yüz kalori daha yüksek tahmin etme eğilimindedir. Hesaplayıcı varsayılan olarak Mifflin-St Jeor kullanır."
   },
   {
-    question: "Harris-Benedict formülü nedir?",
-    answer: "Harris-Benedict formülü, kişinin cinsiyeti, yaşı, boyu ve kilosuna göre bazal metabolizma hızını (BMR) hesaplayan bilimsel bir denklemdir. Erkekler için: BMR = 88,362 + (13,397 × kilo) + (4,799 × boy) − (5,677 × yaş). Kadınlar için: BMR = 447,593 + (9,247 × kilo) + (3,098 × boy) − (4,330 × yaş). Bulunan BMR değeri aktivite katsayısıyla çarpılarak gerçek günlük kalori ihtiyacı hesaplanır."
+    question: "Kilo vermek için günde kaç kalori almalıyım?",
+    answer: "Genel yaklaşım, TDEE'nin 300–500 kcal altında beslenmektir; bu çoğu kişide haftada yaklaşık 0,25–0,5 kg kayıp sağlar. Daha büyük açıklar kas kaybını ve yorgunluğu artırır. Hekim gözetimi olmadan kadınlarda günde 1.200 kcal, erkeklerde 1.500 kcal altına inilmemesi önerilir. Hesaplayıcı bu sınırların altına düşen hedeflerde uyarı verir."
+  },
+  {
+    question: "Aktivite seviyemi nasıl seçmeliyim?",
+    answer: "Masa başı çalışıyor ve spor yapmıyorsanız 1,2; haftada 1–3 gün hafif egzersiz için 1,375; haftada 3–5 gün orta yoğunlukta antrenman için 1,55; neredeyse her gün yoğun spor için 1,725 seçin. 1,9 yalnızca ağır fiziksel işte çalışan veya günde iki antrenman yapanlar içindir. Emin değilseniz bir alt seviyeyi seçmek daha gerçekçi sonuç verir."
+  },
+  {
+    question: "Kilo almak için kaç kalori fazlası gerekir?",
+    answer: "Sağlıklı ve ağırlıklı olarak kas kütlesi şeklinde kilo almak için TDEE'nin 250–500 kcal üzerinde beslenmek yeterlidir. Daha büyük fazlalar yağ birikimini hızlandırır. Kilo alma sürecinde yeterli protein (günde kilo başına 1,6 g civarı) ve düzenli direnç antrenmanı, alınan kilonun kalitesini belirleyen en önemli etkenlerdir."
+  },
+  {
+    question: "Hesaplanan kalori neden gerçek ihtiyacımdan farklı olabilir?",
+    answer: "Formüller nüfus ortalamalarından türetildiği için bireysel sapma ±%10 civarındadır. Kas oranı, tiroid fonksiyonu, ilaçlar, uyku ve günlük adım sayısı gibi etkenler gerçek harcamayı değiştirir. En iyi yöntem, hesaplanan değerle 2–3 hafta beslenip kilonuzu izlemek ve değişime göre hedefi 100–200 kcal ayarlamaktır."
   }
 ];
 
 const meta = {
   title: "Kalori Hesaplama",
-  description: "Günlük kalori ihtiyacınızı Harris-Benedict formülüyle hesaplayın. Kilo vermek, korumak veya almak için gereken kalori miktarını öğrenin.",
+  seoTitle: "Kalori Hesaplama 2026 – Günlük Kalori İhtiyacı Hesapla",
+  description: "Günlük kalori ihtiyacınızı Mifflin-St Jeor formülüyle hesaplayın. Kilo vermek, korumak ve almak için hedef kaloriyi, BMH ve TDEE değerinizi hemen görün.",
+  summary: "Günlük kalori ihtiyacı (TDEE), bazal metabolizma hızının aktivite katsayısıyla (1,2–1,9) çarpılmasıyla bulunur. Mifflin-St Jeor formülünde BMH, erkekte 10 × kilo + 6,25 × boy − 5 × yaş + 5, kadında aynı toplam − 161'dir. Kilo vermek için TDEE'nin 300–500 kcal altı hedeflenir.",
+  howTo: [
+    "Cinsiyetinizi, yaşınızı, boyunuzu (cm) ve kilonuzu (kg) girin.",
+    "Haftalık egzersiz alışkanlığınıza en uygun aktivite seviyesini seçin.",
+    "İsterseniz formülü Harris-Benedict olarak değiştirin; varsayılan Mifflin-St Jeor'dur.",
+    "Kilo koruma, kilo verme ve kilo alma hedef kalorilerinizi sonuç alanında inceleyin."
+  ],
+  sources: [
+    { name: "Mifflin MD ve ark. (1990), Am J Clin Nutr – A new predictive equation for resting energy expenditure", url: "https://pubmed.ncbi.nlm.nih.gov/2305711/" },
+    { name: "Roza AM, Shizgal HM (1984), Am J Clin Nutr – The Harris Benedict equation reevaluated", url: "https://pubmed.ncbi.nlm.nih.gov/6741850/" },
+    { name: "Frankenfield D ve ark. (2005), J Am Diet Assoc – Comparison of predictive equations for RMR", url: "https://www.jandonline.org/article/S0002-8223(05)00149-5/abstract" },
+    { name: "Dünya Sağlık Örgütü – Obesity and overweight", url: "https://www.who.int/news-room/fact-sheets/detail/obesity-and-overweight" }
+  ],
   category: "saglik",
   slug: "kalori-hesaplama",
-  keywords: ["kalori hesaplama", "günlük kalori ihtiyacı", "BMR hesaplama", "TDEE hesaplama", "kilo verme kalori", "Harris-Benedict"],
-  dateModified: "2026-04-01",
-  relatedCalcs: ["ideal-kilo-hesaplama", "vucut-kitle-indeksi-hesaplama"],
+  keywords: ["kalori hesaplama", "günlük kalori ihtiyacı", "BMR hesaplama", "TDEE hesaplama", "kilo verme kalori", "Mifflin-St Jeor", "Harris-Benedict"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["saglik/baz-metabolizma-hizi", "saglik/protein-ihtiyaci-hesaplama", "saglik/vucut-kitle-indeksi", "saglik/ideal-kilo-hesaplama"],
   faq
 };
 ---
 
 <CalcLayout meta={meta}>
-  <form id="calc-form">
+  <form id="calc-form" class="calc-inputs" novalidate>
     <CalcSelect
       id="cinsiyet"
       label="Cinsiyet"
@@ -47,8 +73,8 @@ const meta = {
       label="Yaş"
       type="number"
       suffix="yaş"
-      placeholder="30"
-      min={15}
+      placeholder="32"
+      min={18}
       max={100}
       step={1}
     />
@@ -57,8 +83,8 @@ const meta = {
       label="Boy"
       type="number"
       suffix="cm"
-      placeholder="175"
-      min={100}
+      placeholder="170"
+      min={120}
       max={250}
       step={1}
     />
@@ -67,7 +93,7 @@ const meta = {
       label="Kilo"
       type="number"
       suffix="kg"
-      placeholder="70"
+      placeholder="72"
       min={30}
       max={300}
       step={0.1}
@@ -76,148 +102,196 @@ const meta = {
       id="aktivite"
       label="Aktivite Seviyesi"
       options={[
-        { value: "1.2", label: "Hareketsiz (masa başı)" },
-        { value: "1.375", label: "Hafif aktif (haftada 1-3 gün)" },
-        { value: "1.55", label: "Orta aktif (haftada 3-5 gün)" },
-        { value: "1.725", label: "Çok aktif (haftada 6-7 gün)" },
-        { value: "1.9", label: "Ekstra aktif (günde 2 kez)" }
+        { value: "1.2", label: "Hareketsiz – masa başı, egzersiz yok (×1,2)" },
+        { value: "1.375", label: "Hafif aktif – haftada 1-3 gün (×1,375)" },
+        { value: "1.55", label: "Orta aktif – haftada 3-5 gün (×1,55)" },
+        { value: "1.725", label: "Çok aktif – haftada 6-7 gün (×1,725)" },
+        { value: "1.9", label: "Ekstra aktif – ağır iş / günde 2 antrenman (×1,9)" }
       ]}
-      value="1.55"
+      value="1.375"
+    />
+    <CalcSelect
+      id="formul"
+      label="Formül"
+      options={[
+        { value: "mifflin", label: "Mifflin-St Jeor (önerilen)" },
+        { value: "harris", label: "Harris-Benedict (1984 revizyonu)" }
+      ]}
+      value="mifflin"
     />
   </form>
 
   <CalcResult>
     <div slot="main">
-      <p class="calc-result-label">Günlük Kalori İhtiyacı</p>
+      <p class="calc-result-label">Kilo Korumak İçin Günlük Kalori (TDEE)</p>
       <p class="calc-result-value" id="tdee">—</p>
     </div>
     <div slot="details">
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Kilo vermek için (−500 kcal)</span>
+        <span class="calc-detail-label">Hafif kilo verme (−250 kcal)</span>
+        <span class="calc-detail-value" id="kilo-ver-hafif">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Kilo verme (−500 kcal, ~0,5 kg/hafta)</span>
         <span class="calc-detail-value" id="kilo-ver">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Kilo almak için (+500 kcal)</span>
+        <span class="calc-detail-label">Kilo alma (+300 kcal)</span>
         <span class="calc-detail-value" id="kilo-al">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Bazal Metabolizma Hızı (BMR)</span>
+        <span class="calc-detail-label">Bazal Metabolizma Hızı (BMH)</span>
         <span class="calc-detail-value" id="bmr">—</span>
       </div>
+      <p class="calc-note hidden" id="alt-sinir-uyari"></p>
     </div>
   </CalcResult>
 
+  <p class="calc-note">
+    Sonuçlar formüllere dayalı tahminlerdir ve bireysel olarak ±%10 sapabilir. Gebelik, emzirme, diyabet, tiroid hastalığı, yeme bozukluğu öyküsü veya düzenli ilaç kullanımı gibi durumlarda kalori hedefinizi hekiminiz ya da diyetisyeninizle birlikte belirleyin.
+  </p>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const inputs = document.querySelectorAll<HTMLInputElement | HTMLSelectElement>('#calc-form input, #calc-form select');
       const resultArea = document.getElementById('calc-result');
+      const $ = (id: string) => document.getElementById(id) as HTMLElement;
 
-      function debounce(fn: (...args: unknown[]) => void, delay = 150) {
+      function debounce(fn: () => void, delay = 150) {
         let timer: ReturnType<typeof setTimeout>;
-        return (...args: unknown[]) => {
-          clearTimeout(timer);
-          timer = setTimeout(() => fn(...args), delay);
-        };
+        return () => { clearTimeout(timer); timer = setTimeout(fn, delay); };
       }
 
-      function formatNumber(num: number, dec = 0) {
-        return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: dec, maximumFractionDigits: dec }).format(num);
+      function num(id: string) {
+        const raw = (document.getElementById(id) as HTMLInputElement).value.replace(',', '.');
+        return raw.trim() === '' ? NaN : parseFloat(raw);
       }
 
-      const debouncedCalc = debounce(calculate);
-      inputs.forEach(input => {
-        input.addEventListener('input', debouncedCalc);
-        input.addEventListener('change', debouncedCalc);
-      });
+      function kcal(n: number) {
+        return new Intl.NumberFormat('tr-TR', { maximumFractionDigits: 0 }).format(Math.round(n)) + ' kcal';
+      }
 
       function calculate() {
         const cinsiyet = (document.getElementById('cinsiyet') as HTMLSelectElement).value;
-        const yas = parseFloat((document.getElementById('yas') as HTMLInputElement).value);
-        const boy = parseFloat((document.getElementById('boy') as HTMLInputElement).value);
-        const kilo = parseFloat((document.getElementById('kilo') as HTMLInputElement).value);
+        const formul = (document.getElementById('formul') as HTMLSelectElement).value;
         const aktivite = parseFloat((document.getElementById('aktivite') as HTMLSelectElement).value);
+        const yas = num('yas');
+        const boy = num('boy');
+        const kilo = num('kilo');
 
-        if (!yas || !boy || !kilo || isNaN(aktivite)) return;
-        if (yas <= 0 || boy <= 0 || kilo <= 0) return;
+        if (![yas, boy, kilo, aktivite].every(isFinite) || yas < 10 || yas > 120 || boy < 100 || boy > 260 || kilo < 20 || kilo > 400) {
+          resultArea?.classList.add('hidden');
+          return;
+        }
 
         let bmr: number;
-        if (cinsiyet === 'erkek') {
-          bmr = 88.362 + (13.397 * kilo) + (4.799 * boy) - (5.677 * yas);
+        if (formul === 'harris') {
+          bmr = cinsiyet === 'erkek'
+            ? 88.362 + 13.397 * kilo + 4.799 * boy - 5.677 * yas
+            : 447.593 + 9.247 * kilo + 3.098 * boy - 4.330 * yas;
         } else {
-          bmr = 447.593 + (9.247 * kilo) + (3.098 * boy) - (4.330 * yas);
+          bmr = 10 * kilo + 6.25 * boy - 5 * yas + (cinsiyet === 'erkek' ? 5 : -161);
         }
 
         const tdee = bmr * aktivite;
+        const altSinir = cinsiyet === 'erkek' ? 1500 : 1200;
+        const ver = tdee - 500;
 
-        (document.getElementById('tdee') as HTMLElement).textContent = formatNumber(tdee, 0) + ' kcal';
-        (document.getElementById('kilo-ver') as HTMLElement).textContent = formatNumber(tdee - 500, 0) + ' kcal';
-        (document.getElementById('kilo-al') as HTMLElement).textContent = formatNumber(tdee + 500, 0) + ' kcal';
-        (document.getElementById('bmr') as HTMLElement).textContent = formatNumber(bmr, 0) + ' kcal';
+        $('tdee').textContent = kcal(tdee);
+        $('kilo-ver-hafif').textContent = kcal(tdee - 250);
+        $('kilo-ver').textContent = kcal(ver);
+        $('kilo-al').textContent = kcal(tdee + 300);
+        $('bmr').textContent = kcal(bmr);
 
-        if (resultArea) resultArea.classList.remove('hidden');
+        const uyari = $('alt-sinir-uyari');
+        if (ver < altSinir) {
+          uyari.textContent = `500 kcal açık, hekim gözetimi olmadan önerilen ${kcal(altSinir)} alt sınırının altına düşüyor. Daha küçük bir açık (250 kcal) ve fiziksel aktiviteyi artırmak daha güvenlidir.`;
+          uyari.classList.remove('hidden');
+        } else {
+          uyari.textContent = '';
+          uyari.classList.add('hidden');
+        }
+
+        resultArea?.classList.remove('hidden');
         updateURL();
       }
 
       function updateURL() {
         const params = new URLSearchParams();
-        inputs.forEach(input => {
-          const el = input as HTMLInputElement;
-          if (el.value && el.value !== '' && el.id) {
-            params.set(el.id, el.value);
-          }
-        });
+        inputs.forEach(el => { if (el.id && el.value !== '') params.set(el.id, el.value); });
         history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
       }
 
       function loadFromURL() {
         const params = new URLSearchParams(window.location.search);
-        let hasParams = false;
-        inputs.forEach(input => {
-          const el = input as HTMLInputElement;
-          if (el.id && params.has(el.id)) {
-            el.value = params.get(el.id)!;
-            hasParams = true;
-          }
+        let has = false;
+        inputs.forEach(el => {
+          if (el.id && params.has(el.id)) { el.value = params.get(el.id) ?? ''; has = true; }
         });
-        if (hasParams) calculate();
+        if (has) calculate();
       }
+
+      const debounced = debounce(calculate);
+      inputs.forEach(el => {
+        el.addEventListener('input', debounced);
+        el.addEventListener('change', debounced);
+      });
 
       loadFromURL();
     });
   </script>
 
   <section class="calc-content">
-    <h2>Kalori Hesaplama Nedir?</h2>
+    <h2>Günlük kalori ihtiyacı nasıl belirlenir?</h2>
     <p>
-      Kalori, besinlerin içerdiği enerji miktarını ifade eden bir ölçü birimidir. Vücudumuz her an; nefes almak, dolaşım, sindirim ve hareket gibi işlevleri sürdürmek için enerjiye ihtiyaç duyar. Günlük kalori ihtiyacını doğru hesaplamak; sağlıklı kilo koruma, kilo verme ya da kilo alma hedeflerine ulaşmanın temel adımıdır.
-    </p>
-    <h2>Harris-Benedict Formülü ile BMR Hesaplama</h2>
-    <p>
-      Bu hesap makinesi, bilim dünyasında yaygın kabul gören <strong>Harris-Benedict formülü</strong>nü kullanmaktadır. Formül, kişinin cinsiyeti, yaşı, boyu ve kilosunu dikkate alarak <em>Bazal Metabolizma Hızı'nı (BMR)</em> hesaplar. BMR; vücudun tamamen istirahat halindeyken, yani hiçbir aktivite yapılmadan harcadığı kalori miktarıdır.
-    </p>
-    <ul>
-      <li><strong>Erkekler:</strong> BMR = 88,362 + (13,397 × kilo) + (4,799 × boy) − (5,677 × yaş)</li>
-      <li><strong>Kadınlar:</strong> BMR = 447,593 + (9,247 × kilo) + (3,098 × boy) − (4,330 × yaş)</li>
-    </ul>
-    <h2>TDEE Nedir?</h2>
-    <p>
-      BMR değeri yalnızca dinlenme halindeki enerji gereksinimini gösterir. Gerçek günlük kalori ihtiyacınızı öğrenmek için BMR, fiziksel aktivite düzeyinize göre bir katsayıyla çarpılır. Bu sonuca <strong>Toplam Günlük Enerji Harcaması (TDEE)</strong> adı verilir. Masa başı çalışan biri için katsayı 1,2 iken, günde iki kez antrenman yapan biri için bu değer 1,9'a çıkabilmektedir.
-    </p>
-    <h2>Kilo Vermek veya Almak İçin Kalori Ayarı</h2>
-    <p>
-      Kilo vermek istiyorsanız TDEE değerinizden günlük 500 kalori eksik tüketmeyi hedefleyebilirsiniz; bu yaklaşık haftada 0,5 kg kayba karşılık gelir. Kilo almak için ise TDEE'ye 500 kalori ekleyerek günlük fazla alım oluşturabilirsiniz. Bu değerler genel bir rehber niteliği taşısa da bireysel metabolizma farklılıkları, hormonal durum ve sağlık koşulları sonuçları değiştirebilir. Kesin bir diyet programı için bir diyetisyen veya doktordan destek almanızı öneririz.
-    </p>
-    <h2>Aktivite Seviyesi Seçimi</h2>
-    <p>
-      Aktivite seviyenizi doğru seçmek, sonucun isabetliliği açısından kritik öneme sahiptir. Haftalık egzersiz sıklığınızı ve yoğunluğunu dürüstçe değerlendirin. Çoğu insan aktivitesini olduğundan fazla tahmin etme eğiliminde olduğundan, şüphe durumunda bir alt kademeden başlamanız daha sağlıklı bir hedef belirlemenizi sağlar.
+      Vücudunuzun bir günde harcadığı enerji üç parçadan oluşur: dinlenirken organların çalışması için gereken bazal metabolizma (toplamın yaklaşık %60–70'i), yediklerinizi sindirmek için harcanan enerji (yaklaşık %10) ve gün içindeki tüm hareketleriniz. Hesaplayıcı önce bazal metabolizma hızını (BMH) tahmin eder, sonra bunu aktivite katsayısıyla çarparak toplam günlük enerji harcamanızı (TDEE) bulur.
     </p>
 
-    <h2>Sık Sorulan Sorular</h2>
-    {faq.map(item => (
-      <details>
-        <summary><strong>{item.question}</strong></summary>
-        <p>{item.answer}</p>
-      </details>
-    ))}
+    <h2>Kullanılan formüller</h2>
+    <h3>Mifflin-St Jeor (varsayılan)</h3>
+    <ul>
+      <li><strong>Erkek:</strong> BMH = 10 × kilo (kg) + 6,25 × boy (cm) − 5 × yaş + 5</li>
+      <li><strong>Kadın:</strong> BMH = 10 × kilo (kg) + 6,25 × boy (cm) − 5 × yaş − 161</li>
+    </ul>
+    <h3>Harris-Benedict (Roza ve Shizgal, 1984)</h3>
+    <ul>
+      <li><strong>Erkek:</strong> BMH = 88,362 + 13,397 × kilo + 4,799 × boy − 5,677 × yaş</li>
+      <li><strong>Kadın:</strong> BMH = 447,593 + 9,247 × kilo + 3,098 × boy − 4,330 × yaş</li>
+    </ul>
+    <p>
+      Karşılaştırmalı çalışmalarda Mifflin-St Jeor, hem normal kilolu hem obez yetişkinlerde ölçülen değere en sık %10 yakınlıkta sonuç veren denklem olmuştur. Bu yüzden varsayılan formül olarak kullanılır.
+    </p>
+
+    <h2>Aktivite katsayıları</h2>
+    <table>
+      <thead>
+        <tr><th>Seviye</th><th>Tanım</th><th>Katsayı</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Hareketsiz</td><td>Masa başı iş, planlı egzersiz yok</td><td>1,2</td></tr>
+        <tr><td>Hafif aktif</td><td>Haftada 1–3 gün hafif egzersiz</td><td>1,375</td></tr>
+        <tr><td>Orta aktif</td><td>Haftada 3–5 gün orta yoğunlukta egzersiz</td><td>1,55</td></tr>
+        <tr><td>Çok aktif</td><td>Haftada 6–7 gün yoğun egzersiz</td><td>1,725</td></tr>
+        <tr><td>Ekstra aktif</td><td>Ağır bedensel iş veya günde iki antrenman</td><td>1,9</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Örnek hesaplama</h2>
+    <p>
+      32 yaşında, 170 cm boyunda, 72 kg ağırlığında, haftada iki gün yürüyüş yapan bir kadın için Mifflin-St Jeor ile:
+    </p>
+    <ul>
+      <li>BMH = 10 × 72 + 6,25 × 170 − 5 × 32 − 161 = 720 + 1.062,5 − 160 − 161 = <strong>1.461,5 kcal</strong></li>
+      <li>TDEE = 1.461,5 × 1,375 = <strong>yaklaşık 2.010 kcal</strong> (kilo koruma)</li>
+      <li>Kilo vermek için 500 kcal açık: yaklaşık <strong>1.510 kcal</strong>. Bu değer 1.200 kcal alt sınırının üzerinde olduğu için uygulanabilir bir hedeftir.</li>
+    </ul>
+
+    <h2>Hedefinize göre kalori ayarı</h2>
+    <p>
+      Yaklaşık 7.700 kcal'lik bir enerji açığının 1 kg yağ kaybına denk geldiği kabul edilir; günlük 500 kcal açık bu yüzden haftada yaklaşık 0,5 kg kayıp anlamına gelir. Ancak vücut kilo verdikçe harcaması da azalır; kayıp yavaşladığında hesaplamayı yeni kilonuzla tekrarlayın. Kilo almak isteyenler için 250–500 kcal fazlası, düzenli direnç antrenmanıyla birlikte çoğunlukla kas kazanımı sağlar.
+    </p>
+    <p>
+      Kalori hedefinin yanında besin kalitesi de önemlidir. Yeterli protein almak için <a href="/saglik/protein-ihtiyaci-hesaplama/">protein ihtiyacı hesaplayıcısını</a>, yalnızca dinlenme harcamanızı görmek için <a href="/saglik/baz-metabolizma-hizi/">bazal metabolizma hızı hesaplayıcısını</a> kullanabilirsiniz.
+    </p>
   </section>
 </CalcLayout>

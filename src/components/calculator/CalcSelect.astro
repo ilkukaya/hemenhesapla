@@ -17,10 +17,10 @@ const { id, label, options, value, helpText } = Astro.props;
 
 <div class="calc-input-group">
   <label for={id} class="calc-label">{label}</label>
-  <select id={id} class="calc-select">
+  <select id={id} class="calc-select" aria-describedby={helpText ? `${id}-help` : undefined}>
     {options.map((opt) => (
       <option value={opt.value} selected={opt.value === value}>{opt.label}</option>
     ))}
   </select>
-  {helpText && <p class="calc-help-text">{helpText}</p>}
+  {helpText && <p id={`${id}-help`} class="calc-help-text">{helpText}</p>}
 </div>

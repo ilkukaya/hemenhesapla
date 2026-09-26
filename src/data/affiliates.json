@@ -1,0 +1,104 @@
+{
+  "_readme": "Satış ortaklığı (affiliate) teklifleri. Bir teklifi yayına almak için 'url' alanına ortaklık programından aldığınız takip linkini yazın ve 'enabled' değerini true yapın. 'categories' teklifin hangi kategorilerde, 'calculators' hangi hesaplayıcılarda (kategori/slug) öncelikli gösterileceğini belirler. Linkler otomatik olarak rel=sponsored ve 'Sponsorlu' etiketiyle gösterilir.",
+  "offers": [
+    {
+      "id": "kredi-karsilastirma",
+      "enabled": false,
+      "title": "Kredi tekliflerini karşılaştırın",
+      "description": "Bankaların güncel ihtiyaç, konut ve taşıt kredisi faizlerini tek ekranda karşılaştırıp en düşük taksiti bulun.",
+      "cta": "Teklifleri gör",
+      "url": "",
+      "partner": "",
+      "categories": [],
+      "calculators": ["finans/kredi-hesaplama", "finans/konut-kredisi-hesaplama", "finans/tasit-kredisi-hesaplama"]
+    },
+    {
+      "id": "mevduat-karsilastirma",
+      "enabled": false,
+      "title": "En yüksek mevduat faizini bulun",
+      "description": "Hoş geldin faizi dahil güncel vadeli mevduat oranlarını karşılaştırın, birikiminiz en çok kazandığı yerde dursun.",
+      "cta": "Oranları karşılaştır",
+      "url": "",
+      "partner": "",
+      "categories": [],
+      "calculators": ["finans/mevduat-faizi-hesaplama", "finans/bilesik-faiz-hesaplama", "gunluk/tasarruf-hesaplama", "finans/yatirim-getiri-hesaplama"]
+    },
+    {
+      "id": "yatirim-hesabi",
+      "enabled": false,
+      "title": "Yatırım hesabı açın",
+      "description": "Altın, döviz, fon ve hisse işlemleri için dakikalar içinde ücretsiz yatırım hesabı açın.",
+      "cta": "Hesap aç",
+      "url": "",
+      "partner": "",
+      "categories": [],
+      "calculators": ["finans/altin-hesaplama", "finans/doviz-cevirici", "finans/enflasyon-hesaplama"]
+    },
+    {
+      "id": "kasko-sigorta",
+      "enabled": false,
+      "title": "Kasko ve trafik sigortası teklifi alın",
+      "description": "Onlarca sigorta şirketinden anında teklif alın, aynı teminatı daha uygun fiyata bulun.",
+      "cta": "Teklif al",
+      "url": "",
+      "partner": "",
+      "categories": [],
+      "calculators": ["finans/tasit-kredisi-hesaplama", "gunluk/yakit-maliyeti-hesaplama"]
+    },
+    {
+      "id": "saglik-sigortasi",
+      "enabled": false,
+      "title": "Tamamlayıcı sağlık sigortası",
+      "description": "Özel hastanelerde fark ödemeden muayene için tamamlayıcı sağlık sigortası tekliflerini karşılaştırın.",
+      "cta": "Fiyatları gör",
+      "url": "",
+      "partner": "",
+      "categories": ["saglik"],
+      "calculators": ["saglik/gebelik-haftasi-hesaplama", "saglik/dogum-tarihi-hesaplama"]
+    },
+    {
+      "id": "fitness-urunleri",
+      "enabled": false,
+      "title": "Akıllı tartı ve fitness ürünleri",
+      "description": "Vücut yağ oranı ve kas kütlesini ölçen akıllı tartılar ile protein ürünlerinde güncel fırsatlar.",
+      "cta": "Ürünleri incele",
+      "url": "",
+      "partner": "",
+      "categories": [],
+      "calculators": ["saglik/vucut-kitle-indeksi", "saglik/yag-orani-hesaplama", "saglik/kalori-hesaplama", "saglik/protein-ihtiyaci-hesaplama", "saglik/ideal-kilo-hesaplama", "saglik/baz-metabolizma-hizi"]
+    },
+    {
+      "id": "yapi-market",
+      "enabled": false,
+      "title": "Boya, parke ve fayansta indirimler",
+      "description": "Hesapladığınız miktarı yapı marketlerde karşılaştırın; kampanyalı ürünleri kapınıza getirin.",
+      "cta": "Fiyatları karşılaştır",
+      "url": "",
+      "partner": "",
+      "categories": ["insaat"],
+      "calculators": []
+    },
+    {
+      "id": "online-egitim",
+      "enabled": false,
+      "title": "Sınava online hazırlanın",
+      "description": "YKS, KPSS ve LGS için soru bankaları, deneme sınavları ve online kurslarda indirimler.",
+      "cta": "Kursları incele",
+      "url": "",
+      "partner": "",
+      "categories": ["egitim"],
+      "calculators": []
+    },
+    {
+      "id": "enerji-tasarrufu",
+      "enabled": false,
+      "title": "Faturanızı düşürün",
+      "description": "A+++ enerji sınıfı beyaz eşya, akıllı termostat ve LED aydınlatma ürünlerinde güncel fırsatlar.",
+      "cta": "Fırsatları gör",
+      "url": "",
+      "partner": "",
+      "categories": [],
+      "calculators": ["gunluk/elektrik-faturasi-hesaplama", "gunluk/dogalgaz-faturasi-hesaplama"]
+    }
+  ]
+}

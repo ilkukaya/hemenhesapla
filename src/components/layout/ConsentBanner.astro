@@ -1,0 +1,68 @@
+---
+// KVKK / Google Consent Mode v2 uyumlu hafif çerez bildirimi.
+// Yalnızca analiz veya reklam kimliği tanımlıysa sayfaya eklenir.
+---
+
+<div id="consent-banner" class="consent hidden" role="dialog" aria-live="polite" aria-label="Çerez tercihleri">
+  <p class="text-[0.9rem] leading-relaxed text-[var(--color-text-secondary)]">
+    Siteyi geliştirmek ve ücretsiz tutabilmek için analiz ve reklam çerezleri kullanıyoruz. Tercihinizi dilediğiniz zaman değiştirebilirsiniz.
+    <a href="/cerez-politikasi/" class="link">Ayrıntılar</a>
+  </p>
+  <div class="flex gap-2 shrink-0">
+    <button type="button" class="btn-secondary" data-consent="reject">Yalnızca gerekli</button>
+    <button type="button" class="btn-primary" data-consent="accept">Kabul et</button>
+  </div>
+</div>
+
+<style>
+  .consent {
+    position: fixed;
+    z-index: 70;
+    left: 12px;
+    right: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+    border-radius: 16px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-lg);
+    max-width: 760px;
+    margin-inline: auto;
+  }
+  .consent.hidden { display: none; }
+  @media (min-width: 640px) {
+    .consent { flex-direction: row; align-items: center; padding: 14px 16px 14px 20px; }
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    var el = document.getElementById('consent-banner');
+    if (!el) return;
+    var stored = null;
+    try { stored = localStorage.getItem('hh-consent'); } catch (e) {}
+    if (!stored) el.classList.remove('hidden');
+
+    function save(all) {
+      var c = { ads: all, analytics: all, ts: Date.now() };
+      try { localStorage.setItem('hh-consent', JSON.stringify(c)); } catch (e) {}
+      if (typeof gtag === 'function') {
+        gtag('consent', 'update', {
+          ad_storage: all ? 'granted' : 'denied',
+          ad_user_data: all ? 'granted' : 'denied',
+          ad_personalization: all ? 'granted' : 'denied',
+          analytics_storage: all ? 'granted' : 'denied'
+        });
+      }
+      el.classList.add('hidden');
+    }
+    el.querySelector('[data-consent="accept"]').addEventListener('click', function () { save(true); });
+    el.querySelector('[data-consent="reject"]').addEventListener('click', function () { save(false); });
+    document.querySelectorAll('[data-consent-open]').forEach(function (b) {
+      b.addEventListener('click', function () { el.classList.remove('hidden'); });
+    });
+  })();
+</script>

@@ -1,54 +1,78 @@
 ---
 import CalcLayout from '../../layouts/CalcLayout.astro';
 import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcSelect from '../../components/calculator/CalcSelect.astro';
 import CalcResult from '../../components/calculator/CalcResult.astro';
+import legal from '../../data/legal-2026.json';
 
-const faq = [
-  {
-    question: "Kredi taksit hesaplama nasıl yapılır?",
-    answer: "Kredi taksiti, anüite formülü ile hesaplanır: Aylık Taksit = Anapara × (Aylık Faiz Oranı × (1 + Aylık Faiz Oranı)^Vade) / ((1 + Aylık Faiz Oranı)^Vade - 1). Bu formülde aylık faiz oranı, yıllık faiz oranının 12'ye bölünmesiyle bulunur."
-  },
-  {
-    question: "Toplam faiz nasıl hesaplanır?",
-    answer: "Toplam faiz; (Aylık Taksit × Vade) - Kredi Anaparası formülüyle bulunur. Yani tüm ödemelerin toplamından ana para çıkarıldığında ödenen toplam faiz tutarı elde edilir."
-  },
-  {
-    question: "Düşük faizli kredi için neye dikkat edilmeli?",
-    answer: "Kredi faiz oranı yanı sıra dosya masrafı, sigorta bedeli ve diğer ek masrafları da göz önünde bulundurmanız gerekir. Yıllık maliyet oranı (YMO) bu masrafların tamamını yansıttığı için farklı teklifleri karşılaştırırken en doğru ölçüt YMO'dur."
-  }
-];
+const v = legal.krediVergileri;
 
 const meta = {
   title: "Kredi Hesaplama",
-  description: "Aylık taksit, toplam ödeme ve toplam faizi anında hesaplayın. Konut, taşıt ve ihtiyaç kredisi için ücretsiz kredi hesaplama aracı.",
+  seoTitle: "Kredi Hesaplama 2026 – Aylık Taksit ve Ödeme Planı",
+  description: "Kredi hesaplama 2026: ihtiyaç kredisi aylık taksitini KKDF ve BSMV dahil hesaplayın; toplam geri ödeme, toplam faiz, vergi yükü ve ay ay ödeme planını görün.",
+  summary: `Aylık taksit, eşit taksit formülüyle hesaplanır: Taksit = K × r(1+r)^n ÷ ((1+r)^n − 1). İhtiyaç kredilerinde faizin üzerine %${v.tuketici.kkdf} KKDF ve %${v.tuketici.bsmv} BSMV eklendiği için r, aylık faiz × 1,30 olarak alınır. Örneğin 200.000 TL, %3,29 faiz ve 36 ay vadede aylık taksit 10.986,64 TL'dir.`,
+  howTo: [
+    "Çekmek istediğiniz kredi tutarını girin.",
+    "Bankanın ilan ettiği aylık faiz oranını yazın (vergiler hariç oran).",
+    "Vadeyi ay olarak girin.",
+    "Kredi türünü seçin: ihtiyaç ve taşıt kredilerinde KKDF ve BSMV eklenir, konut kredisinde eklenmez.",
+    "Aylık taksiti, toplam maliyeti ve ödeme planını inceleyin."
+  ],
+  sources: [
+    { name: "TCMB – Para Politikası Kurulu kararları (2026)", url: "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Main+Menu/Temel+Faaliyetler/Para+Politikasi/PPK/2026" },
+    { name: "BDDK", url: "https://www.bddk.org.tr/" }
+  ],
   category: "finans",
   slug: "kredi-hesaplama",
-  keywords: ["kredi hesaplama", "taksit hesaplama", "faiz hesaplama", "konut kredisi", "ihtiyaç kredisi", "taşıt kredisi"],
-  dateModified: "2026-04-01",
-  relatedCalcs: ["kdv-hesaplama", "mevduat-faizi-hesaplama", "net-brut-maas-hesaplama"],
-  faq
+  keywords: ["kredi hesaplama", "ihtiyaç kredisi hesaplama", "kredi taksit hesaplama", "KKDF BSMV hesaplama", "kredi ödeme planı", "kredi faiz hesaplama 2026"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["finans/konut-kredisi-hesaplama", "finans/tasit-kredisi-hesaplama", "finans/mevduat-faizi-hesaplama", "finans/net-brut-maas-hesaplama"],
+  faq: [
+    {
+      question: "Kredi taksiti nasıl hesaplanır?",
+      answer: "Türkiye'de tüketici kredileri eşit taksitli ödenir. Taksit = Kredi × r × (1+r)^n ÷ ((1+r)^n − 1) formülünde r aylık oran, n vade sayısıdır. İhtiyaç ve taşıt kredilerinde r, akdi faizin 1,30 katıdır çünkü faiz üzerinden %15 KKDF ve %15 BSMV alınır. İlk taksitlerde faiz payı yüksek, ana para payı düşüktür."
+    },
+    {
+      question: "KKDF ve BSMV nedir, ne kadar?",
+      answer: "KKDF (Kaynak Kullanımını Destekleme Fonu) ve BSMV (Banka ve Sigorta Muameleleri Vergisi), bireysel kredilerde her taksitteki faiz tutarı üzerinden alınır. İhtiyaç ve taşıt kredilerinde her ikisi de %15'tir. Konut kredileri KKDF ve BSMV'den muaftır. Bu vergiler bankaya değil devlete gider ama taksite dahildir."
+    },
+    {
+      question: "100.000 TL kredinin aylık taksiti ne kadar?",
+      answer: "Aylık %3,29 faiz ve 12 ay vadeli bir ihtiyaç kredisinde KKDF ve BSMV dahil taksit yaklaşık 10.827 TL, 36 ay vadede yaklaşık 5.493 TL'dir. Uzun vade taksiti düşürür ama toplam faizi artırır. Kendi bankanızın oranını girerek kesin tutarı hesaplayabilirsiniz."
+    },
+    {
+      question: "Kredi erken kapatılırsa faiz indirimi yapılır mı?",
+      answer: "Evet. Tüketici kredisini erken kapatan ya da ara ödeme yapan tüketiciye, ödenmeyen dönemlere ait faiz ve masraflar indirilir. Sabit faizli kredilerde banka, 6502 sayılı Tüketicinin Korunması Hakkında Kanun'daki sınırlar içinde erken ödenen tutarın küçük bir yüzdesi kadar erken ödeme tazminatı isteyebilir; kesin oranı sözleşmenizde bulabilirsiniz."
+    },
+    {
+      question: "Yıllık maliyet oranı nedir?",
+      answer: "Yıllık maliyet oranı, faizin yanında KKDF, BSMV, dosya masrafı ve sigorta gibi tüm maliyetleri içeren toplam oran olup bankalar sözleşme öncesi bilgi formunda göstermek zorundadır. Farklı bankaları karşılaştırırken yalnızca aylık faiz oranına değil, yıllık maliyet oranına ve toplam geri ödeme tutarına bakmak gerekir."
+    }
+  ]
 };
 ---
 
 <CalcLayout meta={meta}>
-  <form id="calc-form">
+  <form id="calc-form" class="calc-inputs" novalidate>
     <CalcInput
       id="tutar"
       label="Kredi Tutarı"
       type="number"
       suffix="₺"
-      placeholder="100000"
-      step={100}
-      min={1000}
+      placeholder="200000"
+      step="any"
+      min={0}
     />
     <CalcInput
       id="faiz"
       label="Aylık Faiz Oranı"
       type="number"
       suffix="%"
-      placeholder="3.50"
-      step={0.01}
-      min={0.01}
+      placeholder="3.29"
+      step="any"
+      min={0}
+      helpText="Vergiler hariç akdi faiz oranı"
     />
     <CalcInput
       id="vade"
@@ -60,6 +84,15 @@ const meta = {
       min={1}
       max={360}
     />
+    <CalcSelect
+      id="krediTuru"
+      label="Kredi Türü"
+      options={[
+        { value: "tuketici", label: `İhtiyaç / taşıt (KKDF %${v.tuketici.kkdf} + BSMV %${v.tuketici.bsmv})` },
+        { value: "vergisiz", label: "Konut / vergisiz" },
+      ]}
+      value="tuketici"
+    />
   </form>
 
   <CalcResult>
@@ -69,122 +102,105 @@ const meta = {
     </div>
     <div slot="details">
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Toplam Ödeme</span>
+        <span class="calc-detail-label">Toplam Geri Ödeme</span>
         <span class="calc-detail-value" id="toplam-odeme">—</span>
       </div>
       <div class="calc-detail-row">
         <span class="calc-detail-label">Toplam Faiz</span>
         <span class="calc-detail-value" id="toplam-faiz">—</span>
       </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Toplam KKDF</span>
+        <span class="calc-detail-value" id="toplam-kkdf">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Toplam BSMV</span>
+        <span class="calc-detail-value" id="toplam-bsmv">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Vergiler Dahil Aylık Oran</span>
+        <span class="calc-detail-value" id="efektif-oran">—</span>
+      </div>
+      <div class="calc-table-wrap">
+        <table class="calc-table">
+          <caption>Ödeme planı</caption>
+          <thead>
+            <tr><th scope="col">Ay</th><th scope="col">Taksit</th><th scope="col">Ana para</th><th scope="col">Faiz</th><th scope="col">KKDF+BSMV</th><th scope="col">Kalan</th></tr>
+          </thead>
+          <tbody id="odeme-plani"></tbody>
+        </table>
+      </div>
+      <p class="calc-note">Dosya masrafı ve sigorta primleri dahil değildir. Bankanızın sözleşme öncesi bilgi formundaki tutarlar esas alınır.</p>
     </div>
   </CalcResult>
 
+  <script type="application/json" id="kredi-data" set:html={JSON.stringify(v)}></script>
+
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
-      const resultArea = document.getElementById('calc-result');
+    import { formatTL, formatPercent, readNumber, readValue, readJSON, setText, showResult, initCalculator } from './_shared';
+    import { amortize, renderSchedule } from './_loan';
 
-      function debounce(fn, delay = 150) {
-        let timer;
-        return (...args) => {
-          clearTimeout(timer);
-          timer = setTimeout(() => fn(...args), delay);
-        };
+    const vergiler = readJSON<Record<string, { kkdf: number; bsmv: number }>>('kredi-data');
+
+    function calculate(): boolean {
+      const tutar = readNumber('tutar');
+      const faiz = readNumber('faiz');
+      const vade = Math.round(readNumber('vade'));
+      const tur = readValue('krediTuru') === 'vergisiz' ? 'konut' : 'tuketici';
+      const { kkdf, bsmv } = vergiler[tur] ?? { kkdf: 0, bsmv: 0 };
+
+      if (!(tutar > 0) || !(faiz >= 0) || !(vade >= 1) || vade > 600) {
+        showResult(false);
+        return false;
       }
 
-      const debouncedCalc = debounce(calculate);
-      inputs.forEach(input => {
-        input.addEventListener('input', debouncedCalc);
-        input.addEventListener('change', debouncedCalc);
-      });
+      const r = amortize(tutar, faiz, vade, kkdf, bsmv);
+      setText('aylik-taksit', formatTL(r.payment));
+      setText('toplam-odeme', formatTL(r.totalPayment));
+      setText('toplam-faiz', formatTL(r.totalInterest));
+      setText('toplam-kkdf', formatTL(r.totalKkdf));
+      setText('toplam-bsmv', formatTL(r.totalBsmv));
+      setText('efektif-oran', formatPercent(faiz * (1 + (kkdf + bsmv) / 100)));
+      renderSchedule('odeme-plani', r.rows, formatTL, kkdf + bsmv > 0);
 
-      function formatTL(num) {
-        return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
-      }
+      showResult(true);
+      return true;
+    }
 
-      function calculate() {
-        const tutar = parseFloat((document.getElementById('tutar') as HTMLInputElement).value);
-        const faiz = parseFloat((document.getElementById('faiz') as HTMLInputElement).value);
-        const vade = parseInt((document.getElementById('vade') as HTMLInputElement).value);
-
-        if (!tutar || !faiz || !vade || tutar <= 0 || faiz <= 0 || vade <= 0) return;
-
-        const r = faiz / 100;
-        const pow = Math.pow(1 + r, vade);
-        const aylikTaksit = tutar * r * pow / (pow - 1);
-        const toplamOdeme = aylikTaksit * vade;
-        const toplamFaiz = toplamOdeme - tutar;
-
-        (document.getElementById('aylik-taksit') as HTMLElement).textContent = formatTL(aylikTaksit);
-        (document.getElementById('toplam-odeme') as HTMLElement).textContent = formatTL(toplamOdeme);
-        (document.getElementById('toplam-faiz') as HTMLElement).textContent = formatTL(toplamFaiz);
-
-        if (resultArea) resultArea.classList.remove('hidden');
-        updateURL();
-      }
-
-      function updateURL() {
-        const params = new URLSearchParams();
-        inputs.forEach(input => {
-          const el = input as HTMLInputElement;
-          if (el.value && el.value !== '' && el.id) {
-            params.set(el.id, el.value);
-          }
-        });
-        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
-      }
-
-      function loadFromURL() {
-        const params = new URLSearchParams(window.location.search);
-        let hasParams = false;
-        inputs.forEach(input => {
-          const el = input as HTMLInputElement;
-          if (el.id && params.has(el.id)) {
-            el.value = params.get(el.id)!;
-            hasParams = true;
-          }
-        });
-        if (hasParams) calculate();
-      }
-
-      loadFromURL();
-    });
+    initCalculator({ calculate });
   </script>
 
   <section class="calc-content">
-    <h2>Kredi Hesaplama Nedir?</h2>
-    <p>
-      Kredi hesaplama, bankadan ya da finansal kuruluştan alınan bir borcun aylık taksit, toplam ödeme ve toplam faiz tutarlarını önceden belirlemeye yarayan finansal bir işlemdir. İhtiyaç kredisi, konut kredisi veya taşıt kredisi almayı düşünüyorsanız, aylık gider planlamanızı doğru yapabilmek için kredi hesaplama aracından yararlanmanız büyük önem taşır.
-    </p>
     <h2>Kredi Taksiti Nasıl Hesaplanır?</h2>
     <p>
-      Bankalar aylık sabit taksit tutarını belirlemek için anüite (eşit taksitli ödeme) yöntemini kullanır. Bu yönteme göre:
+      Bankalar bireysel kredileri eşit taksitli (annüite) yöntemle geri öder. Her taksit aynı tutardadır ama içindeki faiz payı zamanla azalır, ana para payı artar. Taksit hesabında kullanılan formül şudur:
     </p>
+    <p><strong>Taksit = Kredi × r × (1 + r)<sup>n</sup> ÷ ((1 + r)<sup>n</sup> − 1)</strong></p>
     <p>
-      <strong>Aylık Taksit = Anapara × [r × (1 + r)^n] / [(1 + r)^n − 1]</strong>
-    </p>
-    <p>
-      Formülde <em>r</em> aylık faiz oranını (yüzde değerinin 100'e bölümü), <em>n</em> ise toplam vade sayısını (ay) gösterir. Hesaplama aracımız bu formülü otomatik olarak uyguladığından; kredi tutarı, aylık faiz oranı ve vade bilgilerini girmeniz yeterlidir.
-    </p>
-    <h2>Toplam Faiz ve Toplam Ödeme</h2>
-    <p>
-      Toplam ödeme tutarı, aylık taksit ile vade sayısının çarpımıdır. Toplam faiz ise toplam ödemeden anapara çıkarılarak bulunur. Örneğin 100.000 ₺ krediyi %3,5 aylık faizle 36 ay vadeyle çektiğinizde aylık taksitiniz ve ödeyeceğiniz toplam faiz miktarı bu araç sayesinde anında görüntülenir.
-    </p>
-    <h2>Kredi Alırken Dikkat Edilmesi Gerekenler</h2>
-    <p>
-      Bankalar aynı faiz oranını sunsalar da dosya masrafı, hayat sigortası, konut sigortası gibi ek ücretler toplam maliyeti önemli ölçüde artırabilir. Bu nedenle teklifleri karşılaştırırken yalnızca aylık faiz oranına değil, <strong>Yıllık Maliyet Oranı'na (YMO)</strong> da dikkat etmelisiniz. Ayrıca erken ödeme komisyonu koşullarını öğrenmek, kredinin kalan borcunu erken kapatma planlarınızı etkileyebilir.
-    </p>
-    <h2>Kredi Vadesi Seçimi</h2>
-    <p>
-      Vade uzadıkça aylık taksit miktarı düşer; ancak toplam faiz yükü artar. Kısa vadede yüksek taksit ödeyerek toplam maliyeti azaltabilir ya da uzun vadede aylık bütçenizi rahatlayabilirsiniz. Bu denge kişisel finansal hedefinize ve aylık gelir-gider durumunuza göre değişir.
+      Burada n vade (ay), r ise vergiler dahil aylık orandır. İhtiyaç ve taşıt kredilerinde her ayın faizi üzerinden %15 KKDF ve %15 BSMV alındığı için r = aylık faiz × 1,30 olur. Konut kredisinde bu vergiler olmadığından r doğrudan aylık faizdir.
     </p>
 
-    <h2>Sık Sorulan Sorular</h2>
-    {faq.map(item => (
-      <details>
-        <summary>{item.question}</summary>
-        <p>{item.answer}</p>
-      </details>
-    ))}
+    <h2>Örnek Hesaplama</h2>
+    <p>
+      200.000 TL ihtiyaç kredisi, aylık %3,29 faiz ve 36 ay vade için vergiler dahil aylık oran %4,277'dir. Bu oranla aylık taksit <strong>10.986,64 TL</strong>, toplam geri ödeme 395.519,05 TL olur. Toplam maliyetin 150.399,27 TL'si faiz, 45.119,78 TL'si KKDF ve BSMV'dir.
+    </p>
+    <div class="calc-table-wrap">
+      <table class="calc-table">
+        <thead><tr><th scope="col">Vade</th><th scope="col">Aylık taksit</th><th scope="col">Toplam ödeme</th></tr></thead>
+        <tbody>
+          <tr><td>12 ay</td><td>21.654,34 TL</td><td>259.852,12 TL</td></tr>
+          <tr><td>24 ay</td><td>13.492,01 TL</td><td>323.808,25 TL</td></tr>
+          <tr><td>36 ay</td><td>10.986,64 TL</td><td>395.519,05 TL</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Tablo 200.000 TL ve aylık %3,29 faiz için KKDF ve BSMV dahil hesaplanmıştır.</p>
+
+    <h2>Kredi Çekmeden Önce</h2>
+    <ul>
+      <li>Bankalar kredi tutarının binde 5'ini aşmayacak şekilde kredi tahsis ücreti alabilir; bu hesaplamaya dahil değildir.</li>
+      <li>Karşılaştırmayı aylık faizle değil, toplam geri ödeme ve yıllık maliyet oranıyla yapın.</li>
+      <li>Taksitinizin aylık net gelirinizin makul bir kısmını aşmamasına dikkat edin; gecikmeler kredi notunuzu düşürür.</li>
+    </ul>
   </section>
 </CalcLayout>

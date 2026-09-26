@@ -1,24 +1,49 @@
 ---
+// Bağlama uygun satış ortaklığı kutusu. Etkin teklif yoksa hiçbir şey basmaz.
+import affiliates from '../../data/affiliates.json';
+import Icon from '../ui/Icon.astro';
+
 interface Props {
-  title: string;
-  description: string;
-  ctaText: string;
-  ctaUrl: string;
+  category: string;
+  slug?: string;
+  limit?: number;
 }
 
-const { title, description, ctaText, ctaUrl } = Astro.props;
+const { category, slug, limit = 1 } = Astro.props;
+const ref = slug ? `${category}/${slug}` : '';
+
+const offers = affiliates.offers
+  .filter((o) => o.enabled && o.url)
+  .map((o) => ({ ...o, score: o.calculators.includes(ref) ? 2 : o.categories.includes(category) ? 1 : 0 }))
+  .filter((o) => o.score > 0)
+  .sort((a, b) => b.score - a.score)
+  .slice(0, limit);
 ---
 
-<div class="bg-gradient-to-br from-[var(--color-bg)] to-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-5 my-4">
-  <p class="text-xs font-semibold text-[var(--color-text-muted)] uppercase tracking-wider mb-2">Önerilen</p>
-  <h4 class="font-[var(--font-heading)] font-bold text-sm text-[var(--color-text)] mb-2">{title}</h4>
-  <p class="text-sm text-[var(--color-text-secondary)] mb-3">{description}</p>
-  <a
-    href={ctaUrl}
-    rel="nofollow sponsored"
-    target="_blank"
-    class="inline-flex items-center text-sm font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary-light)] transition-colors"
-  >
-    {ctaText} →
-  </a>
-</div>
+{offers.map((o) => (
+  <aside class="affiliate card p-5 my-6" aria-label="Sponsorlu öneri">
+    <p class="eyebrow mb-2">Sponsorlu</p>
+    <p class="font-[family-name:var(--font-heading)] font-bold text-lg text-[var(--color-text)] leading-snug">{o.title}</p>
+    <p class="mt-1.5 text-[0.9375rem] text-[var(--color-text-secondary)]">{o.description}</p>
+    <a
+      href={o.url}
+      rel="sponsored noopener nofollow"
+      target="_blank"
+      class="btn-primary mt-4"
+      data-affiliate={o.id}
+    >
+      {o.cta} <Icon name="arrow-up-right" size={16} />
+    </a>
+    {o.partner && <p class="mt-2 text-xs text-[var(--color-text-muted)]">{o.partner} iş birliğiyle</p>}
+  </aside>
+))}
+
+<script>
+  // Tıklamaları GA4'e olay olarak gönder (ölçüm etkinse)
+  document.querySelectorAll<HTMLAnchorElement>('a[data-affiliate]').forEach((a) =>
+    a.addEventListener('click', () => {
+      const g = (window as any).gtag;
+      if (typeof g === 'function') g('event', 'affiliate_click', { offer_id: a.dataset.affiliate, page: location.pathname });
+    }),
+  );
+</script>

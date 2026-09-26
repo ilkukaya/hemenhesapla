@@ -1,68 +1,67 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import PageLayout from '../layouts/PageLayout.astro';
+import { SITE } from '../config/site';
 ---
 
-<BaseLayout title="Gizlilik Politikası | Hemen Hesapla" description="hemenhesapla.net gizlilik politikası, kişisel verilerin korunması ve çerez kullanımı hakkında bilgilendirme.">
-  <div class="max-w-3xl mx-auto px-4 sm:px-6 py-12">
-    <h1 class="text-2xl sm:text-3xl font-[var(--font-heading)] font-extrabold text-[var(--color-text)] mb-8">Gizlilik Politikası</h1>
+<PageLayout
+  title="Gizlilik Politikası ve KVKK Aydınlatma Metni | Hemen Hesapla"
+  h1="Gizlilik politikası"
+  description="Hemen Hesapla'nın kişisel verileri nasıl işlediğini, çerez ve reklam uygulamalarını ve 6698 sayılı KVKK kapsamındaki haklarınızı açıklayan aydınlatma metni."
+  updated="2026-09-26"
+>
+  <p>
+    Bu metin, {SITE.url.replace('https://', '')} ("Hemen Hesapla", "biz") tarafından 6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") ve
+    ilgili mevzuat uyarınca, veri sorumlusu sıfatıyla hazırlanmıştır.
+  </p>
 
-    <div class="prose space-y-6 text-[var(--color-text-secondary)] leading-relaxed">
-      <p><strong>Son güncelleme:</strong> 1 Nisan 2026</p>
+  <h2>Hesaplayıcılara girdiğiniz bilgiler</h2>
+  <p>
+    Hesaplayıcılara girdiğiniz tutar, tarih, boy-kilo gibi bilgiler <strong>yalnızca tarayıcınızda işlenir</strong> ve sunucularımıza gönderilmez.
+    "Paylaş" veya "Bağlantıyı kopyala" özelliğini kullandığınızda bu değerler bağlantı adresine eklenir; bağlantıyı kiminle paylaşacağınıza siz karar verirsiniz.
+  </p>
 
-      <h2 class="text-lg font-[var(--font-heading)] font-bold text-[var(--color-text)] mt-8">1. Genel Bilgi</h2>
-      <p>
-        hemenhesapla.net ("Site"), kullanıcılarına ücretsiz online hesaplama araçları sunan bir platformdur.
-        Gizliliğinize saygı duyuyor ve kişisel verilerinizin korunmasına önem veriyoruz.
-        Bu gizlilik politikası, sitemizi kullanırken hangi bilgilerin toplandığını ve nasıl kullanıldığını açıklar.
-      </p>
+  <h2>Tarayıcınızda sakladığımız bilgiler</h2>
+  <p>
+    Tema tercihiniz (açık/koyu), son kullandığınız hesaplayıcılar ve çerez tercihiniz, tarayıcınızın yerel depolama alanında (localStorage) saklanır.
+    Bu bilgiler cihazınızdan çıkmaz ve tarayıcı ayarlarından silinebilir.
+  </p>
 
-      <h2 class="text-lg font-[var(--font-heading)] font-bold text-[var(--color-text)] mt-8">2. Toplanan Veriler</h2>
-      <p>
-        Sitemizde sunulan tüm hesaplayıcılar tamamen tarayıcınızda (client-side) çalışır.
-        Hesaplayıcılara girdiğiniz veriler (tutarlar, tarihler, ölçüler vb.) hiçbir şekilde sunucularımıza gönderilmez,
-        saklanmaz veya üçüncü taraflarla paylaşılmaz.
-      </p>
-      <p>
-        Sitemiz aşağıdaki anonim verileri toplayabilir:
-      </p>
-      <ul class="list-disc pl-6 space-y-1">
-        <li>Sayfa görüntüleme istatistikleri (anonim)</li>
-        <li>Tarayıcı türü ve işletim sistemi bilgisi</li>
-        <li>Genel coğrafi konum (ülke/şehir düzeyinde)</li>
-        <li>Yönlendiren site (referrer) bilgisi</li>
-      </ul>
+  <h2>İşlenen kişisel veriler ve amaçları</h2>
+  <ul>
+    <li><strong>İletişim verileri</strong> (ad, e-posta, mesaj): İletişim formu üzerinden gönderdiğinizde, yalnızca talebinizi yanıtlamak amacıyla işlenir.</li>
+    <li><strong>Kullanım verileri</strong> (ziyaret edilen sayfalar, cihaz ve tarayıcı türü, yaklaşık konum): Onay vermeniz hâlinde Google Analytics aracılığıyla, sitenin geliştirilmesi amacıyla anonimleştirilmiş olarak işlenir.</li>
+    <li><strong>Reklam verileri</strong>: Onay vermeniz hâlinde Google AdSense, ilgi alanına dayalı reklam gösterebilmek için çerez kullanabilir. Onay vermezseniz yalnızca kişiselleştirilmemiş reklamlar gösterilir.</li>
+  </ul>
 
-      <h2 class="text-lg font-[var(--font-heading)] font-bold text-[var(--color-text)] mt-8">3. Çerezler (Cookies)</h2>
-      <p>
-        Sitemiz, kullanıcı deneyimini iyileştirmek ve reklam hizmetleri sunmak amacıyla çerezler kullanabilir.
-        Çerezler, tarayıcınızda saklanan küçük metin dosyalarıdır.
-      </p>
-      <ul class="list-disc pl-6 space-y-1">
-        <li><strong>Analitik çerezleri:</strong> Anonim ziyaretçi istatistikleri için kullanılır.</li>
-        <li><strong>Reklam çerezleri:</strong> Google AdSense veya benzeri reklam ağları, ilgi alanınıza uygun reklamlar göstermek için çerez kullanabilir.</li>
-      </ul>
-      <p>Tarayıcınızın çerez ayarlarından çerezleri devre dışı bırakabilirsiniz.</p>
+  <h2>Google reklamları hakkında</h2>
+  <p>
+    Google dâhil üçüncü taraf tedarikçiler, kullanıcının bu siteye veya diğer sitelere yaptığı önceki ziyaretlere dayalı reklamlar sunmak için çerezleri kullanır.
+    Google'ın reklam çerezlerini kullanması, Google ve iş ortaklarının kullanıcılara bu site ve/veya internetteki diğer sitelere yaptıkları ziyaretlere
+    dayalı reklamlar sunmasını sağlar. Kişiselleştirilmiş reklamcılığı <a href="https://adssettings.google.com/" target="_blank" rel="noopener">Google Reklam Ayarları</a>
+    sayfasından devre dışı bırakabilirsiniz. Ayrıntılar için <a href="https://policies.google.com/technologies/ads?hl=tr" target="_blank" rel="noopener">Google'ın reklam politikası</a> sayfasını inceleyebilirsiniz.
+  </p>
 
-      <h2 class="text-lg font-[var(--font-heading)] font-bold text-[var(--color-text)] mt-8">4. Üçüncü Taraf Hizmetler</h2>
-      <ul class="list-disc pl-6 space-y-1">
-        <li><strong>Google AdSense:</strong> Reklam gösterimi için kullanılabilir.</li>
-        <li><strong>Google Analytics / Umami:</strong> Anonim trafik analizi için kullanılabilir.</li>
-      </ul>
-      <p>Bu hizmetlerin kendi gizlilik politikaları geçerlidir.</p>
+  <h2>Hukuki sebepler ve aktarım</h2>
+  <p>
+    Kişisel verileriniz KVKK m.5/1 uyarınca açık rızanıza, m.5/2-f uyarınca meşru menfaatimize ve talebinize yanıt verebilmek için gerekli olmasına dayanılarak işlenir.
+    Analiz ve reklam hizmetleri yurt dışında bulunan hizmet sağlayıcılar (Google LLC / Google Ireland Ltd.) tarafından sunulduğundan, bu verilerin aktarımı
+    KVKK m.9 kapsamında açık rızanıza dayanır. Barındırma hizmeti Netlify, Inc. tarafından sağlanır.
+  </p>
 
-      <h2 class="text-lg font-[var(--font-heading)] font-bold text-[var(--color-text)] mt-8">5. KVKK Uyumu</h2>
-      <p>
-        6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) kapsamında,
-        sitemiz kişisel veri toplamamakta veya işlememektedir.
-        Hesaplayıcılara girilen tüm bilgiler yalnızca tarayıcınızda işlenir ve saklanmaz.
-      </p>
+  <h2>Saklama süresi</h2>
+  <p>İletişim yazışmaları talebin sonuçlanmasından itibaren en fazla iki yıl saklanır. Analiz verileri Google Analytics'te 14 ay tutulur.</p>
 
-      <h2 class="text-lg font-[var(--font-heading)] font-bold text-[var(--color-text)] mt-8">6. İletişim</h2>
-      <p>
-        Gizlilik politikamız hakkında sorularınız için
-        <a href="/iletisim/" class="text-[var(--color-primary)] hover:underline">iletişim sayfamızdan</a>
-        bize ulaşabilirsiniz.
-      </p>
-    </div>
-  </div>
-</BaseLayout>
+  <h2>Haklarınız</h2>
+  <p>
+    KVKK m.11 uyarınca kişisel verilerinizin işlenip işlenmediğini öğrenme, bilgi talep etme, düzeltilmesini veya silinmesini isteme ve itiraz etme haklarına sahipsiniz.
+    Taleplerinizi <a href={`mailto:${SITE.email}`}>{SITE.email}</a> adresine iletebilirsiniz; en geç 30 gün içinde yanıtlanır.
+  </p>
+
+  <h2>Çerez tercihleriniz</h2>
+  <p>
+    Kullandığımız çerezlerin listesi ve tercihlerinizi nasıl değiştirebileceğiniz <a href="/cerez-politikasi/">çerez politikası</a> sayfasında yer alır.
+  </p>
+
+  <h2>Değişiklikler</h2>
+  <p>Bu politika güncellendiğinde sayfanın başındaki tarih yenilenir.</p>
+</PageLayout>
