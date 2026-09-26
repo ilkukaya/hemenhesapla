@@ -140,22 +140,18 @@ const meta = {
       return new Date(Date.UTC(y, m, 0)).getUTCDate();
     }
 
-    /** Takvim esaslı yıl/ay/gün farkı. */
-    function diffYMD(a: { y: number; m: number; d: number }, b: { y: number; m: number; d: number }) {
-      let years = b.y - a.y;
-      let months = b.m - a.m;
-      let days = b.d - a.d;
-      if (days < 0) {
-        months -= 1;
-        const pm = b.m - 1 === 0 ? 12 : b.m - 1;
-        const py = b.m - 1 === 0 ? b.y - 1 : b.y;
-        days += daysInMonth(py, pm);
-      }
-      if (months < 0) {
-        years -= 1;
-        months += 12;
-      }
-      return { years, months, days };
+    /** Takvim esaslı yıl/ay/gün farkı (ay sonu taşmaları ay sonuna sabitlenir). */
+    function diffYMD(a: { y: number; m: number; d: number; t: number }, b: { y: number; m: number; d: number; t: number }) {
+      let totalMonths = (b.y - a.y) * 12 + (b.m - a.m);
+      const anchorAt = (months: number) => {
+        const idx = a.m - 1 + months;
+        const y = a.y + Math.floor(idx / 12);
+        const m = (idx % 12) + 1;
+        return Date.UTC(y, m - 1, Math.min(a.d, daysInMonth(y, m)));
+      };
+      if (anchorAt(totalMonths) > b.t) totalMonths -= 1;
+      const days = Math.round((b.t - anchorAt(totalMonths)) / 86400000);
+      return { years: Math.floor(totalMonths / 12), months: totalMonths % 12, days };
     }
 
     function tavanFor(iso: string): { amount: number; exact: boolean; period: string } {

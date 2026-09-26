@@ -5,204 +5,307 @@ import CalcResult from '../../components/calculator/CalcResult.astro';
 
 const faq = [
   {
-    question: "Fayans hesabında fire payı ne kadar olmalıdır?",
-    answer: "Standart dikdörtgen alanlarda %10 fire payı yeterlidir. Köşegen döşeme, karmaşık oda şekilleri veya küçük fayans boyutlarında %15-20 fire payı bırakmanız önerilir. Mermer veya doğal taş döşemelerde desenlerin eşleştirilmesi gerektiğinden fire %20-30'a kadar çıkabilir. İleride kırık fayans ihtimaline karşı 3-5 adet fazladan almanız tavsiye edilir."
+    question: "Kaç adet fayans lazım, nasıl hesaplanır?",
+    answer: "Döşenecek alan (m²) fire payıyla artırılır ve tek fayansın alanına bölünür, sonuç yukarı yuvarlanır. 4 × 3,5 m = 14 m² zemin için %10 fireyle 15,4 m² gerekir. 60 × 60 cm fayansın alanı 0,36 m² olduğundan 15,4 ÷ 0,36 = 42,8, yani 43 adet alınır. Kutu 1,44 m² (4 adet) ise 11 kutu gerekir."
   },
   {
-    question: "Kaç adet fayans bir paket oluşturur?",
-    answer: "Fayans paket içerikleri üreticiye ve fayans boyutuna göre değişir. 30×30 cm fayanslar genellikle 11-12 adet/paket, 60×60 cm fayanslar ise 4-6 adet/paket olarak satılır. Paketin kaç m² kapsadığı genellikle ambalaj üzerinde belirtilir. Hesaplamada toplam m² cinsinden sipariş vermeniz paket sayısını doğrudan belirlemenizi kolaylaştırır."
+    question: "Fayans ve seramikte fire payı ne kadar olmalı?",
+    answer: "Düz döşemede ve kesimin az olduğu dikdörtgen alanlarda %5–10, çok köşeli, niş ve kolonlu alanlarda %10–15, çapraz (45°) veya balıksırtı döşemede %15–20 fire önerilir. 60 × 120 cm gibi büyük ebatlarda kırılma riski ve kesim artığı daha fazladır. Aynı üretim partisinden yedek birkaç parça ayırmak ileride tamir için de faydalıdır."
   },
   {
-    question: "Fayans döşemeden önce ne kadar ölçüm yapılmalıdır?",
-    answer: "Alanı doğru ölçmek için uzun bir şerit metre kullanın ve her duvarı en az iki farklı noktadan ölçün. Girintiler, çıkıntılar, kolonlar ve nişler varsa bunları ayrıca hesaba katın. Düzensiz alanlarda alanı basit dikdörtgenlere bölüp her parçayı ayrı hesaplamak ve sonuçları toplamak daha sağlıklı bir yöntemdir."
+    question: "Kutu sayısı nasıl hesaplanır?",
+    answer: "Fayanslar metrekare üzerinden fiyatlandırılıp kutu olarak satılır. Kutunun kaç m² içerdiği etikette yazar; 60 × 60 cm'de genellikle 1,44 m² (4 adet), 30 × 60 cm'de 1,44 m² (8 adet), 60 × 120 cm'de 1,44 m² (2 adet) olur. Gereken adet, kutudaki adete bölünüp yukarı yuvarlanır; kutu bölünerek satılmadığı için ödeyeceğiniz alan biraz daha fazla olur."
+  },
+  {
+    question: "Duvar fayansı nasıl hesaplanır?",
+    answer: "Her duvarın uzunluğu ile döşenecek yüksekliğini çarpın, kapı ve pencere alanlarını çıkarın ve duvarları toplayın. 2 × 2,5 m bir banyoda tavana kadar 2,6 m fayans için duvar alanı 2 × (2 + 2,5) × 2,6 = 23,4 m²'dir; 0,8 × 2 m kapı düşülünce 21,8 m² kalır. Hesaplayıcıya en olarak toplam duvar uzunluğunu, boy olarak yüksekliği girebilirsiniz."
+  },
+  {
+    question: "Metrekareye ne kadar fayans yapıştırıcısı gider?",
+    answer: "Çimento esaslı seramik yapıştırıcısının sarfiyatı, kullanılan tarak dişine ve fayans ebadına göre 3–5 kg/m² arasındadır. 60 × 60 cm ve üzeri ebatlarda hem fayansın arkasına hem zemine sürme gerektiği için 5–6 kg/m²'ye çıkabilir. Hesaplayıcı ortalama 4 kg/m² ile 25 kg'lık torba sayısını tahmin eder."
+  },
+  {
+    question: "Derz aralığı fayans adedini etkiler mi?",
+    answer: "Genellikle 2–3 mm'lik derz, 30 cm ve üzeri fayanslarda adet hesabını %1–2 azaltır; bu küçük fark fire payının içinde kalır. Bu yüzden hesaplamada derz genellikle göz ardı edilir. Rustik veya küçük ebatlı (10 × 10 cm) karolarda derz payı daha önemlidir; bu durumda fayans ölçüsüne derz genişliğini ekleyerek hesaplayabilirsiniz."
   }
 ];
 
 const meta = {
   title: "Fayans Hesaplama",
-  description: "Zemin veya duvar kaplaması için gereken fayans adedini hesaplayın. Alan boyutu ve fayans boyutuna göre fire dahil fayans hesaplayıcı.",
+  seoTitle: "Fayans Hesaplama – Kaç Adet, Kaç Kutu Seramik Lazım?",
+  description: "Zemin veya duvar ölçülerini ve fayans ebadını girin; fire dahil fayans adedini, kutu sayısını, satın alınacak m²'yi ve yapıştırıcı ihtiyacını hesaplayın.",
+  summary: "Gereken fayans adedi = alan (m²) × (1 + fire oranı) ÷ tek fayansın alanı (m²), yukarı yuvarlanır. Örneğin 14 m² zemin için 60 × 60 cm fayansla %10 fire dahil 43 adet gerekir; kutu 1,44 m² (4 adet) ise 11 kutu alınır. Düz döşemede %10, çapraz döşemede %15–20 fire önerilir.",
+  howTo: [
+    "Döşenecek alanın enini ve boyunu metre olarak girin (duvarda toplam uzunluk ve yükseklik).",
+    "Fayansın en ve boy ölçüsünü santimetre olarak yazın.",
+    "Döşeme şekline uygun fire payını girin.",
+    "Kutudaki metrekareyi etiketinden bakarak yazın.",
+    "Fayans adedini, kutu sayısını ve yapıştırıcı ihtiyacını sonuçta görün."
+  ],
+  sources: [],
   category: "insaat",
   slug: "fayans-hesaplama",
-  keywords: ["fayans hesaplama", "kaç fayans lazım", "fayans adet hesaplama", "seramik hesaplama", "fayans hesaplayıcı"],
-  dateModified: "2026-04-01",
-  relatedCalcs: ["parke-hesaplama", "boya-hesaplama"],
+  keywords: ["fayans hesaplama", "kaç fayans lazım", "seramik hesaplama", "fayans kutu hesaplama", "metrekare fayans hesaplama", "fayans yapıştırıcısı hesaplama"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["insaat/parke-hesaplama", "insaat/boya-hesaplama", "insaat/beton-hesaplama", "matematik/alan-hesaplama"],
   faq
 };
 ---
 
 <CalcLayout meta={meta}>
-  <form id="calc-form" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
-    <div class="calc-inputs">
-      <CalcInput
-        id="alanEn"
-        label="Alan Eni"
-        type="number"
-        placeholder="Örn: 4"
-        suffix="m"
-        min={0.1}
-        step={0.1}
-        helpText="Döşenecek alanın en ölçüsü (metre)"
-      />
-      <CalcInput
-        id="alanBoy"
-        label="Alan Boyu"
-        type="number"
-        placeholder="Örn: 5"
-        suffix="m"
-        min={0.1}
-        step={0.1}
-        helpText="Döşenecek alanın boy ölçüsü (metre)"
-      />
-      <CalcInput
-        id="fayansEn"
-        label="Fayans Eni"
-        type="number"
-        placeholder="30"
-        suffix="cm"
-        min={1}
-        step={1}
-        value={30}
-        helpText="Tek fayansın en ölçüsü (santimetre)"
-      />
-      <CalcInput
-        id="fayansBoy"
-        label="Fayans Boyu"
-        type="number"
-        placeholder="30"
-        suffix="cm"
-        min={1}
-        step={1}
-        value={30}
-        helpText="Tek fayansın boy ölçüsü (santimetre)"
-      />
-      <CalcInput
-        id="fire"
-        label="Fire Payı"
-        type="number"
-        placeholder="10"
-        suffix="%"
-        min={0}
-        max={50}
-        step={1}
-        value={10}
-        helpText="Kesim ve kırılma için eklenen fire yüzdesi (önerilen: %10)"
-      />
-    </div>
+  <form id="calc-form" class="calc-inputs" novalidate>
+    <CalcInput
+      id="alanEn"
+      label="Alan Eni"
+      type="number"
+      suffix="m"
+      placeholder="4"
+      min={0}
+      step={0.01}
+      helpText="Duvarda toplam duvar uzunluğu"
+    />
+    <CalcInput
+      id="alanBoy"
+      label="Alan Boyu"
+      type="number"
+      suffix="m"
+      placeholder="3.5"
+      min={0}
+      step={0.01}
+      helpText="Duvarda döşenecek yükseklik"
+    />
+    <CalcInput
+      id="fayansEn"
+      label="Fayans Eni"
+      type="number"
+      suffix="cm"
+      placeholder="60"
+      value={60}
+      min={1}
+      step={0.5}
+    />
+    <CalcInput
+      id="fayansBoy"
+      label="Fayans Boyu"
+      type="number"
+      suffix="cm"
+      placeholder="60"
+      value={60}
+      min={1}
+      step={0.5}
+    />
+    <CalcInput
+      id="dusulen"
+      label="Düşülecek Alan"
+      type="number"
+      suffix="m²"
+      placeholder="0"
+      min={0}
+      step={0.1}
+      required={false}
+      helpText="Kapı, pencere, küvet vb."
+    />
+    <CalcInput
+      id="fire"
+      label="Fire Payı"
+      type="number"
+      suffix="%"
+      placeholder="10"
+      value={10}
+      min={0}
+      max={50}
+      step={1}
+      required={false}
+      helpText="Düz %10, çapraz %15–20"
+    />
+    <CalcInput
+      id="kutuM2"
+      label="Kutudaki Alan"
+      type="number"
+      suffix="m²/kutu"
+      placeholder="1.44"
+      value={1.44}
+      min={0}
+      step={0.01}
+      required={false}
+      helpText="Kutu etiketinde yazar; boş bırakılabilir"
+    />
   </form>
 
   <CalcResult>
     <div slot="main">
       <p class="calc-result-label">Gereken Fayans</p>
       <p class="calc-result-value" id="sonuc-fayans">—</p>
+      <p class="calc-result-sub" id="sonuc-alt"></p>
     </div>
     <div slot="details">
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Gereken Fayans (fire dahil)</span>
-        <span class="calc-detail-value" id="detail-fayans">—</span>
-      </div>
-      <div class="calc-detail-row">
-        <span class="calc-detail-label">Döşeme Alanı</span>
+        <span class="calc-detail-label">Döşenecek alan</span>
         <span class="calc-detail-value" id="detail-alan">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Tek Fayans Alanı</span>
-        <span class="calc-detail-value" id="detail-fayansalan">—</span>
+        <span class="calc-detail-label">Fire hariç adet</span>
+        <span class="calc-detail-value" id="detail-firesiz">—</span>
+      </div>
+      <div class="calc-detail-row is-total">
+        <span class="calc-detail-label">Kutu sayısı</span>
+        <span class="calc-detail-value" id="detail-kutu">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Fire Eklenmeden</span>
-        <span class="calc-detail-value" id="detail-firesiz">—</span>
+        <span class="calc-detail-label">Satın alınacak alan</span>
+        <span class="calc-detail-value" id="detail-satin">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Yapıştırıcı (~4 kg/m²)</span>
+        <span class="calc-detail-value" id="detail-yapistirici">—</span>
       </div>
     </div>
   </CalcResult>
 
-  <section class="calc-content">
-    <h2>Fayans Hesaplama Nasıl Yapılır?</h2>
-    <p>
-      Banyo, mutfak veya zemin döşemesi için kaç adet fayans satın almanız gerektiğini önceden bilmek hem bütçenizi korumanıza hem de proje sürecini aksatmadan tamamlamanıza yardımcı olur. Yetersiz fayans alımı döşeme sırasında renge uyumsuz parti ile karşılaşma riskini doğururken; gereğinden fazla alım gereksiz maliyet yaratır.
-    </p>
-    <p>
-      Fayans hesaplaması iki temel adımdan oluşur: önce toplam döşeme alanı (m²) hesaplanır, ardından tek bir fayansın alanına (m²) bölünür. Bu işlem bize net fayans adedini verir. Fire payı eklenerek gerçek ihtiyaç ortaya çıkar. Örneğin 4m × 5m = 20 m² alana 30×30 cm (0,09 m²) fayans döşenecekse: 20 / 0,09 ≈ 223 adet net ihtiyaç; %10 fire eklenince 246 adet olur.
-    </p>
-    <p>
-      Fire payı, fayans döşeme sürecinde kaçınılmaz olarak meydana gelen kesim kayıplarını, kırık parçaları ve hatalı döşeme ihtimallerini karşılamak amacıyla hesaba katılır. Düz dikdörtgen alanlarda %10 fire standart kabul edilirken, köşegen (diyagonal) döşemede %15-20, karmaşık şekilli alanlarda ise %20-25'e kadar çıkabilir. Proje bittikten sonra birkaç fayans yedekte bırakmak, ileride oluşabilecek kırılma veya çatlama durumunda renk uyumu sağlayabilmek açısından son derece önemlidir.
-    </p>
-    <p>
-      Fayanslar genellikle m² veya adet cinsinden satılmaktadır. Paket başına düşen m² değeri ambalaj üzerinde belirtilir. Bu araç size adet bazında ihtiyacı gösterir; böylece aldığınız paketin kaç m² kapsadığını bilerek alışverişinizi planlayabilirsiniz.
-    </p>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const inputs = document.querySelectorAll<HTMLInputElement | HTMLSelectElement>('#calc-form input, #calc-form select');
+      const resultArea = document.getElementById('calc-result');
+      const $ = (id: string) => document.getElementById(id) as HTMLElement;
 
-    <h3>Formül</h3>
-    <p>
-      Alan = Alan Eni × Alan Boyu. Fayans Alanı = Fayans Eni (cm) × Fayans Boyu (cm) / 10.000. Net Adet = ⌈Alan / Fayans Alanı⌉. Fire Dahil Adet = ⌈Net Adet × (1 + Fire % / 100)⌉.
-    </p>
-
-    <h3>Dikkat Edilmesi Gerekenler</h3>
-    <p>
-      Hesaplama düzgün dikdörtgen alanlar için optimize edilmiştir. Düzensiz alanlarda alanı parçalara bölüp ayrı hesaplayın. Derz genişliği bu hesaba dahil değildir; ince derz (1-2 mm) için fark ihmal edilebilir düzeydeyken geniş derz (5+ mm) bazı durumda fayans adedini azaltabilir. Büyük formatlı fayanslar (60×120 cm ve üzeri) için fire oranını %15'e çıkarmanız önerilir.
-    </p>
-
-    <h3>Sıkça Sorulan Sorular</h3>
-    {faq.map((item) => (
-      <div class="faq-item">
-        <h4>{item.question}</h4>
-        <p>{item.answer}</p>
-      </div>
-    ))}
-  </section>
-</CalcLayout>
-
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
-    const resultArea = document.getElementById('calc-result');
-
-    function debounce(fn, d = 150) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), d); }; }
-    function formatNumber(n, d = 2) {
-      return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 0, maximumFractionDigits: d }).format(n);
-    }
-
-    const dc = debounce(calculate);
-    inputs.forEach(i => { i.addEventListener('input', dc); i.addEventListener('change', dc); });
-
-    function calculate() {
-      const alanEn = parseFloat((document.getElementById('alanEn')).value);
-      const alanBoy = parseFloat((document.getElementById('alanBoy')).value);
-      const fayansEn = parseFloat((document.getElementById('fayansEn')).value);
-      const fayansBoy = parseFloat((document.getElementById('fayansBoy')).value);
-      const fire = parseFloat((document.getElementById('fire')).value) || 0;
-
-      if (isNaN(alanEn) || isNaN(alanBoy) || isNaN(fayansEn) || isNaN(fayansBoy) || alanEn <= 0 || alanBoy <= 0 || fayansEn <= 0 || fayansBoy <= 0) {
-        if (resultArea) resultArea.classList.add('hidden');
-        return;
+      function debounce(fn: () => void, delay = 150) {
+        let timer: ReturnType<typeof setTimeout>;
+        return () => { clearTimeout(timer); timer = setTimeout(fn, delay); };
       }
 
-      const alan = alanEn * alanBoy;
-      const fayansAlani = (fayansEn * fayansBoy) / 10000;
-      const netAdet = Math.ceil(alan / fayansAlani);
-      const fireDahil = Math.ceil(netAdet * (1 + fire / 100));
+      function num(id: string) {
+        const raw = (document.getElementById(id) as HTMLInputElement).value.replace(',', '.').trim();
+        return raw === '' ? NaN : Number(raw);
+      }
 
-      document.getElementById('sonuc-fayans').textContent = `${fireDahil} adet`;
-      document.getElementById('detail-fayans').textContent = `${fireDahil} adet`;
-      document.getElementById('detail-alan').textContent = `${formatNumber(alan)} m²`;
-      document.getElementById('detail-fayansalan').textContent = `${formatNumber(fayansAlani, 4)} m²`;
-      document.getElementById('detail-firesiz').textContent = `${netAdet} adet`;
+      const fmt = (n: number, d = 2) => new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 0, maximumFractionDigits: d }).format(n);
+      const ceil = (n: number) => Math.ceil(n - 1e-9);
 
-      if (resultArea) resultArea.classList.remove('hidden');
-      updateURL();
-    }
+      function calculate() {
+        const en = num('alanEn');
+        const boy = num('alanBoy');
+        const fEn = num('fayansEn');
+        const fBoy = num('fayansBoy');
+        const dusRaw = num('dusulen');
+        const dusulen = isNaN(dusRaw) ? 0 : dusRaw;
+        const fireRaw = num('fire');
+        const fire = isNaN(fireRaw) ? 0 : fireRaw;
+        const kutuM2 = num('kutuM2');
 
-    function updateURL() {
-      const p = new URLSearchParams();
-      inputs.forEach(i => { if (i.value && i.id) p.set(i.id, i.value); });
-      history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
-    }
+        if (![en, boy, fEn, fBoy].every(v => isFinite(v) && v > 0) || dusulen < 0 || fire < 0) {
+          resultArea?.classList.add('hidden');
+          return;
+        }
 
-    function loadFromURL() {
-      const p = new URLSearchParams(window.location.search);
-      let h = false;
-      inputs.forEach(i => { if (i.id && p.has(i.id)) { i.value = p.get(i.id); h = true; } });
-      if (h) calculate();
-    }
+        const alan = Math.max(0, en * boy - dusulen);
+        if (alan <= 0) {
+          resultArea?.classList.add('hidden');
+          return;
+        }
+        const tekAlan = (fEn * fBoy) / 10000;
+        const firesiz = ceil(alan / tekAlan);
+        const adet = ceil((alan * (1 + fire / 100)) / tekAlan);
 
-    loadFromURL();
-  });
-</script>
+        $('sonuc-fayans').textContent = `${fmt(adet, 0)} adet`;
+        $('sonuc-alt').textContent = `${fmt(fEn, 1)} × ${fmt(fBoy, 1)} cm, %${fmt(fire, 0)} fire dahil`;
+        $('detail-alan').textContent = `${fmt(alan)} m²`;
+        $('detail-firesiz').textContent = `${fmt(firesiz, 0)} adet`;
+
+        if (isFinite(kutuM2) && kutuM2 > 0) {
+          const kutudaAdet = Math.max(1, Math.round(kutuM2 / tekAlan));
+          const kutu = ceil(adet / kutudaAdet);
+          $('detail-kutu').textContent = `${fmt(kutu, 0)} kutu (kutuda ${kutudaAdet} adet)`;
+          $('detail-satin').textContent = `${fmt(kutu * kutudaAdet * tekAlan)} m²`;
+        } else {
+          $('detail-kutu').textContent = '—';
+          $('detail-satin').textContent = `${fmt(adet * tekAlan)} m²`;
+        }
+
+        const yapistirici = alan * 4;
+        $('detail-yapistirici').textContent = `${fmt(yapistirici, 0)} kg (${ceil(yapistirici / 25)} torba × 25 kg)`;
+
+        resultArea?.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const params = new URLSearchParams();
+        inputs.forEach(el => { if (el.id && el.value !== '') params.set(el.id, el.value); });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+      }
+
+      function loadFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        let has = false;
+        inputs.forEach(el => {
+          if (el.id && params.has(el.id)) { el.value = params.get(el.id) ?? ''; has = true; }
+        });
+        if (has) calculate();
+      }
+
+      const debounced = debounce(calculate);
+      inputs.forEach(el => {
+        el.addEventListener('input', debounced);
+        el.addEventListener('change', debounced);
+      });
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>Fayans miktarı nasıl hesaplanır?</h2>
+    <p>
+      Fayans ihtiyacı üç adımda bulunur: döşenecek net alanı hesaplamak, kesim ve kırılma için fire eklemek ve sonucu tek fayansın alanına bölmek. Fayans ebadı santimetre ile verildiği için alanı metrekareye çevirmek gerekir: 60 × 60 cm = 0,60 × 0,60 = 0,36 m².
+    </p>
+    <ul>
+      <li><strong>Net alan</strong> = en × boy − kapı, pencere, küvet gibi döşenmeyecek alanlar</li>
+      <li><strong>Fire dahil alan</strong> = net alan × (1 + fire oranı)</li>
+      <li><strong>Adet</strong> = fire dahil alan ÷ tek fayans alanı, yukarı yuvarlanır</li>
+      <li><strong>Kutu</strong> = adet ÷ kutudaki adet, yukarı yuvarlanır</li>
+    </ul>
+
+    <h2>Örnek hesaplama</h2>
+    <p>
+      4 m × 3,5 m bir mutfak zeminine 60 × 60 cm porselen seramik döşenecek. Kutuda 1,44 m² (4 adet) var, fire %10.
+    </p>
+    <ul>
+      <li>Net alan: 4 × 3,5 = 14 m²</li>
+      <li>Fire dahil: 14 × 1,10 = 15,4 m²</li>
+      <li>Adet: 15,4 ÷ 0,36 = 42,8 → <strong>43 adet</strong></li>
+      <li>Kutu: 43 ÷ 4 = 10,75 → <strong>11 kutu</strong> (44 adet, 15,84 m² ödenir)</li>
+      <li>Yapıştırıcı: 14 × 4 = 56 kg → 3 torba (25 kg)</li>
+    </ul>
+
+    <h2>Ebada göre metrekaredeki fayans adedi</h2>
+    <table>
+      <thead>
+        <tr><th>Ebat</th><th>Tek fayans alanı</th><th>1 m²'deki adet</th><th>Tipik kutu</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>20 × 20 cm</td><td>0,04 m²</td><td>25</td><td>1 m² (25 adet)</td></tr>
+        <tr><td>30 × 60 cm</td><td>0,18 m²</td><td>5,56</td><td>1,44 m² (8 adet)</td></tr>
+        <tr><td>45 × 45 cm</td><td>0,2025 m²</td><td>4,94</td><td>1,42 m² (7 adet)</td></tr>
+        <tr><td>60 × 60 cm</td><td>0,36 m²</td><td>2,78</td><td>1,44 m² (4 adet)</td></tr>
+        <tr><td>60 × 120 cm</td><td>0,72 m²</td><td>1,39</td><td>1,44 m² (2 adet)</td></tr>
+      </tbody>
+    </table>
+    <p>Kutu içerikleri üreticiye göre değişir; hesaplamadan önce etiketi kontrol edin.</p>
+
+    <h2>Fire oranı seçimi</h2>
+    <table>
+      <thead>
+        <tr><th>Durum</th><th>Önerilen fire</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Düz döşeme, dikdörtgen oda</td><td>%5–10</td></tr>
+        <tr><td>Çok köşeli alan, banyo, niş ve kolonlar</td><td>%10–15</td></tr>
+        <tr><td>Çapraz (45°) veya balıksırtı döşeme</td><td>%15–20</td></tr>
+        <tr><td>Büyük ebat (60 × 120 cm ve üzeri)</td><td>%10–15</td></tr>
+      </tbody>
+    </table>
+    <p>
+      Kalan sağlam fayansların birkaçını saklayın. Aynı model sonradan farklı üretim partisinde (ton) gelebilir ve kırılan bir parçayı değiştirirken renk farkı oluşabilir.
+    </p>
+  </section>
+</CalcLayout>

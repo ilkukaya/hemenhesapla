@@ -164,9 +164,9 @@ const meta = {
 
     function updateStatus() {
       const manuel = readValue('kurKaynagi') === 'manuel';
-      if (manuel) setText('kur-durum', 'Elle girdiğiniz kur kullanılıyor.');
+      if (loadFailed) setText('kur-durum', 'Otomatik kur alınamadı. Lütfen "Kur" alanına bankanızın ya da TCMB\'nin kurunu girin.');
+      else if (manuel) setText('kur-durum', 'Elle girdiğiniz kur kullanılıyor.');
       else if (rates) setText('kur-durum', `ECB referans kurları yüklendi (${fmtDate(rateDate)}).`);
-      else if (loadFailed) setText('kur-durum', 'Otomatik kur alınamadı. Lütfen "Kur" alanına bankanızın ya da TCMB\'nin kurunu girin.');
       else setText('kur-durum', 'Kurlar yükleniyor…');
     }
 
