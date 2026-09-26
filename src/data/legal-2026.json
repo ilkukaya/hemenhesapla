@@ -1,0 +1,39 @@
+{
+  "lastUpdate": "2026-09-26",
+  "kidemTavan": [
+    { "from": "2025-01-01", "to": "2025-06-30", "amount": 46655.43 },
+    { "from": "2025-07-01", "to": "2025-12-31", "amount": 53919.68 },
+    { "from": "2026-01-01", "to": "2026-06-30", "amount": 64948.77 },
+    { "from": "2026-07-01", "to": "2026-12-31", "amount": 73729.87 }
+  ],
+  "ihbarSureleri": [
+    { "key": "6aydan-az", "label": "6 aydan az", "weeks": 2 },
+    { "key": "6ay-1.5yil", "label": "6 ay - 1,5 yıl", "weeks": 4 },
+    { "key": "1.5yil-3yil", "label": "1,5 - 3 yıl", "weeks": 6 },
+    { "key": "3yil-ustu", "label": "3 yıldan fazla", "weeks": 8 }
+  ],
+  "mevduatStopaj": {
+    "source": "10041 sayılı Cumhurbaşkanı Kararı (RG 09.07.2025), süresi 11444 sayılı Karar ile 31.12.2026'ya uzatıldı",
+    "validUntil": "2026-12-31",
+    "tiers": [
+      { "maxDays": 183, "rate": 17.5, "label": "6 aya kadar vadeli (vadesiz dahil)" },
+      { "maxDays": 366, "rate": 15, "label": "1 yıla kadar vadeli" },
+      { "maxDays": null, "rate": 10, "label": "1 yıldan uzun vadeli" }
+    ]
+  },
+  "krediVergileri": {
+    "tuketici": { "kkdf": 15, "bsmv": 15 },
+    "konut": { "kkdf": 0, "bsmv": 0 }
+  },
+  "kdvOranlari": [1, 10, 20],
+  "kiraArtis": {
+    "period": "Eylül 2026",
+    "rate": 31.79,
+    "basis": "Ağustos 2026 TÜFE 12 aylık ortalamalara göre değişim",
+    "announced": "2026-09-03",
+    "previous": [
+      { "period": "Ağustos 2026", "rate": 31.90 },
+      { "period": "Temmuz 2026", "rate": 32.03 }
+    ]
+  }
+}

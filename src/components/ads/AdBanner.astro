@@ -1,9 +1,35 @@
 ---
+// Google AdSense reklam alanı. PUBLIC_ADSENSE_CLIENT tanımlı değilse hiçbir şey basmaz.
+// Yer önceden ayrılır (min-height) → düzen kayması (CLS) olmaz.
+import { INTEGRATIONS, hasAds } from '../../config/site';
+
 interface Props {
-  slot?: string;
+  variant?: 'in-content' | 'sidebar' | 'after-result';
+  class?: string;
 }
+
+const { variant = 'in-content', class: className = '' } = Astro.props;
+
+const slotId =
+  variant === 'sidebar'
+    ? INTEGRATIONS.adSlots.sidebar
+    : variant === 'after-result'
+      ? INTEGRATIONS.adSlots.afterResult
+      : INTEGRATIONS.adSlots.inContent;
+
+const variantClass = variant === 'sidebar' ? 'ad-slot--sidebar' : 'ad-slot--in-content';
 ---
 
-<div class="bg-[var(--color-bg)] border border-dashed border-[var(--color-border)] rounded-lg p-4 text-center my-4">
-  <p class="text-xs text-[var(--color-text-muted)]">Reklam Alanı</p>
-</div>
+{hasAds && (
+  <div class={`ad-slot ${variantClass} ${className}`}>
+    <ins
+      class="adsbygoogle"
+      style={variant === 'sidebar' ? 'display:block;width:300px;height:600px;margin:0 auto' : 'display:block'}
+      data-ad-client={INTEGRATIONS.adsenseClient}
+      data-ad-slot={slotId || undefined}
+      data-ad-format={variant === 'sidebar' ? undefined : 'auto'}
+      data-full-width-responsive={variant === 'sidebar' ? undefined : 'true'}
+    ></ins>
+    <script is:inline>(window.adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
+)}

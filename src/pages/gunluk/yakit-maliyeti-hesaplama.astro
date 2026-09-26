@@ -1,65 +1,109 @@
 ---
 import CalcLayout from '../../layouts/CalcLayout.astro';
 import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcSelect from '../../components/calculator/CalcSelect.astro';
 import CalcResult from '../../components/calculator/CalcResult.astro';
 
 const faq = [
   {
-    question: "Araç yakıt maliyeti nasıl hesaplanır?",
-    answer: "Yakıt maliyeti hesaplamak için üç bilgiye ihtiyaç vardır: gidilecek mesafe (km), aracın ortalama yakıt tüketimi (litre/100 km) ve güncel yakıt fiyatı (₺/litre). Formül: Toplam Yakıt (litre) = Mesafe ÷ 100 × Tüketim; Maliyet = Toplam Yakıt × Yakıt Fiyatı. Örneğin 500 km mesafe, 7 lt/100 km tüketim ve 42,50 ₺/lt fiyatla toplam maliyet 500 ÷ 100 × 7 × 42,50 = 1.487,50 ₺ olur."
+    question: "Yakıt maliyeti nasıl hesaplanır?",
+    answer: "Önce harcanacak yakıt bulunur: Mesafe (km) ÷ 100 × 100 km'deki tüketim (litre). Sonra bu miktar litre fiyatıyla çarpılır. Örneğin 450 km'lik yolda 100 km'de 6,5 litre yakan bir araç 29,25 litre benzin harcar; litresi 80,40 TL ise yakıt maliyeti 29,25 × 80,40 = 2.351,70 TL olur."
   },
   {
-    question: "Aracın gerçek yakıt tüketimini nasıl ölçebilirim?",
-    answer: "Gerçek yakıt tüketimini ölçmek için depoyu doldurun ve kilometre sayacını sıfırlayın. Bir süre sürdükten sonra tekrar depoyu doldurun ve doldurduğunuz litre miktarını not alın. Formül: Tüketim (lt/100km) = (Doldurduğunuz Litre ÷ Kat Ettiğiniz Km) × 100. Bu yöntemi şehir içi ve şehir dışı olmak üzere ayrı ayrı yaparsanız farklı koşullardaki tüketiminizi daha net görebilirsiniz."
+    question: "Km başı yakıt maliyeti nasıl bulunur?",
+    answer: "100 km'deki tüketim ile litre fiyatı çarpılır ve 100'e bölünür. 6,5 litre yakan ve benzinin 80,40 TL olduğu bir araçta km başı maliyet 6,5 × 80,40 ÷ 100 = 5,23 TL'dir. Motorinli 5 litre yakan bir araç litresi 93,50 TL'den km başına 4,68 TL, LPG'de 8 litre yakan bir araç 35 TL'den km başına 2,80 TL harcar."
   },
   {
-    question: "Yakıt tüketimini düşürmek için ne yapabilirim?",
-    answer: "Yakıt tasarrufu için sabit ve düşük hızda sürüş (80–90 km/s en verimli aralık), ani hızlanma ve frenleme yapmaktan kaçınma, lastik basıncını düzenli kontrol etme, gereksiz yük taşımama, klima kullanımını minimumda tutma ve motor bakımını ihmal etmeme başlıca önlemlerdir. Ayrıca mümkün olduğunca yoğun saatleri ve trafiği tercih etmemek de yakıt tüketimini önemli ölçüde azaltır."
+    question: "Aracımın gerçek yakıt tüketimini nasıl ölçerim?",
+    answer: "Depoyu tamamen doldurup kilometre sayacını sıfırlayın. Bir sonraki dolumda depoyu yine tam doldurun ve alınan litreyi gidilen kilometreye bölüp 100 ile çarpın. Örneğin 620 km sonra 41 litre aldıysanız tüketim 41 ÷ 620 × 100 = 6,6 lt/100 km'dir. Katalog değerleri gerçek kullanımdan genellikle %10–20 düşüktür."
+  },
+  {
+    question: "Benzin, motorin ve LPG hangisi daha ekonomik?",
+    answer: "Eylül 2026 sonunda İstanbul'da litre fiyatları benzinde yaklaşık 80 TL, motorinde 93 TL, LPG'de 35 TL civarındadır. LPG'li araçlar benzine göre yaklaşık %20–25 daha fazla litre yakmasına rağmen km başı maliyette açık ara ucuzdur. Dizel araçlar daha az litre yaktığı için motorinin yüksek fiyatına rağmen uzun yolda benzinliyle yakın maliyete sahip olabilir."
+  },
+  {
+    question: "Yolculuk masrafı kişi başına nasıl bölünür?",
+    answer: "Toplam yakıt maliyeti, varsa köprü ve otoyol ücretleri eklenerek araçtaki kişi sayısına bölünür. Hesaplayıcıda kişi sayısını girdiğinizde yakıt masrafının kişi başı payı otomatik gösterilir. Gidiş-dönüş seçeneği mesafeyi iki katına çıkarır; otoyol ve köprü geçiş ücretlerini ayrıca eklemeyi unutmayın."
+  },
+  {
+    question: "Klima ve hız yakıt tüketimini ne kadar artırır?",
+    answer: "Otoyolda 90 km/s yerine 120 km/s hızla gitmek, hava direnci arttığı için tüketimi yaklaşık %20–25 yükseltir. Klima şehir içinde %10'a varan ek tüketime yol açabilir. Düşük lastik basıncı, tavan bagajı ve ani hızlanıp frenleme de tüketimi artırır. Hesaplamada gerçekçi olmak için bu koşullarda tüketim değerini biraz yüksek girin."
   }
 ];
 
 const meta = {
   title: "Yakıt Maliyeti Hesaplama",
-  description: "Seyahat mesafenize ve araç tüketiminize göre yakıt maliyetini hesaplayın. Benzin, motorin veya LPG maliyetinizi km başı ve toplam olarak öğrenin.",
+  seoTitle: "Yakıt Hesaplama 2026 – Yol Masrafı ve Km Başı Maliyet",
+  description: "Gideceğiniz mesafeyi, aracınızın 100 km tüketimini ve litre fiyatını girin; benzin, motorin veya LPG yol masrafını, km başı ve kişi başı maliyeti hesaplayın.",
+  summary: "Yakıt maliyeti = Mesafe (km) ÷ 100 × 100 km'deki tüketim (lt) × litre fiyatı. Örneğin 450 km'lik yolda 6,5 lt/100 km yakan bir benzinli araç, litresi 80,40 TL iken 29,25 litre yakıt harcar ve yol masrafı 2.351,70 TL, km başı maliyet 5,23 TL olur.",
+  howTo: [
+    "Gideceğiniz mesafeyi kilometre olarak girin.",
+    "Aracınızın 100 km'de ortalama kaç litre yaktığını yazın.",
+    "Güncel litre fiyatını girin (benzin, motorin veya LPG).",
+    "Gerekirse gidiş-dönüş seçin ve masrafı bölüşecek kişi sayısını yazın.",
+    "Toplam maliyeti, harcanacak litreyi, km başı ve kişi başı maliyeti sonuçta görün."
+  ],
+  sources: [],
   category: "gunluk",
   slug: "yakit-maliyeti-hesaplama",
-  keywords: ["yakıt maliyeti hesaplama", "benzin maliyeti", "motorin hesaplama", "seyahat yakıt masrafı", "km başı yakıt", "araç yakıt tüketimi"],
-  dateModified: "2026-04-01",
-  relatedCalcs: ["tasarruf-hesaplama", "elektrik-faturasi-hesaplama"],
+  keywords: ["yakıt maliyeti hesaplama", "yol masrafı hesaplama", "benzin hesaplama", "km başı yakıt maliyeti", "LPG maliyet hesaplama", "motorin hesaplama"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["gunluk/elektrik-faturasi-hesaplama", "gunluk/bahsis-hesaplama", "gunluk/tasarruf-hesaplama", "finans/tasit-kredisi-hesaplama"],
   faq
 };
 ---
 
 <CalcLayout meta={meta}>
-  <form id="calc-form">
+  <form id="calc-form" class="calc-inputs" novalidate>
     <CalcInput
       id="mesafe"
       label="Mesafe"
       type="number"
       suffix="km"
-      placeholder="500"
-      min={1}
+      placeholder="450"
+      min={0}
       step={1}
     />
     <CalcInput
       id="tuketim"
-      label="Ortalama Yakıt Tüketimi"
+      label="Ortalama Tüketim"
       type="number"
-      suffix="lt/100km"
-      placeholder="7"
-      min={1}
-      max={50}
+      suffix="lt/100 km"
+      placeholder="6.5"
+      min={0}
+      max={60}
       step={0.1}
     />
     <CalcInput
       id="yakitFiyati"
-      label="Yakıt Fiyatı"
+      label="Yakıt Litre Fiyatı"
       type="number"
-      prefix="₺"
-      suffix="/lt"
-      placeholder="42.50"
-      min={1}
+      suffix="₺/lt"
+      placeholder="80.40"
+      min={0}
       step={0.01}
+      helpText="İstanbul, Eylül 2026: benzin ~80,40 · motorin ~93,50 · LPG ~35"
+    />
+    <CalcSelect
+      id="yon"
+      label="Yolculuk"
+      options={[
+        { value: "tek", label: "Tek yön" },
+        { value: "cift", label: "Gidiş-dönüş (×2)" }
+      ]}
+      value="tek"
+    />
+    <CalcInput
+      id="kisi"
+      label="Kişi Sayısı"
+      type="number"
+      suffix="kişi"
+      placeholder="1"
+      value={1}
+      min={1}
+      max={60}
+      step={1}
+      required={false}
     />
   </form>
 
@@ -67,114 +111,138 @@ const meta = {
     <div slot="main">
       <p class="calc-result-label">Toplam Yakıt Maliyeti</p>
       <p class="calc-result-value" id="toplam-maliyet">—</p>
+      <p class="calc-result-sub" id="toplam-alt"></p>
     </div>
     <div slot="details">
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Yakıt Miktarı</span>
+        <span class="calc-detail-label">Harcanacak yakıt</span>
         <span class="calc-detail-value" id="d-yakit">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">KM Başı Maliyet</span>
+        <span class="calc-detail-label">Km başı maliyet</span>
         <span class="calc-detail-value" id="d-km-basi">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">100 KM Maliyeti</span>
+        <span class="calc-detail-label">100 km maliyeti</span>
         <span class="calc-detail-value" id="d-yuz-km">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Kişi başı</span>
+        <span class="calc-detail-value" id="d-kisi">—</span>
       </div>
     </div>
   </CalcResult>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const inputs = document.querySelectorAll<HTMLInputElement | HTMLSelectElement>('#calc-form input, #calc-form select');
       const resultArea = document.getElementById('calc-result');
+      const $ = (id: string) => document.getElementById(id) as HTMLElement;
 
-      function debounce(fn, delay = 150) {
-        let t;
-        return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), delay); };
+      function debounce(fn: () => void, delay = 150) {
+        let timer: ReturnType<typeof setTimeout>;
+        return () => { clearTimeout(timer); timer = setTimeout(fn, delay); };
       }
 
-      function formatTL(n) {
-        return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+      function num(id: string) {
+        const raw = (document.getElementById(id) as HTMLInputElement).value.replace(',', '.').trim();
+        return raw === '' ? NaN : Number(raw);
       }
 
-      function formatNumber(n, d = 0) {
-        return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: d, maximumFractionDigits: d }).format(n);
-      }
-
-      const dc = debounce(calculate);
-      inputs.forEach(i => { i.addEventListener('input', dc); i.addEventListener('change', dc); });
+      const tl = (n: number) => new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+      const fmt = (n: number, d = 2) => new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 0, maximumFractionDigits: d }).format(n);
 
       function calculate() {
-        const mesafe = parseFloat(document.getElementById('mesafe').value);
-        const tuketim = parseFloat(document.getElementById('tuketim').value);
-        const yakitFiyati = parseFloat(document.getElementById('yakitFiyati').value);
+        const mesafeGiris = num('mesafe');
+        const tuketim = num('tuketim');
+        const fiyat = num('yakitFiyati');
+        const cift = (document.getElementById('yon') as HTMLSelectElement).value === 'cift';
+        const kisiRaw = num('kisi');
+        const kisi = isNaN(kisiRaw) ? 1 : Math.floor(kisiRaw);
 
-        if (isNaN(mesafe) || isNaN(tuketim) || isNaN(yakitFiyati) || mesafe <= 0 || tuketim <= 0 || yakitFiyati <= 0) {
-          if (resultArea) resultArea.classList.add('hidden');
+        if (!isFinite(mesafeGiris) || !isFinite(tuketim) || !isFinite(fiyat) || mesafeGiris <= 0 || tuketim <= 0 || fiyat <= 0 || kisi < 1) {
+          resultArea?.classList.add('hidden');
           return;
         }
 
-        const toplamYakit = (mesafe / 100) * tuketim;
-        const toplamMaliyet = toplamYakit * yakitFiyati;
-        const kmBasiMaliyet = toplamMaliyet / mesafe;
-        const yuzKmMaliyet = tuketim * yakitFiyati;
+        const mesafe = cift ? mesafeGiris * 2 : mesafeGiris;
+        const litre = (mesafe / 100) * tuketim;
+        const toplam = litre * fiyat;
 
-        document.getElementById('toplam-maliyet').textContent = formatTL(toplamMaliyet);
-        document.getElementById('d-yakit').textContent = formatNumber(toplamYakit, 2) + ' lt';
-        document.getElementById('d-km-basi').textContent = formatTL(kmBasiMaliyet);
-        document.getElementById('d-yuz-km').textContent = formatTL(yuzKmMaliyet);
+        $('toplam-maliyet').textContent = tl(toplam);
+        $('toplam-alt').textContent = `${fmt(mesafe, 0)} km ${cift ? '(gidiş-dönüş)' : ''}`.trim();
+        $('d-yakit').textContent = `${fmt(litre)} litre`;
+        $('d-km-basi').textContent = tl(toplam / mesafe);
+        $('d-yuz-km').textContent = tl(tuketim * fiyat);
+        $('d-kisi').textContent = kisi > 1 ? `${tl(toplam / kisi)} (${kisi} kişi)` : tl(toplam);
 
-        if (resultArea) resultArea.classList.remove('hidden');
+        resultArea?.classList.remove('hidden');
         updateURL();
       }
 
       function updateURL() {
-        const p = new URLSearchParams();
-        inputs.forEach(i => { if (i.value && i.id) p.set(i.id, i.value); });
-        history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
+        const params = new URLSearchParams();
+        inputs.forEach(el => { if (el.id && el.value !== '') params.set(el.id, el.value); });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
       }
 
       function loadFromURL() {
-        const p = new URLSearchParams(window.location.search);
-        let h = false;
-        inputs.forEach(i => { if (i.id && p.has(i.id)) { i.value = p.get(i.id); h = true; } });
-        if (h) calculate();
+        const params = new URLSearchParams(window.location.search);
+        let has = false;
+        inputs.forEach(el => {
+          if (el.id && params.has(el.id)) { el.value = params.get(el.id) ?? ''; has = true; }
+        });
+        if (has) calculate();
       }
+
+      const debounced = debounce(calculate);
+      inputs.forEach(el => {
+        el.addEventListener('input', debounced);
+        el.addEventListener('change', debounced);
+      });
 
       loadFromURL();
     });
   </script>
 
   <section class="calc-content">
-    <h2>Yakıt Maliyeti Nasıl Hesaplanır?</h2>
+    <h2>Yol masrafı nasıl hesaplanır?</h2>
     <p>
-      Araç sahipliğinin en önemli giderlerinden biri yakıt maliyetidir. İster günlük işe gidip gelmek ister uzun tatil yolculukları için planlama yapıyor olun, yakıt maliyetini önceden hesaplamak bütçenizi etkin şekilde yönetmenizi sağlar. Türkiye'de benzin ve motorin fiyatlarının sürekli değişmesi, yakıt masraflarını takip etmeyi daha da önemli kılmaktadır.
+      Bir yolculuğun yakıt maliyetini bulmak için üç bilgi yeterlidir: gidilecek mesafe, aracın 100 km'de yaktığı yakıt ve yakıtın litre fiyatı. Önce mesafe 100'e bölünüp tüketimle çarpılarak kaç litre yakıt gerektiği bulunur, ardından bu miktar litre fiyatıyla çarpılır.
     </p>
-    <p>
-      Yakıt maliyeti hesaplaması son derece basit bir matematiksel işlemdir. Gidilecek mesafe, aracın ortalama yakıt tüketimi ve güncel yakıt fiyatı bilindiğinde toplam maliyet kolayca bulunabilir. Bu hesap makinesi ayrıca km başı maliyet ve 100 km'lik yolculuk maliyeti gibi pratik bilgiler de sunmaktadır.
-    </p>
+    <p><strong>Yakıt (lt) = Mesafe ÷ 100 × Tüketim</strong><br /><strong>Maliyet (TL) = Yakıt (lt) × Litre fiyatı</strong></p>
 
-    <h3>Formül</h3>
+    <h2>Örnek hesaplama</h2>
     <p>
-      <strong>Toplam Yakıt (litre) = Mesafe (km) ÷ 100 × Tüketim (lt/100km)</strong><br />
-      <strong>Toplam Maliyet (₺) = Toplam Yakıt (lt) × Yakıt Fiyatı (₺/lt)</strong>
+      İstanbul'dan Ankara'ya yaklaşık 450 km yol gidilecek. Araç benzinli ve otoyolda 100 km'de 6,5 litre yakıyor; benzinin litresi 80,40 TL.
     </p>
-    <p>
-      Km başı maliyet, toplam maliyetin mesafeye bölünmesiyle; 100 km maliyeti ise tüketim değerinin yakıt fiyatıyla çarpılmasıyla hesaplanır.
-    </p>
+    <ul>
+      <li>Harcanacak yakıt: 450 ÷ 100 × 6,5 = 29,25 litre</li>
+      <li>Tek yön maliyet: 29,25 × 80,40 = <strong>2.351,70 TL</strong></li>
+      <li>Km başı maliyet: 2.351,70 ÷ 450 = 5,23 TL</li>
+      <li>Gidiş-dönüş ve 3 kişi: 4.703,40 TL, kişi başı 1.567,80 TL</li>
+    </ul>
+    <p>Köprü ve otoyol geçiş ücretleri bu tutara dahil değildir.</p>
 
-    <h3>Dikkat Edilmesi Gerekenler</h3>
-    <p>
-      Yakıt tüketimi şehir içi ve şehir dışı koşullara göre önemli ölçüde farklılık gösterir. Şehir içinde sık duran, yavaş ilerleyen trafikte tüketim tipik olarak %20–40 daha yüksektir. Ayrıca aracın bakım durumu, lastik basıncı, taşınan yük ve hava koşulları da tüketimi etkiler. Arabaca fabrika değerlerinin her koşulda geçerli olmadığını göz önünde bulundurarak gerçek tüketiminizi kullanmanız daha doğru sonuç verir.
-    </p>
+    <h2>Yakıt türüne göre 100 km maliyeti</h2>
+    <table>
+      <thead>
+        <tr><th>Yakıt</th><th>Tipik tüketim</th><th>Litre fiyatı (Eylül 2026, İstanbul)</th><th>100 km maliyeti</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Benzin</td><td>6,5 lt</td><td>~80,40 TL</td><td>~523 TL</td></tr>
+        <tr><td>Motorin</td><td>5,0 lt</td><td>~93,50 TL</td><td>~468 TL</td></tr>
+        <tr><td>LPG</td><td>8,0 lt</td><td>~35,00 TL</td><td>~280 TL</td></tr>
+      </tbody>
+    </table>
+    <p>Akaryakıt fiyatları ilden ile ve neredeyse her hafta değiştiği için hesaplamada dolum yaptığınız istasyondaki güncel fiyatı kullanın.</p>
 
-    <h3>Sıkça Sorulan Sorular</h3>
-    {faq.map(item => (
-      <details>
-        <summary><strong>{item.question}</strong></summary>
-        <p>{item.answer}</p>
-      </details>
-    ))}
+    <h2>Tüketimi etkileyen faktörler</h2>
+    <ul>
+      <li><strong>Hız:</strong> 90 km/s'nin üzerinde hava direnci hızla artar; 120 km/s'de tüketim %20–25 yükselebilir.</li>
+      <li><strong>Şehir içi trafik:</strong> Dur-kalk sürüşte tüketim otoyola göre %30–50 fazladır.</li>
+      <li><strong>Yük ve tavan bagajı:</strong> Her 100 kg ek yük yaklaşık %5–7, tavan bagajı %10'a varan ek tüketim getirir.</li>
+      <li><strong>Lastik basıncı:</strong> Düşük basınç yuvarlanma direncini artırır; ayda bir kontrol edin.</li>
+    </ul>
   </section>
 </CalcLayout>

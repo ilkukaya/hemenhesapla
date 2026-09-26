@@ -1,0 +1,228 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcSelect from '../../components/calculator/CalcSelect.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Kâr marjı nasıl hesaplanır?",
+    answer: "Kâr marjı, kârın satış fiyatına oranıdır: Kâr Marjı = (Satış Fiyatı − Maliyet) / Satış Fiyatı × 100. Örneğin maliyeti 80 TL olan bir ürünü 100 TL'ye satarsanız kârınız 20 TL, kâr marjınız 20 / 100 = %20 olur. Kâr marjı hiçbir zaman %100'e ulaşamaz, çünkü maliyet sıfırdan büyüktür."
+  },
+  {
+    question: "Kâr marjı ile kâr oranı (markup) arasındaki fark nedir?",
+    answer: "Kâr marjı kârı satış fiyatına, kâr oranı (markup, maliyet üzerine kâr) ise kârı maliyete böler. 80 TL maliyetli ürünü 100 TL'ye sattığınızda kâr marjı %20, markup ise 20 / 80 = %25'tir. Aynı işlem için markup her zaman marjdan yüksektir. Fiyat belirlerken hangi oranı kullandığınızı karıştırmak zarar etmenize yol açabilir."
+  },
+  {
+    question: "İstediğim kâr marjına göre satış fiyatı nasıl bulunur?",
+    answer: "Hedef marja göre satış fiyatı şu formülle bulunur: Satış Fiyatı = Maliyet / (1 − Hedef Marj). Maliyeti 80 TL olan ürün için %20 kâr marjı istiyorsanız fiyat 80 / 0,80 = 100 TL olmalıdır. Maliyetin üzerine %20 eklemek (96 TL) ise yalnızca %16,67 marj sağlar; bu en sık yapılan fiyatlandırma hatasıdır."
+  },
+  {
+    question: "İyi bir kâr marjı yüzde kaç olmalı?",
+    answer: "İdeal kâr marjı sektöre göre büyük farklılık gösterir. Gıda perakendesinde net marjlar genellikle %2 ile %5 arasındayken, giyim perakendesinde brüt marjlar %40-%60 seviyesine çıkabilir. Yazılım ve dijital ürünlerde brüt marj %70'in üzerinde olabilir. Kendi marjınızı sektör ortalamalarıyla ve geçmiş dönemlerinizle karşılaştırmak en sağlıklı yaklaşımdır."
+  },
+  {
+    question: "Brüt kâr marjı ve net kâr marjı nedir?",
+    answer: "Brüt kâr marjı, yalnızca satılan malın maliyeti düşüldükten sonra kalan kârın satışlara oranıdır. Net kâr marjı ise kira, personel, pazarlama, faiz ve vergi gibi tüm giderler düşüldükten sonra kalan kârı gösterir. Bu hesaplayıcıya maliyet olarak yalnızca ürün maliyetini girerseniz brüt marjı, tüm giderleri dahil ederseniz net marja yakın bir değeri bulursunuz."
+  },
+  {
+    question: "Kâr marjı hesaplamasında KDV dahil edilir mi?",
+    answer: "Kâr marjı hesaplamasında hem maliyet hem satış fiyatı KDV hariç tutarlarla girilmelidir. KDV işletmenin geliri değil, devlet adına tahsil edilen bir vergidir; indirilebilir KDV mekanizması nedeniyle maliyetinize de dahil değildir. KDV dahil fiyatla hesap yaparsanız marjınızı olduğundan yüksek görürsünüz. KDV hariç tutarı bulmak için KDV hesaplama aracını kullanabilirsiniz."
+  }
+];
+
+const meta = {
+  title: "Kâr Marjı Hesaplama",
+  seoTitle: "Kâr Marjı Hesaplama - Kâr Oranı ve Satış Fiyatı",
+  description: "Kâr marjı hesaplama: maliyet ve satış fiyatından kâr marjını ve kâr oranını (markup) bulun ya da hedef marja göre satış fiyatını hesaplayın. Ücretsiz araç.",
+  summary: "Kâr marjı = (Satış Fiyatı − Maliyet) / Satış Fiyatı × 100; kâr oranı (markup) = (Satış Fiyatı − Maliyet) / Maliyet × 100. 80 TL maliyetli ürün 100 TL'ye satılırsa marj %20, markup %25'tir. Hedef marja göre fiyat = Maliyet / (1 − Marj).",
+  howTo: [
+    "Hesaplama türünü seçin: marj bulma, hedef marjla fiyat veya markup ile fiyat.",
+    "Ürünün birim maliyetini KDV hariç olarak girin.",
+    "Satış fiyatını veya hedeflediğiniz marj ya da markup yüzdesini yazın.",
+    "Kâr tutarını, kâr marjını ve kâr oranını birlikte inceleyin."
+  ],
+  sources: [],
+  category: "finans",
+  slug: "kar-marji-hesaplama",
+  keywords: ["kâr marjı hesaplama", "kar marjı hesaplama", "kâr oranı hesaplama", "markup hesaplama", "satış fiyatı hesaplama", "maliyet üzerine kâr"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["finans/kdv-hesaplama", "finans/indirim-hesaplama", "matematik/yuzde-hesaplama", "finans/yatirim-getiri-hesaplama"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" class="calc-inputs">
+    <CalcSelect
+      id="mod"
+      label="Hesaplama Türü"
+      options={[
+        { value: "marj", label: "Maliyet ve satış fiyatından marjı bul" },
+        { value: "hedefMarj", label: "Hedef kâr marjına göre satış fiyatı" },
+        { value: "hedefMarkup", label: "Maliyet üzerine kâr oranına göre satış fiyatı" }
+      ]}
+      value="marj"
+    />
+    <CalcInput id="maliyet" label="Birim Maliyet (KDV hariç)" type="number" suffix="₺" placeholder="80" step={0.01} min={0} />
+    <CalcInput id="deger" label="Satış Fiyatı / Hedef Oran" type="number" placeholder="100" step={0.01} helpText="Marj bulmada satış fiyatını (₺), diğer türlerde hedef yüzdeyi (%) girin." />
+    <CalcInput id="adet" label="Satış Adedi (isteğe bağlı)" type="number" placeholder="1" step={1} min={1} required={false} />
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label" id="ana-etiket">Kâr Marjı</p>
+      <p class="calc-result-value" id="ana-sonuc">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row"><span class="calc-detail-label">Satış Fiyatı</span><span class="calc-detail-value" id="fiyat">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Birim Kâr</span><span class="calc-detail-value" id="kar">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Kâr Marjı</span><span class="calc-detail-value" id="marj">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Kâr Oranı (Markup)</span><span class="calc-detail-value" id="markup">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Toplam Kâr</span><span class="calc-detail-value" id="toplam-kar">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Toplam Ciro</span><span class="calc-detail-value" id="ciro">—</span></div>
+    </div>
+  </CalcResult>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('calc-form');
+      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const resultArea = document.getElementById('calc-result');
+
+      function debounce(fn: () => void, delay = 150) {
+        let timer: ReturnType<typeof setTimeout>;
+        return () => { clearTimeout(timer); timer = setTimeout(fn, delay); };
+      }
+      const val = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
+      const setText = (id: string, t: string) => { (document.getElementById(id) as HTMLElement).textContent = t; };
+      const tl = (n: number) => new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+      const pct = (n: number) => '%' + new Intl.NumberFormat('tr-TR', { maximumFractionDigits: 2 }).format(n);
+
+      form?.addEventListener('submit', (e) => e.preventDefault());
+      const debouncedCalc = debounce(calculate);
+      inputs.forEach(input => {
+        input.addEventListener('input', debouncedCalc);
+        input.addEventListener('change', debouncedCalc);
+      });
+
+      function calculate() {
+        const mod = val('mod');
+        const maliyet = parseFloat(val('maliyet'));
+        const deger = parseFloat(val('deger'));
+        const adet = Math.max(1, parseInt(val('adet'), 10) || 1);
+        if (isNaN(maliyet) || maliyet < 0 || isNaN(deger)) return;
+
+        let fiyat: number;
+        if (mod === 'marj') {
+          fiyat = deger;
+        } else if (mod === 'hedefMarj') {
+          if (deger >= 100) return;
+          fiyat = maliyet / (1 - deger / 100);
+        } else {
+          fiyat = maliyet * (1 + deger / 100);
+        }
+        if (fiyat <= 0) return;
+        const kar = fiyat - maliyet;
+        const marj = kar / fiyat * 100;
+        const markup = maliyet > 0 ? kar / maliyet * 100 : NaN;
+
+        if (mod === 'marj') {
+          setText('ana-etiket', kar >= 0 ? 'Kâr Marjı' : 'Zarar Marjı');
+          setText('ana-sonuc', pct(marj));
+        } else {
+          setText('ana-etiket', 'Olması Gereken Satış Fiyatı');
+          setText('ana-sonuc', tl(fiyat));
+        }
+        setText('fiyat', tl(fiyat));
+        setText('kar', tl(kar));
+        setText('marj', pct(marj));
+        setText('markup', isNaN(markup) ? '—' : pct(markup));
+        setText('toplam-kar', tl(kar * adet));
+        setText('ciro', tl(fiyat * adet));
+
+        if (resultArea) resultArea.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const params = new URLSearchParams();
+        inputs.forEach(input => {
+          const el = input as HTMLInputElement;
+          if (el.value && el.id) params.set(el.id, el.value);
+        });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+      }
+
+      function loadFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        let hasParams = false;
+        inputs.forEach(input => {
+          const el = input as HTMLInputElement;
+          if (el.id && params.has(el.id)) { el.value = params.get(el.id)!; hasParams = true; }
+        });
+        if (hasParams) calculate();
+      }
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>Kâr Marjı Nedir?</h2>
+    <p>
+      Kâr marjı, satış gelirinin yüzde kaçının kâr olarak işletmede kaldığını gösteren temel bir karlılık göstergesidir. E-ticaret satıcısından üreticiye, restorandan serbest çalışana kadar fiyat belirleyen herkesin bilmesi gereken bir orandır. Kâr marjı hesaplama aracı; maliyet ve satış fiyatından marjı bulur, ayrıca hedeflediğiniz marj veya kâr oranına göre olması gereken satış fiyatını hesaplar.
+    </p>
+
+    <h2>Kâr Marjı ve Kâr Oranı Formülleri</h2>
+    <ul>
+      <li><strong>Kâr:</strong> Satış Fiyatı − Maliyet</li>
+      <li><strong>Kâr marjı:</strong> Kâr / Satış Fiyatı × 100</li>
+      <li><strong>Kâr oranı (markup):</strong> Kâr / Maliyet × 100</li>
+      <li><strong>Hedef marja göre fiyat:</strong> Maliyet / (1 − Marj / 100)</li>
+      <li><strong>Markup'a göre fiyat:</strong> Maliyet × (1 + Markup / 100)</li>
+      <li><strong>Marjdan markup'a:</strong> Markup = Marj / (1 − Marj)</li>
+    </ul>
+
+    <h2>Örnek Hesaplama</h2>
+    <p>
+      Bir e-ticaret satıcısı, KDV hariç 250 TL'ye aldığı bir ürünü satmak istiyor ve %30 kâr marjı hedefliyor.
+    </p>
+    <ul>
+      <li>Satış fiyatı: 250 / (1 − 0,30) = 357,14 TL</li>
+      <li>Birim kâr: 357,14 − 250 = 107,14 TL</li>
+      <li>Kâr marjı: 107,14 / 357,14 = %30</li>
+      <li>Kâr oranı (markup): 107,14 / 250 = %42,86</li>
+    </ul>
+    <p>
+      Satıcı yanlışlıkla maliyetin üzerine %30 ekleseydi fiyat 325 TL olacak ve kâr marjı yalnızca %23,08'de kalacaktı. 100 adet satışta bu fark yaklaşık 3.214 TL daha az kâr demektir.
+    </p>
+
+    <h2>Kâr Marjı - Markup Dönüşüm Tablosu</h2>
+    <table>
+      <thead>
+        <tr><th>Kâr Marjı</th><th>Karşılık Gelen Markup</th><th>100 TL Maliyette Satış Fiyatı</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>%10</td><td>%11,11</td><td>111,11 TL</td></tr>
+        <tr><td>%20</td><td>%25</td><td>125 TL</td></tr>
+        <tr><td>%25</td><td>%33,33</td><td>133,33 TL</td></tr>
+        <tr><td>%30</td><td>%42,86</td><td>142,86 TL</td></tr>
+        <tr><td>%40</td><td>%66,67</td><td>166,67 TL</td></tr>
+        <tr><td>%50</td><td>%100</td><td>200 TL</td></tr>
+        <tr><td>%60</td><td>%150</td><td>250 TL</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Fiyatlandırmada Dikkat Edilmesi Gerekenler</h2>
+    <ul>
+      <li><strong>Tüm maliyetleri dahil edin:</strong> Kargo, paketleme, pazaryeri komisyonu ve ödeme altyapısı ücretleri birim maliyete eklenmezse gerçek marj beklenenden düşük çıkar.</li>
+      <li><strong>KDV hariç çalışın:</strong> Maliyet ve satış fiyatını KDV hariç girerek doğru marjı elde edin.</li>
+      <li><strong>İndirimlerin etkisini hesaplayın:</strong> %30 marjlı bir üründe %20 indirim yapmak marjı %12,5'e düşürür.</li>
+      <li><strong>Sabit giderleri unutmayın:</strong> Kira, personel ve reklam gibi giderler brüt marjdan karşılanır; net kârı görmek için bu giderleri de hesaba katın.</li>
+    </ul>
+    <p class="calc-note">
+      Not: Hesaplama birim bazında brüt kârı gösterir. Vergi, finansman ve genel yönetim giderleri net kârlılığı değiştirebilir.
+    </p>
+  </section>
+</CalcLayout>

@@ -3,185 +3,163 @@ import CalcLayout from '../../layouts/CalcLayout.astro';
 import CalcInput from '../../components/calculator/CalcInput.astro';
 import CalcResult from '../../components/calculator/CalcResult.astro';
 
-const faq = [
-  {
-    question: "Enflasyon hesaplama neden önemlidir?",
-    answer: "Enflasyon hesaplama, paranızın gelecekteki satın alma gücünü anlamanızı sağlar. Tasarruflarınızın veya yatırımlarınızın enflasyona karşı gerçek değerini koruyup korumadığını görmenizi mümkün kılar. Örneğin yıllık %60 enflasyon ortamında bankada %40 faizle para tutmak, paranızın satın alma gücünü düşürmek demektir. Bu hesaplama sayesinde hangi yatırım araçlarının reel getiri sağladığını kolayca karşılaştırabilirsiniz.",
-  },
-  {
-    question: "Gelecek değer ile bugünkü değer arasındaki fark nedir?",
-    answer: "Gelecek değer, belirli bir enflasyon oranında belirli süre sonra aynı miktarda paranın nominal olarak ne kadar edeceğini gösterir. Bugünkü değer (satın alma gücü) ise tam tersini hesaplar: gelecekte aynı yaşam standardını sürdürmek için bugünkü para birimiyle ne kadar paraya ihtiyaç duyacağınızı gösterir. Yatırım kararlarında her ikisi de kritik öneme sahiptir.",
-  },
-  {
-    question: "Türkiye'de ortalama enflasyon oranı nedir?",
-    answer: "Türkiye'de enflasyon oranı yıldan yıla önemli ölçüde değişkenlik göstermektedir. 2021-2023 döneminde yüksek enflasyon yaşanmış, TÜFE bazında yıllık oranlar %20 ile %85 arasında seyretmiştir. Uzun vadeli planlamalar için ortalama bir oran kullanmak yerine TÜİK'in açıkladığı güncel TÜFE verilerini takip etmek daha sağlıklı sonuçlar verir. Hesaplama aracımızda güncel oranı girerek kendi tahminlerinizi yapabilirsiniz.",
-  },
-];
-
 const meta = {
-  title: "Enflasyon Hesaplama — Paranızın Gerçek Değeri",
-  description: "Enflasyonun paranızın satın alma gücüne etkisini hesaplayın. Gelecek değer ve reel değer kaybını anında öğrenin.",
+  title: "Enflasyon Hesaplama",
+  seoTitle: "Enflasyon Hesaplama – Paranın Gelecekteki Değeri ve Alım Gücü",
+  description: "Enflasyon hesaplama: bugünkü paranızın yıllar sonra ne kadar alım gücü kaybedeceğini ve aynı yaşam standardı için ne kadar para gerekeceğini yıllık enflasyonla hesaplayın.",
+  summary: "Enflasyonun etkisi bileşik olarak hesaplanır: Gelecekte gereken tutar = Bugünkü tutar × (1 + enflasyon)^yıl, bugünkü paranın gelecekteki alım gücü = Tutar ÷ (1 + enflasyon)^yıl. Örneğin yıllık %30 enflasyonla 10.000 TL'nin 3 yıl sonraki alım gücü 4.551,66 TL'ye düşer; aynı sepeti almak için 21.970 TL gerekir.",
+  howTo: [
+    "Hesaplamak istediğiniz tutarı girin.",
+    "Beklediğiniz ya da gerçekleşen yıllık enflasyon oranını yazın.",
+    "Kaç yıllık süreyi hesaplamak istediğinizi girin.",
+    "Aynı alım gücü için gereken tutarı, alım gücü kaybını ve toplam fiyat artışını görün."
+  ],
+  sources: [
+    { name: "TÜİK – Tüketici Fiyat Endeksi", url: "https://data.tuik.gov.tr/" },
+    { name: "TCMB", url: "https://www.tcmb.gov.tr/" }
+  ],
   category: "finans",
   slug: "enflasyon-hesaplama",
-  keywords: ["enflasyon hesaplama", "satın alma gücü", "paranın değeri", "TÜFE hesaplama", "reel değer hesaplama", "enflasyon etkisi"],
-  dateModified: "2026-04-01",
-  relatedCalcs: ["kira-artis-hesaplama", "bilesik-faiz-hesaplama", "yatirim-getiri-hesaplama"],
-  faq,
+  keywords: ["enflasyon hesaplama", "paranın alım gücü hesaplama", "enflasyon etkisi", "reel değer hesaplama", "TÜFE hesaplama", "paranın gelecekteki değeri"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["finans/kira-artis-hesaplama", "finans/bilesik-faiz-hesaplama", "finans/yatirim-getiri-hesaplama", "finans/mevduat-faizi-hesaplama"],
+  faq: [
+    {
+      question: "Enflasyon paranın değerini nasıl etkiler?",
+      answer: "Enflasyon, fiyatların genel düzeyindeki artıştır; aynı miktar parayla daha az mal ve hizmet alabilirsiniz. Yıllık %30 enflasyonda bugün 1.000 TL olan bir sepet bir yıl sonra 1.300 TL olur. Başka bir deyişle cebinizdeki 1.000 TL'nin alım gücü, bugünkü fiyatlarla 769 TL'ye iner."
+    },
+    {
+      question: "Birden fazla yıllık enflasyon nasıl hesaplanır?",
+      answer: "Yıllık oranlar toplanmaz, çarpılır. İki yıl üst üste %30 enflasyon toplamda %60 değil, 1,30 × 1,30 − 1 = %69 fiyat artışı demektir. Farklı yıllar için her yılın oranını (1 + oran) olarak çarpıp 1 çıkararak toplam enflasyonu bulabilirsiniz."
+    },
+    {
+      question: "Reel getiri nasıl hesaplanır?",
+      answer: "Reel getiri = (1 + nominal getiri) ÷ (1 + enflasyon) − 1 formülüyle bulunur. Yıllık %40 net faiz getirisi ve %30 enflasyonda reel getiri %7,7'dir; basitçe 40 − 30 = %10 demek getiriyi olduğundan yüksek gösterir. Negatif reel getiri, birikiminizin alım gücünün azaldığını gösterir."
+    },
+    {
+      question: "Resmi enflasyon verileri nereden öğrenilir?",
+      answer: "Türkiye'de resmi tüketici enflasyonunu TÜİK açıklar; veriler her ayın 3'ünde saat 10.00'da yayımlanır. Aylık, yıllık ve 12 aylık ortalama değişim oranları ayrı ayrı verilir. Kira artışlarında 12 aylık ortalama, maaş ve fiyat karşılaştırmalarında genellikle yıllık değişim kullanılır."
+    },
+    {
+      question: "Geçmişteki bir tutarın bugünkü değeri nasıl bulunur?",
+      answer: "Geçmişteki tutarı, aradaki dönemdeki TÜFE endeks değerlerinin oranıyla çarparak bugünkü fiyatlarla karşılığını bulursunuz: Bugünkü değer = Eski tutar × (Güncel endeks ÷ Eski endeks). Endeks değerlerine TÜİK veri portalından ulaşabilirsiniz. Bu hesaplayıcıda aynı işlemi ortalama yıllık enflasyonla yapabilirsiniz."
+    }
+  ]
 };
 ---
 
 <CalcLayout meta={meta}>
-  <form id="calc-form" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
+  <form id="calc-form" class="calc-inputs" novalidate>
     <CalcInput
       id="tutar"
       label="Tutar"
       type="number"
       suffix="₺"
       placeholder="10000"
-      step={100}
-      min={1}
-      helpText="Hesaplamak istediğiniz para miktarı"
+      step="any"
+      min={0}
     />
     <CalcInput
       id="enflasyonOrani"
       label="Yıllık Enflasyon Oranı"
       type="number"
       suffix="%"
-      placeholder="60.00"
-      step={0.01}
-      min={0.01}
-      helpText="Beklenen ya da gerçekleşen yıllık enflasyon oranı"
+      placeholder="30"
+      step="any"
+      min={-99}
+      helpText="Beklenen ya da gerçekleşen ortalama yıllık oran"
     />
     <CalcInput
       id="yilSayisi"
       label="Süre"
       type="number"
       suffix="yıl"
-      placeholder="5"
-      step={1}
-      min={1}
-      max={50}
-      helpText="Kaç yıl sonrasını hesaplamak istiyorsunuz?"
+      placeholder="3"
+      step="any"
+      min={0}
+      max={100}
     />
   </form>
 
   <CalcResult>
     <div slot="main">
-      <span class="calc-result-label">Gelecek Nominal Değer</span>
-      <span class="calc-result-value" id="gelecek-deger">—</span>
+      <p class="calc-result-label">Aynı Alım Gücü İçin Gereken Tutar</p>
+      <p class="calc-result-value" id="gelecek-deger">—</p>
     </div>
     <div slot="details">
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Satın Alma Gücü Kaybı</span>
+        <span class="calc-detail-label">Bugünkü Paranın Gelecekteki Alım Gücü</span>
+        <span class="calc-detail-value" id="gercek-deger">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Alım Gücü Kaybı</span>
         <span class="calc-detail-value" id="guc-kaybi">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Gerçek Değer (Bugünkü Para ile)</span>
-        <span class="calc-detail-value" id="gercek-deger">—</span>
+        <span class="calc-detail-label">Toplam Fiyat Artışı</span>
+        <span class="calc-detail-value" id="toplam-artis">—</span>
       </div>
     </div>
   </CalcResult>
 
-  <section class="calc-content">
-    <h2>Enflasyon Hesaplama Nasıl Yapılır?</h2>
-    <p>
-      Enflasyon, mal ve hizmetlerin fiyatlarının zaman içinde artmasıyla ortaya çıkan ekonomik bir olgudur. Bu artış, paranın satın alma gücünü olumsuz yönde etkiler; yani belirli bir miktarda parayla bugün alabildiğiniz ürün ya da hizmet miktarı, enflasyon ortamında gelecekte azalır. Enflasyon hesaplama aracı, bu değer kaybını somut rakamlarla görmenizi sağlar.
-    </p>
-    <p>
-      Türkiye'de enflasyon, Türkiye İstatistik Kurumu (TÜİK) tarafından aylık olarak açıklanan Tüketici Fiyat Endeksi (TÜFE) ile ölçülmektedir. Yüksek enflasyon dönemlerinde tasarruf hesabında tutulan paranın reel değeri hızla düşebilir. Bu nedenle hangi yatırım araçlarının enflasyona karşı korunaklı olduğunu anlamak büyük önem taşımaktadır.
-    </p>
-    <p>
-      Enflasyon hesaplayıcımız iki farklı sonucu hesaplar: birincisi, belirli bir tutar ve enflasyon oranına göre paranın gelecekteki nominal değeri; ikincisi ise gelecekte aynı satın alma gücünü elde etmek için bugünkü para birimiyle ne kadar paraya ihtiyaç duyulduğudur. Bu hesaplamalar sayesinde emeklilik planlaması, uzun vadeli yatırım kararları ve birikim hedefleri için daha gerçekçi projeksiyonlar yapabilirsiniz.
-    </p>
-    <h3>Enflasyon Hesaplama Formülü</h3>
-    <p>
-      Enflasyon etkisini hesaplamak için bileşik büyüme formülü kullanılır:
-    </p>
-    <p>
-      <strong>Gelecek Değer = Tutar × (1 + Enflasyon Oranı / 100) ^ Yıl Sayısı</strong>
-    </p>
-    <p>
-      <strong>Bugünkü Satın Alma Gücü = Tutar / (1 + Enflasyon Oranı / 100) ^ Yıl Sayısı</strong>
-    </p>
-    <p>
-      Örneğin bugün 10.000 TL'niz var ve yıllık enflasyon %60 ise 5 yıl sonra aynı yaşam standardını korumak için 10.000 × (1,60)^5 = yaklaşık 104.858 TL'ye ihtiyaç duyarsınız. Satın alma gücü kaybı ise 94.858 TL olarak hesaplanır.
-    </p>
-    <h3>Dikkat Edilmesi Gerekenler</h3>
-    <p>
-      Enflasyon hesaplamalarında kullanılan oran, gelecekteki gerçek enflasyona ilişkin bir tahmindir. Geçmiş enflasyon verileri gelecek için kesin bir gösterge değildir; dolayısıyla farklı senaryolar için birkaç farklı oran deneyin. Ayrıca hesaplayıcımız genel enflasyon üzerinden çalışır; bazı ürün kategorilerinde (sağlık, eğitim, gıda gibi) sektörel enflasyon genel enflasyondan farklılık gösterebilir. Uzun vadeli finansal planlamanızda bir finans uzmanından destek almanız tavsiye edilir.
-    </p>
-    <h3>Sıkça Sorulan Sorular</h3>
-    {faq.map((item) => (
-      <div class="faq-item">
-        <h4>{item.question}</h4>
-        <p>{item.answer}</p>
-      </div>
-    ))}
-  </section>
-</CalcLayout>
+  <script>
+    import { formatTL, formatPercent, readNumber, setText, showResult, initCalculator } from './_shared';
 
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
-    const resultArea = document.getElementById('calc-result');
+    function calculate(): boolean {
+      const tutar = readNumber('tutar');
+      const oran = readNumber('enflasyonOrani');
+      const yil = readNumber('yilSayisi');
 
-    function debounce(fn: (...args: unknown[]) => void, delay = 150) {
-      let timer: ReturnType<typeof setTimeout>;
-      return (...args: unknown[]) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), delay); };
-    }
-
-    function formatTL(num: number) {
-      return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
-    }
-
-    const debouncedCalc = debounce(calculate);
-    inputs.forEach(i => {
-      i.addEventListener('input', debouncedCalc);
-      i.addEventListener('change', debouncedCalc);
-    });
-
-    function calculate() {
-      const tutar = parseFloat((document.getElementById('tutar') as HTMLInputElement).value);
-      const enflasyonOrani = parseFloat((document.getElementById('enflasyonOrani') as HTMLInputElement).value);
-      const yilSayisi = parseInt((document.getElementById('yilSayisi') as HTMLInputElement).value);
-
-      if (!tutar || !enflasyonOrani || !yilSayisi || tutar <= 0 || enflasyonOrani <= 0 || yilSayisi < 1) {
-        if (resultArea) resultArea.classList.add('hidden');
-        return;
+      if (!(tutar > 0) || !(oran > -100) || !(yil > 0) || yil > 100) {
+        showResult(false);
+        return false;
       }
 
-      const carpan = Math.pow(1 + enflasyonOrani / 100, yilSayisi);
-      const gelecekDeger = tutar * carpan;
-      const gercekDeger = tutar / carpan;
-      const gucKaybi = tutar - gercekDeger;
+      const carpan = Math.pow(1 + oran / 100, yil);
+      const gelecek = tutar * carpan;
+      const reel = tutar / carpan;
 
-      (document.getElementById('gelecek-deger') as HTMLElement).textContent = formatTL(gelecekDeger);
-      (document.getElementById('guc-kaybi') as HTMLElement).textContent = formatTL(gucKaybi);
-      (document.getElementById('gercek-deger') as HTMLElement).textContent = formatTL(gercekDeger);
+      setText('gelecek-deger', formatTL(gelecek));
+      setText('gercek-deger', formatTL(reel));
+      setText('guc-kaybi', `${formatTL(tutar - reel)} (${formatPercent((1 - 1 / carpan) * 100)})`);
+      setText('toplam-artis', formatPercent((carpan - 1) * 100));
 
-      if (resultArea) resultArea.classList.remove('hidden');
-      updateURL();
+      showResult(true);
+      return true;
     }
 
-    function updateURL() {
-      const params = new URLSearchParams();
-      inputs.forEach(i => {
-        const el = i as HTMLInputElement;
-        if (el.value && el.id) params.set(el.id, el.value);
-      });
-      history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
-    }
+    initCalculator({ calculate });
+  </script>
 
-    function loadFromURL() {
-      const params = new URLSearchParams(window.location.search);
-      let hasParams = false;
-      inputs.forEach(i => {
-        const el = i as HTMLInputElement;
-        if (el.id && params.has(el.id)) { el.value = params.get(el.id)!; hasParams = true; }
-      });
-      if (hasParams) calculate();
-    }
+  <section class="calc-content">
+    <h2>Enflasyon Hesaplaması Nasıl Yapılır?</h2>
+    <p>
+      Enflasyon her yıl bir önceki yılın fiyatları üzerine eklendiği için etkisi bileşik faiz gibi birikir. Bu nedenle çok yıllı hesaplarda yıllık oranlar toplanmaz; (1 + oran) çarpanları üst üste çarpılır.
+    </p>
+    <ul>
+      <li><strong>Aynı alım gücü için gereken tutar</strong> = Tutar × (1 + enflasyon)<sup>yıl</sup></li>
+      <li><strong>Bugünkü paranın gelecekteki alım gücü</strong> = Tutar ÷ (1 + enflasyon)<sup>yıl</sup></li>
+      <li><strong>Toplam fiyat artışı</strong> = (1 + enflasyon)<sup>yıl</sup> − 1</li>
+    </ul>
 
-    loadFromURL();
-  });
-</script>
+    <h2>Örnek Hesaplama</h2>
+    <p>
+      Yıllık ortalama %30 enflasyon varsayımıyla bugün 10.000 TL'ye alınan bir sepetin 3 yıl sonraki fiyatı 10.000 × 1,30³ = <strong>21.970 TL</strong> olur. Toplam fiyat artışı %119,7'dir. Yastık altında tutulan 10.000 TL ise bugünkü fiyatlarla yalnızca 4.551,66 TL'lik alım gücüne sahip olur; kayıp %54,5'tir.
+    </p>
+    <div class="calc-table-wrap">
+      <table class="calc-table">
+        <thead><tr><th scope="col">Yıllık enflasyon</th><th scope="col">5 yıl sonra 10.000 TL'nin alım gücü</th><th scope="col">Gereken tutar</th></tr></thead>
+        <tbody>
+          <tr><td>%10</td><td>6.209,21 TL</td><td>16.105,10 TL</td></tr>
+          <tr><td>%20</td><td>4.018,78 TL</td><td>24.883,20 TL</td></tr>
+          <tr><td>%30</td><td>2.693,29 TL</td><td>37.129,30 TL</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Hangi Enflasyon Oranını Kullanmalıyım?</h2>
+    <p>
+      Geçmişe dönük hesaplar için TÜİK'in açıkladığı yıllık TÜFE değişimini, geleceğe dönük tahminler için TCMB'nin Piyasa Katılımcıları Anketi'ndeki beklentileri ya da enflasyon raporundaki ara hedefleri kullanabilirsiniz. Kişisel harcama sepetiniz resmi sepetten farklıysa (örneğin kira payınız yüksekse), hissedilen enflasyon resmi orandan farklı olabilir.
+    </p>
+  </section>
+</CalcLayout>

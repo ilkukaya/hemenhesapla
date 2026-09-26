@@ -4,197 +4,249 @@ import CalcInput from '../../components/calculator/CalcInput.astro';
 import CalcSelect from '../../components/calculator/CalcSelect.astro';
 import CalcResult from '../../components/calculator/CalcResult.astro';
 
-const faq = [
-  {
-    question: "Döviz çevirici hangi kurları kullanıyor?",
-    answer: "Bu araçta kullanılan döviz kurları yaklaşık referans değerlerdir ve gerçek zamanlı piyasa verilerini yansıtmamaktadır. Gerçek işlemler için bankanızın veya döviz bürosunun güncel alış-satış kurlarını kontrol etmenizi öneririz. Döviz kurları gün içinde sürekli değişebildiğinden, büyük miktarlarda işlem yapmadan önce mutlaka güncel kuru doğrulayın.",
-  },
-  {
-    question: "Türk Lirası ile döviz nasıl dönüştürülür?",
-    answer: "Döviz dönüştürme işleminde iki para biriminin TL karşısındaki değerleri kullanılır. Kaynak para birimini TL'ye çevirmek için ilgili kur ile çarpılır; ardından TL, hedef para birimine bölünerek sonuç elde edilir. Örneğin 100 USD'yi EUR'ya çevirmek için: 100 × 38,50 = 3.850 TL, ardından 3.850 / 42,20 ≈ 91,23 EUR bulunur.",
-  },
-  {
-    question: "Hangi para birimleri destekleniyor?",
-    answer: "Araçta ABD Doları (USD), Euro (EUR), İngiliz Sterlini (GBP), İsviçre Frangı (CHF) ve Türk Lirası (TRY) desteklenmektedir. Bu beş para birimi arasındaki tüm çevirimleri gerçekleştirebilirsiniz. Farklı para birimlerine ihtiyaç duymanız halinde bankanızın veya merkez bankasının resmi kur listesine başvurabilirsiniz.",
-  },
-];
-
-const meta = {
-  title: "Döviz Çevirici — USD EUR GBP TRY Kur Hesaplama",
-  description: "Dolar, Euro, Sterlin ve İsviçre Frangı arasında anında döviz çevirisi yapın. Güncel kur ile TRY dönüştürme hesaplayıcısı.",
-  category: "finans",
-  slug: "doviz-cevirici",
-  keywords: ["döviz çevirici", "dolar TL hesaplama", "euro TL hesaplama", "kur hesaplama", "döviz dönüştürme", "USD EUR TRY"],
-  dateModified: "2026-04-01",
-  relatedCalcs: ["altin-hesaplama", "enflasyon-hesaplama", "yatirim-getiri-hesaplama"],
-  faq,
-};
-
 const paraBirimleri = [
   { value: "USD", label: "ABD Doları (USD)" },
   { value: "EUR", label: "Euro (EUR)" },
   { value: "GBP", label: "İngiliz Sterlini (GBP)" },
   { value: "CHF", label: "İsviçre Frangı (CHF)" },
+  { value: "JPY", label: "Japon Yeni (JPY)" },
+  { value: "CAD", label: "Kanada Doları (CAD)" },
+  { value: "AUD", label: "Avustralya Doları (AUD)" },
+  { value: "SEK", label: "İsveç Kronu (SEK)" },
+  { value: "NOK", label: "Norveç Kronu (NOK)" },
+  { value: "DKK", label: "Danimarka Kronu (DKK)" },
+  { value: "CNY", label: "Çin Yuanı (CNY)" },
   { value: "TRY", label: "Türk Lirası (TRY)" },
 ];
+
+const meta = {
+  title: "Döviz Çevirici",
+  seoTitle: "Döviz Çevirici – Dolar, Euro, Sterlin TL Kur Hesaplama",
+  description: "Döviz çevirici: dolar, euro, sterlin ve diğer para birimlerini Türk lirasına çevirin. ECB referans kuru otomatik gelir, isterseniz bankanızın kurunu elle girin.",
+  summary: "Döviz çevirisi, Tutar × Kur formülüyle yapılır; örneğin kur 1 USD = X TL ise 100 USD, 100 × X TL eder. İki yabancı para arasında çapraz kur, her ikisinin TL veya euro karşılığı oranlanarak bulunur. Bu araç Avrupa Merkez Bankası günlük referans kurunu kullanır; bankaların alış-satış kurları bundan farklıdır.",
+  howTo: [
+    "Çevirmek istediğiniz miktarı girin.",
+    "Kaynak ve hedef para birimini seçin.",
+    "Kur kaynağını seçin: ECB referans kuru otomatik yüklenir; bankanızın ya da TCMB'nin kurunu kullanmak için \"Elle gir\" seçeneğini seçin.",
+    "Çevrilen tutarı ve kullanılan kuru, kur tarihiyle birlikte görün."
+  ],
+  sources: [
+    { name: "TCMB – Gösterge niteliğindeki döviz kurları", url: "https://www.tcmb.gov.tr/kurlar/today.xml" },
+    { name: "Avrupa Merkez Bankası – Euro referans kurları", url: "https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html" },
+    { name: "Frankfurter (açık kaynak ECB kur API'si)", url: "https://frankfurter.dev/" }
+  ],
+  category: "finans",
+  slug: "doviz-cevirici",
+  keywords: ["döviz çevirici", "dolar TL hesaplama", "euro TL çevirici", "sterlin TL", "kur hesaplama", "döviz hesaplama"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["finans/altin-hesaplama", "finans/yatirim-getiri-hesaplama", "finans/enflasyon-hesaplama", "finans/kdv-hesaplama"],
+  faq: [
+    {
+      question: "Döviz çevirici hangi kuru kullanıyor?",
+      answer: "Otomatik modda Avrupa Merkez Bankası'nın (ECB) iş günlerinde yaklaşık 16.00 CET'te yayımladığı referans kurları kullanılır ve kurun tarihi sonuçta gösterilir. Bu kurlar anlık piyasa fiyatı değildir; hafta sonu ve tatillerde son iş gününün kuru geçerlidir. Bağlantı kurulamazsa kuru elle girmeniz istenir."
+    },
+    {
+      question: "Bankadaki dolar kuru neden farklı?",
+      answer: "Bankalar ve döviz büroları, piyasa kurunun üzerine alış-satış farkı (makas) ekler. Döviz alırken bankanın satış kurunu, döviz bozdururken alış kurunu ödersiniz. Makas; saat, tutar ve kurumlara göre değişir. Gerçek işlem tutarını görmek için bankanızın kurunu elle girin."
+    },
+    {
+      question: "TCMB kuru ile ECB kuru arasındaki fark nedir?",
+      answer: "TCMB, her iş günü saat 15.30'da gösterge niteliğinde döviz alış ve satış kurlarını ilan eder; resmi işlemlerde, vergi ve muhasebe kayıtlarında genellikle bu kurlar kullanılır. ECB kuru ise euro bazlı tek bir orta kurdur. İki kur arasında saat ve yöntem farkından kaynaklanan küçük farklar olabilir."
+    },
+    {
+      question: "Çapraz kur nasıl hesaplanır?",
+      answer: "İki yabancı para arasındaki kur, ortak bir para birimi üzerinden bulunur. Örneğin EUR/USD kuru, EUR/TRY kurunun USD/TRY kuruna bölünmesiyle hesaplanır. Bu araç, tüm kurları euro bazında alıp gerekli çapraz kuru otomatik hesaplar."
+    },
+    {
+      question: "Faturada hangi döviz kuru kullanılmalı?",
+      answer: "Vergi Usul Kanunu uygulamasında dövizli işlemlerin TL'ye çevrilmesinde genellikle işlem tarihindeki TCMB döviz alış kuru esas alınır. Sözleşmede farklı bir kur kararlaştırılmışsa o kur kullanılabilir. Muhasebe uygulamaları için mali müşavirinize danışın."
+    }
+  ]
+};
 ---
 
 <CalcLayout meta={meta}>
-  <form id="calc-form" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
+  <form id="calc-form" class="calc-inputs" novalidate>
     <CalcInput
       id="miktar"
       label="Miktar"
       type="number"
-      placeholder="1"
-      step={0.01}
-      min={0.01}
-      value="1"
-      helpText="Dönüştürmek istediğiniz miktarı girin"
+      placeholder="100"
+      value="100"
+      step="any"
+      min={0}
     />
+    <CalcSelect id="kaynakPara" label="Kaynak Para Birimi" options={paraBirimleri} value="USD" />
+    <CalcSelect id="hedefPara" label="Hedef Para Birimi" options={paraBirimleri} value="TRY" />
     <CalcSelect
-      id="kaynakPara"
-      label="Kaynak Para Birimi"
-      options={paraBirimleri}
-      value="USD"
-      helpText="Hangi para biriminden dönüştürmek istiyorsunuz?"
+      id="kurKaynagi"
+      label="Kur Kaynağı"
+      options={[
+        { value: "ecb", label: "ECB referans kuru (otomatik)" },
+        { value: "manuel", label: "Elle gir (banka / TCMB kuru)" },
+      ]}
+      value="ecb"
     />
-    <CalcSelect
-      id="hedefPara"
-      label="Hedef Para Birimi"
-      options={paraBirimleri}
-      value="TRY"
-      helpText="Hangi para birimine dönüştürmek istiyorsunuz?"
+    <CalcInput
+      id="manuelKur"
+      label="Kur (1 kaynak = ? hedef)"
+      type="number"
+      placeholder="Bankanızın kurunu girin"
+      step="any"
+      min={0}
+      required={false}
+      helpText="Yalnızca elle giriş seçiliyse ya da otomatik kur alınamazsa kullanılır"
     />
   </form>
 
+  <p class="calc-note" id="kur-durum" aria-live="polite">Kurlar yükleniyor…</p>
+
   <CalcResult>
     <div slot="main">
-      <span class="calc-result-label">Dönüştürülen Tutar</span>
-      <span class="calc-result-value" id="donusturulen-tutar">—</span>
+      <p class="calc-result-label">Çevrilen Tutar</p>
+      <p class="calc-result-value" id="donusturulen-tutar">—</p>
     </div>
     <div slot="details">
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Kur</span>
+        <span class="calc-detail-label">Kullanılan Kur</span>
         <span class="calc-detail-value" id="kur-bilgisi">—</span>
       </div>
       <div class="calc-detail-row">
         <span class="calc-detail-label">Ters Kur</span>
         <span class="calc-detail-value" id="ters-kur">—</span>
       </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Kur Kaynağı ve Tarihi</span>
+        <span class="calc-detail-value" id="kur-tarihi">—</span>
+      </div>
+      <p class="calc-note">ECB referans kurları bilgilendirme amaçlıdır; bankaların alış-satış kurları farklıdır. Alım satım kararı için kurumunuzun kurunu kullanın.</p>
     </div>
   </CalcResult>
 
-  <p class="text-sm text-[var(--color-text-muted)] mt-2 px-1">* Kurlar yaklaşık değerlerdir. Gerçek işlemler için bankanızın güncel kurlarını kontrol edin.</p>
+  <script>
+    import { formatNumber, readNumber, readValue, setText, showResult, initCalculator } from './_shared';
 
-  <section class="calc-content">
-    <h2>Döviz Çevirici Nasıl Kullanılır?</h2>
-    <p>
-      Döviz çevirici, farklı para birimleri arasında hızlı ve kolay dönüşüm yapmanızı sağlayan bir finansal araçtır. ABD Doları (USD), Euro (EUR), İngiliz Sterlini (GBP), İsviçre Frangı (CHF) ve Türk Lirası (TRY) arasındaki tüm kombinasyonları bu araç aracılığıyla hesaplayabilirsiniz. Yurt dışı alışveriş, seyahat planlaması, yatırım kararları veya döviz tasarrufu değerlendirmesi gibi pek çok senaryoda döviz çevirici büyük kolaylık sağlar.
-    </p>
-    <p>
-      Döviz piyasaları dünya genelinde 24 saat boyunca işlem gören dinamik piyasalardır. Kur değerleri; merkez bankası kararları, enflasyon verileri, ticaret dengesi, jeopolitik gelişmeler ve küresel piyasa hareketlerine bağlı olarak sürekli değişkenlik göstermektedir. Bu nedenle hesaplama aracımızdaki kurlar sabit referans değerler olup gerçek zamanlı piyasa verilerini yansıtmamaktadır.
-    </p>
-    <p>
-      Türkiye Cumhuriyet Merkez Bankası (TCMB) her gün saat 15:30'da resmi kur listesini yayımlamaktadır. Büyük miktarlarda döviz işlemi yapmadan önce TCMB'nin resmi sitesinden veya bankanızın kur sayfasından güncel alış-satış kurlarını kontrol etmenizi öneririz. Banka ve döviz bürosu kurları arasında da farklılıklar bulunabilir.
-    </p>
-    <h3>Döviz Hesaplama Formülü</h3>
-    <p>
-      Çapraz kur hesaplama için tüm para birimleri önce TL'ye dönüştürülür, ardından hedef para birimine çevrilir:
-    </p>
-    <p>
-      <strong>Sonuç = Miktar × (Kaynak Para Kuru / Hedef Para Kuru)</strong>
-    </p>
-    <p>
-      Örneğin 500 USD'yi EUR'ya çevirmek için: 500 × (38,50 / 42,20) ≈ 456,40 EUR hesaplanır. Kaynak para birimi TRY ise oran direkt hedef kurun tersine bölünür.
-    </p>
-    <h3>Dikkat Edilmesi Gerekenler</h3>
-    <p>
-      Döviz alım-satım işlemlerinde bankaların uyguladığı spread (alış-satış farkı) gerçek dönüştürme maliyetini etkiler. Döviz büroları ve bankalar farklı kurlar uygulayabileceği gibi, işlem miktarına göre kur da değişebilir. Yurt dışı kredi kartı işlemlerinde kur farkına ek olarak yabancı işlem ücreti de uygulanabilir. Bu araç yalnızca bilgilendirme amaçlıdır ve yatırım tavsiyesi niteliği taşımaz.
-    </p>
-    <h3>Sıkça Sorulan Sorular</h3>
-    {faq.map((item) => (
-      <div class="faq-item">
-        <h4>{item.question}</h4>
-        <p>{item.answer}</p>
-      </div>
-    ))}
-  </section>
-</CalcLayout>
+    const ENDPOINTS = [
+      'https://api.frankfurter.dev/v1/latest?base=EUR',
+      'https://api.frankfurter.app/latest?from=EUR',
+    ];
 
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
-    const resultArea = document.getElementById('calc-result');
+    // EUR bazında kurlar: 1 EUR = rates[X] X
+    let rates: Record<string, number> | null = null;
+    let rateDate = '';
+    let loadFailed = false;
 
-    const kurlar: Record<string, number> = {
-      USD: 38.50,
-      EUR: 42.20,
-      GBP: 49.80,
-      CHF: 45.10,
-      TRY: 1,
-    };
-
-    function debounce(fn: (...args: unknown[]) => void, delay = 150) {
-      let timer: ReturnType<typeof setTimeout>;
-      return (...args: unknown[]) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), delay); };
+    async function loadRates() {
+      for (const url of ENDPOINTS) {
+        try {
+          const ctrl = new AbortController();
+          const timer = setTimeout(() => ctrl.abort(), 8000);
+          const res = await fetch(url, { signal: ctrl.signal });
+          clearTimeout(timer);
+          if (!res.ok) continue;
+          const json = await res.json();
+          if (json && json.rates && typeof json.rates.TRY === 'number') {
+            rates = { ...json.rates, EUR: 1 };
+            rateDate = String(json.date || '');
+            return;
+          }
+        } catch {
+          // bir sonraki uç noktayı dene
+        }
+      }
+      loadFailed = true;
     }
 
-    function formatNumber(num: number, digits = 4) {
-      return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: digits }).format(num);
+    function fmtDate(iso: string) {
+      const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
+      return m ? `${m[3]}.${m[2]}.${m[1]}` : iso;
     }
 
-    const debouncedCalc = debounce(calculate);
-    inputs.forEach(i => {
-      i.addEventListener('input', debouncedCalc);
-      i.addEventListener('change', debouncedCalc);
-    });
+    function updateStatus() {
+      const manuel = readValue('kurKaynagi') === 'manuel';
+      if (manuel) setText('kur-durum', 'Elle girdiğiniz kur kullanılıyor.');
+      else if (rates) setText('kur-durum', `ECB referans kurları yüklendi (${fmtDate(rateDate)}).`);
+      else if (loadFailed) setText('kur-durum', 'Otomatik kur alınamadı. Lütfen "Kur" alanına bankanızın ya da TCMB\'nin kurunu girin.');
+      else setText('kur-durum', 'Kurlar yükleniyor…');
+    }
 
-    function calculate() {
-      const miktar = parseFloat((document.getElementById('miktar') as HTMLInputElement).value);
-      const kaynakPara = (document.getElementById('kaynakPara') as HTMLSelectElement).value;
-      const hedefPara = (document.getElementById('hedefPara') as HTMLSelectElement).value;
+    function calculate(): boolean {
+      updateStatus();
+      const miktar = readNumber('miktar');
+      const kaynak = readValue('kaynakPara');
+      const hedef = readValue('hedefPara');
+      const manuelKur = readNumber('manuelKur');
+      const manuel = readValue('kurKaynagi') === 'manuel';
 
-      if (!miktar || miktar <= 0 || !kaynakPara || !hedefPara) {
-        if (resultArea) resultArea.classList.add('hidden');
-        return;
+      if (!(miktar > 0) || !kaynak || !hedef) {
+        showResult(false);
+        return false;
       }
 
-      const kaynakKur = kurlar[kaynakPara] ?? 1;
-      const hedefKur = kurlar[hedefPara] ?? 1;
-      const oran = kaynakKur / hedefKur;
+      let oran: number | null = null;
+      let kaynakBilgi = '';
+      if (kaynak === hedef) {
+        oran = 1;
+        kaynakBilgi = 'Aynı para birimi';
+      } else if (!manuel && rates && rates[kaynak] && rates[hedef]) {
+        oran = rates[hedef] / rates[kaynak];
+        kaynakBilgi = `ECB referans kuru, ${fmtDate(rateDate)}`;
+      } else if (manuelKur > 0) {
+        oran = manuelKur;
+        kaynakBilgi = 'Elle girilen kur';
+      }
+
+      if (oran === null) {
+        showResult(false);
+        return false;
+      }
+
       const sonuc = miktar * oran;
+      setText('donusturulen-tutar', `${formatNumber(sonuc, 2, 2)} ${hedef}`);
+      setText('kur-bilgisi', `1 ${kaynak} = ${formatNumber(oran, 2, 4)} ${hedef}`);
+      setText('ters-kur', `1 ${hedef} = ${formatNumber(1 / oran, 2, 4)} ${kaynak}`);
+      setText('kur-tarihi', kaynakBilgi);
 
-      (document.getElementById('donusturulen-tutar') as HTMLElement).textContent =
-        `${formatNumber(sonuc, 4)} ${hedefPara}`;
-      (document.getElementById('kur-bilgisi') as HTMLElement).textContent =
-        `1 ${kaynakPara} = ${formatNumber(oran, 4)} ${hedefPara}`;
-      (document.getElementById('ters-kur') as HTMLElement).textContent =
-        `1 ${hedefPara} = ${formatNumber(1 / oran, 4)} ${kaynakPara}`;
-
-      if (resultArea) resultArea.classList.remove('hidden');
-      updateURL();
+      showResult(true);
+      return true;
     }
 
-    function updateURL() {
-      const params = new URLSearchParams();
-      inputs.forEach(i => {
-        const el = i as HTMLInputElement;
-        if (el.value && el.id) params.set(el.id, el.value);
-      });
-      history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
-    }
+    initCalculator({ calculate, calculateOnLoad: true });
+    loadRates().then(() => {
+      if (loadFailed) {
+        const sel = document.getElementById('kurKaynagi') as HTMLSelectElement | null;
+        if (sel) sel.value = 'manuel';
+      }
+      calculate();
+    });
+  </script>
 
-    function loadFromURL() {
-      const params = new URLSearchParams(window.location.search);
-      let hasParams = false;
-      inputs.forEach(i => {
-        const el = i as HTMLInputElement;
-        if (el.id && params.has(el.id)) { el.value = params.get(el.id)!; hasParams = true; }
-      });
-      if (hasParams) calculate();
-    }
+  <section class="calc-content">
+    <h2>Döviz Çevirme Nasıl Yapılır?</h2>
+    <p>
+      Bir para birimini diğerine çevirmek için tutar ilgili kurla çarpılır: <strong>Çevrilen tutar = Miktar × Kur</strong>. Örneğin kur 1 USD = 40 TL ise 250 USD, 250 × 40 = 10.000 TL eder. Ters yönde, yani TL'den dövize çevirirken tutar kura bölünür.
+    </p>
 
-    loadFromURL();
-    calculate();
-  });
-</script>
+    <h2>Hangi Kuru Kullanmalısınız?</h2>
+    <div class="calc-table-wrap">
+      <table class="calc-table">
+        <thead><tr><th scope="col">Kur türü</th><th scope="col">Nerede kullanılır?</th></tr></thead>
+        <tbody>
+          <tr><td>ECB referans kuru</td><td>Genel bilgi ve karşılaştırma; bu aracın otomatik modu</td></tr>
+          <tr><td>TCMB gösterge kuru</td><td>Resmi işlemler, vergi ve muhasebe kayıtları</td></tr>
+          <tr><td>Banka alış / satış kuru</td><td>Gerçek döviz alım-satımı; makas içerir</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Örnek Hesaplama</h2>
+    <p>
+      Bankanız doları 41,20 TL'den satıyor, 40,60 TL'den alıyor olsun (örnek değerler). 1.000 USD almak isterseniz 1.000 × 41,20 = <strong>41.200 TL</strong> ödersiniz. Aynı 1.000 USD'yi hemen bozdurursanız 40.600 TL alırsınız; aradaki 600 TL bankanın makasıdır. Bu nedenle kısa vadeli döviz alım-satımında makas, getiriyi önemli ölçüde azaltabilir.
+    </p>
+
+    <h3>Çapraz Kur</h3>
+    <p>
+      İki yabancı para birimi arasında çeviri yaparken araç, her iki para biriminin euro karşılığını kullanarak çapraz kuru hesaplar. Örneğin GBP'den USD'ye çeviride kur = (1 EUR'nun USD karşılığı) ÷ (1 EUR'nun GBP karşılığı) olur.
+    </p>
+  </section>
+</CalcLayout>

@@ -1,0 +1,237 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "EBOB nasıl bulunur?",
+    answer: "EBOB (en büyük ortak bölen), verilen sayıların hepsini tam bölen en büyük pozitif tam sayıdır. Sayılar asal çarpanlarına ayrılır ve ortak asal çarpanların en küçük üslüleri çarpılır. Örneğin 12 = 2² × 3 ve 18 = 2 × 3² için ortak çarpanların en küçük üsleri 2¹ ve 3¹'dir; EBOB(12, 18) = 2 × 3 = 6 olur."
+  },
+  {
+    question: "EKOK nasıl bulunur?",
+    answer: "EKOK (en küçük ortak kat), verilen sayıların hepsine tam bölünebilen en küçük pozitif tam sayıdır. Sayılar asal çarpanlarına ayrılır ve tüm asal çarpanların en büyük üslüleri çarpılır. 12 = 2² × 3 ve 18 = 2 × 3² için EKOK = 2² × 3² = 36 olur. İki sayı için EKOK = (a × b) / EBOB(a, b) formülü de kullanılabilir."
+  },
+  {
+    question: "EBOB ve EKOK arasındaki ilişki nedir?",
+    answer: "İki pozitif tam sayı için EBOB ile EKOK'un çarpımı, sayıların çarpımına eşittir: EBOB(a, b) × EKOK(a, b) = a × b. Örneğin 12 ve 18 için 6 × 36 = 216 = 12 × 18. Bu kural yalnızca iki sayı için geçerlidir; üç veya daha fazla sayıda doğrudan uygulanamaz."
+  },
+  {
+    question: "Aralarında asal sayılar ne demektir?",
+    answer: "EBOB'u 1 olan sayılara aralarında asal sayılar denir. Örneğin 8 ve 15 asal sayı değildir ama 1'den başka ortak bölenleri olmadığı için aralarında asaldır. Aralarında asal iki sayının EKOK'u, sayıların çarpımına eşittir: EKOK(8, 15) = 120. Ardışık iki doğal sayı her zaman aralarında asaldır."
+  },
+  {
+    question: "EBOB EKOK problemleri nasıl ayırt edilir?",
+    answer: "Soruda bir bütünü eşit ve en büyük parçalara bölmek, en az sayıda parça elde etmek veya en büyük ölçüyü bulmak isteniyorsa EBOB kullanılır. Olayların ilk kez tekrar aynı anda gerçekleşmesi, en az kaç tane gerektiği veya ortak kat bulunması isteniyorsa EKOK kullanılır. Örneğin 6 ve 8 dakikada bir çalan zillerin birlikte çalması EKOK problemidir."
+  },
+  {
+    question: "Öklid algoritması nedir?",
+    answer: "Öklid algoritması, büyük sayılarda EBOB'u asal çarpanlara ayırmadan hızlıca bulmanın yoludur. Büyük sayı küçüğe bölünür, ardından bölen kalana bölünür ve kalan sıfır olana kadar devam edilir; son sıfırdan önceki kalan EBOB'dur. EBOB(84, 36) için 84 = 2 × 36 + 12 ve 36 = 3 × 12 + 0 olduğundan EBOB 12'dir."
+  }
+];
+
+const meta = {
+  title: "EBOB EKOK Hesaplama",
+  seoTitle: "EBOB EKOK Hesaplama - Asal Çarpanlar ile Çözüm",
+  description: "EBOB EKOK hesaplama aracı: iki veya daha fazla sayının en büyük ortak bölenini ve en küçük ortak katını asal çarpanlarıyla birlikte adım adım hesaplayın.",
+  summary: "EBOB, sayıların hepsini bölen en büyük sayı; EKOK, hepsine bölünen en küçük sayıdır. Asal çarpanlara ayırmada EBOB ortak çarpanların en küçük üsleriyle, EKOK tüm çarpanların en büyük üsleriyle bulunur. Örneğin EBOB(12, 18) = 6, EKOK(12, 18) = 36; iki sayı için EBOB × EKOK = a × b.",
+  howTo: [
+    "Sayıları virgül veya boşlukla ayırarak girin (en az iki pozitif tam sayı).",
+    "Hesaplayıcı her sayıyı asal çarpanlarına ayırır.",
+    "EBOB ve EKOK sonuçlarını ve aralarında asal olup olmadıklarını görün.",
+    "Asal çarpan dökümüyle çözümü adım adım kontrol edin."
+  ],
+  sources: [],
+  category: "matematik",
+  slug: "ebob-ekok-hesaplama",
+  keywords: ["ebob ekok hesaplama", "ebob hesaplama", "ekok hesaplama", "en büyük ortak bölen", "en küçük ortak kat", "asal çarpanlara ayırma"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["matematik/kesir-hesaplama", "matematik/oran-hesaplama", "matematik/uslu-sayi-hesaplama", "matematik/karekok-hesaplama"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" class="calc-inputs">
+    <CalcInput id="sayilar" label="Sayılar" type="text" placeholder="12, 18, 30" helpText="En az iki pozitif tam sayıyı virgül veya boşlukla ayırın (en fazla 10 sayı)." />
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">EBOB / EKOK</p>
+      <p class="calc-result-value" id="sonuc">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row"><span class="calc-detail-label">EBOB (En Büyük Ortak Bölen)</span><span class="calc-detail-value" id="ebob">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">EKOK (En Küçük Ortak Kat)</span><span class="calc-detail-value" id="ekok">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Aralarında Asal mı?</span><span class="calc-detail-value" id="asal">—</span></div>
+      <div id="carpanlar"></div>
+      <p class="calc-note" id="uyari" hidden></p>
+    </div>
+  </CalcResult>
+
+  <script>
+    function gcd(a: bigint, b: bigint): bigint { while (b) { [a, b] = [b, a % b]; } return a; }
+    function factorize(n: number): Map<number, number> {
+      const f = new Map<number, number>();
+      let x = n;
+      for (let p = 2; p * p <= x; p++) {
+        while (x % p === 0) { f.set(p, (f.get(p) || 0) + 1); x /= p; }
+      }
+      if (x > 1) f.set(x, (f.get(x) || 0) + 1);
+      return f;
+    }
+    const SUP: Record<string, string> = { '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹' };
+    const us = (e: number) => e === 1 ? '' : String(e).split('').map(c => SUP[c]).join('');
+    const fmtF = (f: Map<number, number>) => f.size === 0 ? '1' : [...f.entries()].sort((a, b) => a[0] - b[0]).map(([p, e]) => `${p}${us(e)}`).join(' × ');
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('calc-form');
+      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const resultArea = document.getElementById('calc-result');
+
+      function debounce(fn: () => void, delay = 200) {
+        let timer: ReturnType<typeof setTimeout>;
+        return () => { clearTimeout(timer); timer = setTimeout(fn, delay); };
+      }
+      const val = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
+      const setText = (id: string, t: string) => { (document.getElementById(id) as HTMLElement).textContent = t; };
+      const nf = new Intl.NumberFormat('tr-TR');
+
+      form?.addEventListener('submit', (e) => e.preventDefault());
+      const debouncedCalc = debounce(calculate);
+      inputs.forEach(input => {
+        input.addEventListener('input', debouncedCalc);
+        input.addEventListener('change', debouncedCalc);
+      });
+
+      function calculate() {
+        const uyari = document.getElementById('uyari') as HTMLElement;
+        const parca = val('sayilar').split(/[\s,;]+/).filter(Boolean);
+        const sayilar = parca.map(s => Number(s)).filter(n => Number.isInteger(n) && n > 0 && n <= 1e12).slice(0, 10);
+        if (sayilar.length < 2) return;
+        uyari.hidden = sayilar.length === parca.length;
+        uyari.textContent = 'Uyarı: Pozitif tam sayı olmayan veya çok büyük değerler hesaba katılmadı.';
+
+        const big = sayilar.map(n => BigInt(n));
+        const ebob = big.reduce((a, b) => gcd(a, b));
+        const ekok = big.reduce((a, b) => a / gcd(a, b) * b);
+
+        setText('ebob', nf.format(ebob));
+        setText('ekok', nf.format(ekok));
+        setText('sonuc', `${nf.format(ebob)} / ${nf.format(ekok)}`);
+        setText('asal', ebob === 1n ? 'Evet (EBOB = 1)' : 'Hayır');
+
+        const fs = sayilar.map(factorize);
+        const box = document.getElementById('carpanlar') as HTMLElement;
+        box.innerHTML = '';
+        sayilar.forEach((n, i) => {
+          const row = document.createElement('div');
+          row.className = 'calc-detail-row';
+          const l = document.createElement('span'); l.className = 'calc-detail-label'; l.textContent = `${nf.format(n)} asal çarpanları`;
+          const v = document.createElement('span'); v.className = 'calc-detail-value'; v.textContent = fmtF(fs[i]);
+          row.append(l, v);
+          box.appendChild(row);
+        });
+        // EBOB ve EKOK'un çarpan gösterimi
+        const tum = new Set<number>(); fs.forEach(f => f.forEach((_, p) => tum.add(p)));
+        const ebobF = new Map<number, number>(); const ekokF = new Map<number, number>();
+        tum.forEach(p => {
+          const usler = fs.map(f => f.get(p) || 0);
+          const mn = Math.min(...usler), mx = Math.max(...usler);
+          if (mn > 0) ebobF.set(p, mn);
+          ekokF.set(p, mx);
+        });
+        [['EBOB çarpanları (en küçük üsler)', fmtF(ebobF)], ['EKOK çarpanları (en büyük üsler)', fmtF(ekokF)]].forEach(([a, b]) => {
+          const row = document.createElement('div');
+          row.className = 'calc-detail-row';
+          const l = document.createElement('span'); l.className = 'calc-detail-label'; l.textContent = a;
+          const v = document.createElement('span'); v.className = 'calc-detail-value'; v.textContent = b;
+          row.append(l, v);
+          box.appendChild(row);
+        });
+
+        if (resultArea) resultArea.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const params = new URLSearchParams();
+        inputs.forEach(input => {
+          const el = input as HTMLInputElement;
+          if (el.value && el.id) params.set(el.id, el.value);
+        });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+      }
+
+      function loadFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        let hasParams = false;
+        inputs.forEach(input => {
+          const el = input as HTMLInputElement;
+          if (el.id && params.has(el.id)) { el.value = params.get(el.id)!; hasParams = true; }
+        });
+        if (hasParams) calculate();
+      }
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>EBOB ve EKOK Nedir?</h2>
+    <p>
+      EBOB (En Büyük Ortak Bölen) ve EKOK (En Küçük Ortak Kat), ortaokuldan itibaren matematik müfredatında yer alan ve LGS, YKS, KPSS, ALES gibi sınavlarda sıkça sorulan temel kavramlardır. EBOB, verilen sayıların hepsini kalansız bölen en büyük sayıdır. EKOK ise verilen sayıların hepsine kalansız bölünebilen en küçük pozitif sayıdır. EBOB EKOK hesaplama aracı, girdiğiniz sayıların asal çarpanlarını çıkararak her iki değeri adım adım gösterir.
+    </p>
+
+    <h2>Asal Çarpanlara Ayırma Yöntemi</h2>
+    <p>
+      En yaygın çözüm yolu, sayıları asal çarpanlarına ayırmaktır:
+    </p>
+    <ul>
+      <li><strong>EBOB:</strong> Tüm sayılarda ortak olan asal çarpanlar alınır ve her birinin en küçük üssü kullanılır.</li>
+      <li><strong>EKOK:</strong> Sayılarda geçen tüm asal çarpanlar alınır ve her birinin en büyük üssü kullanılır.</li>
+    </ul>
+
+    <h2>Örnek Hesaplama</h2>
+    <p>24, 36 ve 60 sayılarının EBOB ve EKOK'unu bulalım:</p>
+    <table>
+      <thead>
+        <tr><th>Sayı</th><th>Asal Çarpanlar</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>24</td><td>2³ × 3</td></tr>
+        <tr><td>36</td><td>2² × 3²</td></tr>
+        <tr><td>60</td><td>2² × 3 × 5</td></tr>
+        <tr><td><strong>EBOB</strong></td><td>2² × 3 = 12</td></tr>
+        <tr><td><strong>EKOK</strong></td><td>2³ × 3² × 5 = 360</td></tr>
+      </tbody>
+    </table>
+    <p>
+      EBOB için yalnızca üç sayıda da bulunan 2 ve 3 çarpanları, en küçük üsleriyle (2² ve 3¹) alınır. 5 yalnızca 60'ta olduğu için EBOB'a girmez. EKOK için ise 2, 3 ve 5'in en büyük üsleri (2³, 3², 5¹) çarpılır.
+    </p>
+
+    <h2>Bölme Yöntemi (Ortak Bölen Tablosu)</h2>
+    <p>
+      Sayılar yan yana yazılır ve sağ tarafa en küçük asal sayıdan başlanarak bölenler yazılır. En az bir sayıyı bölen asal sayı ile bölünebilen sayılar bölünür, bölünemeyenler aynen aşağı indirilir. Tüm sayılar 1 olunca işlem biter. Sağ sütundaki tüm bölenlerin çarpımı EKOK'u, yalnızca tüm sayıları aynı anda bölen asal sayıların çarpımı EBOB'u verir.
+    </p>
+
+    <h2>Günlük Hayatta EBOB EKOK Problemleri</h2>
+    <ul>
+      <li><strong>EBOB örneği:</strong> 180 cm ve 240 cm uzunluğundaki iki kumaş, hiç artmayacak şekilde eşit ve en uzun parçalara bölünecektir. Parça boyu EBOB(180, 240) = 60 cm, toplam parça sayısı 3 + 4 = 7'dir.</li>
+      <li><strong>EKOK örneği:</strong> Biri 12, diğeri 18 dakikada bir kalkan iki otobüs saat 09.00'da birlikte kalkıyor. Tekrar birlikte kalkacakları süre EKOK(12, 18) = 36 dakika, yani saat 09.36'dır.</li>
+      <li><strong>Karo döşeme:</strong> 360 cm × 480 cm'lik bir zemine kesilmeden döşenebilecek en büyük kare karo kenarı EBOB(360, 480) = 120 cm'dir.</li>
+    </ul>
+
+    <h2>Önemli Kurallar</h2>
+    <ul>
+      <li>İki sayı için: EBOB(a, b) × EKOK(a, b) = a × b</li>
+      <li>Aralarında asal sayılarda EBOB = 1 ve EKOK = a × b'dir.</li>
+      <li>Bir sayı diğerini tam bölüyorsa EBOB küçük sayıya, EKOK büyük sayıya eşittir.</li>
+      <li>EBOB, sayıların en küçüğünden büyük olamaz; EKOK, en büyüğünden küçük olamaz.</li>
+    </ul>
+    <p class="calc-note">
+      Not: Hesaplayıcı en fazla 10 sayı ve sayı başına 1 trilyona kadar pozitif tam sayıyı destekler. Büyük sayılarda EKOK tam sayı aritmetiğiyle hassas biçimde hesaplanır.
+    </p>
+  </section>
+</CalcLayout>

@@ -1,0 +1,50 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/ui/Icon.astro';
+import { allCalcs, categories, normalizeTr } from '../utils/catalog';
+---
+
+<BaseLayout title="Hesaplayıcı Ara | Hemen Hesapla" description="Hemen Hesapla'daki tüm hesaplayıcılar arasında arama yapın." noindex>
+  <div class="container-page py-10 max-w-3xl">
+    <h1 class="text-[2rem] font-extrabold tracking-[-0.025em] mb-5">Hesaplayıcı ara</h1>
+    <form action="/ara/" method="get" role="search" class="relative mb-6">
+      <label for="q" class="sr-only">Arama</label>
+      <Icon name="search" size={20} class="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]" />
+      <input id="q" name="q" type="search" autocomplete="off" placeholder="örn. kredi, maaş, vize" class="w-full h-14 pl-12 pr-4 rounded-full border border-[var(--color-border-strong)] bg-[var(--color-surface)] text-[1.0625rem] outline-none focus:border-[var(--color-text)]" />
+    </form>
+    <p id="ara-sonuc" class="eyebrow mb-2">Tüm hesaplayıcılar</p>
+    <ul id="ara-list" class="card p-2">
+      {allCalcs.map((c) => (
+        <li data-h={normalizeTr(`${c.title} ${c.description} ${c.categoryName}`)}>
+          <a href={c.href} class="tool-link" style={`--cat:${categories.find((k) => k.slug === c.category)?.color}`}>
+            <span class="tool-icon"><Icon name={c.icon} size={18} /></span>
+            <span class="min-w-0">
+              <span class="block font-semibold">{c.title}</span>
+              <span class="block text-[0.8125rem] text-[var(--color-text-muted)] truncate">{c.categoryName} · {c.description}</span>
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</BaseLayout>
+
+<script>
+  const input = document.getElementById('q') as HTMLInputElement;
+  const rows = Array.from(document.querySelectorAll<HTMLLIElement>('#ara-list li'));
+  const label = document.getElementById('ara-sonuc')!;
+  const norm = (s: string) => s.toLocaleLowerCase('tr-TR').replace(/ı/g, 'i').replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ş/g, 's').replace(/ö/g, 'o').replace(/ç/g, 'c');
+  function run() {
+    const terms = norm(input.value).split(/\s+/).filter(Boolean);
+    let n = 0;
+    rows.forEach((r) => {
+      const ok = terms.every((t) => (r.dataset.h || '').includes(t));
+      r.hidden = !ok;
+      if (ok) n++;
+    });
+    label.textContent = terms.length ? `${n} sonuç` : 'Tüm hesaplayıcılar';
+  }
+  input.value = new URLSearchParams(location.search).get('q') || '';
+  input.addEventListener('input', run);
+  run();
+</script>

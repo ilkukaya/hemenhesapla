@@ -3,83 +3,103 @@ import CalcLayout from '../../layouts/CalcLayout.astro';
 import CalcInput from '../../components/calculator/CalcInput.astro';
 import CalcSelect from '../../components/calculator/CalcSelect.astro';
 import CalcResult from '../../components/calculator/CalcResult.astro';
+import legal from '../../data/legal-2026.json';
 
-const faq = [
-  {
-    question: "Mevduat faizi nasıl hesaplanır?",
-    answer: "Mevduat faizi basit faiz yöntemiyle hesaplanır. Brüt Faiz = Anapara × (Yıllık Faiz Oranı / 100) × (Vade Gün / 365) formülü kullanılır. Net faiz ise brüt faizden stopaj kesintisi düşüldükten sonra elde edilen tutardır. Örneğin 100.000 TL anaparayı %50 yıllık faizle 32 gün vadeli mevduata yatırdığınızda yaklaşık 4.384 TL brüt faiz elde edersiniz.",
-  },
-  {
-    question: "Mevduat stopaj oranı ne kadardır?",
-    answer: "2024 itibarıyla Türkiye'de mevduat faizlerinden uygulanan stopaj oranları vadeye göre değişmektedir: 6 aya kadar (dahil) vadeli mevduatta %15, 6 aydan 1 yıla kadar vadeli mevduatta %12, 1 yıl ve üzeri vadeli mevduatta %10 stopaj uygulanır. Katılım hesapları ile Türk lirası mevduatlar için oranlar farklılık gösterebilir.",
-  },
-  {
-    question: "Mevduat faizini artırmak için ne yapılabilir?",
-    answer: "Faiz getirisini artırmak için vadeyi uzatmak, anapara miktarını yükseltmek veya daha yüksek faiz oranı sunan bankaları tercih etmek etkilidir. Ayrıca bileşik faiz avantajından yararlanmak için vade sonunda faizi anaparaya ekleyerek yeniden yatırım yapabilirsiniz. Farklı bankaların mevduat kampanyalarını düzenli takip etmek de önemlidir.",
-  },
+const tiers = legal.mevduatStopaj.tiers;
+const stopajOptions = [
+  { value: "oto", label: "Vadeye göre otomatik (2026)" },
+  ...tiers.map((t) => ({ value: String(t.rate), label: `%${String(t.rate).replace('.', ',')} – ${t.label}` })),
+  { value: "0", label: "%0 (stopajsız)" },
 ];
 
 const meta = {
   title: "Mevduat Faizi Hesaplama",
-  description: "Banka mevduatı faiz getirinizi anında hesaplayın. Brüt faiz, stopaj kesintisi ve net faiz getirisi hesaplama aracı.",
+  seoTitle: "Mevduat Faizi Hesaplama 2026 – Net Getiri ve Stopaj",
+  description: "Mevduat faizi hesaplama 2026: anapara, yıllık faiz ve vade gün sayısına göre brüt faizi, vadeye göre %17,5 / %15 / %10 stopajı ve net getirinizi hemen hesaplayın.",
+  summary: "Mevduat brüt faizi = Anapara × Yıllık faiz × Gün ÷ 365. Brüt faizden stopaj düşülerek net faiz bulunur; 2026'da TL mevduatta stopaj 6 aya kadar vadede %17,5, 1 yıla kadar %15, daha uzun vadede %10'dur. Örneğin 100.000 TL, %40 faiz ve 32 günde brüt 3.506,85 TL, net 2.893,15 TL getirir.",
+  howTo: [
+    "Yatırmak istediğiniz anaparayı girin.",
+    "Bankanın verdiği yıllık brüt faiz oranını yazın.",
+    "Vade gün sayısını girin (32, 46, 92, 181, 365 gibi).",
+    "Stopaj oranını otomatik bırakın ya da hesabınızın oranını seçin; net getiriyi ve vade sonu tutarını görün."
+  ],
+  sources: [
+    { name: "10041 sayılı Cumhurbaşkanı Kararı – mevduat stopaj oranları (Resmî Gazete)", url: "https://www.resmigazete.gov.tr/eskiler/2025/07/20250709-6.pdf" },
+    { name: "TCMB – Para Politikası Kurulu kararları (2026)", url: "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Main+Menu/Temel+Faaliyetler/Para+Politikasi/PPK/2026" }
+  ],
   category: "finans",
   slug: "mevduat-faizi-hesaplama",
-  keywords: ["mevduat faizi hesaplama", "faiz getirisi hesaplama", "banka faizi", "stopaj kesintisi", "net faiz hesaplama", "vadeli mevduat"],
-  dateModified: "2026-04-01",
-  relatedCalcs: ["bilesik-faiz-hesaplama", "enflasyon-hesaplama", "kredi-hesaplama"],
-  faq,
+  keywords: ["mevduat faizi hesaplama", "32 günlük faiz hesaplama", "mevduat stopaj oranı 2026", "net faiz getirisi", "vadeli mevduat hesaplama", "faiz getirisi hesaplama"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["finans/bilesik-faiz-hesaplama", "finans/enflasyon-hesaplama", "finans/yatirim-getiri-hesaplama", "finans/stopaj-hesaplama"],
+  faq: [
+    {
+      question: "2026'da mevduat stopaj oranı kaç?",
+      answer: "TL vadeli mevduatta stopaj; vadesiz ve 6 aya kadar vadeli hesaplarda %17,5, 1 yıla kadar vadeli hesaplarda %15, 1 yıldan uzun vadelilerde %10'dur. Bu oranlar 9 Temmuz 2025'te yürürlüğe girdi ve süresi 31 Aralık 2026'ya kadar uzatıldı. Oran, hesabın açıldığı ya da vadenin yenilendiği tarihte geçerli olan karara göre belirlenir."
+    },
+    {
+      question: "Mevduat faizi nasıl hesaplanır?",
+      answer: "Brüt faiz, anapara × yıllık faiz oranı × vade günü ÷ 365 formülüyle hesaplanır. Bu tutardan stopaj kesilir, kalan net faiz vade sonunda anaparaya eklenir. Örneğin 250.000 TL, %42 yıllık faiz ve 32 gün vadede brüt faiz 9.205,48 TL, %17,5 stopaj sonrası net faiz 7.594,52 TL'dir."
+    },
+    {
+      question: "100.000 TL'nin 32 günlük faizi ne kadar?",
+      answer: "Yıllık %40 brüt faiz oranıyla 100.000 TL'nin 32 günlük brüt faizi 3.506,85 TL'dir. %17,5 stopaj (613,70 TL) düşülünce net getiri 2.893,15 TL olur. Faiz oranı bankaya ve tutara göre değiştiği için kendi oranınızı hesaplayıcıya girerek sonucu güncelleyebilirsiniz."
+    },
+    {
+      question: "Vade yenilendiğinde faiz bileşik mi işler?",
+      answer: "Vade sonunda net faiz anaparaya eklenir ve hesap aynı koşullarla yenilenirse bir sonraki dönemde bu toplam üzerinden faiz işler. Böylece kısa vadeli mevduatın yıllık getirisi bileşik etkiyle nominal orandan biraz yüksek olur. Birden çok dönem için Bileşik Faiz Hesaplama aracını kullanabilirsiniz."
+    },
+    {
+      question: "Mevduat faizi enflasyona karşı koruyor mu?",
+      answer: "Reel getiri, net faiz oranı ile enflasyon arasındaki farka bağlıdır. Net yıllık getiriniz yıllık enflasyonun altındaysa paranızın satın alma gücü azalır. Karşılaştırma için stopaj sonrası yıllık getiriyi TÜİK'in açıkladığı yıllık TÜFE ile kıyaslayın."
+    }
+  ]
 };
 ---
 
 <CalcLayout meta={meta}>
-  <form id="calc-form" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
+  <form id="calc-form" class="calc-inputs" novalidate>
     <CalcInput
       id="anapara"
       label="Anapara"
       type="number"
       suffix="₺"
       placeholder="100000"
-      step={1000}
+      step="any"
       min={0}
     />
     <CalcInput
       id="faizOrani"
-      label="Yıllık Faiz Oranı"
+      label="Yıllık Brüt Faiz Oranı"
       type="number"
       suffix="%"
-      placeholder="50.00"
-      step={0.01}
+      placeholder="40"
+      step="any"
       min={0}
     />
-    <CalcSelect
+    <CalcInput
       id="vade"
       label="Vade"
-      options={[
-        { value: "32", label: "32 Gün" },
-        { value: "91", label: "91 Gün" },
-        { value: "181", label: "181 Gün" },
-        { value: "365", label: "365 Gün" },
-      ]}
+      type="number"
+      suffix="gün"
+      placeholder="32"
       value="32"
+      step={1}
+      min={1}
+      max={3650}
     />
     <CalcSelect
       id="stopajOrani"
       label="Stopaj Oranı"
-      options={[
-        { value: "0", label: "%0" },
-        { value: "5", label: "%5" },
-        { value: "10", label: "%10" },
-        { value: "12", label: "%12" },
-        { value: "15", label: "%15" },
-      ]}
-      value="15"
+      options={stopajOptions}
+      value="oto"
     />
   </form>
 
   <CalcResult>
     <div slot="main">
-      <span class="calc-result-label">Net Faiz Getirisi</span>
-      <span class="calc-result-value" id="net-faiz">—</span>
+      <p class="calc-result-label">Net Faiz Getirisi</p>
+      <p class="calc-result-value" id="net-faiz">—</p>
     </div>
     <div slot="details">
       <div class="calc-detail-row">
@@ -87,116 +107,98 @@ const meta = {
         <span class="calc-detail-value" id="brut-faiz">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Stopaj Kesintisi</span>
+        <span class="calc-detail-label" id="stopaj-label">Stopaj Kesintisi</span>
         <span class="calc-detail-value" id="stopaj-kesinti">—</span>
       </div>
       <div class="calc-detail-row">
         <span class="calc-detail-label">Vade Sonu Toplam</span>
         <span class="calc-detail-value" id="vade-sonu">—</span>
       </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Net Yıllık Getiri Oranı</span>
+        <span class="calc-detail-value" id="net-oran">—</span>
+      </div>
     </div>
   </CalcResult>
 
-  <section class="calc-content">
-    <h2>Mevduat Faizi Hesaplama Nasıl Yapılır?</h2>
-    <p>
-      Vadeli mevduat, birikimlerinizi belirli bir süre boyunca bankada tutarak faiz geliri elde etmenizi sağlayan en yaygın tasarruf araçlarından biridir. Mevduat faizi hesaplama aracımız sayesinde anaparanızı, yıllık faiz oranını, vade süresini ve stopaj oranını girerek net kazancınızı saniyeler içinde öğrenebilirsiniz.
-    </p>
-    <h3>Mevduat Faizi Formülü</h3>
-    <p>
-      Türk bankalarında vadeli mevduat faizi basit faiz yöntemiyle hesaplanır. Formül şu şekildedir:
-    </p>
-    <p>
-      <strong>Brüt Faiz = Anapara × (Yıllık Faiz Oranı / 100) × (Vade Gün Sayısı / 365)</strong>
-    </p>
-    <p>
-      <strong>Net Faiz = Brüt Faiz − (Brüt Faiz × Stopaj Oranı / 100)</strong>
-    </p>
-    <p>
-      Vade sonunda hesabınıza yatırılan tutar ise anaparanız ile net faizin toplamına eşittir.
-    </p>
-    <h3>Stopaj Kesintisi Nedir?</h3>
-    <p>
-      Mevduat faiz gelirleri üzerinden devlet tarafından stopaj (gelir vergisi kesintisi) alınır. Bu kesinti vadeye göre değişmekle birlikte yaygın uygulama %15 oranındadır. Stopaj tutarı, elde edilen brüt faiz üzerinden otomatik olarak banka tarafından kesilir ve doğrudan devlete aktarılır; bu nedenle hesabınıza net faiz tutarı yatar.
-    </p>
-    <h3>Dikkat Edilmesi Gerekenler</h3>
-    <p>
-      Mevduat faizi değerlendirmesinde yalnızca nominal (yüzde) oranına değil, enflasyon oranına da dikkat etmelisiniz. Faiz oranının enflasyon oranının altında kaldığı dönemlerde mevduatın reel getirisi negatif olabilir. Enflasyona karşı koruma sağlamak için TÜFE'ye endeksli mevduat hesaplarını veya alternatif yatırım araçlarını değerlendirebilirsiniz. Ayrıca hesap açmadan önce bankanın TMSF güvencesi kapsamındaki limit olan 1.000.000 TL'yi göz önünde bulundurun.
-    </p>
-    <h3>Sıkça Sorulan Sorular</h3>
-    {faq.map((item) => (
-      <div class="faq-item">
-        <h4>{item.question}</h4>
-        <p>{item.answer}</p>
-      </div>
-    ))}
-  </section>
-</CalcLayout>
+  <script type="application/json" id="mevduat-data" set:html={JSON.stringify(tiers)}></script>
 
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
-    const resultArea = document.getElementById('calc-result');
+  <script>
+    import { formatTL, formatPercent, formatNumber, readNumber, readValue, readJSON, setText, showResult, initCalculator, round2 } from './_shared';
 
-    function debounce(fn: (...args: unknown[]) => void, delay = 150) {
-      let timer: ReturnType<typeof setTimeout>;
-      return (...args: unknown[]) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), delay); };
+    const tiers = readJSON<{ maxDays: number | null; rate: number; label: string }[]>('mevduat-data');
+
+    function autoRate(gun: number): number {
+      const t = tiers.find((x) => x.maxDays === null || gun <= x.maxDays);
+      return t ? t.rate : 0;
     }
 
-    function formatTL(num: number) {
-      return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
-    }
+    function calculate(): boolean {
+      const anapara = readNumber('anapara');
+      const faiz = readNumber('faizOrani');
+      const gun = Math.round(readNumber('vade'));
+      const secim = readValue('stopajOrani');
 
-    const debouncedCalc = debounce(calculate);
-    inputs.forEach(input => {
-      input.addEventListener('input', debouncedCalc);
-      input.addEventListener('change', debouncedCalc);
-    });
-
-    function calculate() {
-      const anapara = parseFloat((document.getElementById('anapara') as HTMLInputElement).value);
-      const faizOrani = parseFloat((document.getElementById('faizOrani') as HTMLInputElement).value);
-      const vade = parseInt((document.getElementById('vade') as HTMLSelectElement).value);
-      const stopaj = parseFloat((document.getElementById('stopajOrani') as HTMLSelectElement).value);
-
-      if (!anapara || !faizOrani || !vade || anapara <= 0 || faizOrani <= 0) {
-        if (resultArea) resultArea.classList.add('hidden');
-        return;
+      if (!(anapara > 0) || !(faiz >= 0) || !(gun >= 1)) {
+        showResult(false);
+        return false;
       }
 
-      const brutFaiz = anapara * (faizOrani / 100) * (vade / 365);
-      const stopajKesinti = brutFaiz * (stopaj / 100);
-      const netFaiz = brutFaiz - stopajKesinti;
-      const vadeSonu = anapara + netFaiz;
+      const stopajOrani = secim === 'oto' || secim === '' ? autoRate(gun) : Number(secim);
+      const brut = round2(anapara * (faiz / 100) * (gun / 365));
+      const stopaj = round2(brut * stopajOrani / 100);
+      const net = round2(brut - stopaj);
 
-      (document.getElementById('net-faiz') as HTMLElement).textContent = formatTL(netFaiz);
-      (document.getElementById('brut-faiz') as HTMLElement).textContent = formatTL(brutFaiz);
-      (document.getElementById('stopaj-kesinti') as HTMLElement).textContent = formatTL(stopajKesinti);
-      (document.getElementById('vade-sonu') as HTMLElement).textContent = formatTL(vadeSonu);
+      setText('net-faiz', formatTL(net));
+      setText('brut-faiz', formatTL(brut));
+      setText('stopaj-label', `Stopaj Kesintisi (%${formatNumber(stopajOrani, 0, 2)})`);
+      setText('stopaj-kesinti', formatTL(stopaj));
+      setText('vade-sonu', formatTL(anapara + net));
+      setText('net-oran', formatPercent((net / anapara) * (365 / gun) * 100));
 
-      if (resultArea) resultArea.classList.remove('hidden');
-      updateURL();
+      showResult(true);
+      return true;
     }
 
-    function updateURL() {
-      const params = new URLSearchParams();
-      inputs.forEach(input => {
-        const el = input as HTMLInputElement;
-        if (el.value && el.id) params.set(el.id, el.value);
-      });
-      history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
-    }
+    initCalculator({ calculate });
+  </script>
 
-    function loadFromURL() {
-      const params = new URLSearchParams(window.location.search);
-      let hasParams = false;
-      inputs.forEach(input => {
-        const el = input as HTMLInputElement;
-        if (el.id && params.has(el.id)) { el.value = params.get(el.id)!; hasParams = true; }
-      });
-      if (hasParams) calculate();
-    }
+  <section class="calc-content">
+    <h2>Mevduat Faizi Nasıl Hesaplanır?</h2>
+    <p>
+      Türk bankaları vadeli mevduatta basit faiz uygular ve yılı 365 gün kabul eder. Vade sonunda hesaplanan brüt faizden stopaj (gelir vergisi kesintisi) düşülür, kalan net faiz anaparaya eklenir.
+    </p>
+    <ul>
+      <li><strong>Brüt faiz</strong> = Anapara × Yıllık faiz oranı × Vade (gün) ÷ 365</li>
+      <li><strong>Stopaj</strong> = Brüt faiz × Stopaj oranı</li>
+      <li><strong>Net faiz</strong> = Brüt faiz − Stopaj</li>
+    </ul>
 
-    loadFromURL();
-  });
-</script>
+    <h2>2026 TL Mevduat Stopaj Oranları</h2>
+    <div class="calc-table-wrap">
+      <table class="calc-table">
+        <thead><tr><th scope="col">Vade</th><th scope="col">Stopaj oranı</th></tr></thead>
+        <tbody>
+          {tiers.map((t) => (
+            <tr><td>{t.label}</td><td>%{String(t.rate).replace('.', ',')}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Oranlar 10041 sayılı Cumhurbaşkanı Kararı ile belirlendi ve 20 Haziran 2026 tarihli karar ile 31 Aralık 2026'ya kadar uzatıldı. Döviz tevdiat hesaplarında farklı oranlar uygulanır.
+    </p>
+
+    <h2>Örnek Hesaplama</h2>
+    <p>
+      250.000 TL'yi yıllık %42 brüt faizle 32 günlük vadeye yatırdığınızı düşünelim. Brüt faiz 250.000 × 0,42 × 32 ÷ 365 = 9.205,48 TL olur. Vade 6 aydan kısa olduğu için %17,5 stopaj uygulanır: 1.610,96 TL. Net faiz <strong>7.594,52 TL</strong>, vade sonunda hesabınızda 257.594,52 TL bulunur. Bu, stopaj sonrası yaklaşık %34,65'lik basit yıllık getiriye karşılık gelir.
+    </p>
+
+    <h3>Getiriyi Etkileyen Diğer Konular</h3>
+    <ul>
+      <li>Bankalar tutar ve vade aralığına göre farklı oran verir; ilan edilen "hoş geldin" oranları çoğu zaman yalnızca ilk vade için geçerlidir.</li>
+      <li>Vadeyi bozarsanız o dönemin faizini genellikle kaybedersiniz.</li>
+      <li>Mevduatınız, kişi başına ve banka başına belirli bir tutara kadar TMSF güvencesindedir.</li>
+    </ul>
+  </section>
+</CalcLayout>

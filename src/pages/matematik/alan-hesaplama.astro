@@ -6,33 +6,57 @@ import CalcResult from '../../components/calculator/CalcResult.astro';
 
 const faq = [
   {
-    question: "Dairenin alanı nasıl hesaplanır?",
-    answer: "Daire alanı π × r² formülüyle hesaplanır. Burada r yarıçaptır. Örneğin yarıçapı 5 cm olan bir dairenin alanı 3,14159 × 5² = 78,54 cm² olur."
+    question: "Dikdörtgenin alanı nasıl hesaplanır?",
+    answer: "Dikdörtgenin alanı kısa kenar ile uzun kenarın çarpımıdır: Alan = a × b. 4 m eninde ve 5,5 m boyunda bir odanın alanı 4 × 5,5 = 22 m²'dir. Çevresi ise 2 × (a + b) = 19 m olur. Parke, halı veya fayans alırken bu değere %5–10 fire payı eklemek iyi bir uygulamadır."
   },
   {
-    question: "Üçgenin alanını bulmak için ne kullanılır?",
-    answer: "Üçgenin alanı ½ × taban × yükseklik formülüyle bulunur. Örneğin tabanı 8 m ve yüksekliği 6 m olan bir üçgenin alanı ½ × 8 × 6 = 24 m² olur."
+    question: "Dairenin alanı nasıl bulunur?",
+    answer: "Daire alanı π × r² formülüyle bulunur; r yarıçaptır. Yarıçapı 3 m olan bir havuzun alanı 3,14159 × 9 ≈ 28,27 m²'dir. Elinizde çap varsa önce ikiye bölün: çapı 6 m olan dairenin yarıçapı 3 m'dir. Dairenin çevresi 2 × π × r, yani yaklaşık 18,85 m olur."
   },
   {
-    question: "Kare ile dikdörtgenin alanı arasındaki fark nedir?",
-    answer: "Karenin dört kenarı eşit olduğundan alan = kenar² formülü kullanılır. Dikdörtgende ise iki farklı kenar uzunluğu olduğundan alan = en × boy formülü kullanılır. Tüm kareler dikdörtgendir ama tüm dikdörtgenler kare değildir."
+    question: "Üç kenarı bilinen üçgenin alanı nasıl hesaplanır?",
+    answer: "Heron formülü kullanılır. Önce yarı çevre bulunur: u = (a + b + c) ÷ 2. Alan = √[u × (u − a) × (u − b) × (u − c)]. Kenarları 5, 6 ve 7 cm olan üçgende u = 9, alan √(9 × 4 × 3 × 2) = √216 ≈ 14,70 cm²'dir. Kenarlar üçgen eşitsizliğini sağlamıyorsa böyle bir üçgen çizilemez."
+  },
+  {
+    question: "Yamuğun alanı formülü nedir?",
+    answer: "Yamuğun alanı paralel iki tabanın ortalaması ile yüksekliğin çarpımıdır: Alan = (a + c) ÷ 2 × h. Alt tabanı 10 m, üst tabanı 6 m ve yüksekliği 4 m olan bir arsanın alanı (10 + 6) ÷ 2 × 4 = 32 m²'dir. Yükseklik, tabanlara dik olarak ölçülen mesafedir; eğik kenar uzunluğu yerine kullanılmamalıdır."
+  },
+  {
+    question: "1 dönüm kaç metrekaredir?",
+    answer: "Türkiye'de kullanılan yeni (metrik) dönüm 1.000 m²'dir. 1 hektar 10.000 m², yani 10 dönümdür; 1 dekar da 1.000 m²'ye eşittir. Eski Osmanlı dönümü yaklaşık 919 m² olduğundan eski tapu kayıtlarında farklılık görülebilir. Hesaplayıcı, metre cinsinden girilen ölçüler için sonucu dönüm karşılığıyla da gösterir."
+  },
+  {
+    question: "Alan ve çevre arasındaki fark nedir?",
+    answer: "Alan, bir şeklin kapladığı yüzeyin büyüklüğüdür ve m², cm² gibi kare birimlerle ölçülür. Çevre ise şeklin dış sınırının toplam uzunluğudur ve m, cm gibi uzunluk birimleriyle ifade edilir. Bir bahçenin çimlendirilecek kısmı alanla, etrafına çekilecek çitin uzunluğu çevreyle hesaplanır. Aynı çevreye sahip şekillerin alanları farklı olabilir."
   }
 ];
 
 const meta = {
   title: "Alan Hesaplama",
-  description: "Kare, dikdörtgen, daire ve üçgen için alan hesaplama aracı. Şekli seçin, ölçüleri girin; alanı ve çevreyi anında öğrenin.",
+  seoTitle: "Alan Hesaplama: Kare, Daire, Üçgen, Yamuk Alanı",
+  description: "Kare, dikdörtgen, daire, üçgen, yamuk, paralelkenar, eşkenar dörtgen ve elipsin alanını ve çevresini hesaplayın. Heron formülü, m² ve dönüm karşılığıyla.",
+  summary: "Alan, şeklin kapladığı yüzeyin büyüklüğüdür: dikdörtgende a × b, karede a², dairede π × r², üçgende taban × yükseklik ÷ 2, yamukta (a + c) ÷ 2 × h formülüyle hesaplanır. Örneğin 4 m × 5 m bir odanın alanı 20 m²'dir.",
+  howTo: [
+    "Şekli seçin; giriş alanları seçtiğiniz şekle göre değişir.",
+    "Ölçü birimini seçin ve tüm ölçüleri aynı birimde girin.",
+    "Alan, çevre ve metrekare karşılığı anında hesaplanır.",
+    "Daire ve elips için çap değil yarıçap girdiğinizden emin olun."
+  ],
+  sources: [
+    { name: "Wolfram MathWorld: Area", url: "https://mathworld.wolfram.com/Area.html" },
+    { name: "Wolfram MathWorld: Heron's Formula", url: "https://mathworld.wolfram.com/HeronsFormula.html" }
+  ],
   category: "matematik",
   slug: "alan-hesaplama",
-  keywords: ["alan hesaplama", "kare alan", "dikdörtgen alan", "daire alan", "üçgen alan", "geometri hesaplama"],
-  dateModified: "2026-04-01",
-  relatedCalcs: ["hacim-hesaplama", "yuzde-hesaplama", "oran-hesaplama"],
-  faq,
+  keywords: ["alan hesaplama", "dikdörtgen alanı", "daire alanı", "üçgen alanı", "yamuk alanı", "metrekare hesaplama", "çevre hesaplama"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["matematik/hacim-hesaplama", "insaat/fayans-hesaplama", "insaat/parke-hesaplama", "insaat/boya-hesaplama", "donusum/uzunluk-donusturucu"],
+  faq
 };
 ---
 
 <CalcLayout meta={meta}>
-  <form id="calc-form" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
+  <form id="calc-form" class="calc-inputs" novalidate>
     <CalcSelect
       id="sekil"
       label="Şekil"
@@ -40,15 +64,39 @@ const meta = {
         { value: "kare", label: "Kare" },
         { value: "dikdortgen", label: "Dikdörtgen" },
         { value: "daire", label: "Daire" },
-        { value: "ucgen", label: "Üçgen" },
+        { value: "ucgen", label: "Üçgen (taban ve yükseklik)" },
+        { value: "ucgen3", label: "Üçgen (üç kenar, Heron)" },
+        { value: "paralelkenar", label: "Paralelkenar" },
+        { value: "yamuk", label: "Yamuk" },
+        { value: "eskenar", label: "Eşkenar dörtgen (köşegenler)" },
+        { value: "elips", label: "Elips" },
       ]}
       value="kare"
     />
-    <CalcInput id="boyut1" label="Kenar (a)" type="number" placeholder="Örn: 5" suffix="m" min={0} />
+    <CalcSelect
+      id="birim"
+      label="Ölçü Birimi"
+      options={[
+        { value: "mm", label: "Milimetre (mm)" },
+        { value: "cm", label: "Santimetre (cm)" },
+        { value: "m", label: "Metre (m)" },
+        { value: "km", label: "Kilometre (km)" },
+        { value: "in", label: "İnç (in)" },
+        { value: "ft", label: "Feet (ft)" },
+      ]}
+      value="m"
+    />
+    <div id="boyut1-wrapper">
+      <CalcInput id="boyut1" suffix="m" label="Kenar (a)" type="number" placeholder="Örn: 4,5" min={0} />
+    </div>
     <div id="boyut2-wrapper">
-      <CalcInput id="boyut2" label="Boy (b)" type="number" placeholder="Örn: 8" suffix="m" min={0} />
+      <CalcInput id="boyut2" suffix="m" label="Boy (b)" type="number" placeholder="Örn: 6" min={0} />
+    </div>
+    <div id="boyut3-wrapper">
+      <CalcInput id="boyut3" suffix="m" label="Üçüncü ölçü" type="number" placeholder="Örn: 7" min={0} />
     </div>
   </form>
+  <p id="calc-error" class="calc-error" role="alert" hidden></p>
 
   <CalcResult>
     <div slot="main">
@@ -57,147 +105,289 @@ const meta = {
     </div>
     <div slot="details">
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Alan</span>
-        <span class="calc-detail-value" id="d-alan">—</span>
+        <span class="calc-detail-label">Formül</span>
+        <span class="calc-detail-value" id="d-formul">—</span>
       </div>
       <div class="calc-detail-row">
         <span class="calc-detail-label">Çevre</span>
         <span class="calc-detail-value" id="d-cevre">—</span>
       </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label" id="d-ek-label">Ek bilgi</span>
+        <span class="calc-detail-value" id="d-ek">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Metrekare karşılığı</span>
+        <span class="calc-detail-value" id="d-m2">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Dönüm karşılığı (1 dönüm = 1.000 m²)</span>
+        <span class="calc-detail-value" id="d-donum">—</span>
+      </div>
     </div>
   </CalcResult>
 
+  <script>
+    type Shape = 'kare' | 'dikdortgen' | 'daire' | 'ucgen' | 'ucgen3' | 'paralelkenar' | 'yamuk' | 'eskenar' | 'elips';
+    interface Result { alan: number; cevre: number; formul: string; ekLabel?: string; ek?: string; error?: string }
+
+    // Birimin metre cinsinden tam karşılığı (inç ve feet 1959 uluslararası tanımı)
+    const TO_M: Record<string, number> = { mm: 0.001, cm: 0.01, m: 1, km: 1000, in: 0.0254, ft: 0.3048 };
+
+    const FIELDS: Record<Shape, { labels: string[]; placeholders: string[] }> = {
+      kare: { labels: ['Kenar (a)'], placeholders: ['Örn: 4,5'] },
+      dikdortgen: { labels: ['En (a)', 'Boy (b)'], placeholders: ['Örn: 4', 'Örn: 5,5'] },
+      daire: { labels: ['Yarıçap (r)'], placeholders: ['Örn: 3'] },
+      ucgen: { labels: ['Taban (a)', 'Yükseklik (h)'], placeholders: ['Örn: 8', 'Örn: 6'] },
+      ucgen3: { labels: ['Kenar a', 'Kenar b', 'Kenar c'], placeholders: ['Örn: 5', 'Örn: 6', 'Örn: 7'] },
+      paralelkenar: { labels: ['Taban (a)', 'Yükseklik (h)', 'Yan kenar (b)'], placeholders: ['Örn: 10', 'Örn: 4', 'Örn: 5'] },
+      yamuk: { labels: ['Alt taban (a)', 'Üst taban (c)', 'Yükseklik (h)'], placeholders: ['Örn: 10', 'Örn: 6', 'Örn: 4'] },
+      eskenar: { labels: ['Köşegen (e)', 'Köşegen (f)'], placeholders: ['Örn: 6', 'Örn: 8'] },
+      elips: { labels: ['Büyük yarı eksen (a)', 'Küçük yarı eksen (b)'], placeholders: ['Örn: 5', 'Örn: 3'] },
+    };
+
+    const SUP: Record<string, string> = { '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹', '-': '⁻' };
+
+    function parseNum(raw: string): number {
+      let s = raw.trim().replace(/\s+/g, '');
+      if (!s) return NaN;
+      s = s.replace(',', '.');
+      if (!/^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/i.test(s)) return NaN;
+      return Number(s);
+    }
+
+    function fmt(n: number, maxFrac = 4): string {
+      if (Number.isNaN(n)) return '—';
+      if (!Number.isFinite(n)) return '∞';
+      if (n === 0) return '0';
+      const abs = Math.abs(n);
+      if (abs >= 1e15 || abs < 1e-6) {
+        const [m, e] = n.toExponential(6).split('e');
+        const mant = new Intl.NumberFormat('tr-TR', { maximumFractionDigits: 6 }).format(Number(m));
+        return `${mant} × 10${String(Number(e)).split('').map(c => SUP[c] ?? c).join('')}`;
+      }
+      const clean = Number(n.toPrecision(12));
+      const extra = abs < 1 ? Math.ceil(-Math.log10(abs)) : 0;
+      return new Intl.NumberFormat('tr-TR', { maximumFractionDigits: Math.min(20, maxFrac + extra) }).format(clean);
+    }
+
+    function compute(shape: Shape, v: number[]): Result {
+      const [a, b, c] = v;
+      const PI = Math.PI;
+      switch (shape) {
+        case 'kare':
+          return { alan: a * a, cevre: 4 * a, formul: 'a²', ekLabel: 'Köşegen (a√2)', ek: fmt(a * Math.SQRT2) };
+        case 'dikdortgen':
+          return { alan: a * b, cevre: 2 * (a + b), formul: 'a × b', ekLabel: 'Köşegen √(a² + b²)', ek: fmt(Math.hypot(a, b)) };
+        case 'daire':
+          return { alan: PI * a * a, cevre: 2 * PI * a, formul: 'π × r²', ekLabel: 'Çap (2r)', ek: fmt(2 * a) };
+        case 'ucgen':
+          return { alan: (a * b) / 2, cevre: NaN, formul: 'taban × yükseklik ÷ 2' };
+        case 'ucgen3': {
+          if (a + b <= c || a + c <= b || b + c <= a) {
+            return { alan: NaN, cevre: NaN, formul: '', error: 'Bu kenarlarla üçgen oluşmaz: herhangi iki kenarın toplamı üçüncü kenardan büyük olmalıdır.' };
+          }
+          const u = (a + b + c) / 2;
+          const alan = Math.sqrt(u * (u - a) * (u - b) * (u - c));
+          return { alan, cevre: a + b + c, formul: '√[u(u − a)(u − b)(u − c)]', ekLabel: 'Yarı çevre (u)', ek: fmt(u) };
+        }
+        case 'paralelkenar': {
+          if (!Number.isNaN(c) && c < b) {
+            return { alan: NaN, cevre: NaN, formul: '', error: 'Yan kenar, yükseklikten kısa olamaz.' };
+          }
+          return { alan: a * b, cevre: Number.isNaN(c) ? NaN : 2 * (a + c), formul: 'taban × yükseklik' };
+        }
+        case 'yamuk':
+          return { alan: ((a + b) / 2) * c, cevre: NaN, formul: '(a + c) ÷ 2 × h', ekLabel: 'Orta taban (a + c) ÷ 2', ek: fmt((a + b) / 2) };
+        case 'eskenar': {
+          const kenar = Math.hypot(a / 2, b / 2);
+          return { alan: (a * b) / 2, cevre: 4 * kenar, formul: 'e × f ÷ 2', ekLabel: 'Kenar uzunluğu', ek: fmt(kenar) };
+        }
+        case 'elips': {
+          // Çevre için Ramanujan'ın ikinci yaklaşımı (hata çok küçük)
+          const h = ((a - b) ** 2) / ((a + b) ** 2);
+          const cevre = PI * (a + b) * (1 + (3 * h) / (10 + Math.sqrt(4 - 3 * h)));
+          return { alan: PI * a * b, cevre, formul: 'π × a × b', ekLabel: 'Çevre yöntemi', ek: 'Ramanujan yaklaşımı' };
+        }
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('calc-form') as HTMLFormElement;
+      const inputs = form.querySelectorAll<HTMLInputElement | HTMLSelectElement>('input, select');
+      const resultArea = document.getElementById('calc-result');
+      const errorEl = document.getElementById('calc-error') as HTMLElement;
+      const sekilEl = document.getElementById('sekil') as HTMLSelectElement;
+      const birimEl = document.getElementById('birim') as HTMLSelectElement;
+      const fields = [1, 2, 3].map(i => ({
+        input: document.getElementById(`boyut${i}`) as HTMLInputElement,
+        wrapper: document.getElementById(`boyut${i}-wrapper`) as HTMLElement,
+      }));
+
+      const setText = (id: string, text: string) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = text;
+      };
+
+      function updateLabels() {
+        const cfg = FIELDS[sekilEl.value as Shape] ?? FIELDS.kare;
+        const unit = birimEl.value;
+        fields.forEach((f, i) => {
+          const visible = i < cfg.labels.length;
+          f.wrapper.hidden = !visible;
+          if (!visible) return;
+          const label = f.wrapper.querySelector('.calc-label');
+          const optional = sekilEl.value === 'paralelkenar' && i === 2;
+          if (label) label.textContent = `${cfg.labels[i]}${optional ? ' (çevre için, isteğe bağlı)' : ''}`;
+          const suffix = f.wrapper.querySelector('.calc-input-suffix');
+          if (suffix) suffix.textContent = unit;
+          f.input.placeholder = cfg.placeholders[i];
+        });
+      }
+
+      function debounce<T extends (...args: never[]) => void>(fn: T, delay = 150) {
+        let timer: ReturnType<typeof setTimeout>;
+        return (...args: Parameters<T>) => {
+          clearTimeout(timer);
+          timer = setTimeout(() => fn(...args), delay);
+        };
+      }
+
+      function hide(msg = '') {
+        errorEl.textContent = msg;
+        errorEl.hidden = !msg;
+        resultArea?.classList.add('hidden');
+      }
+
+      function calculate() {
+        const shape = (FIELDS[sekilEl.value as Shape] ? sekilEl.value : 'kare') as Shape;
+        const need = FIELDS[shape].labels.length;
+        const required = shape === 'paralelkenar' ? 2 : need;
+        const values = fields.slice(0, need).map(f => parseNum(f.input.value));
+
+        if (values.slice(0, required).some(v => Number.isNaN(v))) return hide();
+        if (values.some(v => !Number.isNaN(v) && v <= 0)) return hide('Ölçüler sıfırdan büyük olmalıdır.');
+
+        const r = compute(shape, values);
+        if (r.error) return hide(r.error);
+
+        const unit = birimEl.value;
+        const f = TO_M[unit] ?? 1;
+        const m2 = r.alan * f * f;
+
+        errorEl.hidden = true;
+        setText('sonuc-alan', `${fmt(r.alan)} ${unit}²`);
+        setText('d-formul', r.formul);
+        setText('d-cevre', Number.isNaN(r.cevre)
+          ? (shape === 'paralelkenar' ? 'Yan kenarı girin' : 'Tüm kenarlar gerekli')
+          : `${fmt(r.cevre)} ${unit}`);
+        setText('d-ek-label', r.ekLabel ?? 'Ek bilgi');
+        setText('d-ek', r.ek ? (r.ekLabel === 'Çevre yöntemi' ? r.ek : `${r.ek} ${unit}`) : '—');
+        setText('d-m2', `${fmt(m2)} m²`);
+        setText('d-donum', `${fmt(m2 / 1000)} dönüm`);
+
+        resultArea?.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const params = new URLSearchParams();
+        inputs.forEach(el => {
+          const wrapper = el.closest('[id$="-wrapper"]') as HTMLElement | null;
+          if (el.id && el.value !== '' && !wrapper?.hidden) params.set(el.id, el.value);
+        });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+      }
+
+      function loadFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        let hasParams = false;
+        inputs.forEach(el => {
+          if (el.id && params.has(el.id)) {
+            const v = params.get(el.id)!;
+            if (el instanceof HTMLSelectElement) {
+              if (Array.from(el.options).some(o => o.value === v)) el.value = v;
+            } else {
+              const n = parseNum(v);
+              if (!Number.isNaN(n)) el.value = String(n);
+            }
+            hasParams = true;
+          }
+        });
+        updateLabels();
+        if (hasParams) calculate();
+      }
+
+      const debouncedCalc = debounce(calculate);
+      inputs.forEach(el => {
+        el.addEventListener('input', debouncedCalc);
+        el.addEventListener('change', debouncedCalc);
+      });
+      sekilEl.addEventListener('change', updateLabels);
+      birimEl.addEventListener('change', updateLabels);
+      form.addEventListener('submit', e => { e.preventDefault(); calculate(); });
+
+      loadFromURL();
+    });
+  </script>
+
   <section class="calc-content">
-    <h2>Alan Hesaplama Nedir?</h2>
+    <h2>Alan Nedir?</h2>
     <p>
-      Alan hesaplama, geometrik şekillerin kapladığı yüzey miktarını bulmak için kullanılan matematiksel bir işlemdir. Kare metre (m²), santimetre kare (cm²) gibi birimlerle ifade edilen alan, günlük hayatta ev satın alırken, boya veya fayans hesaplarken, bahçe düzenlemesi yaparken ve pek çok mühendislik uygulamasında kullanılır.
+      Alan, düz bir şeklin kapladığı yüzeyin büyüklüğüdür ve kare birimlerle (mm², cm², m², km²) ölçülür. 1 m², kenarı 1 metre olan bir karenin alanıdır. Ev ilanlarındaki metrekare, boya ya da fayans ihtiyacı, arsa büyüklüğü ve kumaş hesabı hep alan hesabına dayanır.
     </p>
+
+    <h2>Alan ve Çevre Formülleri</h2>
+    <table>
+      <thead>
+        <tr><th>Şekil</th><th>Alan</th><th>Çevre</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Kare</td><td>a²</td><td>4a</td></tr>
+        <tr><td>Dikdörtgen</td><td>a × b</td><td>2(a + b)</td></tr>
+        <tr><td>Daire</td><td>π × r²</td><td>2 × π × r</td></tr>
+        <tr><td>Üçgen</td><td>taban × yükseklik ÷ 2</td><td>a + b + c</td></tr>
+        <tr><td>Üçgen (Heron)</td><td>√[u(u − a)(u − b)(u − c)], u = (a + b + c) ÷ 2</td><td>a + b + c</td></tr>
+        <tr><td>Paralelkenar</td><td>taban × yükseklik</td><td>2(a + b)</td></tr>
+        <tr><td>Yamuk</td><td>(a + c) ÷ 2 × h</td><td>Dört kenarın toplamı</td></tr>
+        <tr><td>Eşkenar dörtgen</td><td>e × f ÷ 2</td><td>4 × √[(e/2)² + (f/2)²]</td></tr>
+        <tr><td>Elips</td><td>π × a × b</td><td>Kesin formülü yoktur; Ramanujan yaklaşımı kullanılır</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Örnek Hesaplama</h2>
+    <h3>L biçimli bir salonun alanı</h3>
     <p>
-      Bu araç sayesinde en sık kullanılan dört geometrik şeklin — kare, dikdörtgen, daire ve üçgen — alan hesaplarını kolayca yapabilirsiniz. Şekli seçip ölçüleri girdiğinizde hem alan hem de çevre değeri anında hesaplanır.
+      L biçimli bir salonu iki dikdörtgene bölün: 6 m × 4 m'lik ana bölüm ve 3 m × 2,5 m'lik çıkıntı. Alanlar 24 m² ve 7,5 m², toplam 31,5 m²'dir. Laminat parke için %7 fire eklerseniz 31,5 × 1,07 ≈ 33,7 m² malzeme almanız gerekir.
     </p>
-    <h3>Alan Formülleri</h3>
+    <h3>Dairesel bir bahçe havuzu</h3>
     <p>
-      <strong>Kare:</strong> Alan = a² (kenar uzunluğunun karesi). Çevre = 4 × a.<br />
-      <strong>Dikdörtgen:</strong> Alan = en × boy. Çevre = 2 × (en + boy).<br />
-      <strong>Daire:</strong> Alan = π × r² (yarıçap karesinin π ile çarpımı). Çevre (çap) = 2 × π × r.<br />
-      <strong>Üçgen:</strong> Alan = ½ × taban × yükseklik. Çevre hesabı için üç kenar gerekir.
+      Çapı 4 m olan havuzun yarıçapı 2 m'dir. Alanı π × 2² ≈ 12,57 m², kenar taşı döşenecek çevresi ise 2 × π × 2 ≈ 12,57 m'dir. Yarıçapın 2 olduğu bu özel durumda alan ve çevrenin sayısal değeri eşit çıkar; birimleri farklıdır.
     </p>
-    <h3>Pratik Kullanım Örnekleri</h3>
+
+    <h2>Alan Birimleri Arasındaki Dönüşüm</h2>
     <p>
-      Bir oda döşemesi için kaç m² parke gerektiğini bulmak, duvarları boyamak için yüzey alanı hesabı yapmak veya dairesel bir havuzun yüzey alanını öğrenmek gibi durumlarda bu hesaplayıcıyı kullanabilirsiniz. Örneğin 4 m × 5 m boyutlarındaki bir odanın alanı 20 m²'dir; 10 m²'lik kapı ve pencere alanı çıkarıldığında boyalanacak alan 10 m² kalır.
+      Uzunluk birimi 10 kat büyüdüğünde alan birimi 100 kat büyür, çünkü iki boyut birlikte çarpılır. Bu yüzden 1 m = 100 cm iken 1 m² = 10.000 cm²'dir.
     </p>
-    <h3>Dikkat Edilmesi Gerekenler</h3>
-    <p>
-      Tüm ölçümlerin aynı birimde girilmesi gerekir. Farklı birimler kullanıyorsanız (örneğin biri metre, diğeri santimetre) önce dönüşüm yapın. Daire için yarıçap değeri (çapın yarısı) girilmelidir; çap değerini giriyorsanız 2'ye bölün.
-    </p>
-    <h3>Sıkça Sorulan Sorular</h3>
-    {faq.map((item) => (
-      <div class="faq-item">
-        <h4>{item.question}</h4>
-        <p>{item.answer}</p>
-      </div>
-    ))}
+    <table>
+      <thead>
+        <tr><th>Birim</th><th>Metrekare karşılığı</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1 cm²</td><td>0,0001 m²</td></tr>
+        <tr><td>1 ft² (feet kare)</td><td>0,09290304 m²</td></tr>
+        <tr><td>1 dekar / 1 dönüm</td><td>1.000 m²</td></tr>
+        <tr><td>1 hektar</td><td>10.000 m²</td></tr>
+        <tr><td>1 km²</td><td>1.000.000 m²</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Doğru Ölçüm İçin İpuçları</h2>
+    <ul>
+      <li>Üçgen, paralelkenar ve yamukta yükseklik, tabana dik ölçülen mesafedir; eğik kenar uzunluğu yükseklik yerine kullanılamaz.</li>
+      <li>Daire ve elipste çap değil yarıçap girilir. Çapı ölçtüyseniz ikiye bölün.</li>
+      <li>Düzensiz odaları dikdörtgen ve üçgenlere bölüp alanları toplayın.</li>
+      <li>Bütün ölçüleri aynı birimde girin; 350 cm ile 4 m'yi karıştırmak alanı 100 kat hatalı çıkarır.</li>
+    </ul>
   </section>
 </CalcLayout>
-
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('calc-form');
-    const inputs = form.querySelectorAll('input, select');
-    const resultArea = document.getElementById('calc-result');
-
-    function debounce(fn, delay = 150) {
-      let timer;
-      return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), delay); };
-    }
-
-    function formatNumber(num, dec = 2) {
-      return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: dec, maximumFractionDigits: dec }).format(num);
-    }
-
-    const sekilEl = document.getElementById('sekil');
-    const boyut1El = document.getElementById('boyut1');
-    const boyut2El = document.getElementById('boyut2');
-    const boyut2Wrapper = document.getElementById('boyut2-wrapper');
-    const boyut1Label = boyut1El?.closest('.calc-input-group')?.querySelector('.calc-label');
-    const boyut2Label = boyut2El?.closest('.calc-input-group')?.querySelector('.calc-label');
-
-    function updateLabels() {
-      const sekil = sekilEl?.value;
-      if (sekil === 'kare') {
-        if (boyut1Label) boyut1Label.textContent = 'Kenar (a)';
-        if (boyut2Wrapper) boyut2Wrapper.style.display = 'none';
-      } else if (sekil === 'dikdortgen') {
-        if (boyut1Label) boyut1Label.textContent = 'En (a)';
-        if (boyut2Label) boyut2Label.textContent = 'Boy (b)';
-        if (boyut2Wrapper) boyut2Wrapper.style.display = '';
-      } else if (sekil === 'daire') {
-        if (boyut1Label) boyut1Label.textContent = 'Yarıçap (r)';
-        if (boyut2Wrapper) boyut2Wrapper.style.display = 'none';
-      } else if (sekil === 'ucgen') {
-        if (boyut1Label) boyut1Label.textContent = 'Taban';
-        if (boyut2Label) boyut2Label.textContent = 'Yükseklik';
-        if (boyut2Wrapper) boyut2Wrapper.style.display = '';
-      }
-    }
-
-    sekilEl?.addEventListener('change', () => { updateLabels(); calculate(); });
-    updateLabels();
-
-    const debouncedCalc = debounce(calculate);
-    inputs.forEach(input => {
-      input.addEventListener('input', debouncedCalc);
-      input.addEventListener('change', debouncedCalc);
-    });
-
-    function calculate() {
-      const sekil = sekilEl?.value;
-      const b1 = parseFloat(boyut1El?.value);
-      const b2 = parseFloat(boyut2El?.value);
-      const PI = Math.PI;
-
-      let alan = NaN, cevre = NaN;
-
-      if (sekil === 'kare' && !isNaN(b1)) {
-        alan = b1 * b1;
-        cevre = 4 * b1;
-      } else if (sekil === 'dikdortgen' && !isNaN(b1) && !isNaN(b2)) {
-        alan = b1 * b2;
-        cevre = 2 * (b1 + b2);
-      } else if (sekil === 'daire' && !isNaN(b1)) {
-        alan = PI * b1 * b1;
-        cevre = 2 * PI * b1;
-      } else if (sekil === 'ucgen' && !isNaN(b1) && !isNaN(b2)) {
-        alan = 0.5 * b1 * b2;
-        cevre = NaN;
-      }
-
-      if (isNaN(alan)) {
-        if (resultArea) resultArea.classList.add('hidden');
-        return;
-      }
-
-      document.getElementById('sonuc-alan').textContent = formatNumber(alan) + ' m²';
-      document.getElementById('d-alan').textContent = formatNumber(alan) + ' m²';
-      document.getElementById('d-cevre').textContent = isNaN(cevre) ? 'Kenar bilgisi gerekli' : formatNumber(cevre) + ' m';
-
-      if (resultArea) resultArea.classList.remove('hidden');
-      updateURL();
-    }
-
-    function updateURL() {
-      const params = new URLSearchParams();
-      inputs.forEach(input => { if (input.value && input.id) params.set(input.id, input.value); });
-      history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
-    }
-
-    function loadFromURL() {
-      const params = new URLSearchParams(window.location.search);
-      let h = false;
-      inputs.forEach(input => { if (input.id && params.has(input.id)) { input.value = params.get(input.id); h = true; } });
-      if (h) { updateLabels(); calculate(); }
-    }
-
-    loadFromURL();
-  });
-</script>

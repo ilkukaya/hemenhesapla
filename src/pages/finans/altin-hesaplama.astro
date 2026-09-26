@@ -4,192 +4,205 @@ import CalcInput from '../../components/calculator/CalcInput.astro';
 import CalcSelect from '../../components/calculator/CalcSelect.astro';
 import CalcResult from '../../components/calculator/CalcResult.astro';
 
-const faq = [
-  {
-    question: "Altın türleri arasındaki fark nedir?",
-    answer: "Gram altın; piyasada işlem gören en küçük standart birimdir ve has (24 ayar) altından üretilir. Çeyrek altın yaklaşık 1,75 gram, yarım altın yaklaşık 3,5 gram ve tam altın yaklaşık 7,2 gram gelir. Cumhuriyet altını ise Türkiye Cumhuriyet Merkez Bankası tarafından basılan ve yaklaşık 7,2 gram olan özel bir altın türüdür. Fiyatlar; darphane işçilik bedeli, arz-talep dengesi ve dövizdeki hareketlilik nedeniyle gram fiyatıyla tam orantılı olmayabilir.",
-  },
-  {
-    question: "Altın fiyatlarını neler etkiler?",
-    answer: "Altın fiyatları; uluslararası piyasalarda belirlenen ons fiyatı, dolar/TL kuru, enflasyon beklentileri, jeopolitik riskler, merkez bankalarının altın alım-satımları ve küresel risk iştahı gibi faktörler tarafından belirlenir. Türkiye'de altın fiyatları ayrıca TL'nin dolar karşısındaki değerine bağlıdır; dolar yükseldiğinde TL bazındaki altın fiyatları da artış gösterir.",
-  },
-  {
-    question: "Altın yatırımı yaparken nelere dikkat edilmeli?",
-    answer: "Fiziksel altın alırken kuyumcu veya banka kaynaklı satın almanız, saflık belgesi (ayar) ve alım-satım makbuzu almanız önemlidir. Altın yatırım hesabı veya altın fonları, fiziksel depolama ve güvenlik endişesi olmaksızın altın fiyatından yararlanmanızı sağlar. Altın fiyatları kısa vadede dalgalanabilir; bu nedenle uzun vadeli bir yatırım aracı olarak değerlendirmek daha sağlıklıdır. Portföyünüzün tamamını değil, belirli bir oranını altına yatırmak riski azaltır.",
-  },
+// Brüt ağırlık (gram) ve milyem (saflık). Has altın = ağırlık × milyem.
+const altinlar = [
+  { value: "gram", label: "Gram altın (24 ayar)", unit: "gram", weight: 1, fineness: 1 },
+  { value: "ceyrek", label: "Çeyrek altın", unit: "adet", weight: 1.754, fineness: 0.916 },
+  { value: "yarim", label: "Yarım altın", unit: "adet", weight: 3.508, fineness: 0.916 },
+  { value: "tam", label: "Tam altın", unit: "adet", weight: 7.016, fineness: 0.916 },
+  { value: "cumhuriyet", label: "Cumhuriyet (Ata) altını", unit: "adet", weight: 7.216, fineness: 0.916 },
+  { value: "gremse", label: "Gremse altın", unit: "adet", weight: 17.54, fineness: 0.916 },
+  { value: "ayar22", label: "22 ayar bilezik / takı", unit: "gram", weight: 1, fineness: 0.916 },
+  { value: "ayar18", label: "18 ayar", unit: "gram", weight: 1, fineness: 0.75 },
+  { value: "ayar14", label: "14 ayar", unit: "gram", weight: 1, fineness: 0.585 },
 ];
+const options = altinlar.map((a) => ({ value: a.value, label: a.label }));
+const fmt = (n: number, d = 3) => new Intl.NumberFormat('tr-TR', { minimumFractionDigits: d, maximumFractionDigits: d }).format(n);
 
 const meta = {
-  title: "Altın Hesaplama — Gram, Çeyrek, Yarım, Tam Altın Fiyatı",
-  description: "Gram, çeyrek, yarım, tam ve cumhuriyet altını değerini hesaplayın. Altın portföyünüzün toplam TL değerini anında öğrenin.",
+  title: "Altın Hesaplama",
+  seoTitle: "Altın Hesaplama – Gram, Çeyrek, Yarım, Tam Altın Değeri",
+  description: "Altın hesaplama: gram altın fiyatını girin; çeyrek, yarım, tam, cumhuriyet ve 22/18/14 ayar altınınızın has gram karşılığını ve TL değerini anında hesaplayın.",
+  summary: "Altının değeri, içerdiği saf (has) altın miktarıyla bulunur: Değer = Ağırlık × Milyem × Gram altın fiyatı. Çeyrek altın 1,754 gram ve 22 ayar (916 milyem) olduğundan yaklaşık 1,607 gram has altın içerir; yani değeri gram altın fiyatının yaklaşık 1,61 katıdır. Kuyumcu fiyatlarına işçilik ve makas eklenir.",
+  howTo: [
+    "Güncel gram altın (24 ayar) fiyatını bankanızdan veya kuyumcudan öğrenip girin.",
+    "Altın türünü seçin (çeyrek, yarım, tam, bilezik vb.).",
+    "Adet ya da gram miktarını yazın.",
+    "İsterseniz kuyumcunun verdiği birim fiyatı girerek işçilik farkını görün."
+  ],
+  sources: [
+    { name: "Borsa İstanbul – Kıymetli Madenler Piyasası", url: "https://www.borsaistanbul.com/" },
+    { name: "Darphane ve Damga Matbaası Genel Müdürlüğü", url: "https://www.darphane.gov.tr/" }
+  ],
   category: "finans",
   slug: "altin-hesaplama",
-  keywords: ["altın hesaplama", "gram altın fiyatı", "çeyrek altın hesaplama", "tam altın fiyatı", "cumhuriyet altını", "altın değeri hesaplama"],
-  dateModified: "2026-04-01",
-  relatedCalcs: ["doviz-cevirici", "enflasyon-hesaplama", "yatirim-getiri-hesaplama"],
-  faq,
+  keywords: ["altın hesaplama", "çeyrek altın kaç gram", "gram altın hesaplama", "22 ayar altın hesaplama", "bilezik hesaplama", "has altın hesaplama"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["finans/doviz-cevirici", "finans/yatirim-getiri-hesaplama", "finans/enflasyon-hesaplama", "finans/bilesik-faiz-hesaplama"],
+  faq: [
+    {
+      question: "Çeyrek altın kaç gram?",
+      answer: "Kuyumcularda kullanılan standart çeyrek altın 1,754 gram ağırlığında ve 22 ayardır (916 milyem). İçindeki saf altın yaklaşık 1,607 gramdır. Yarım altın 3,508 gram, tam altın 7,016 gram, Cumhuriyet (Ata) altını ise 7,216 gramdır; hepsi 22 ayardır."
+    },
+    {
+      question: "22 ayar altın nasıl hesaplanır?",
+      answer: "22 ayar altının milyemi 916'dır, yani her gramın yüzde 91,6'sı saf altındır. Değeri bulmak için gram miktarı 0,916 ve gram altın fiyatıyla çarpılır. Örneğin 20 gram 22 ayar bilezik, gram altın 4.000 TL iken 20 × 0,916 × 4.000 = 73.280 TL has değerindedir; satışta işçilik düşülebilir."
+    },
+    {
+      question: "Kuyumcu fiyatı neden hesaplanan değerden farklı?",
+      answer: "Kuyumcular ziynet altınlara işçilik ve kâr payı ekler, alırken de makas uygular. Bu nedenle çeyrek altının satış fiyatı, has altın değerinin genellikle birkaç yüzde üzerindedir. Takı ve bileziklerde işçilik farkı daha yüksektir ve bozdururken çoğu zaman geri alınamaz."
+    },
+    {
+      question: "Neden güncel altın fiyatı otomatik gelmiyor?",
+      answer: "Altın fiyatları gün içinde sürekli değişir ve kurumdan kuruma farklıdır. Yanıltıcı bir fiyat göstermemek için hesaplayıcı, gram altın fiyatını sizin girmenizi ister. Bankanızın mobil uygulamasındaki ya da kuyumcunuzun ilan ettiği güncel alış veya satış fiyatını kullanmanızı öneririz."
+    },
+    {
+      question: "14 ve 18 ayar altın kaç milyem?",
+      answer: "18 ayar altın 750 milyem, yani yüzde 75 saf altın içerir; 14 ayar altın 585 milyemdir. 24 ayar gram altın ise 995 veya 999,9 milyemdir. Ayar ne kadar düşükse aynı ağırlıktaki takının has altın değeri o kadar azdır."
+    }
+  ]
 };
-
-const altinTurleri = [
-  { value: "gram", label: "Gram Altın" },
-  { value: "ceyrek", label: "Çeyrek Altın" },
-  { value: "yarim", label: "Yarım Altın" },
-  { value: "tam", label: "Tam Altın" },
-  { value: "cumhuriyet", label: "Cumhuriyet Altını" },
-];
 ---
 
 <CalcLayout meta={meta}>
-  <form id="calc-form" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
-    <CalcSelect
-      id="altinTuru"
-      label="Altın Türü"
-      options={altinTurleri}
-      value="gram"
-      helpText="Hesaplamak istediğiniz altın türünü seçin"
+  <form id="calc-form" class="calc-inputs" novalidate>
+    <CalcInput
+      id="gramFiyat"
+      label="Gram Altın Fiyatı (24 ayar)"
+      type="number"
+      suffix="₺"
+      placeholder="Güncel fiyatı girin"
+      step="any"
+      min={0}
+      helpText="Bankanızdan veya kuyumcudan güncel fiyatı öğrenin"
     />
+    <CalcSelect id="altinTuru" label="Altın Türü" options={options} value="ceyrek" />
     <CalcInput
       id="miktar"
       label="Miktar"
       type="number"
-      suffix="adet"
       placeholder="1"
-      step={1}
-      min={1}
       value="1"
-      helpText="Kaç adet ya da gram altın hesaplamak istiyorsunuz?"
+      step="any"
+      min={0}
+      helpText="Ziynet altınlarda adet, ayar altında gram"
+    />
+    <CalcInput
+      id="birimFiyat"
+      label="Kuyumcu Birim Fiyatı"
+      type="number"
+      suffix="₺"
+      placeholder="İsteğe bağlı"
+      step="any"
+      min={0}
+      required={false}
+      helpText="İşçilik farkını görmek için (isteğe bağlı)"
     />
   </form>
 
   <CalcResult>
     <div slot="main">
-      <span class="calc-result-label">Toplam Değer</span>
-      <span class="calc-result-value" id="toplam-deger">—</span>
+      <p class="calc-result-label">Has Altın Değeri</p>
+      <p class="calc-result-value" id="toplam-deger">—</p>
     </div>
     <div slot="details">
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Birim Fiyat</span>
+        <span class="calc-detail-label">Has Altın Karşılığı</span>
+        <span class="calc-detail-value" id="gram-karsiligi">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Birim Has Değer</span>
         <span class="calc-detail-value" id="birim-fiyat">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Gram Karşılığı</span>
-        <span class="calc-detail-value" id="gram-karsiligi">—</span>
+        <span class="calc-detail-label">Kuyumcu Fiyatıyla Toplam</span>
+        <span class="calc-detail-value" id="kuyumcu-toplam">—</span>
       </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">İşçilik / Prim Farkı</span>
+        <span class="calc-detail-value" id="iscilik">—</span>
+      </div>
+      <p class="calc-note">Has değer; ağırlık × milyem × gram altın fiyatıdır. İşçilik ve alış-satış makası dahil değildir.</p>
     </div>
   </CalcResult>
 
-  <p class="text-sm text-[var(--color-text-muted)] mt-2 px-1">* Fiyatlar yaklaşık değerlerdir. Güncel fiyatlar için kuyumcu veya bankanızla iletişime geçin.</p>
+  <script type="application/json" id="altin-data" set:html={JSON.stringify(altinlar)}></script>
 
-  <section class="calc-content">
-    <h2>Altın Hesaplama Nasıl Yapılır?</h2>
-    <p>
-      Altın, Türkiye'de geleneksel olarak en yaygın bireysel yatırım araçlarından biridir. Düğün, nişan gibi özel günlerde verilen çeyrek ve tam altınlar; aynı zamanda enflasyona karşı korunma aracı olarak da tercih edilmektedir. Altın hesaplama aracımız, farklı altın türlerinin toplam değerini hızlı ve pratik şekilde hesaplamanızı sağlar.
-    </p>
-    <p>
-      Türkiye'de en sık işlem gören altın türleri şunlardır: gram altın, çeyrek altın, yarım altın, tam altın ve cumhuriyet altını. Bu türlerin birim fiyatları; İstanbul kapalı çarşısındaki işlemler, uluslararası altın ons fiyatı ve döviz kuruna bağlı olarak sürekli değişir. Hesaplama aracımızdaki fiyatlar yaklaşık referans değerleri olup gerçek zamanlı piyasa verilerini yansıtmamaktadır.
-    </p>
-    <p>
-      Altın yatırımı yaparken fiziksel altın tutmanın yanı sıra altın hesabı, altın fonu ya da borsada işlem gören altın ETF'leri de değerlendirilebilir. Bu araçlar fiziksel depolama gerektirmeden altın fiyatından yararlanmanızı sağlar. Ancak her yatırım aracının kendine özgü risk ve maliyetleri bulunduğundan, karar vermeden önce detaylı araştırma yapmanız önerilir.
-    </p>
-    <h3>Altın Değeri Hesaplama Formülü</h3>
-    <p>
-      Altın değerini hesaplamak oldukça basittir:
-    </p>
-    <p>
-      <strong>Toplam Değer = Miktar × Birim Fiyat</strong>
-    </p>
-    <p>
-      Gram karşılığı hesabı için ise her altın türünün yaklaşık gram ağırlığı kullanılır. Çeyrek altın ≈ 1,75 gr, yarım altın ≈ 3,50 gr, tam altın ≈ 7,20 gr, cumhuriyet altını ≈ 7,20 gr ağırlığındadır. Bu değerler; altının işçilik ve prim bedelini içermediğinden yaklaşık gram ağırlıklarıdır.
-    </p>
-    <h3>Dikkat Edilmesi Gerekenler</h3>
-    <p>
-      Kuyumcular her altın türüne farklı işçilik bedeli uygulayabilir. Satın alınan ve satılan altın arasındaki fark (spread), fiziksel altın yatırımının gerçek maliyetini etkiler. Altın alım-satım işlemlerinde kuyumcu, banka ve borsa fiyatları birbirinden farklılık gösterebilir. Miras veya hediye amaçlı büyük miktarda altın işlemlerinde noter ve vergi yükümlülüklerini de göz önünde bulundurmanız tavsiye edilir.
-    </p>
-    <h3>Sıkça Sorulan Sorular</h3>
-    {faq.map((item) => (
-      <div class="faq-item">
-        <h4>{item.question}</h4>
-        <p>{item.answer}</p>
-      </div>
-    ))}
-  </section>
-</CalcLayout>
+  <script>
+    import { formatTL, formatNumber, formatPercent, readNumber, readValue, readJSON, setText, showResult, initCalculator } from './_shared';
 
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
-    const resultArea = document.getElementById('calc-result');
+    interface Altin { value: string; label: string; unit: string; weight: number; fineness: number }
+    const altinlar = readJSON<Altin[]>('altin-data');
 
-    const fiyatlar: Record<string, { fiyat: number; gram: number; label: string }> = {
-      gram:       { fiyat: 3250,  gram: 1,    label: 'Gram Altın' },
-      ceyrek:     { fiyat: 5350,  gram: 1.75, label: 'Çeyrek Altın' },
-      yarim:      { fiyat: 10700, gram: 3.50, label: 'Yarım Altın' },
-      tam:        { fiyat: 21200, gram: 7.20, label: 'Tam Altın' },
-      cumhuriyet: { fiyat: 22500, gram: 7.20, label: 'Cumhuriyet Altını' },
-    };
+    function calculate(): boolean {
+      const gramFiyat = readNumber('gramFiyat');
+      const tur = altinlar.find((a) => a.value === readValue('altinTuru'));
+      const miktar = readNumber('miktar');
+      const birim = readNumber('birimFiyat');
 
-    function debounce(fn: (...args: unknown[]) => void, delay = 150) {
-      let timer: ReturnType<typeof setTimeout>;
-      return (...args: unknown[]) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), delay); };
-    }
-
-    function formatTL(num: number) {
-      return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
-    }
-
-    function formatNumber(num: number, d = 2) {
-      return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: d, maximumFractionDigits: d }).format(num);
-    }
-
-    const debouncedCalc = debounce(calculate);
-    inputs.forEach(i => {
-      i.addEventListener('input', debouncedCalc);
-      i.addEventListener('change', debouncedCalc);
-    });
-
-    function calculate() {
-      const altinTuru = (document.getElementById('altinTuru') as HTMLSelectElement).value;
-      const miktar = parseFloat((document.getElementById('miktar') as HTMLInputElement).value);
-
-      if (!altinTuru || !miktar || miktar <= 0) {
-        if (resultArea) resultArea.classList.add('hidden');
-        return;
+      if (!tur || !(gramFiyat > 0) || !(miktar > 0)) {
+        showResult(false);
+        return false;
       }
 
-      const altin = fiyatlar[altinTuru];
-      if (!altin) return;
+      const hasBirim = tur.weight * tur.fineness;
+      const hasToplam = hasBirim * miktar;
+      const deger = hasToplam * gramFiyat;
 
-      const toplamDeger = miktar * altin.fiyat;
-      const gramKarsiligi = miktar * altin.gram;
+      setText('toplam-deger', formatTL(deger));
+      setText('gram-karsiligi', `${formatNumber(hasToplam, 3)} gram`);
+      setText('birim-fiyat', `${formatTL(hasBirim * gramFiyat)} / ${tur.unit}`);
 
-      (document.getElementById('toplam-deger') as HTMLElement).textContent = formatTL(toplamDeger);
-      (document.getElementById('birim-fiyat') as HTMLElement).textContent = formatTL(altin.fiyat);
-      (document.getElementById('gram-karsiligi') as HTMLElement).textContent = `${formatNumber(gramKarsiligi, 2)} gram`;
+      if (birim > 0) {
+        const kuyumcu = birim * miktar;
+        setText('kuyumcu-toplam', formatTL(kuyumcu));
+        setText('iscilik', `${formatTL(kuyumcu - deger)} (${formatPercent(((kuyumcu - deger) / deger) * 100)})`);
+      } else {
+        setText('kuyumcu-toplam', 'Girilmedi');
+        setText('iscilik', '—');
+      }
 
-      if (resultArea) resultArea.classList.remove('hidden');
-      updateURL();
+      showResult(true);
+      return true;
     }
 
-    function updateURL() {
-      const params = new URLSearchParams();
-      inputs.forEach(i => {
-        const el = i as HTMLInputElement;
-        if (el.value && el.id) params.set(el.id, el.value);
-      });
-      history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
-    }
+    initCalculator({ calculate });
+  </script>
 
-    function loadFromURL() {
-      const params = new URLSearchParams(window.location.search);
-      let hasParams = false;
-      inputs.forEach(i => {
-        const el = i as HTMLInputElement;
-        if (el.id && params.has(el.id)) { el.value = params.get(el.id)!; hasParams = true; }
-      });
-      if (hasParams) calculate();
-    }
+  <section class="calc-content">
+    <h2>Altın Değeri Nasıl Hesaplanır?</h2>
+    <p>
+      Her altın ürününün değeri, içindeki saf (has) altın miktarından gelir. Has altın miktarı ağırlığın milyem (saflık) değeriyle çarpılmasıyla bulunur. Sonucu gram altın fiyatıyla çarptığınızda işçilik hariç değere ulaşırsınız:
+    </p>
+    <p><strong>Değer = Ağırlık (gram) × Milyem × Gram altın fiyatı</strong></p>
 
-    loadFromURL();
-    calculate();
-  });
-</script>
+    <h2>Altın Türlerinin Ağırlık ve Saflıkları</h2>
+    <div class="calc-table-wrap">
+      <table class="calc-table">
+        <thead><tr><th scope="col">Tür</th><th scope="col">Ağırlık</th><th scope="col">Milyem</th><th scope="col">Has altın</th></tr></thead>
+        <tbody>
+          {altinlar.map((a) => (
+            <tr>
+              <td>{a.label}</td>
+              <td>{a.unit === 'gram' ? '1 gram' : `${fmt(a.weight)} g`}</td>
+              <td>{Math.round(a.fineness * 1000)}</td>
+              <td>{fmt(a.weight * a.fineness)} g</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Örnek Hesaplama</h2>
+    <p>
+      Gram altın fiyatının 4.000 TL olduğunu varsayalım (örnek değer). 5 çeyrek altının has altın karşılığı 5 × 1,754 × 0,916 = 8,033 gramdır; has değeri 8,03332 × 4.000 = <strong>32.133,28 TL</strong> olur. Kuyumcu çeyrek başına 6.700 TL istiyorsa toplam 33.500 TL ödersiniz; aradaki yaklaşık 1.367 TL (%4,3) işçilik ve kâr payıdır.
+    </p>
+
+    <h3>Alırken ve Satarken Dikkat</h3>
+    <ul>
+      <li>Ziynet altınlarda (çeyrek, yarım, tam) işçilik genellikle bozdururken de kısmen geri alınır; bilezik ve takılarda işçilik çoğunlukla kaybolur.</li>
+      <li>Banka hesabındaki altın için alış-satış makasına, fiziki altın için saklama ve güvenlik maliyetine dikkat edin.</li>
+      <li>Faturalı alım yapın; ayar damgası ve darphane ambalajı ürünün doğrulanmasını kolaylaştırır.</li>
+    </ul>
+  </section>
+</CalcLayout>

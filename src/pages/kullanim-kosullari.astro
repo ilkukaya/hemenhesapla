@@ -1,0 +1,43 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { SITE } from '../config/site';
+---
+
+<PageLayout
+  title="Kullanım Koşulları | Hemen Hesapla"
+  h1="Kullanım koşulları"
+  description="Hemen Hesapla hesaplayıcılarının kullanım şartları, sorumluluk sınırları, fikri mülkiyet hakları ve üçüncü taraf bağlantılarına ilişkin koşullar."
+  updated="2026-09-26"
+>
+  <p>Hemen Hesapla'yı kullanarak aşağıdaki koşulları kabul etmiş sayılırsınız.</p>
+
+  <h2>Hizmetin niteliği</h2>
+  <p>
+    Sitedeki hesaplayıcılar ve içerikler genel bilgilendirme amaçlıdır. Mali, hukuki, vergisel veya tıbbi danışmanlık niteliği taşımaz.
+    Kişisel durumunuza ilişkin kararlar öncesinde uzman görüşü alınız.
+  </p>
+
+  <h2>Doğruluk ve sorumluluk</h2>
+  <p>
+    Sonuçların doğru ve güncel olması için azami özen gösteririz; ancak mevzuat değişiklikleri, bankaların ve kurumların farklı uygulamaları veya
+    girilen verilerdeki hatalar nedeniyle sonuçlar gerçek tutarlardan farklı olabilir. Hemen Hesapla, sonuçlara dayanılarak verilen kararlardan doğabilecek
+    zararlardan sorumlu tutulamaz.
+  </p>
+
+  <h2>Fikri mülkiyet</h2>
+  <p>
+    Sitenin tasarımı, metinleri ve yazılımı Hemen Hesapla'ya aittir. Kaynak göstermek ve bağlantı vermek koşuluyla kısa alıntılar yapılabilir;
+    içeriklerin toplu olarak kopyalanması veya otomatik yöntemlerle çoğaltılması yasaktır.
+  </p>
+
+  <h2>Üçüncü taraf bağlantıları ve reklamlar</h2>
+  <p>
+    Sitede reklamlar ve sponsorlu bağlantılar bulunabilir. Bu bağlantılar üzerinden alışveriş yapmanız hâlinde komisyon kazanabiliriz; bu durum size ek
+    maliyet getirmez. Üçüncü taraf sitelerin içerik ve uygulamalarından sorumlu değiliz.
+  </p>
+
+  <h2>Değişiklikler ve iletişim</h2>
+  <p>
+    Bu koşullar önceden bildirimde bulunmaksızın güncellenebilir. Sorularınız için <a href={`mailto:${SITE.email}`}>{SITE.email}</a> adresine yazabilirsiniz.
+  </p>
+</PageLayout>

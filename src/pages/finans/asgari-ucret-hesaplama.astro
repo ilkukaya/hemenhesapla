@@ -1,0 +1,251 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcSelect from '../../components/calculator/CalcSelect.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "2026 asgari ücret net ne kadar?",
+    answer: "2026 yılında tek bir asgari ücret uygulanmaktadır. Aylık brüt asgari ücret 33.030 TL, net asgari ücret ise 28.075,50 TL'dir. Brüt tutardan yüzde 14 SGK işçi payı (4.624,20 TL) ve yüzde 1 işsizlik sigortası işçi payı (330,30 TL) kesilir. Asgari ücrete isabet eden gelir vergisi ve damga vergisi istisna olduğu için kesinti yapılmaz."
+  },
+  {
+    question: "Asgari ücretin işverene maliyeti ne kadar?",
+    answer: "2026'da bir asgari ücretlinin aylık işveren maliyeti, prim teşvikine göre değişir. İmalat sektöründe 5 puanlık SGK indirimiyle 39.223,13 TL, diğer sektörlerde 2 puanlık indirimle 40.214,03 TL, hiç indirim uygulanmadığında ise 40.874,63 TL'dir. Şartları sağlayan işverenler bu tutardan ayrıca 1.270 TL asgari ücret desteği düşebilir."
+  },
+  {
+    question: "Asgari ücret desteği nedir, kaç TL?",
+    answer: "Asgari ücret desteği, özel sektör işverenlerinin SGK prim borcundan mahsup edilen bir teşviktir. 2026 yılında sigortalı başına aylık 1.270 TL olarak uygulanmaktadır. Destekten yararlanmak için işyerinin vadesi geçmiş prim borcu bulunmaması, bildirgelerin yasal süresinde verilmesi ve kanunda belirtilen çalışan sayısı şartlarının sağlanması gerekir."
+  },
+  {
+    question: "Asgari ücretten gelir vergisi kesilir mi?",
+    answer: "Hayır. 2022'den bu yana asgari ücrete isabet eden kazanç gelir vergisi ve damga vergisinden istisnadır. Asgari ücretle çalışan kişinin brüt ücretinden yalnızca SGK ve işsizlik sigortası primleri kesilir. Asgari ücretin üzerinde maaş alanlarda ise istisna, asgari ücret tutarına kadar uygulanır ve aşan kısım vergilendirilir."
+  },
+  {
+    question: "Asgari ücret günlük ve saatlik ne kadar?",
+    answer: "2026 brüt asgari ücreti 33.030 TL'dir; 30 güne bölündüğünde günlük brüt ücret 1.101 TL, günlük net ücret 935,85 TL olur. Haftalık 45 saatlik çalışma esas alındığında aylık 225 saat üzerinden saatlik brüt ücret yaklaşık 146,80 TL, saatlik net ücret yaklaşık 124,78 TL'dir."
+  },
+  {
+    question: "Asgari ücrete ara zam yapılacak mı?",
+    answer: "2026 yılı için belirlenen asgari ücret 1 Ocak 2026'dan itibaren yürürlüktedir ve Eylül 2026 itibarıyla resmi bir ara zam kararı açıklanmamıştır. Asgari ücret, Asgari Ücret Tespit Komisyonu tarafından belirlenip Resmi Gazete'de yayımlanır. Olası bir güncellemede hesaplayıcı ve bu sayfadaki tutarlar yenilenecektir."
+  }
+];
+
+const meta = {
+  title: "Asgari Ücret Hesaplama",
+  seoTitle: "Asgari Ücret Hesaplama 2026 - Net, Brüt ve İşveren Maliyeti",
+  description: "2026 asgari ücret net 28.075,50 TL, brüt 33.030 TL. SGK kesintileri, işveren maliyeti, 1.270 TL asgari ücret desteği ve yıllık toplamları hesaplayın.",
+  summary: "2026 yılında brüt asgari ücret 33.030 TL, net asgari ücret 28.075,50 TL'dir. Brütten %14 SGK (4.624,20 TL) ve %1 işsizlik (330,30 TL) primi kesilir; gelir ve damga vergisi alınmaz. İşveren maliyeti imalat sektöründe 39.223,13 TL, diğer sektörlerde 40.214,03 TL'dir; 1.270 TL asgari ücret desteği bu tutardan düşülebilir.",
+  howTo: [
+    "Asgari ücretle çalışan kişi sayısını girin.",
+    "İşyerinin sektörüne göre uygulanan SGK prim indirimini seçin.",
+    "Asgari ücret desteğinden yararlanıp yararlanmadığınızı belirtin.",
+    "Net ücret, kesintiler ve aylık-yıllık işveren maliyetini inceleyin."
+  ],
+  sources: [
+    { name: "TÜRMOB - 2026 Asgari Ücret Desteği Sirküleri", url: "https://www.turmob.org.tr/sirkuler/detailPdf/dc084f37-cec7-4a51-aac4-9ce9f4ed1fe9/2026-yilinda-sigortali-basina-1-270-tl-asgari-ucret-destegi-verilecektir" },
+    { name: "EY Türkiye - 2026 Yılı Asgari Ücreti", url: "https://www.ey.com/tr_tr/insights/tax/2026-asgari-ucret" },
+    { name: "Çalışma ve Sosyal Güvenlik Bakanlığı", url: "https://www.csgb.gov.tr/" }
+  ],
+  category: "finans",
+  slug: "asgari-ucret-hesaplama",
+  keywords: ["asgari ücret hesaplama", "asgari ücret 2026", "asgari ücret net", "asgari ücret işveren maliyeti", "asgari ücret desteği", "asgari ücret brüt"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["finans/net-brut-maas-hesaplama", "finans/maas-zammi-hesaplama", "finans/kidem-tazminati-hesaplama", "finans/gelir-vergisi-hesaplama", "finans/ihbar-tazminati-hesaplama"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" class="calc-inputs">
+    <CalcInput id="kisi" label="Çalışan Sayısı" type="number" placeholder="1" value="1" step={1} min={1} suffix="kişi" />
+    <CalcSelect
+      id="indirim"
+      label="SGK İşveren Prim İndirimi"
+      options={[
+        { value: "5", label: "İmalat sektörü (5 puan indirim)" },
+        { value: "2", label: "Diğer sektörler (2 puan indirim)" },
+        { value: "0", label: "İndirim yok" }
+      ]}
+      value="2"
+    />
+    <CalcSelect
+      id="destek"
+      label="Asgari Ücret Desteği (1.270 TL)"
+      options={[
+        { value: "evet", label: "Yararlanıyorum" },
+        { value: "hayir", label: "Yararlanmıyorum" }
+      ]}
+      value="evet"
+    />
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">Net Asgari Ücret (kişi başı, aylık)</p>
+      <p class="calc-result-value" id="net">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row"><span class="calc-detail-label">Brüt Asgari Ücret</span><span class="calc-detail-value" id="brut">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">SGK İşçi Payı (%14)</span><span class="calc-detail-value" id="sgk-isci">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">İşsizlik İşçi Payı (%1)</span><span class="calc-detail-value" id="issizlik-isci">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Gelir Vergisi / Damga Vergisi</span><span class="calc-detail-value">0,00 ₺ (istisna)</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label" id="sgk-isveren-etiket">SGK İşveren Payı</span><span class="calc-detail-value" id="sgk-isveren">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">İşsizlik İşveren Payı (%2)</span><span class="calc-detail-value" id="issizlik-isveren">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">İşveren Maliyeti (kişi başı)</span><span class="calc-detail-value" id="maliyet">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Destek Sonrası Maliyet (kişi başı)</span><span class="calc-detail-value" id="net-maliyet">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Toplam Aylık Maliyet</span><span class="calc-detail-value" id="toplam-aylik">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Toplam Yıllık Maliyet</span><span class="calc-detail-value" id="toplam-yillik">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Günlük Net / Saatlik Net</span><span class="calc-detail-value" id="gunluk">—</span></div>
+    </div>
+  </CalcResult>
+
+  <script>
+    const BRUT = 33030;
+    const DESTEK = 1270;
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('calc-form');
+      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const resultArea = document.getElementById('calc-result');
+
+      function debounce(fn: () => void, delay = 150) {
+        let timer: ReturnType<typeof setTimeout>;
+        return () => { clearTimeout(timer); timer = setTimeout(fn, delay); };
+      }
+      const val = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
+      const setText = (id: string, t: string) => { (document.getElementById(id) as HTMLElement).textContent = t; };
+      const tl = (n: number) => new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+      // Kuruş cinsinden tam sayı aritmetiği: oran yüzde olarak (ör. 19.75) verilir
+      const pay = (oranYuzde: number) => Math.round(BRUT * 100 * Math.round(oranYuzde * 100) / 10000) / 100;
+      const r2 = (n: number) => Math.round(n * 100) / 100;
+
+      form?.addEventListener('submit', (e) => e.preventDefault());
+      const debouncedCalc = debounce(calculate);
+      inputs.forEach(input => {
+        input.addEventListener('input', debouncedCalc);
+        input.addEventListener('change', debouncedCalc);
+      });
+
+      function calculate() {
+        const kisi = Math.max(1, parseInt(val('kisi'), 10) || 1);
+        const indirim = parseFloat(val('indirim')) || 0;
+        const destek = val('destek') === 'evet' ? DESTEK : 0;
+
+        const sgkIsci = pay(14);
+        const issizlikIsci = pay(1);
+        const net = r2(BRUT - sgkIsci - issizlikIsci);
+        const sgkIsverenOran = 21.75 - indirim;
+        const sgkIsveren = pay(sgkIsverenOran);
+        const issizlikIsveren = pay(2);
+        const maliyet = r2(BRUT + sgkIsveren + issizlikIsveren);
+        const netMaliyet = r2(maliyet - destek);
+
+        setText('net', tl(net));
+        setText('brut', tl(BRUT));
+        setText('sgk-isci', tl(sgkIsci));
+        setText('issizlik-isci', tl(issizlikIsci));
+        setText('sgk-isveren-etiket', `SGK İşveren Payı (%${sgkIsverenOran.toLocaleString('tr-TR')})`);
+        setText('sgk-isveren', tl(sgkIsveren));
+        setText('issizlik-isveren', tl(issizlikIsveren));
+        setText('maliyet', tl(maliyet));
+        setText('net-maliyet', tl(netMaliyet));
+        setText('toplam-aylik', tl(netMaliyet * kisi));
+        setText('toplam-yillik', tl(netMaliyet * kisi * 12));
+        setText('gunluk', `${tl(net / 30)} / ${tl(net / 225)}`);
+
+        if (resultArea) resultArea.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const params = new URLSearchParams();
+        inputs.forEach(input => {
+          const el = input as HTMLInputElement;
+          if (el.value && el.id) params.set(el.id, el.value);
+        });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+      }
+
+      function loadFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        inputs.forEach(input => {
+          const el = input as HTMLInputElement;
+          if (el.id && params.has(el.id)) el.value = params.get(el.id)!;
+        });
+        calculate();
+      }
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>2026 Asgari Ücret Ne Kadar?</h2>
+    <p>
+      2026 yılı için Asgari Ücret Tespit Komisyonu tarafından belirlenen asgari ücret 1 Ocak 2026 tarihinden itibaren yürürlüktedir. Bu yıl da yıl ortasında ara zam yapılmamış olup tek bir asgari ücret tutarı geçerlidir. Aylık brüt asgari ücret <strong>33.030 TL</strong>, net asgari ücret ise <strong>28.075,50 TL</strong>'dir. Asgari ücret hesaplama aracı; çalışanın eline geçen tutarı, yapılan kesintileri, işverenin toplam maliyetini ve asgari ücret desteği sonrası kalan maliyeti tek ekranda gösterir.
+    </p>
+
+    <h2>Brütten Nete Asgari Ücret Kesintileri</h2>
+    <table>
+      <thead>
+        <tr><th>Kalem</th><th>Oran</th><th>Tutar (Aylık)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Brüt asgari ücret</td><td>-</td><td>33.030,00 TL</td></tr>
+        <tr><td>SGK primi işçi payı</td><td>%14</td><td>4.624,20 TL</td></tr>
+        <tr><td>İşsizlik sigortası işçi payı</td><td>%1</td><td>330,30 TL</td></tr>
+        <tr><td>Gelir vergisi</td><td>İstisna</td><td>0,00 TL</td></tr>
+        <tr><td>Damga vergisi</td><td>İstisna</td><td>0,00 TL</td></tr>
+        <tr><td><strong>Net asgari ücret</strong></td><td>-</td><td><strong>28.075,50 TL</strong></td></tr>
+      </tbody>
+    </table>
+    <p>
+      Toplam kesinti 4.954,50 TL'dir. Asgari ücrete isabet eden kazanç gelir vergisi ve damga vergisinden istisna tutulduğu için asgari ücretlinin bordrosunda vergi kesintisi görünmez.
+    </p>
+
+    <h2>Asgari Ücretin İşverene Maliyeti</h2>
+    <p>
+      İşveren, brüt ücretin üzerine SGK işveren payı ve %2 işsizlik sigortası işveren payı öder. 2026'da SGK işveren payı indirim öncesi %21,75'tir. Düzenli prim ödeyen işverenler imalat sektöründe 5 puan, diğer sektörlerde 2 puan prim indiriminden yararlanabilir.
+    </p>
+    <table>
+      <thead>
+        <tr><th>Durum</th><th>SGK İşveren Payı</th><th>Aylık Maliyet</th><th>1.270 TL Destek Sonrası</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>İmalat sektörü (5 puan indirim)</td><td>%16,75</td><td>39.223,13 TL</td><td>37.953,13 TL</td></tr>
+        <tr><td>Diğer sektörler (2 puan indirim)</td><td>%19,75</td><td>40.214,03 TL</td><td>38.944,03 TL</td></tr>
+        <tr><td>İndirim yok</td><td>%21,75</td><td>40.874,63 TL</td><td>39.604,63 TL</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Asgari Ücret Desteği 2026</h2>
+    <p>
+      Özel sektör işverenlerine sağlanan asgari ücret desteği 2026 yılında sigortalı başına aylık <strong>1.270 TL</strong> olarak belirlenmiştir. Destek tutarı işverenin sonraki aylarda ödeyeceği SGK primlerinden mahsup edilir; nakit ödeme yapılmaz. Yararlanmak için vadesi geçmiş prim borcunun olmaması ve muhtasar ve prim hizmet beyannamesinin süresinde verilmesi gibi şartlar aranır.
+    </p>
+
+    <h2>Örnek Hesaplama</h2>
+    <p>
+      İmalat dışı bir sektörde asgari ücretle 5 kişi çalıştıran ve asgari ücret desteğinden yararlanan bir işverenin maliyeti şöyle hesaplanır:
+    </p>
+    <ul>
+      <li>Kişi başı SGK işveren payı: 33.030 × %19,75 = 6.523,43 TL</li>
+      <li>Kişi başı işsizlik işveren payı: 33.030 × %2 = 660,60 TL</li>
+      <li>Kişi başı maliyet: 33.030 + 6.523,43 + 660,60 = 40.214,03 TL</li>
+      <li>Destek sonrası: 40.214,03 − 1.270 = 38.944,03 TL</li>
+      <li>5 çalışan için aylık toplam: 194.720,15 TL; yıllık toplam: 2.336.641,80 TL</li>
+    </ul>
+
+    <h2>Günlük ve Saatlik Asgari Ücret</h2>
+    <p>
+      Aylık ücret 30 güne bölündüğünde günlük brüt asgari ücret 1.101 TL, günlük net asgari ücret 935,85 TL olur. Haftalık 45 saat çalışma esas alınarak aylık 225 saat üzerinden hesaplandığında saatlik brüt ücret yaklaşık 146,80 TL, saatlik net ücret ise yaklaşık 124,78 TL'dir. Fazla mesai ücreti, saatlik brüt ücretin %50 fazlasıyla hesaplanır.
+    </p>
+
+    <h2>Asgari Ücrete Bağlı Diğer Tutarlar</h2>
+    <p>
+      Asgari ücret; SGK prime esas kazanç alt sınırı, bazı idari para cezaları, işsizlik ödeneği üst sınırı ve kıdem tazminatı gibi pek çok hesaplamayı etkiler. SGK prime esas kazanç alt sınırı brüt asgari ücrete eşittir. Asgari ücretin üzerinde maaş alan çalışanların net ücretini hesaplamak için net-brüt maaş hesaplama aracını kullanabilirsiniz.
+    </p>
+    <p class="calc-note">
+      Not: Hesaplamalar 1 Ocak 2026'dan itibaren geçerli asgari ücret ve 2026 SGK prim oranlarına göre yapılmıştır. Prim teşviki ve asgari ücret desteği şartları işyerine göre farklılık gösterebilir; bordro için mali müşavirinize danışın.
+    </p>
+  </section>
+</CalcLayout>

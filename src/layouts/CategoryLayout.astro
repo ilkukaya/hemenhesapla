@@ -1,68 +1,126 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import Breadcrumb from '../components/layout/Breadcrumb.astro';
-import CalcCard from '../components/calculator/CalcCard.astro';
-
-interface Calculator {
-  slug: string;
-  title: string;
-  description: string;
-  icon: string;
-  popular: boolean;
-}
+import AdBanner from '../components/ads/AdBanner.astro';
+import Icon from '../components/ui/Icon.astro';
+import { getCategory, categories } from '../utils/catalog';
+import { absoluteUrl, SITE } from '../config/site';
 
 interface Props {
-  name: string;
   slug: string;
-  color: string;
-  icon: string;
-  description: string;
-  calculators: Calculator[];
+  // Eski çağrılarla uyumluluk için (kullanılmıyor)
+  [key: string]: unknown;
 }
 
-const { name, slug, color, icon, description, calculators } = Astro.props;
+const { slug } = Astro.props;
+const cat = getCategory(slug)!;
+const url = absoluteUrl(`/${slug}/`);
+const popular = cat.calculators.filter((c) => c.popular);
+const others = categories.filter((c) => c.slug !== slug);
+
+const pageTitle = `${cat.name} Hesaplama Araçları (2026) | Hemen Hesapla`;
+const description = `${cat.description}. ${cat.calculators.length} ücretsiz ${cat.name.toLocaleLowerCase('tr-TR')} hesaplayıcısı, 2026 güncel verilerle anında sonuç.`.slice(0, 160);
 
 const breadcrumbItems = [
   { label: 'Ana Sayfa', href: '/' },
-  { label: name, href: `/${slug}/` },
+  { label: cat.name, href: `/${slug}/` },
 ];
 
-const pageTitle = `${name} Hesaplayıcıları | Hemen Hesapla`;
+const schema = [
+  {
+    '@type': 'CollectionPage',
+    '@id': `${url}#webpage`,
+    url,
+    name: pageTitle,
+    description,
+    inLanguage: 'tr-TR',
+    isPartOf: { '@id': `${SITE.url}/#website` },
+    breadcrumb: { '@id': `${url}#breadcrumb` },
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: cat.calculators.length,
+      itemListElement: cat.calculators.map((c, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        url: absoluteUrl(c.href),
+        name: c.title,
+      })),
+    },
+  },
+  {
+    '@type': 'BreadcrumbList',
+    '@id': `${url}#breadcrumb`,
+    itemListElement: breadcrumbItems.map((b, i) => ({ '@type': 'ListItem', position: i + 1, name: b.label, item: absoluteUrl(b.href) })),
+  },
+];
 ---
 
-<BaseLayout title={pageTitle} description={description}>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+<BaseLayout title={pageTitle} description={description} canonicalURL={url} ogImage={`/og/${slug}.png`} schema={schema}>
+  <div class="container-page pt-5 pb-8" style={`--cat:${cat.color}`}>
     <Breadcrumb items={breadcrumbItems} />
 
-    <div class="mb-8">
-      <div class="flex items-center gap-3 mb-3">
-        <span class="text-3xl">{icon}</span>
-        <h1 class="text-2xl sm:text-3xl font-[var(--font-heading)] font-extrabold text-[var(--color-text)]">
-          {name} Hesaplayıcıları
-        </h1>
+    <header class="mb-8 flex items-start gap-4">
+      <span class="tool-icon hidden sm:grid place-items-center w-14 h-14 rounded-2xl shrink-0" style={`color:${cat.color};background:color-mix(in srgb, ${cat.color} 12%, transparent)`}>
+        <Icon name={cat.icon} size={28} />
+      </span>
+      <div>
+        <h1 class="text-[1.875rem] sm:text-[2.5rem] font-extrabold tracking-[-0.025em]">{cat.name} hesaplama araçları</h1>
+        <p class="mt-2 text-[1.0625rem] text-[var(--color-text-secondary)] max-w-2xl">
+          {cat.description}. {cat.calculators.length} araç, 2026 güncel verileriyle.
+        </p>
       </div>
-      <p class="text-[var(--color-text-secondary)] max-w-2xl">{description}</p>
-    </div>
+    </header>
 
-    {calculators.length > 0 ? (
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {calculators.map((calc) => (
-          <CalcCard
-            title={calc.title}
-            description={calc.description}
-            href={`/${slug}/${calc.slug}/`}
-            icon={calc.icon}
-            categoryColor={color}
-          />
+    {popular.length > 0 && (
+      <section class="mb-10" aria-labelledby="en-cok">
+        <h2 id="en-cok" class="eyebrow mb-3">En çok kullanılanlar</h2>
+        <ul class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {popular.map((c) => (
+            <li>
+              <a href={c.href} class="group card flex flex-col h-full p-5 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-md)] transition-all">
+                <span class="tool-icon grid place-items-center w-10 h-10 rounded-xl mb-4" style={`color:${cat.color};background:color-mix(in srgb, ${cat.color} 11%, transparent)`}>
+                  <Icon name={c.icon} size={20} />
+                </span>
+                <span class="font-[family-name:var(--font-heading)] font-bold text-lg leading-snug text-[var(--color-text)]">{c.title}</span>
+                <span class="mt-1 text-[0.9rem] text-[var(--color-text-muted)] leading-relaxed">{c.description}</span>
+                <span class="mt-auto pt-4 inline-flex items-center gap-1 text-[0.875rem] font-semibold text-[var(--color-text)]">
+                  Hesapla <Icon name="arrow-right" size={15} class="transition-transform group-hover:translate-x-0.5" />
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    <section aria-labelledby="tumu">
+      <h2 id="tumu" class="eyebrow mb-3">Tüm {cat.name.toLocaleLowerCase('tr-TR')} hesaplayıcıları</h2>
+      <ul class="card grid sm:grid-cols-2 lg:grid-cols-3 gap-x-2 p-2">
+        {cat.calculators.map((c) => (
+          <li>
+            <a href={c.href} class="tool-link">
+              <span class="tool-icon"><Icon name={c.icon} size={18} /></span>
+              <span class="min-w-0">
+                <span class="block font-semibold text-[var(--color-text)] leading-snug">{c.title}</span>
+                <span class="block text-[0.8125rem] text-[var(--color-text-muted)] line-clamp-1">{c.description}</span>
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <AdBanner variant="in-content" />
+
+    <section class="mt-12" aria-labelledby="diger">
+      <h2 id="diger" class="eyebrow mb-3">Diğer kategoriler</h2>
+      <div class="scroll-row">
+        {others.map((o) => (
+          <a href={`/${o.slug}/`} class="chip" style={`--cat:${o.color}`}>
+            <Icon name={o.icon} size={16} class="text-[var(--cat)]" /> {o.name}
+          </a>
         ))}
       </div>
-    ) : (
-      <div class="bg-[var(--color-bg)] border border-[var(--color-border)] rounded-xl p-8 text-center">
-        <p class="text-[var(--color-text-muted)] text-lg">Bu kategorideki hesaplayıcılar yakında eklenecek.</p>
-        <a href="/" class="inline-block mt-4 text-[var(--color-primary)] font-semibold hover:underline">
-          ← Ana Sayfaya Dön
-        </a>
-      </div>
-    )}
+    </section>
   </div>
 </BaseLayout>

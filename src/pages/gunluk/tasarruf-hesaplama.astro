@@ -5,62 +5,107 @@ import CalcResult from '../../components/calculator/CalcResult.astro';
 
 const faq = [
   {
-    question: "Tasarruf hedefime ne zaman ulaşırım?",
-    answer: "Hedefe ulaşma süresi, aylık birikim miktarınıza ve faiz oranına bağlıdır. Faizsiz hesaplamada süre = Hedef Tutar ÷ Aylık Birikim formülüyle bulunur. Faiz varsa bileşik faiz etkisiyle para daha hızlı büyür. Örneğin 100.000 TL hedef için aylık 2.000 TL biriktirirseniz faizsiz senaryoda 50 ay (yaklaşık 4 yıl 2 ay) sürer; ancak yıllık %30 faizle bu süre önemli ölçüde kısalır."
+    question: "Hedefime ne zaman ulaşırım?",
+    answer: "Faizsiz birikimde süre, (hedef − mevcut birikim) ÷ aylık birikim formülüyle bulunur ve yukarı yuvarlanır. 250.000 TL hedef, 20.000 TL mevcut birikim ve ayda 10.000 TL ile 23 ay gerekir. Birikim aylık bileşik getiri sağlayan bir hesapta değerlenirse süre kısalır: yıllık %30 net getiriyle aynı hedefe 18 ayda ulaşılır."
   },
   {
-    question: "Bileşik faiz neden önemlidir?",
-    answer: "Bileşik faiz, kazandığınız faizin de bir sonraki dönemde faiz getirmesi anlamına gelir. Bu etki zamanla kar topu gibi büyür. Bir örnek: 50.000 TL'yi yıllık %40 faizle tutarsanız 3 yıl sonra yaklaşık 137.200 TL olur. Bileşik faizi erken ve düzenli olarak kullanmak, uzun vadede servet biriktirmenin en güçlü araçlarından biridir."
+    question: "Aylık ne kadar biriktirmeliyim?",
+    answer: "Hedef süreyi girerseniz hesaplayıcı gereken aylık tutarı da gösterir. Faizsiz hesapta (hedef − mevcut) ÷ ay sayısı; getirili hesapta ise gelecek değer formülü kullanılır. 12 ayda 250.000 TL'ye ulaşmak için 20.000 TL mevcutla faizsiz 19.167 TL, yıllık %30 net getiriyle 16.172 TL biriktirmeniz gerekir. Genel kural olarak net gelirin en az %10–20'si birikime ayrılmalıdır."
   },
   {
-    question: "Tasarruf için hangi yatırım araçları uygundur?",
-    answer: "Türkiye'de popüler tasarruf araçları arasında vadeli mevduat, devlet tahvili ve hazine bonosu, altın ve döviz hesapları, bireysel emeklilik sistemi (BES) ve yatırım fonları yer almaktadır. Her birinin risk, getiri ve vergi profili farklıdır. Düşük riskli ve likit tutmak isteyenler için vadeli mevduat ve devlet tahvilleri; uzun vadeli büyüme hedefleyenler için BES veya yatırım fonları daha uygun olabilir."
+    question: "Bileşik getiri tasarrufu nasıl etkiler?",
+    answer: "Bileşik getiride her ay kazanılan getiri anaparaya eklenir ve sonraki ay o da getiri kazanır. Süre uzadıkça etki büyür: kısa vadede fark küçükken 5–10 yıllık birikimlerde toplam getirinin yatırdığınız paraya yaklaşması hatta onu geçmesi mümkündür. Hesaplayıcı yıllık oranı 12'ye bölerek aylık bileşik hesap yapar."
+  },
+  {
+    question: "Faiz oranı olarak hangi değeri girmeliyim?",
+    answer: "Vergi sonrası elinize geçecek net yıllık oranı girin. Mevduat faizinde 2026 sonuna kadar 6 aya kadar vadelerde %17,5, 1 yıla kadar %15, daha uzun vadelerde %10 stopaj kesilir. Örneğin brüt %40 faizin 6 aylık vadede neti %40 × (1 − 0,175) = %33'tür. Enflasyonun üzerinde reel getiri elde edip etmediğinizi de ayrıca kontrol edin."
+  },
+  {
+    question: "Enflasyon hedef tutarı nasıl etkiler?",
+    answer: "Bugün 250.000 TL olan bir ürünün fiyatı birikim süresince artacağı için hedef tutarı da enflasyona göre güncellemek gerekir. 18 aylık bir hedef için yıllık %30 fiyat artışı beklentisi varsa hedefi yaklaşık %48 yükseltmeniz gerekir. Ya da faiz alanına enflasyonu aşan kısmı (reel getiri) girerek bugünkü fiyatlarla planlama yapabilirsiniz."
+  },
+  {
+    question: "Acil durum fonu ne kadar olmalı?",
+    answer: "Finansal planlamacılar, zorunlu aylık giderlerinizin 3–6 katı kadar kolay erişilebilir bir acil durum fonu önerir. Aylık zorunlu gideri 40.000 TL olan bir hane için bu 120.000–240.000 TL eder. Bu fon vadesiz ya da kısa vadeli, anaparayı riske atmayan araçlarda tutulmalı; diğer hedeflere ancak fon tamamlandıktan sonra geçilmelidir."
   }
 ];
 
 const meta = {
-  title: "Tasarruf ve Birikim Hesaplama",
-  description: "Aylık birikim miktarı ve faiz oranıyla tasarruf hedefinize ne zaman ulaşacağınızı hesaplayın. Bileşik faiz etkisini ve toplam faiz getirisini görün.",
+  title: "Tasarruf Hesaplama",
+  seoTitle: "Tasarruf Hesaplama – Birikim Hedefine Ne Zaman Ulaşırım?",
+  description: "Hedef tutarınızı, mevcut birikiminizi ve aylık tasarrufunuzu girin; bileşik getiriyle hedefe kaç ayda ulaşacağınızı ve gereken aylık birikimi hesaplayın.",
+  summary: "Faizsiz birikimde hedefe ulaşma süresi (hedef − mevcut birikim) ÷ aylık birikim ile bulunur. Getiri varsa her ay bakiye (1 + yıllık oran ÷ 12) ile büyür ve aylık tutar eklenir. 250.000 TL hedefe 20.000 TL mevcut ve ayda 10.000 TL ile faizsiz 23 ayda, yıllık %30 net getiriyle 18 ayda ulaşılır.",
+  howTo: [
+    "Ulaşmak istediğiniz hedef tutarı girin.",
+    "Varsa bugünkü birikiminizi yazın.",
+    "Her ay ne kadar biriktirebileceğinizi girin.",
+    "Birikimin değerleneceği yıllık net getiri oranını yazın; faizsiz hesap için 0 bırakın.",
+    "İsterseniz hedef süreyi girerek gereken aylık birikimi de görün."
+  ],
+  sources: [],
   category: "gunluk",
   slug: "tasarruf-hesaplama",
-  keywords: ["tasarruf hesaplama", "birikim hesaplama", "bileşik faiz hesaplama", "hedefe ulaşma süresi", "aylık tasarruf", "para biriktirme"],
-  dateModified: "2026-04-01",
-  relatedCalcs: ["emeklilik-hesaplama"],
+  keywords: ["tasarruf hesaplama", "birikim hesaplama", "hedefe ulaşma süresi", "aylık birikim hesaplama", "para biriktirme", "bileşik faiz birikim"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["finans/bilesik-faiz-hesaplama", "finans/mevduat-faizi-hesaplama", "finans/enflasyon-hesaplama", "finans/yatirim-getiri-hesaplama", "gunluk/emeklilik-hesaplama"],
   faq
 };
 ---
 
 <CalcLayout meta={meta}>
-  <form id="calc-form">
+  <form id="calc-form" class="calc-inputs" novalidate>
     <CalcInput
       id="hedefTutar"
       label="Hedef Tutar"
       type="number"
-      prefix="₺"
-      placeholder="100000"
+      suffix="₺"
+      placeholder="250000"
       min={1}
       step={1000}
+    />
+    <CalcInput
+      id="mevcut"
+      label="Mevcut Birikim"
+      type="number"
+      suffix="₺"
+      placeholder="20000"
+      min={0}
+      step={1000}
+      required={false}
     />
     <CalcInput
       id="aylikBirikim"
       label="Aylık Birikim"
       type="number"
-      prefix="₺"
-      placeholder="2000"
-      min={1}
+      suffix="₺"
+      placeholder="10000"
+      min={0}
       step={100}
     />
     <CalcInput
       id="faizOrani"
-      label="Yıllık Faiz Oranı"
+      label="Yıllık Net Getiri"
       type="number"
       suffix="%"
-      placeholder="0"
+      placeholder="30"
+      value={0}
       min={0}
       max={500}
-      step={0.01}
-      value={0}
-      helpText="Faizsiz birikim için 0 girin"
+      step={0.1}
+      required={false}
+      helpText="Stopaj sonrası oran; faizsiz için 0"
+    />
+    <CalcInput
+      id="hedefAy"
+      label="Hedef Süre (isteğe bağlı)"
+      type="number"
+      suffix="ay"
+      placeholder="12"
+      min={1}
+      max={600}
+      step={1}
+      required={false}
+      helpText="Gereken aylık birikimi görmek için"
     />
   </form>
 
@@ -68,140 +113,171 @@ const meta = {
     <div slot="main">
       <p class="calc-result-label">Hedefe Ulaşma Süresi</p>
       <p class="calc-result-value" id="sure-sonuc">—</p>
+      <p class="calc-result-sub" id="sure-alt"></p>
     </div>
     <div slot="details">
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Toplam Yatırılan</span>
+        <span class="calc-detail-label">Toplam yatırılan</span>
         <span class="calc-detail-value" id="d-yatirilan">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Faiz Getirisi</span>
+        <span class="calc-detail-label">Getiri</span>
         <span class="calc-detail-value" id="d-faiz-getiri">—</span>
       </div>
-      <div class="calc-detail-row">
-        <span class="calc-detail-label">Toplam Birikim</span>
+      <div class="calc-detail-row is-total">
+        <span class="calc-detail-label">Ulaşılan birikim</span>
         <span class="calc-detail-value" id="d-toplam">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Hedef süre için gereken aylık</span>
+        <span class="calc-detail-value" id="d-gereken">—</span>
       </div>
     </div>
   </CalcResult>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const inputs = document.querySelectorAll<HTMLInputElement | HTMLSelectElement>('#calc-form input, #calc-form select');
       const resultArea = document.getElementById('calc-result');
+      const $ = (id: string) => document.getElementById(id) as HTMLElement;
 
-      function debounce(fn, delay = 150) {
-        let t;
-        return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), delay); };
+      function debounce(fn: () => void, delay = 150) {
+        let timer: ReturnType<typeof setTimeout>;
+        return () => { clearTimeout(timer); timer = setTimeout(fn, delay); };
       }
 
-      function formatTL(n) {
-        return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+      function num(id: string) {
+        const raw = (document.getElementById(id) as HTMLInputElement).value.replace(',', '.').trim();
+        return raw === '' ? NaN : Number(raw);
       }
 
-      function formatNumber(n, d = 0) {
-        return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: d, maximumFractionDigits: d }).format(n);
-      }
+      const tl = (n: number) => new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+      const fmtDate = (d: Date) => new Intl.DateTimeFormat('tr-TR', { month: 'long', year: 'numeric' }).format(d);
+      const MAX_AY = 1200;
 
-      const dc = debounce(calculate);
-      inputs.forEach(i => { i.addEventListener('input', dc); i.addEventListener('change', dc); });
+      function sureMetni(ay: number) {
+        const y = Math.floor(ay / 12);
+        const a = ay % 12;
+        if (y && a) return `${y} yıl ${a} ay`;
+        if (y) return `${y} yıl`;
+        return `${a} ay`;
+      }
 
       function calculate() {
-        const hedef = parseFloat(document.getElementById('hedefTutar').value);
-        const aylik = parseFloat(document.getElementById('aylikBirikim').value);
-        const yillikFaiz = parseFloat(document.getElementById('faizOrani').value) || 0;
+        const hedef = num('hedefTutar');
+        const mevcutRaw = num('mevcut');
+        const mevcut = isNaN(mevcutRaw) ? 0 : mevcutRaw;
+        const aylik = num('aylikBirikim');
+        const faizRaw = num('faizOrani');
+        const faiz = isNaN(faizRaw) ? 0 : faizRaw;
+        const hedefAy = Math.floor(num('hedefAy'));
 
-        if (isNaN(hedef) || isNaN(aylik) || hedef <= 0 || aylik <= 0) {
-          if (resultArea) resultArea.classList.add('hidden');
+        if (!isFinite(hedef) || hedef <= 0 || !isFinite(aylik) || aylik < 0 || mevcut < 0 || faiz < 0 || !isFinite(faiz)) {
+          resultArea?.classList.add('hidden');
           return;
         }
 
+        const r = faiz / 100 / 12;
+        let bakiye = mevcut;
         let ay = 0;
-        let toplamBirikim = 0;
-        const aylikFaiz = yillikFaiz / 100 / 12;
+        while (bakiye < hedef && ay < MAX_AY) {
+          bakiye = bakiye * (1 + r) + aylik;
+          ay++;
+        }
+        const ulasildi = bakiye >= hedef;
+        const yatirilan = mevcut + aylik * ay;
 
-        if (yillikFaiz <= 0) {
-          ay = Math.ceil(hedef / aylik);
-          toplamBirikim = hedef;
+        if (ay === 0) {
+          $('sure-sonuc').textContent = 'Hedefe ulaşıldı';
+          $('sure-alt').textContent = 'Mevcut birikiminiz hedefi karşılıyor';
+        } else if (!ulasildi) {
+          $('sure-sonuc').textContent = '100 yıldan uzun';
+          $('sure-alt').textContent = 'Aylık birikimi artırmayı deneyin';
         } else {
-          // Compound monthly iteration
-          const MAX_AY = 600;
-          while (toplamBirikim < hedef && ay < MAX_AY) {
-            toplamBirikim = toplamBirikim * (1 + aylikFaiz) + aylik;
-            ay++;
-          }
+          const now = new Date();
+          $('sure-sonuc').textContent = sureMetni(ay);
+          $('sure-alt').textContent = `${ay} ay · tahmini ${fmtDate(new Date(now.getFullYear(), now.getMonth() + ay, 1))}`;
+        }
+        $('d-yatirilan').textContent = tl(yatirilan);
+        $('d-faiz-getiri').textContent = tl(Math.max(0, bakiye - yatirilan));
+        $('d-toplam').textContent = tl(bakiye);
+
+        if (hedefAy >= 1) {
+          const g = Math.pow(1 + r, hedefAy);
+          const gereken = r === 0 ? (hedef - mevcut) / hedefAy : ((hedef - mevcut * g) * r) / (g - 1);
+          $('d-gereken').textContent = gereken <= 0 ? 'Ek birikim gerekmiyor' : `${tl(gereken)} (${hedefAy} ay)`;
+        } else {
+          $('d-gereken').textContent = '—';
         }
 
-        const toplamYatirilan = aylik * ay;
-        const faizGetirisi = toplamBirikim - toplamYatirilan;
-
-        const yil = Math.floor(ay / 12);
-        const kalanAy = ay % 12;
-        let sureMetin = '';
-        if (yil > 0 && kalanAy > 0) {
-          sureMetin = yil + ' yıl ' + kalanAy + ' ay';
-        } else if (yil > 0) {
-          sureMetin = yil + ' yıl';
-        } else {
-          sureMetin = kalanAy + ' ay';
-        }
-
-        document.getElementById('sure-sonuc').textContent = sureMetin;
-        document.getElementById('d-yatirilan').textContent = formatTL(toplamYatirilan);
-        document.getElementById('d-faiz-getiri').textContent = formatTL(Math.max(0, faizGetirisi));
-        document.getElementById('d-toplam').textContent = formatTL(toplamBirikim);
-
-        if (resultArea) resultArea.classList.remove('hidden');
+        resultArea?.classList.remove('hidden');
         updateURL();
       }
 
       function updateURL() {
-        const p = new URLSearchParams();
-        inputs.forEach(i => { if (i.value && i.id) p.set(i.id, i.value); });
-        history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
+        const params = new URLSearchParams();
+        inputs.forEach(el => { if (el.id && el.value !== '') params.set(el.id, el.value); });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
       }
 
       function loadFromURL() {
-        const p = new URLSearchParams(window.location.search);
-        let h = false;
-        inputs.forEach(i => { if (i.id && p.has(i.id)) { i.value = p.get(i.id); h = true; } });
-        if (h) calculate();
+        const params = new URLSearchParams(window.location.search);
+        let has = false;
+        inputs.forEach(el => {
+          if (el.id && params.has(el.id)) { el.value = params.get(el.id) ?? ''; has = true; }
+        });
+        if (has) calculate();
       }
+
+      const debounced = debounce(calculate);
+      inputs.forEach(el => {
+        el.addEventListener('input', debounced);
+        el.addEventListener('change', debounced);
+      });
 
       loadFromURL();
     });
   </script>
 
   <section class="calc-content">
-    <h2>Tasarruf Hesaplama Nasıl Yapılır?</h2>
+    <h2>Tasarruf hedefine ne zaman ulaşılır?</h2>
     <p>
-      Finansal özgürlüğe giden yolun temel taşı, düzenli ve bilinçli bir birikim alışkanlığı oluşturmaktır. İster ev almak, ister emeklilik fonu kurmak, ister tatil planlamak olsun; bir tasarruf hedefi belirleyip bu hedefe ulaşmak için ne kadar süre gerektiğini bilmek motivasyonu büyük ölçüde artırır. Bu hesap makinesi, hedefinize ne kadar sürede ulaşacağınızı ve faiz getirisi varsa ne kadar kazanacağınızı gösterir.
+      Bir hedefe ne zaman ulaşacağınız üç şeye bağlıdır: bugün elinizde olan birikim, her ay ekleyebildiğiniz tutar ve paranın beklerken kazandığı getiri. Hesaplayıcı ay ay ilerler: önce mevcut bakiyeye o ayın getirisi eklenir, ardından aylık birikiminiz yatırılır. Bakiye hedefi geçtiği ilk ay, hedefe ulaşma süresidir.
     </p>
+    <p><strong>Yeni bakiye = Önceki bakiye × (1 + yıllık oran ÷ 12) + Aylık birikim</strong></p>
     <p>
-      Aylık sabit bir miktar birikim yapıyorsanız ve paranızı faiz getiren bir hesapta tutuyorsanız bileşik faiz etkisinden yararlanırsınız. Bileşik faiz, kazandığınız faizin de bir sonraki dönemde faiz getirmesidir; bu etki özellikle uzun vadeli birikimlerde son derece güçlü sonuçlar doğurur. Faiz oranı ne kadar yüksek ve süre ne kadar uzunsa bileşik faizin katkısı o kadar belirginleşir.
-    </p>
-
-    <h3>Formül</h3>
-    <p>
-      <strong>Faizsiz:</strong> Ay Sayısı = ⌈Hedef Tutar ÷ Aylık Birikim⌉
-    </p>
-    <p>
-      <strong>Faizli (Aylık Bileşik):</strong> Her ay toplam birikim önce aylık faizle büyütülür, ardından aylık birikim eklenir. Bu işlem hedef tutara ulaşılana kadar tekrarlanır.<br />
-      Aylık Faiz = Yıllık Faiz ÷ 12<br />
-      Yeni Birikim = Önceki Birikim × (1 + Aylık Faiz) + Aylık Katkı
+      Belirli bir sürede hedefe ulaşmak için gereken aylık tutar ise gelecek değer formülünden bulunur: <strong>Aylık = (Hedef − Mevcut × (1 + r)<sup>n</sup>) × r ÷ ((1 + r)<sup>n</sup> − 1)</strong>. Burada r aylık oran, n ay sayısıdır. Getiri sıfırsa formül (Hedef − Mevcut) ÷ n'ye dönüşür.
     </p>
 
-    <h3>Dikkat Edilmesi Gerekenler</h3>
+    <h2>Örnek hesaplama</h2>
     <p>
-      Bu hesaplama sabit aylık birikim ve sabit faiz oranı varsayımına dayanmaktadır. Enflasyon, vergiler ve yatırım ürününe bağlı değişken faiz oranları gerçek sonucu etkileyebilir. Türkiye gibi yüksek enflasyon ortamında nominal faiz oranı yüksek görünse de reel getiriyi hesaplamak için enflasyon oranını çıkarmak gerekir. Uzun vadeli tasarruf kararları için bir finansal danışmandan profesyonel destek almanızı öneririz.
+      Hedef: 250.000 TL. Mevcut birikim: 20.000 TL. Her ay 10.000 TL kenara konuyor.
     </p>
+    <ul>
+      <li><strong>Faizsiz:</strong> (250.000 − 20.000) ÷ 10.000 = 23 ay. Yatırılan toplam 250.000 TL.</li>
+      <li><strong>Yıllık %30 net getiri ile:</strong> Hedefe 18 ayda ulaşılır. Toplam 200.000 TL yatırılır, yaklaşık 55.057 TL getiri kazanılır ve bakiye 255.057 TL olur.</li>
+      <li><strong>12 ayda ulaşmak isteseydiniz:</strong> Faizsiz ayda 19.167 TL, %30 getiriyle ayda 16.172 TL biriktirmeniz gerekirdi.</li>
+    </ul>
 
-    <h3>Sıkça Sorulan Sorular</h3>
-    {faq.map(item => (
-      <details>
-        <summary><strong>{item.question}</strong></summary>
-        <p>{item.answer}</p>
-      </details>
-    ))}
+    <h2>Aylık birikime göre 250.000 TL hedef süresi (başlangıç 0 TL)</h2>
+    <table>
+      <thead>
+        <tr><th>Aylık birikim</th><th>Faizsiz</th><th>Yıllık %30 net getiri</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>5.000 TL</td><td>50 ay (4 yıl 2 ay)</td><td>33 ay (2 yıl 9 ay)</td></tr>
+        <tr><td>10.000 TL</td><td>25 ay (2 yıl 1 ay)</td><td>20 ay (1 yıl 8 ay)</td></tr>
+        <tr><td>15.000 TL</td><td>17 ay (1 yıl 5 ay)</td><td>15 ay (1 yıl 3 ay)</td></tr>
+        <tr><td>25.000 TL</td><td>10 ay</td><td>10 ay</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Daha hızlı biriktirmek için</h2>
+    <ul>
+      <li><strong>Önce kendinize ödeyin:</strong> Maaş yatar yatmaz birikim tutarını otomatik talimatla ayrı hesaba aktarın.</li>
+      <li><strong>Net oranı kullanın:</strong> Mevduatta stopaj, fonlarda vergi ve yönetim ücreti getiriyi düşürür; hesaplamada her zaman net oranı girin.</li>
+      <li><strong>Enflasyonu hesaba katın:</strong> Hedefiniz bir ürünse fiyatı da artacaktır; hedefi beklenen fiyat artışıyla güncelleyin.</li>
+      <li><strong>Ek gelirleri ekleyin:</strong> İkramiye, vergi iadesi gibi düzensiz gelirleri doğrudan birikime yönlendirmek süreyi belirgin kısaltır.</li>
+    </ul>
   </section>
 </CalcLayout>

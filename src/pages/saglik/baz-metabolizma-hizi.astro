@@ -7,32 +7,57 @@ import CalcResult from '../../components/calculator/CalcResult.astro';
 const faq = [
   {
     question: "Bazal metabolizma hızı (BMH) nedir?",
-    answer: "Bazal metabolizma hızı (BMH), vücudun tamamen dinlenme halinde, hiçbir hareket yapmaksızın temel yaşamsal işlevleri (nefes alma, kalp atışı, sindirim, vücut ısısını koruma) sürdürebilmek için harcadığı minimum kalori miktarıdır. BMH, günlük kalori ihtiyacının hesaplanmasında temel referans değeridir."
+    answer: "Bazal metabolizma hızı, vücudun tam dinlenme halinde; nefes alma, kalp atışı, beyin faaliyeti ve vücut ısısını koruma gibi temel işlevler için bir günde harcadığı enerjidir. Hareketsiz bir yetişkinde günlük toplam harcamanın yaklaşık %60–70'ini oluşturur. Kadınlarda genellikle 1.200–1.500, erkeklerde 1.500–1.900 kcal arasındadır."
   },
   {
-    question: "Harris-Benedict formülü nedir ve nasıl çalışır?",
-    answer: "Harris-Benedict formülü, 1919 yılında geliştirilmiş ve 1984'te revize edilmiş bilimsel bir denklemdir. Erkekler için BMH = 88,362 + (13,397 × kilo) + (4,799 × boy) − (5,677 × yaş); kadınlar için BMH = 447,593 + (9,247 × kilo) + (3,098 × boy) − (4,330 × yaş) şeklinde hesaplanır. Bu formül kişinin cinsiyeti, yaşı, boyu ve kilosunu dikkate alarak oldukça güvenilir sonuçlar vermektedir."
+    question: "BMH nasıl hesaplanır?",
+    answer: "En güvenilir kabul edilen Mifflin-St Jeor denklemine göre erkeklerde BMH = 10 × kilo (kg) + 6,25 × boy (cm) − 5 × yaş + 5, kadınlarda aynı toplam − 161'dir. Örneğin 35 yaşında, 178 cm ve 80 kg bir erkeğin BMH'si 800 + 1.112,5 − 175 + 5 = 1.742,5 kcal olur. Vücut yağ oranınızı biliyorsanız Katch-McArdle formülü de kullanılabilir."
   },
   {
-    question: "BMH değerimi nasıl kullanabilirim?",
-    answer: "BMH değeriniz, günlük kalori ihtiyacınızı hesaplamak için kullanabileceğiniz temel değerdir. Hareketsiz bir yaşam sürdürüyorsanız BMH × 1,2; hafif aktifseniz BMH × 1,375; orta aktifseniz BMH × 1,55 alarak toplam günlük kalori ihtiyacınızı bulabilirsiniz. Kilo vermek için bu değerin altında, kilo almak için ise üzerinde kalori tüketmelisiniz."
+    question: "BMH ile günlük kalori ihtiyacı aynı şey mi?",
+    answer: "Hayır. BMH yalnızca dinlenmedeki harcamadır. Günlük kalori ihtiyacı (TDEE), BMH'nin aktivite katsayısıyla çarpılmasıyla bulunur: hareketsiz biri için 1,2, orta aktif biri için 1,55. BMH'si 1.500 kcal olan hareketsiz biri kilosunu korumak için yaklaşık 1.800 kcal'ye ihtiyaç duyar. Diyetlerde uzun süre BMH'nin altında beslenmek önerilmez."
+  },
+  {
+    question: "Metabolizma hızı neden kişiden kişiye değişir?",
+    answer: "En büyük etken yağsız vücut kütlesidir; kas dokusu dinlenmede yağ dokusundan daha fazla enerji harcar. Bu yüzden erkeklerde ve kaslı kişilerde BMH daha yüksektir. Yaş ilerledikçe kas kütlesi azaldığı için BMH düşer. Tiroid hormonları, genetik, uyku düzeni, hastalık, ateş ve bazı ilaçlar da metabolizma hızını belirgin biçimde etkiler."
+  },
+  {
+    question: "Metabolizma hızımı artırabilir miyim?",
+    answer: "BMH'yi kalıcı olarak artırmanın kanıtlanmış yolu kas kütlesini artırmaktır; bunun için haftada en az iki gün direnç antrenmanı ve yeterli protein alımı önerilir. Çok düşük kalorili diyetler vücudu enerji tasarrufuna yönlendirip BMH'yi düşürebilir. 'Metabolizma hızlandıran' takviyelerin etkisi ise genellikle çok küçüktür ve kalıcı değildir."
+  },
+  {
+    question: "Hesaplayıcı hangi formülleri kullanıyor?",
+    answer: "Ana sonuç Mifflin-St Jeor denklemiyle hesaplanır. Karşılaştırma için Harris-Benedict'in 1984 revizyonu da gösterilir. Vücut yağ oranınızı girerseniz yağsız kütleye dayanan Katch-McArdle formülü (370 + 21,6 × yağsız kütle) de hesaplanır; bu formül kas oranı yüksek veya düşük kişilerde daha isabetli olabilir."
   }
 ];
 
 const meta = {
-  title: "Bazal Metabolizma Hızı Hesaplama",
-  description: "Harris-Benedict formülü ile bazal metabolizma hızınızı (BMH/BMR) hesaplayın. Cinsiyet, yaş, boy ve kilonuza göre günlük minimum kalori ihtiyacınızı öğrenin.",
+  title: "Bazal Metabolizma Hızı (BMH) Hesaplama",
+  seoTitle: "Bazal Metabolizma Hızı Hesaplama 2026 – BMH / BMR",
+  description: "Bazal metabolizma hızınızı Mifflin-St Jeor, Harris-Benedict ve Katch-McArdle formülleriyle hesaplayın. Dinlenirken günde kaç kalori yaktığınızı öğrenin.",
+  summary: "Bazal metabolizma hızı, vücudun tam dinlenmede bir günde harcadığı enerjidir. Mifflin-St Jeor formülüne göre erkekte BMH = 10 × kilo + 6,25 × boy − 5 × yaş + 5, kadında aynı toplam − 161'dir. Yetişkinlerde BMH çoğunlukla 1.200–1.900 kcal arasındadır.",
+  howTo: [
+    "Cinsiyetinizi seçin, yaşınızı, boyunuzu (cm) ve kilonuzu (kg) girin.",
+    "Biliyorsanız vücut yağ oranınızı da girin; Katch-McArdle sonucu eklenir.",
+    "Mifflin-St Jeor ile hesaplanan BMH değerinizi ana sonuçta görün.",
+    "Günlük toplam ihtiyacınız için kalori hesaplayıcısına geçin."
+  ],
+  sources: [
+    { name: "Mifflin MD ve ark. (1990), Am J Clin Nutr – A new predictive equation for resting energy expenditure", url: "https://pubmed.ncbi.nlm.nih.gov/2305711/" },
+    { name: "Roza AM, Shizgal HM (1984), Am J Clin Nutr – The Harris Benedict equation reevaluated", url: "https://pubmed.ncbi.nlm.nih.gov/6741850/" },
+    { name: "Frankenfield D ve ark. (2005), J Am Diet Assoc – Comparison of predictive equations for RMR", url: "https://www.jandonline.org/article/S0002-8223(05)00149-5/abstract" }
+  ],
   category: "saglik",
   slug: "baz-metabolizma-hizi",
-  keywords: ["bazal metabolizma hızı", "BMH hesaplama", "BMR hesaplama", "Harris-Benedict", "minimum kalori ihtiyacı", "metabolizma hızı"],
-  dateModified: "2026-04-01",
-  relatedCalcs: ["kalori-hesaplama", "ideal-kilo-hesaplama", "vucut-kitle-indeksi"],
+  keywords: ["bazal metabolizma hızı", "BMH hesaplama", "BMR hesaplama", "Mifflin-St Jeor", "Harris-Benedict", "metabolizma hızı"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["saglik/kalori-hesaplama", "saglik/yag-orani-hesaplama", "saglik/protein-ihtiyaci-hesaplama", "saglik/vucut-kitle-indeksi"],
   faq
 };
 ---
 
 <CalcLayout meta={meta}>
-  <form id="calc-form" novalidate>
+  <form id="calc-form" class="calc-inputs" novalidate>
     <CalcSelect
       id="cinsiyet"
       label="Cinsiyet"
@@ -47,8 +72,8 @@ const meta = {
       label="Yaş"
       type="number"
       suffix="yaş"
-      placeholder="30"
-      min={15}
+      placeholder="35"
+      min={18}
       max={100}
       step={1}
     />
@@ -57,8 +82,8 @@ const meta = {
       label="Boy"
       type="number"
       suffix="cm"
-      placeholder="175"
-      min={100}
+      placeholder="178"
+      min={120}
       max={250}
       step={1}
     />
@@ -67,131 +92,175 @@ const meta = {
       label="Kilo"
       type="number"
       suffix="kg"
-      placeholder="70"
+      placeholder="80"
       min={30}
       max={300}
       step={0.1}
+    />
+    <CalcInput
+      id="yag"
+      label="Vücut Yağ Oranı (isteğe bağlı)"
+      type="number"
+      suffix="%"
+      placeholder="22"
+      min={3}
+      max={60}
+      step={0.1}
+      required={false}
+      helpText="Katch-McArdle hesabı için"
     />
   </form>
 
   <CalcResult>
     <div slot="main">
-      <p class="calc-result-label">Bazal Metabolizma Hızı</p>
+      <p class="calc-result-label">Bazal Metabolizma Hızı (Mifflin-St Jeor)</p>
       <p class="calc-result-value" id="bmr-sonuc">—</p>
     </div>
     <div slot="details">
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Cinsiyet</span>
-        <span class="calc-detail-value" id="d-cinsiyet">—</span>
+        <span class="calc-detail-label">Harris-Benedict (1984)</span>
+        <span class="calc-detail-value" id="d-harris">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Yaş</span>
-        <span class="calc-detail-value" id="d-yas">—</span>
+        <span class="calc-detail-label">Katch-McArdle</span>
+        <span class="calc-detail-value" id="d-katch">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Boy</span>
-        <span class="calc-detail-value" id="d-boy">—</span>
+        <span class="calc-detail-label">Saatlik ortalama</span>
+        <span class="calc-detail-value" id="d-saatlik">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Kilo</span>
-        <span class="calc-detail-value" id="d-kilo">—</span>
+        <span class="calc-detail-label">Hareketsiz günlük ihtiyaç (×1,2)</span>
+        <span class="calc-detail-value" id="d-tdee">—</span>
       </div>
     </div>
   </CalcResult>
 
+  <p class="calc-note">
+    Bu değerler sağlıklı yetişkinler için formül tabanlı tahminlerdir; ölçülen metabolizma hızından ±%10 farklı olabilir. Tiroid hastalığı, gebelik, ciddi kilo kaybı veya kronik hastalık durumunda beslenme planınızı hekiminiz ya da diyetisyeninizle yapın.
+  </p>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const inputs = document.querySelectorAll<HTMLInputElement | HTMLSelectElement>('#calc-form input, #calc-form select');
       const resultArea = document.getElementById('calc-result');
+      const $ = (id: string) => document.getElementById(id) as HTMLElement;
 
-      function debounce(fn, delay = 150) {
-        let t;
-        return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), delay); };
+      function debounce(fn: () => void, delay = 150) {
+        let timer: ReturnType<typeof setTimeout>;
+        return () => { clearTimeout(timer); timer = setTimeout(fn, delay); };
       }
 
-      function formatNumber(n, d = 0) {
-        return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: d, maximumFractionDigits: d }).format(n);
+      function num(id: string) {
+        const raw = (document.getElementById(id) as HTMLInputElement).value.replace(',', '.');
+        return raw.trim() === '' ? NaN : parseFloat(raw);
       }
 
-      const dc = debounce(calculate);
-      inputs.forEach(i => { i.addEventListener('input', dc); i.addEventListener('change', dc); });
+      function kcal(n: number, suffix = ' kcal/gün') {
+        return new Intl.NumberFormat('tr-TR', { maximumFractionDigits: 0 }).format(Math.round(n)) + suffix;
+      }
 
       function calculate() {
-        const cinsiyet = document.getElementById('cinsiyet').value;
-        const yas = parseFloat(document.getElementById('yas').value);
-        const boy = parseFloat(document.getElementById('boy').value);
-        const kilo = parseFloat(document.getElementById('kilo').value);
+        const cinsiyet = (document.getElementById('cinsiyet') as HTMLSelectElement).value;
+        const yas = num('yas');
+        const boy = num('boy');
+        const kilo = num('kilo');
+        const yag = num('yag');
 
-        if (isNaN(yas) || isNaN(boy) || isNaN(kilo) || yas <= 0 || boy <= 0 || kilo <= 0) {
-          if (resultArea) resultArea.classList.add('hidden');
+        if (![yas, boy, kilo].every(isFinite) || yas < 10 || yas > 120 || boy < 100 || boy > 260 || kilo < 20 || kilo > 400) {
+          resultArea?.classList.add('hidden');
           return;
         }
 
-        let bmr;
-        if (cinsiyet === 'erkek') {
-          bmr = 88.362 + (13.397 * kilo) + (4.799 * boy) - (5.677 * yas);
+        const erkek = cinsiyet === 'erkek';
+        const mifflin = 10 * kilo + 6.25 * boy - 5 * yas + (erkek ? 5 : -161);
+        const harris = erkek
+          ? 88.362 + 13.397 * kilo + 4.799 * boy - 5.677 * yas
+          : 447.593 + 9.247 * kilo + 3.098 * boy - 4.330 * yas;
+
+        $('bmr-sonuc').textContent = kcal(mifflin);
+        $('d-harris').textContent = kcal(harris);
+        $('d-saatlik').textContent = new Intl.NumberFormat('tr-TR', { maximumFractionDigits: 0 }).format(mifflin / 24) + ' kcal/saat';
+        $('d-tdee').textContent = kcal(mifflin * 1.2);
+
+        if (isFinite(yag) && yag > 0 && yag < 70) {
+          const yagsiz = kilo * (1 - yag / 100);
+          $('d-katch').textContent = kcal(370 + 21.6 * yagsiz);
         } else {
-          bmr = 447.593 + (9.247 * kilo) + (3.098 * boy) - (4.330 * yas);
+          $('d-katch').textContent = 'Yağ oranı girilmedi';
         }
 
-        document.getElementById('bmr-sonuc').textContent = formatNumber(bmr, 0) + ' kcal/gün';
-        document.getElementById('d-cinsiyet').textContent = cinsiyet === 'erkek' ? 'Erkek' : 'Kadın';
-        document.getElementById('d-yas').textContent = formatNumber(yas) + ' yaş';
-        document.getElementById('d-boy').textContent = formatNumber(boy) + ' cm';
-        document.getElementById('d-kilo').textContent = formatNumber(kilo, 1) + ' kg';
-
-        if (resultArea) resultArea.classList.remove('hidden');
+        resultArea?.classList.remove('hidden');
         updateURL();
       }
 
       function updateURL() {
-        const p = new URLSearchParams();
-        inputs.forEach(i => { if (i.value && i.id) p.set(i.id, i.value); });
-        history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
+        const params = new URLSearchParams();
+        inputs.forEach(el => { if (el.id && el.value !== '') params.set(el.id, el.value); });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
       }
 
       function loadFromURL() {
-        const p = new URLSearchParams(window.location.search);
-        let h = false;
-        inputs.forEach(i => { if (i.id && p.has(i.id)) { i.value = p.get(i.id); h = true; } });
-        if (h) calculate();
+        const params = new URLSearchParams(window.location.search);
+        let has = false;
+        inputs.forEach(el => {
+          if (el.id && params.has(el.id)) { el.value = params.get(el.id) ?? ''; has = true; }
+        });
+        if (has) calculate();
       }
+
+      const debounced = debounce(calculate);
+      inputs.forEach(el => {
+        el.addEventListener('input', debounced);
+        el.addEventListener('change', debounced);
+      });
 
       loadFromURL();
     });
   </script>
 
   <section class="calc-content">
-    <h2>Bazal Metabolizma Hızı (BMH) Nedir?</h2>
+    <h2>Bazal metabolizma hızı ne işe yarar?</h2>
     <p>
-      Bazal metabolizma hızı (BMH), İngilizce adıyla Basal Metabolic Rate (BMR), vücudun tam dinlenme halinde harcadığı minimum enerji miktarını ifade eder. Hiçbir fiziksel aktivite yapılmadan, yalnızca solunum, kalp atışı, vücut ısısının korunması ve sindirim gibi temel yaşamsal işlevlerin sürdürülmesi için gerekli olan bu enerji miktarı, günlük toplam kalori ihtiyacının en önemli bileşenidir.
-    </p>
-    <p>
-      Günlük tükettiğimiz kalorinin yaklaşık yüzde altmış ila yetmişi bazal metabolizma tarafından harcanır. Bu nedenle BMH değerini bilmek; kilo kontrolü, spor performansı ve genel sağlık yönetimi açısından son derece değerlidir. Vücudunuzun temel ihtiyaçlarını karşılamak için gereken enerjiyi bilerek daha bilinçli beslenme planları oluşturabilirsiniz.
-    </p>
-    <h3>Harris-Benedict Formülü</h3>
-    <p>
-      Bu hesap makinesi, dünya genelinde en yaygın kullanılan BMH formülü olan <strong>Harris-Benedict denklemini</strong> kullanmaktadır. 1984 yılında Mifflin ve St Jeor tarafından revize edilen bu formül şu şekildedir:
-    </p>
-    <p>
-      <strong>Erkekler için:</strong> BMH = 88,362 + (13,397 × kilo) + (4,799 × boy) − (5,677 × yaş)<br />
-      <strong>Kadınlar için:</strong> BMH = 447,593 + (9,247 × kilo) + (3,098 × boy) − (4,330 × yaş)
-    </p>
-    <h3>BMH'yi Etkileyen Faktörler</h3>
-    <p>
-      Bazal metabolizma hızı kişiden kişiye önemli ölçüde farklılık gösterir. Kas kütlesi yüksek olan bireyler, aynı kilodaki yağ oranı yüksek bireylere kıyasla daha yüksek BMH değerine sahiptir; zira kas dokusu, yağ dokusuna göre çok daha fazla enerji tüketir. Yaş ilerledikçe metabolizma yavaşlama eğilimi gösterir. Hormon düzeyleri, tiroid fonksiyonu, iklim ve genetik faktörler de bazal metabolizmayı etkileyen başlıca unsurlardır.
-    </p>
-    <h3>Dikkat Edilmesi Gerekenler</h3>
-    <p>
-      BMH formülleri ortalama popülasyon verileri kullanılarak geliştirilmiş olduğundan bireysel sapma gösterebilir. Formül sonuçları tahmini nitelik taşır; profesyonel bir beslenme danışmanı veya doktorun değerlendirmesinin yerini tutmaz. Ayrıca hesaplanan BMH değeri yalnızca dinlenme durumundaki enerji ihtiyacını verir; günlük toplam kalori gereksinimini bulmak için fiziksel aktivite katsayısıyla çarpılması gerekir.
+      Bazal metabolizma hızı (BMH), gün boyu yatakta hiç kıpırdamadan dursanız bile vücudunuzun harcayacağı enerjiyi gösterir. Kalp, beyin, karaciğer ve böbrekler bu harcamanın büyük kısmını oluşturur. BMH'yi bilmek, diyet yaparken ne kadar kalorinin "fazla düşük" olduğunu anlamanıza ve günlük kalori ihtiyacınızı doğru hesaplamanıza yardımcı olur.
     </p>
 
-    <h3>Sıkça Sorulan Sorular</h3>
-    {faq.map(item => (
-      <details>
-        <summary><strong>{item.question}</strong></summary>
-        <p>{item.answer}</p>
-      </details>
-    ))}
+    <h2>Formüller</h2>
+    <table>
+      <thead>
+        <tr><th>Formül</th><th>Erkek</th><th>Kadın</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Mifflin-St Jeor (1990)</td><td>10 × kg + 6,25 × cm − 5 × yaş + 5</td><td>10 × kg + 6,25 × cm − 5 × yaş − 161</td></tr>
+        <tr><td>Harris-Benedict (1984 revizyonu)</td><td>88,362 + 13,397 × kg + 4,799 × cm − 5,677 × yaş</td><td>447,593 + 9,247 × kg + 3,098 × cm − 4,330 × yaş</td></tr>
+        <tr><td>Katch-McArdle</td><td colspan="2">370 + 21,6 × yağsız kütle (kg)</td></tr>
+      </tbody>
+    </table>
+    <p>
+      Mifflin-St Jeor, 498 sağlıklı yetişkinde dolaylı kalorimetriyle ölçülen değerlerden türetilmiştir ve karşılaştırmalı derlemelerde en tutarlı sonuçları veren denklem olarak öne çıkar. Katch-McArdle cinsiyet ve yaş yerine yağsız kütleyi kullandığından, vücut yağ oranı doğru ölçülmüşse sporcularda daha isabetli olabilir.
+    </p>
+
+    <h2>Örnek hesaplama</h2>
+    <p>35 yaşında, 178 cm boyunda, 80 kg ağırlığında ve yağ oranı %22 olan bir erkek için:</p>
+    <ul>
+      <li><strong>Mifflin-St Jeor:</strong> 10 × 80 + 6,25 × 178 − 5 × 35 + 5 = 800 + 1.112,5 − 175 + 5 = 1.742,5 kcal</li>
+      <li><strong>Harris-Benedict:</strong> 88,362 + 1.071,76 + 854,22 − 198,70 ≈ 1.816 kcal</li>
+      <li><strong>Katch-McArdle:</strong> Yağsız kütle = 80 × 0,78 = 62,4 kg → 370 + 21,6 × 62,4 ≈ 1.718 kcal</li>
+    </ul>
+    <p>
+      Üç formül birbirine yakın sonuç veriyor; bu kişinin BMH'si yaklaşık 1.700–1.800 kcal aralığındadır. Hareketsiz bir günde kilosunu korumak için yaklaşık 1.742,5 × 1,2 ≈ 2.090 kcal gerekir.
+    </p>
+
+    <h2>BMH'yi etkileyen başlıca etkenler</h2>
+    <ul>
+      <li><strong>Yağsız vücut kütlesi:</strong> Kas oranı arttıkça dinlenme harcaması yükselir.</li>
+      <li><strong>Yaş:</strong> 20'li yaşlardan sonra her on yılda BMH birkaç yüzde azalır; bunun büyük kısmı kas kaybından kaynaklanır.</li>
+      <li><strong>Cinsiyet:</strong> Aynı kilo ve boyda erkeklerin BMH'si, daha yüksek kas oranı nedeniyle genellikle daha yüksektir.</li>
+      <li><strong>Hormonlar ve sağlık durumu:</strong> Tiroid bozuklukları, ateş, gebelik ve bazı ilaçlar BMH'yi belirgin biçimde değiştirir.</li>
+      <li><strong>Uzun süreli düşük kalori:</strong> Vücut kendini korumak için enerji harcamasını azaltabilir.</li>
+    </ul>
+    <p>
+      BMH'nizi öğrendikten sonra aktivite düzeyinizi de hesaba katmak için <a href="/saglik/kalori-hesaplama/">kalori hesaplama</a> aracını kullanabilirsiniz.
+    </p>
   </section>
 </CalcLayout>

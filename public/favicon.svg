@@ -1,12 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="6" fill="#1B4D3E"/>
-  <rect x="6" y="4" width="20" height="5" rx="1.5" fill="#E8A838"/>
-  <rect x="6" y="12" width="4" height="4" rx="1" fill="#fff" opacity="0.9"/>
-  <rect x="14" y="12" width="4" height="4" rx="1" fill="#fff" opacity="0.9"/>
-  <rect x="22" y="12" width="4" height="4" rx="1" fill="#fff" opacity="0.9"/>
-  <rect x="6" y="19" width="4" height="4" rx="1" fill="#fff" opacity="0.9"/>
-  <rect x="14" y="19" width="4" height="4" rx="1" fill="#fff" opacity="0.9"/>
-  <rect x="22" y="19" width="4" height="4" rx="1" fill="#E8A838"/>
-  <rect x="6" y="26" width="4" height="4" rx="1" fill="#fff" opacity="0.9"/>
-  <rect x="14" y="26" width="12" height="4" rx="1" fill="#fff" opacity="0.9"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><style>.b{fill:#15171A}.l{stroke:#F7F7F4}@media (prefers-color-scheme:dark){.b{fill:#F1F2F4}.l{stroke:#15171A}}</style><rect class="b" width="32" height="32" rx="9"/><path class="l" d="M9 9.5v13M9 16h7.5M16.5 9.5v13" fill="none" stroke-width="2.6" stroke-linecap="round"/><path d="M20.5 16h4.5M22.75 13.75v4.5" fill="none" stroke="#E8541E" stroke-width="2.6" stroke-linecap="round"/></svg>

@@ -1,0 +1,229 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcSelect from '../../components/calculator/CalcSelect.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Maaş zammı nasıl hesaplanır?",
+    answer: "Yüzde olarak verilen zamda yeni maaş, Mevcut Maaş × (1 + Zam Oranı / 100) formülüyle bulunur. Örneğin 40.000 TL maaşa %25 zam yapılırsa zam tutarı 10.000 TL, yeni maaş 50.000 TL olur. Zam tutar olarak verildiyse oranı bulmak için Zam Tutarı / Mevcut Maaş × 100 hesaplanır."
+  },
+  {
+    question: "Enflasyon farkı nasıl hesaplanır?",
+    answer: "Enflasyon farkı, maaşınızın satın alma gücünü korumak için gereken ek tutardır. Enflasyon farkı = Mevcut Maaş × Enflasyon Oranı. Aldığınız zam bu tutarın altında kalırsa reel olarak kayıp yaşarsınız. Örneğin 40.000 TL maaş ve %30 enflasyonda maaşın 52.000 TL'ye çıkması gerekir; 50.000 TL'lik yeni maaş 2.000 TL geride kalır."
+  },
+  {
+    question: "Reel zam oranı nedir?",
+    answer: "Reel zam, enflasyonun etkisi çıkarıldıktan sonra maaşınızın satın alma gücündeki gerçek artıştır. Formül: Reel Zam = (1 + Nominal Zam) / (1 + Enflasyon) − 1. %25 zam ve %30 enflasyonda reel zam (1,25 / 1,30) − 1 = −%3,85 olur; yani maaşınız görünürde artsa da satın alma gücünüz düşmüştür."
+  },
+  {
+    question: "Zam brüt maaşa mı net maaşa mı yapılır?",
+    answer: "Özel sektörde zam genellikle brüt maaş üzerinden belirlenir, ancak bazı işverenler net tutar üzerinden anlaşır. Brüt maaşa yapılan zamda gelir vergisi dilimleri nedeniyle net maaştaki artış oranı yıl içinde farklılaşabilir. Zam oranını hangi tutara uyguladığınızı netleştirin; brütten nete geçiş için net-brüt maaş hesaplama aracını kullanabilirsiniz."
+  },
+  {
+    question: "Memur ve emekli zammı nasıl belirlenir?",
+    answer: "Memur maaş artışları toplu sözleşme zammı ile Ocak ve Temmuz aylarında açıklanan altı aylık enflasyon farkının birleşiminden oluşur. SSK ve Bağ-Kur emeklileri ise altı aylık TÜFE değişimi oranında zam alır. İki oranın birleşik etkisi (1 + a) × (1 + b) − 1 formülüyle hesaplanır; bu nedenle oranlar doğrudan toplanmaz."
+  },
+  {
+    question: "İki zam oranı toplanır mı?",
+    answer: "Hayır, art arda yapılan zamlar toplanmaz, çarpılır. Örneğin önce %10, sonra %15 zam alan birinin toplam artışı %25 değil, 1,10 × 1,15 − 1 = %26,5 olur. Bunun nedeni ikinci zammın, ilk zamla yükselmiş maaş üzerinden hesaplanmasıdır. Toplu sözleşme ve enflasyon farkı birleştirilirken de aynı yöntem kullanılır."
+  }
+];
+
+const meta = {
+  title: "Maaş Zammı Hesaplama",
+  seoTitle: "Maaş Zammı Hesaplama 2026 - Yeni Maaş ve Enflasyon Farkı",
+  description: "Maaş zammı hesaplama: yüzde veya tutar olarak zam girin; yeni maaşı, zam oranını, reel zammı ve enflasyon karşısındaki kaybı ya da kazancı anında görün.",
+  summary: "Yeni maaş = Mevcut maaş × (1 + zam oranı). Örneğin 40.000 TL maaşa %25 zam yapılırsa yeni maaş 50.000 TL olur. Reel zam ise (1 + zam) / (1 + enflasyon) − 1 formülüyle bulunur; %25 zam ve %30 enflasyonda reel zam −%3,85'tir.",
+  howTo: [
+    "Mevcut aylık maaşınızı girin (brüt veya net, hangisine zam yapılıyorsa).",
+    "Zam türünü seçin: yüzde oran veya TL tutar.",
+    "Zam değerini ve isterseniz karşılaştırma için yıllık enflasyon oranını girin.",
+    "Yeni maaşı, reel zammı ve enflasyon farkını inceleyin."
+  ],
+  sources: [
+    { name: "TÜİK - Tüketici Fiyat Endeksi", url: "https://veriportali.tuik.gov.tr/Kategori/GetKategori?p=enflasyon-ve-fiyat-106" }
+  ],
+  category: "finans",
+  slug: "maas-zammi-hesaplama",
+  keywords: ["maaş zammı hesaplama", "zam hesaplama", "yüzde zam hesaplama", "enflasyon farkı hesaplama", "reel zam", "yeni maaş hesaplama"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["finans/net-brut-maas-hesaplama", "finans/enflasyon-hesaplama", "finans/asgari-ucret-hesaplama", "matematik/yuzde-hesaplama"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" class="calc-inputs">
+    <CalcInput id="maas" label="Mevcut Maaş" type="number" suffix="₺" placeholder="40000" step={100} min={0} />
+    <CalcSelect
+      id="tur"
+      label="Zam Türü"
+      options={[
+        { value: "yuzde", label: "Yüzde (%)" },
+        { value: "tutar", label: "Tutar (₺)" },
+        { value: "yeni", label: "Yeni maaşı biliyorum" }
+      ]}
+      value="yuzde"
+    />
+    <CalcInput id="zam" label="Zam Değeri" type="number" placeholder="25" step={0.01} min={0} helpText="Yüzde, TL tutarı veya yeni maaş (seçtiğiniz türe göre)." />
+    <CalcInput id="enf" label="Yıllık Enflasyon (isteğe bağlı)" type="number" suffix="%" placeholder="30" step={0.01} required={false} />
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">Yeni Maaş</p>
+      <p class="calc-result-value" id="yeni-maas">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row"><span class="calc-detail-label">Zam Tutarı</span><span class="calc-detail-value" id="zam-tutar">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Zam Oranı</span><span class="calc-detail-value" id="zam-oran">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Yıllık Ek Gelir (12 ay)</span><span class="calc-detail-value" id="yillik">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Enflasyona Göre Olması Gereken Maaş</span><span class="calc-detail-value" id="enf-maas">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Enflasyon Karşısında Fark</span><span class="calc-detail-value" id="enf-fark">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Reel Zam Oranı</span><span class="calc-detail-value" id="reel">—</span></div>
+    </div>
+  </CalcResult>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('calc-form');
+      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const resultArea = document.getElementById('calc-result');
+
+      function debounce(fn: () => void, delay = 150) {
+        let timer: ReturnType<typeof setTimeout>;
+        return () => { clearTimeout(timer); timer = setTimeout(fn, delay); };
+      }
+      const val = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
+      const setText = (id: string, t: string) => { (document.getElementById(id) as HTMLElement).textContent = t; };
+      const tl = (n: number) => new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+      const pct = (n: number) => '%' + new Intl.NumberFormat('tr-TR', { maximumFractionDigits: 2 }).format(n);
+
+      form?.addEventListener('submit', (e) => e.preventDefault());
+      const debouncedCalc = debounce(calculate);
+      inputs.forEach(input => {
+        input.addEventListener('input', debouncedCalc);
+        input.addEventListener('change', debouncedCalc);
+      });
+
+      function calculate() {
+        const maas = parseFloat(val('maas'));
+        const tur = val('tur');
+        const zam = parseFloat(val('zam'));
+        const enf = parseFloat(val('enf'));
+        if (!maas || maas <= 0 || isNaN(zam)) return;
+
+        let yeni: number;
+        if (tur === 'yuzde') yeni = maas * (1 + zam / 100);
+        else if (tur === 'tutar') yeni = maas + zam;
+        else yeni = zam;
+        if (yeni <= 0) return;
+        const fark = yeni - maas;
+        const oran = fark / maas * 100;
+
+        setText('yeni-maas', tl(yeni));
+        setText('zam-tutar', tl(fark));
+        setText('zam-oran', pct(oran));
+        setText('yillik', tl(fark * 12));
+
+        if (!isNaN(enf)) {
+          const gereken = maas * (1 + enf / 100);
+          const enfFark = yeni - gereken;
+          const reel = ((1 + oran / 100) / (1 + enf / 100) - 1) * 100;
+          setText('enf-maas', tl(gereken));
+          setText('enf-fark', (enfFark >= 0 ? 'Kazanç: ' : 'Kayıp: ') + tl(Math.abs(enfFark)));
+          setText('reel', pct(reel));
+        } else {
+          setText('enf-maas', 'Enflasyon girilmedi');
+          setText('enf-fark', '—');
+          setText('reel', '—');
+        }
+
+        if (resultArea) resultArea.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const params = new URLSearchParams();
+        inputs.forEach(input => {
+          const el = input as HTMLInputElement;
+          if (el.value && el.id) params.set(el.id, el.value);
+        });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+      }
+
+      function loadFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        let hasParams = false;
+        inputs.forEach(input => {
+          const el = input as HTMLInputElement;
+          if (el.id && params.has(el.id)) { el.value = params.get(el.id)!; hasParams = true; }
+        });
+        if (hasParams) calculate();
+      }
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>Maaş Zammı Hesaplama Nedir?</h2>
+    <p>
+      Maaş zammı hesaplama, mevcut maaşınıza yapılan artışın yeni maaşa, yıllık gelire ve satın alma gücüne etkisini gösterir. Türkiye'de yüksek enflasyon döneminde zam oranının tek başına anlamı sınırlıdır; asıl önemli olan zammın enflasyonun üzerinde kalıp kalmadığıdır. Bu araç hem nominal zammı hem de enflasyondan arındırılmış reel zammı hesaplar.
+    </p>
+
+    <h2>Maaş Zammı Formülleri</h2>
+    <ul>
+      <li><strong>Yüzde zamla yeni maaş:</strong> Yeni Maaş = Mevcut Maaş × (1 + Zam % / 100)</li>
+      <li><strong>Tutar zamdan oran:</strong> Zam % = Zam Tutarı / Mevcut Maaş × 100</li>
+      <li><strong>Olması gereken maaş:</strong> Mevcut Maaş × (1 + Enflasyon % / 100)</li>
+      <li><strong>Reel zam:</strong> (1 + Zam %) / (1 + Enflasyon %) − 1</li>
+      <li><strong>Art arda zamlar:</strong> Toplam Artış = (1 + a) × (1 + b) − 1</li>
+    </ul>
+
+    <h2>Örnek Hesaplama</h2>
+    <p>
+      Aylık 40.000 TL maaş alan bir çalışana %25 zam yapıldığını ve son 12 aylık enflasyonun %30 olduğunu varsayalım:
+    </p>
+    <ul>
+      <li>Zam tutarı: 40.000 × 0,25 = 10.000 TL</li>
+      <li>Yeni maaş: 40.000 + 10.000 = 50.000 TL</li>
+      <li>Yıllık ek gelir: 10.000 × 12 = 120.000 TL</li>
+      <li>Satın alma gücünü korumak için gereken maaş: 40.000 × 1,30 = 52.000 TL</li>
+      <li>Enflasyon karşısındaki kayıp: 52.000 − 50.000 = 2.000 TL</li>
+      <li>Reel zam: 1,25 / 1,30 − 1 = −%3,85</li>
+    </ul>
+    <p>
+      Yani maaş 10.000 TL artmasına rağmen çalışanın satın alma gücü yaklaşık %3,85 azalmıştır.
+    </p>
+
+    <h2>Farklı Zam Oranlarında Yeni Maaş</h2>
+    <table>
+      <thead>
+        <tr><th>Mevcut Maaş</th><th>%10 Zam</th><th>%20 Zam</th><th>%30 Zam</th><th>%40 Zam</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>30.000 TL</td><td>33.000 TL</td><td>36.000 TL</td><td>39.000 TL</td><td>42.000 TL</td></tr>
+        <tr><td>40.000 TL</td><td>44.000 TL</td><td>48.000 TL</td><td>52.000 TL</td><td>56.000 TL</td></tr>
+        <tr><td>50.000 TL</td><td>55.000 TL</td><td>60.000 TL</td><td>65.000 TL</td><td>70.000 TL</td></tr>
+        <tr><td>75.000 TL</td><td>82.500 TL</td><td>90.000 TL</td><td>97.500 TL</td><td>105.000 TL</td></tr>
+        <tr><td>100.000 TL</td><td>110.000 TL</td><td>120.000 TL</td><td>130.000 TL</td><td>140.000 TL</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Zam Pazarlığında Hangi Enflasyon Oranı Kullanılmalı?</h2>
+    <p>
+      Maaş artışlarında genellikle TÜİK'in açıkladığı yıllık TÜFE değişim oranı referans alınır. Yıllık zam görüşmelerinde son 12 ayın enflasyonu, altı aylık zamlarda ise altı aylık kümülatif enflasyon kullanılır. Bazı çalışanlar kendi harcama sepetlerini daha iyi yansıttığı için gıda veya kira enflasyonunu da dikkate alır. Hangi oranı seçerseniz seçin, reel zammın sıfırın üzerinde olması maaşınızın gerçekten arttığı anlamına gelir.
+    </p>
+
+    <h2>Brüt Zam ile Net Zam Arasındaki Fark</h2>
+    <p>
+      Brüt maaşa yapılan zam, net maaşa aynı oranda yansımayabilir. Gelir vergisi artan oranlı olduğu için yıl içinde kümülatif matrah yükseldikçe üst vergi dilimine geçilir ve net maaş düşer. Ayrıca asgari ücret istisnası ve SGK tavanı da net artış oranını etkiler. Net etkisini görmek için zamlı brüt maaşı net-brüt maaş hesaplama aracına girebilirsiniz.
+    </p>
+    <p class="calc-note">
+      Not: Hesaplama bilgilendirme amaçlıdır. Bordronuzdaki net tutar; vergi dilimi, asgari ücret istisnası ve diğer kesintilere göre farklılık gösterebilir.
+    </p>
+  </section>
+</CalcLayout>

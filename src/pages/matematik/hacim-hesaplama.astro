@@ -6,52 +6,95 @@ import CalcResult from '../../components/calculator/CalcResult.astro';
 
 const faq = [
   {
-    question: "Silindir hacmi nasıl hesaplanır?",
-    answer: "Silindir hacmi π × r² × h formülüyle hesaplanır. Burada r taban yarıçapı, h ise yüksekliktir. Örneğin yarıçapı 3 m ve yüksekliği 5 m olan bir silindirin hacmi 3,14159 × 9 × 5 ≈ 141,37 m³ olur."
+    question: "Hacim nasıl hesaplanır?",
+    answer: "Prizma ve silindir gibi düz cisimlerde hacim, taban alanı ile yüksekliğin çarpımıdır: V = Taban alanı × h. Dikdörtgen prizmada bu en × boy × yükseklik olur. Koni ve piramitte sonuç aynı taban ve yükseklikteki prizmanın üçte biridir. Kürenin hacmi ise (4/3) × π × r³ formülüyle bulunur."
   },
   {
-    question: "Küp ile dikdörtgen prizma arasındaki fark nedir?",
-    answer: "Küpün tüm ayrıtları eşittir ve hacmi a³ formülüyle bulunur. Dikdörtgen prizmanın ise en, boy ve yüksekliği farklı olabilir; hacmi en × boy × yükseklik formülüyle hesaplanır."
+    question: "Silindirin hacmi nasıl bulunur?",
+    answer: "Silindir hacmi V = π × r² × h formülüyle hesaplanır; r taban yarıçapı, h yüksekliktir. Yarıçapı 0,5 m, yüksekliği 1,2 m olan bir su deposunun hacmi 3,14159 × 0,25 × 1,2 ≈ 0,942 m³, yani yaklaşık 942 litredir. Çap ölçtüyseniz yarıçap için ikiye bölmeyi unutmayın."
   },
   {
-    question: "Küre hacmi formülü nedir?",
-    answer: "Küre hacmi (4/3) × π × r³ formülüyle hesaplanır. Burada r kürenin yarıçapıdır. Örneğin yarıçapı 4 cm olan bir kürenin hacmi (4/3) × 3,14159 × 64 ≈ 268,08 cm³ olur."
+    question: "1 metreküp kaç litredir?",
+    answer: "1 m³ tam olarak 1.000 litredir. 1 litre ise 1 dm³, yani 1.000 cm³'e eşittir; 1 mL de 1 cm³'tür. Bu yüzden santimetre cinsinden hesaplanan bir akvaryumun hacmini 1.000'e bölerek litreye çevirebilirsiniz: 80 × 35 × 45 cm = 126.000 cm³ = 126 litre. Hesaplayıcı litre karşılığını otomatik gösterir."
+  },
+  {
+    question: "Kürenin hacmi formülü nedir?",
+    answer: "Küre hacmi V = (4/3) × π × r³, yüzey alanı ise 4 × π × r² formülüyle bulunur. Yarıçapı 12 cm olan bir topun hacmi (4/3) × 3,14159 × 1.728 ≈ 7.238 cm³, yani yaklaşık 7,24 litredir. Yarıçap iki katına çıkarsa hacim sekiz katına çıkar, çünkü yarıçapın küpü alınır."
+  },
+  {
+    question: "Koninin hacmi neden silindirin üçte biridir?",
+    answer: "Aynı taban yarıçapına ve yüksekliğe sahip bir koni, silindirin tam üçte biri kadar hacim kaplar: V = (1/3) × π × r² × h. Bu ilişki kare tabanlı piramit ile aynı tabanlı prizma arasında da geçerlidir. Sonuç integral hesabıyla kanıtlanır; kum ya da su doldurularak da kolayca gözlemlenebilir."
+  },
+  {
+    question: "Beton için kaç metreküp gerektiği nasıl hesaplanır?",
+    answer: "Dökülecek alanın en, boy ve kalınlığını metre cinsinden çarpın. 6 m × 4 m'lik ve 15 cm kalınlığındaki bir döşeme için 6 × 4 × 0,15 = 3,6 m³ beton gerekir. Kalıp kaybı ve zemin düzensizlikleri için sipariş miktarına genellikle %5–10 pay eklenir. Ayrıntılı hesap için Beton Hesaplama aracını kullanabilirsiniz."
   }
 ];
 
 const meta = {
   title: "Hacim Hesaplama",
-  description: "Küp, dikdörtgen prizma, silindir ve küre için hacim hesaplama aracı. Şekli seçin, ölçüleri girin; hacim ve yüzey alanını anında öğrenin.",
+  seoTitle: "Hacim Hesaplama: Küp, Silindir, Küre, Koni, Litre",
+  description: "Küp, dikdörtgen prizma, silindir, küre, koni ve piramidin hacmini ve yüzey alanını hesaplayın. Sonucu m³, cm³ ve litre olarak anında görün, formüllerle.",
+  summary: "Hacim, bir cismin kapladığı üç boyutlu alandır: dikdörtgen prizmada en × boy × yükseklik, silindirde π × r² × h, kürede (4/3) × π × r³, konide (1/3) × π × r² × h formülüyle hesaplanır. 1 m³ = 1.000 litre, 1 litre = 1.000 cm³'tür.",
+  howTo: [
+    "Cismi seçin; giriş alanları seçtiğiniz şekle göre değişir.",
+    "Ölçü birimini seçin ve tüm ölçüleri aynı birimde girin.",
+    "Hacim, yüzey alanı ve litre karşılığı anında hesaplanır.",
+    "Silindir, küre ve konide çap değil yarıçap girin."
+  ],
+  sources: [
+    { name: "Wolfram MathWorld: Volume", url: "https://mathworld.wolfram.com/Volume.html" },
+    { name: "Wolfram MathWorld: Sphere", url: "https://mathworld.wolfram.com/Sphere.html" },
+    { name: "Wolfram MathWorld: Cone", url: "https://mathworld.wolfram.com/Cone.html" },
+    { name: "BIPM: SI Brochure (litre tanımı)", url: "https://www.bipm.org/en/publications/si-brochure" }
+  ],
   category: "matematik",
   slug: "hacim-hesaplama",
-  keywords: ["hacim hesaplama", "küp hacmi", "silindir hacmi", "küre hacmi", "prizma hacmi", "geometri hesaplama"],
-  dateModified: "2026-04-01",
-  relatedCalcs: ["alan-hesaplama", "yuzde-hesaplama", "oran-hesaplama"],
-  faq,
+  keywords: ["hacim hesaplama", "silindir hacmi", "küre hacmi", "küp hacmi", "koni hacmi", "prizma hacmi", "metreküp hesaplama", "litre hesaplama"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["matematik/alan-hesaplama", "insaat/beton-hesaplama", "donusum/uzunluk-donusturucu", "matematik/uslu-sayi-hesaplama"],
+  faq
 };
 ---
 
 <CalcLayout meta={meta}>
-  <form id="calc-form" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
+  <form id="calc-form" class="calc-inputs" novalidate>
     <CalcSelect
       id="sekil"
-      label="Şekil"
+      label="Cisim"
       options={[
         { value: "kup", label: "Küp" },
-        { value: "prizma", label: "Dikdörtgen Prizma" },
+        { value: "prizma", label: "Dikdörtgen prizma" },
         { value: "silindir", label: "Silindir" },
         { value: "kure", label: "Küre" },
+        { value: "koni", label: "Koni" },
+        { value: "piramit", label: "Kare tabanlı piramit" },
       ]}
       value="kup"
     />
-    <CalcInput id="boyut1" label="Kenar (a)" type="number" placeholder="Örn: 5" suffix="m" min={0} />
+    <CalcSelect
+      id="birim"
+      label="Ölçü Birimi"
+      options={[
+        { value: "mm", label: "Milimetre (mm)" },
+        { value: "cm", label: "Santimetre (cm)" },
+        { value: "m", label: "Metre (m)" },
+        { value: "in", label: "İnç (in)" },
+        { value: "ft", label: "Feet (ft)" },
+      ]}
+      value="m"
+    />
+    <div id="boyut1-wrapper">
+      <CalcInput id="boyut1" suffix="m" label="Kenar (a)" type="number" placeholder="Örn: 2" min={0} />
+    </div>
     <div id="boyut2-wrapper">
-      <CalcInput id="boyut2" label="Boy (b)" type="number" placeholder="Örn: 8" suffix="m" min={0} />
+      <CalcInput id="boyut2" suffix="m" label="Boy (b)" type="number" placeholder="Örn: 3" min={0} />
     </div>
     <div id="boyut3-wrapper">
-      <CalcInput id="boyut3" label="Yükseklik (h)" type="number" placeholder="Örn: 3" suffix="m" min={0} />
+      <CalcInput id="boyut3" suffix="m" label="Yükseklik (h)" type="number" placeholder="Örn: 1,5" min={0} />
     </div>
   </form>
+  <p id="calc-error" class="calc-error" role="alert" hidden></p>
 
   <CalcResult>
     <div slot="main">
@@ -60,156 +103,254 @@ const meta = {
     </div>
     <div slot="details">
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Hacim</span>
-        <span class="calc-detail-value" id="d-hacim">—</span>
+        <span class="calc-detail-label">Formül</span>
+        <span class="calc-detail-value" id="d-formul">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Yüzey Alanı</span>
+        <span class="calc-detail-label">Litre karşılığı</span>
+        <span class="calc-detail-value" id="d-litre">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Metreküp karşılığı</span>
+        <span class="calc-detail-value" id="d-m3">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Toplam yüzey alanı</span>
         <span class="calc-detail-value" id="d-yuzey">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label" id="d-ek-label">Ek bilgi</span>
+        <span class="calc-detail-value" id="d-ek">—</span>
       </div>
     </div>
   </CalcResult>
 
+  <script>
+    type Shape = 'kup' | 'prizma' | 'silindir' | 'kure' | 'koni' | 'piramit';
+    interface Result { hacim: number; yuzey: number; formul: string; ekLabel: string; ek: string }
+
+    const TO_M: Record<string, number> = { mm: 0.001, cm: 0.01, m: 1, in: 0.0254, ft: 0.3048 };
+
+    const FIELDS: Record<Shape, { labels: string[]; placeholders: string[] }> = {
+      kup: { labels: ['Kenar (a)'], placeholders: ['Örn: 2'] },
+      prizma: { labels: ['En (a)', 'Boy (b)', 'Yükseklik (h)'], placeholders: ['Örn: 6', 'Örn: 4', 'Örn: 0,15'] },
+      silindir: { labels: ['Taban yarıçapı (r)', 'Yükseklik (h)'], placeholders: ['Örn: 0,5', 'Örn: 1,2'] },
+      kure: { labels: ['Yarıçap (r)'], placeholders: ['Örn: 0,12'] },
+      koni: { labels: ['Taban yarıçapı (r)', 'Yükseklik (h)'], placeholders: ['Örn: 3', 'Örn: 4'] },
+      piramit: { labels: ['Taban kenarı (a)', 'Yükseklik (h)'], placeholders: ['Örn: 230', 'Örn: 146'] },
+    };
+
+    const SUP: Record<string, string> = { '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹', '-': '⁻' };
+
+    function parseNum(raw: string): number {
+      let s = raw.trim().replace(/\s+/g, '');
+      if (!s) return NaN;
+      s = s.replace(',', '.');
+      if (!/^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/i.test(s)) return NaN;
+      return Number(s);
+    }
+
+    function fmt(n: number, maxFrac = 4): string {
+      if (Number.isNaN(n)) return '—';
+      if (!Number.isFinite(n)) return '∞';
+      if (n === 0) return '0';
+      const abs = Math.abs(n);
+      if (abs >= 1e15 || abs < 1e-6) {
+        const [m, e] = n.toExponential(6).split('e');
+        const mant = new Intl.NumberFormat('tr-TR', { maximumFractionDigits: 6 }).format(Number(m));
+        return `${mant} × 10${String(Number(e)).split('').map(c => SUP[c] ?? c).join('')}`;
+      }
+      const clean = Number(n.toPrecision(12));
+      const extra = abs < 1 ? Math.ceil(-Math.log10(abs)) : 0;
+      return new Intl.NumberFormat('tr-TR', { maximumFractionDigits: Math.min(20, maxFrac + extra) }).format(clean);
+    }
+
+    function compute(shape: Shape, v: number[], unit: string): Result {
+      const [a, b, c] = v;
+      const PI = Math.PI;
+      switch (shape) {
+        case 'kup':
+          return { hacim: a ** 3, yuzey: 6 * a * a, formul: 'a³', ekLabel: 'Cisim köşegeni (a√3)', ek: `${fmt(a * Math.sqrt(3))} ${unit}` };
+        case 'prizma':
+          return { hacim: a * b * c, yuzey: 2 * (a * b + a * c + b * c), formul: 'a × b × h', ekLabel: 'Taban alanı', ek: `${fmt(a * b)} ${unit}²` };
+        case 'silindir':
+          return { hacim: PI * a * a * b, yuzey: 2 * PI * a * (a + b), formul: 'π × r² × h', ekLabel: 'Yanal alan (2πrh)', ek: `${fmt(2 * PI * a * b)} ${unit}²` };
+        case 'kure':
+          return { hacim: (4 / 3) * PI * a ** 3, yuzey: 4 * PI * a * a, formul: '(4/3) × π × r³', ekLabel: 'Çap (2r)', ek: `${fmt(2 * a)} ${unit}` };
+        case 'koni': {
+          const l = Math.hypot(a, b);
+          return { hacim: (PI * a * a * b) / 3, yuzey: PI * a * (a + l), formul: '(1/3) × π × r² × h', ekLabel: 'Ana doğru (√(r² + h²))', ek: `${fmt(l)} ${unit}` };
+        }
+        case 'piramit': {
+          const slant = Math.hypot(a / 2, b);
+          return { hacim: (a * a * b) / 3, yuzey: a * a + 2 * a * slant, formul: '(1/3) × a² × h', ekLabel: 'Yan yüz yüksekliği (apotem)', ek: `${fmt(slant)} ${unit}` };
+        }
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('calc-form') as HTMLFormElement;
+      const inputs = form.querySelectorAll<HTMLInputElement | HTMLSelectElement>('input, select');
+      const resultArea = document.getElementById('calc-result');
+      const errorEl = document.getElementById('calc-error') as HTMLElement;
+      const sekilEl = document.getElementById('sekil') as HTMLSelectElement;
+      const birimEl = document.getElementById('birim') as HTMLSelectElement;
+      const fields = [1, 2, 3].map(i => ({
+        input: document.getElementById(`boyut${i}`) as HTMLInputElement,
+        wrapper: document.getElementById(`boyut${i}-wrapper`) as HTMLElement,
+      }));
+
+      const setText = (id: string, text: string) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = text;
+      };
+
+      function updateLabels() {
+        const cfg = FIELDS[sekilEl.value as Shape] ?? FIELDS.kup;
+        fields.forEach((f, i) => {
+          const visible = i < cfg.labels.length;
+          f.wrapper.hidden = !visible;
+          if (!visible) return;
+          const label = f.wrapper.querySelector('.calc-label');
+          if (label) label.textContent = cfg.labels[i];
+          const suffix = f.wrapper.querySelector('.calc-input-suffix');
+          if (suffix) suffix.textContent = birimEl.value;
+          f.input.placeholder = cfg.placeholders[i];
+        });
+      }
+
+      function debounce<T extends (...args: never[]) => void>(fn: T, delay = 150) {
+        let timer: ReturnType<typeof setTimeout>;
+        return (...args: Parameters<T>) => {
+          clearTimeout(timer);
+          timer = setTimeout(() => fn(...args), delay);
+        };
+      }
+
+      function hide(msg = '') {
+        errorEl.textContent = msg;
+        errorEl.hidden = !msg;
+        resultArea?.classList.add('hidden');
+      }
+
+      function calculate() {
+        const shape = (FIELDS[sekilEl.value as Shape] ? sekilEl.value : 'kup') as Shape;
+        const need = FIELDS[shape].labels.length;
+        const values = fields.slice(0, need).map(f => parseNum(f.input.value));
+
+        if (values.some(v => Number.isNaN(v))) return hide();
+        if (values.some(v => v <= 0)) return hide('Ölçüler sıfırdan büyük olmalıdır.');
+
+        const unit = birimEl.value;
+        const r = compute(shape, values, unit);
+        const f = TO_M[unit] ?? 1;
+        const m3 = r.hacim * f ** 3;
+
+        errorEl.hidden = true;
+        setText('sonuc-hacim', `${fmt(r.hacim)} ${unit}³`);
+        setText('d-formul', r.formul);
+        setText('d-litre', `${fmt(m3 * 1000)} L`);
+        setText('d-m3', `${fmt(m3)} m³`);
+        setText('d-yuzey', `${fmt(r.yuzey)} ${unit}²`);
+        setText('d-ek-label', r.ekLabel);
+        setText('d-ek', r.ek);
+
+        resultArea?.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const params = new URLSearchParams();
+        inputs.forEach(el => {
+          const wrapper = el.closest('[id$="-wrapper"]') as HTMLElement | null;
+          if (el.id && el.value !== '' && !wrapper?.hidden) params.set(el.id, el.value);
+        });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+      }
+
+      function loadFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        // Eski linklerde silindir yüksekliği boyut3'te tutuluyordu
+        if (params.get('sekil') === 'silindir' && params.has('boyut3') && !params.has('boyut2')) {
+          params.set('boyut2', params.get('boyut3')!);
+          params.delete('boyut3');
+        }
+        let hasParams = false;
+        inputs.forEach(el => {
+          if (el.id && params.has(el.id)) {
+            const v = params.get(el.id)!;
+            if (el instanceof HTMLSelectElement) {
+              if (Array.from(el.options).some(o => o.value === v)) el.value = v;
+            } else {
+              const n = parseNum(v);
+              if (!Number.isNaN(n)) el.value = String(n);
+            }
+            hasParams = true;
+          }
+        });
+        updateLabels();
+        if (hasParams) calculate();
+      }
+
+      const debouncedCalc = debounce(calculate);
+      inputs.forEach(el => {
+        el.addEventListener('input', debouncedCalc);
+        el.addEventListener('change', debouncedCalc);
+      });
+      sekilEl.addEventListener('change', updateLabels);
+      birimEl.addEventListener('change', updateLabels);
+      form.addEventListener('submit', e => { e.preventDefault(); calculate(); });
+
+      loadFromURL();
+    });
+  </script>
+
   <section class="calc-content">
-    <h2>Hacim Hesaplama Nedir?</h2>
+    <h2>Hacim Nedir?</h2>
     <p>
-      Hacim, üç boyutlu bir cismin kapladığı uzay miktarıdır. Metreküp (m³), santimetreküp (cm³) veya litre gibi birimlerle ifade edilir. İnşaat projelerinde beton miktarı hesaplamak, ambalaj tasarımında kutu kapasitesini belirlemek, su deposu planlamak ya da kimya deneylerinde sıvı miktarını ölçmek için hacim hesaplaması vazgeçilmez bir araçtır.
+      Hacim, bir cismin uzayda kapladığı yerin büyüklüğüdür ve küp birimlerle (cm³, m³) ya da litre cinsinden ifade edilir. Bir su deposunun kaç litre alacağı, bir odaya kaç BTU'luk klima gerektiği, hafriyatta kaç kamyon toprak çıkacağı ya da bir koliye kaç ürün sığacağı hep hacim hesabıyla bulunur.
     </p>
+
+    <h2>Hacim ve Yüzey Alanı Formülleri</h2>
+    <table>
+      <thead>
+        <tr><th>Cisim</th><th>Hacim</th><th>Toplam yüzey alanı</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Küp</td><td>a³</td><td>6a²</td></tr>
+        <tr><td>Dikdörtgen prizma</td><td>a × b × h</td><td>2(ab + ah + bh)</td></tr>
+        <tr><td>Silindir</td><td>π × r² × h</td><td>2πr(r + h)</td></tr>
+        <tr><td>Küre</td><td>(4/3) × π × r³</td><td>4πr²</td></tr>
+        <tr><td>Koni</td><td>(1/3) × π × r² × h</td><td>πr(r + l), l = √(r² + h²)</td></tr>
+        <tr><td>Kare tabanlı piramit</td><td>(1/3) × a² × h</td><td>a² + 2a × √[(a/2)² + h²]</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Örnek Hesaplama</h2>
+    <h3>Silindir biçimli su deposu</h3>
     <p>
-      Bu hesaplayıcı dört temel geometrik cisme ait hacim ve yüzey alanı hesaplarını otomatik olarak yapar: küp, dikdörtgen prizma, silindir ve küre.
+      İç çapı 110 cm, yüksekliği 140 cm olan bir depo düşünelim. Yarıçap 55 cm'dir. Hacim π × 55² × 140 = 3,14159 × 3.025 × 140 ≈ 1.330.464 cm³ eder. 1 litre 1.000 cm³ olduğundan depo yaklaşık 1.330 litre su alır. Hesaplayıcıda birimi "cm" seçip r = 55, h = 140 girdiğinizde litre karşılığı doğrudan görünür.
     </p>
-    <h3>Hacim Formülleri</h3>
+    <h3>Akvaryum</h3>
     <p>
-      <strong>Küp:</strong> Hacim = a³ | Yüzey Alanı = 6a²<br />
-      <strong>Dikdörtgen Prizma:</strong> Hacim = en × boy × yükseklik | Yüzey Alanı = 2(eb + ey + by)<br />
-      <strong>Silindir:</strong> Hacim = π × r² × h | Yüzey Alanı = 2πr(r + h)<br />
-      <strong>Küre:</strong> Hacim = (4/3) × π × r³ | Yüzey Alanı = 4πr²
+      80 cm × 35 cm × 45 cm ölçülerindeki bir akvaryumun hacmi 126.000 cm³, yani 126 litredir. Cam kalınlığı ve su seviyesinin üst kenardan birkaç santimetre aşağıda tutulduğu düşünülürse net su hacmi biraz daha düşük olacaktır.
     </p>
-    <h3>Kullanım Alanları</h3>
+
+    <h2>Hacim Birimleri</h2>
+    <table>
+      <thead>
+        <tr><th>Birim</th><th>Karşılığı</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1 cm³</td><td>1 mL</td></tr>
+        <tr><td>1 dm³</td><td>1 L = 1.000 cm³</td></tr>
+        <tr><td>1 m³</td><td>1.000 L</td></tr>
+        <tr><td>1 ft³</td><td>28,316846592 L</td></tr>
+        <tr><td>1 in³</td><td>16,387064 cm³</td></tr>
+      </tbody>
+    </table>
     <p>
-      Hacim hesaplama inşaat, mühendislik, tıp, kimya ve günlük yaşamda sıklıkla kullanılır. Bir su deposunun kapasitesini, bir odanın havalandırma hesabını ya da beton dökmek için gerekli malzeme miktarını bulmak için bu hesaplayıcıdan yararlanabilirsiniz.
+      Uzunluk 10 kat büyüdüğünde hacim 1.000 kat büyür. Bu yüzden 1 m = 100 cm iken 1 m³ = 1.000.000 cm³'tür. Birimleri karıştırmak hacim hesabında en sık yapılan hatadır; tüm ölçüleri aynı birimde girin.
     </p>
-    <h3>Dikkat Edilmesi Gerekenler</h3>
-    <p>
-      Tüm ölçülerin aynı birimde girilmesi gerekir. Sonuç girilen birimin küpü cinsinden çıkar (örneğin metre girilirse m³). Daire tabanı olan silindir ve kürede yarıçap (çapın yarısı) kullanılır.
-    </p>
-    <h3>Sıkça Sorulan Sorular</h3>
-    {faq.map((item) => (
-      <div class="faq-item">
-        <h4>{item.question}</h4>
-        <p>{item.answer}</p>
-      </div>
-    ))}
   </section>
 </CalcLayout>
-
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('calc-form');
-    const inputs = form.querySelectorAll('input, select');
-    const resultArea = document.getElementById('calc-result');
-
-    function debounce(fn, delay = 150) {
-      let timer;
-      return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), delay); };
-    }
-
-    function formatNumber(num, dec = 3) {
-      return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: dec, maximumFractionDigits: dec }).format(num);
-    }
-
-    const sekilEl = document.getElementById('sekil');
-    const boyut1El = document.getElementById('boyut1');
-    const boyut2El = document.getElementById('boyut2');
-    const boyut3El = document.getElementById('boyut3');
-    const boyut2Wrapper = document.getElementById('boyut2-wrapper');
-    const boyut3Wrapper = document.getElementById('boyut3-wrapper');
-    const boyut1Label = boyut1El?.closest('.calc-input-group')?.querySelector('.calc-label');
-    const boyut2Label = boyut2El?.closest('.calc-input-group')?.querySelector('.calc-label');
-    const boyut3Label = boyut3El?.closest('.calc-input-group')?.querySelector('.calc-label');
-
-    function updateLabels() {
-      const sekil = sekilEl?.value;
-      if (sekil === 'kup') {
-        if (boyut1Label) boyut1Label.textContent = 'Kenar (a)';
-        if (boyut2Wrapper) boyut2Wrapper.style.display = 'none';
-        if (boyut3Wrapper) boyut3Wrapper.style.display = 'none';
-      } else if (sekil === 'prizma') {
-        if (boyut1Label) boyut1Label.textContent = 'En (a)';
-        if (boyut2Label) boyut2Label.textContent = 'Boy (b)';
-        if (boyut3Label) boyut3Label.textContent = 'Yükseklik (h)';
-        if (boyut2Wrapper) boyut2Wrapper.style.display = '';
-        if (boyut3Wrapper) boyut3Wrapper.style.display = '';
-      } else if (sekil === 'silindir') {
-        if (boyut1Label) boyut1Label.textContent = 'Yarıçap (r)';
-        if (boyut3Label) boyut3Label.textContent = 'Yükseklik (h)';
-        if (boyut2Wrapper) boyut2Wrapper.style.display = 'none';
-        if (boyut3Wrapper) boyut3Wrapper.style.display = '';
-      } else if (sekil === 'kure') {
-        if (boyut1Label) boyut1Label.textContent = 'Yarıçap (r)';
-        if (boyut2Wrapper) boyut2Wrapper.style.display = 'none';
-        if (boyut3Wrapper) boyut3Wrapper.style.display = 'none';
-      }
-    }
-
-    sekilEl?.addEventListener('change', () => { updateLabels(); calculate(); });
-    updateLabels();
-
-    const debouncedCalc = debounce(calculate);
-    inputs.forEach(input => {
-      input.addEventListener('input', debouncedCalc);
-      input.addEventListener('change', debouncedCalc);
-    });
-
-    function calculate() {
-      const sekil = sekilEl?.value;
-      const b1 = parseFloat(boyut1El?.value);
-      const b2 = parseFloat(boyut2El?.value);
-      const b3 = parseFloat(boyut3El?.value);
-      const PI = Math.PI;
-
-      let hacim = NaN, yuzey = NaN;
-
-      if (sekil === 'kup' && !isNaN(b1)) {
-        hacim = b1 ** 3;
-        yuzey = 6 * b1 * b1;
-      } else if (sekil === 'prizma' && !isNaN(b1) && !isNaN(b2) && !isNaN(b3)) {
-        hacim = b1 * b2 * b3;
-        yuzey = 2 * (b1 * b2 + b1 * b3 + b2 * b3);
-      } else if (sekil === 'silindir' && !isNaN(b1) && !isNaN(b3)) {
-        hacim = PI * b1 * b1 * b3;
-        yuzey = 2 * PI * b1 * (b1 + b3);
-      } else if (sekil === 'kure' && !isNaN(b1)) {
-        hacim = (4 / 3) * PI * b1 ** 3;
-        yuzey = 4 * PI * b1 * b1;
-      }
-
-      if (isNaN(hacim)) {
-        if (resultArea) resultArea.classList.add('hidden');
-        return;
-      }
-
-      document.getElementById('sonuc-hacim').textContent = formatNumber(hacim) + ' m³';
-      document.getElementById('d-hacim').textContent = formatNumber(hacim) + ' m³';
-      document.getElementById('d-yuzey').textContent = formatNumber(yuzey) + ' m²';
-
-      if (resultArea) resultArea.classList.remove('hidden');
-      updateURL();
-    }
-
-    function updateURL() {
-      const params = new URLSearchParams();
-      inputs.forEach(input => { if (input.value && input.id) params.set(input.id, input.value); });
-      history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
-    }
-
-    function loadFromURL() {
-      const params = new URLSearchParams(window.location.search);
-      let h = false;
-      inputs.forEach(input => { if (input.id && params.has(input.id)) { input.value = params.get(input.id); h = true; } });
-      if (h) { updateLabels(); calculate(); }
-    }
-
-    loadFromURL();
-  });
-</script>

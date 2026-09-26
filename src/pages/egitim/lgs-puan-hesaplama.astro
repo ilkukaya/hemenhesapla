@@ -1,0 +1,244 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const dersler = [
+  { id: 'tr', ad: 'Türkçe', soru: 20, katsayi: 4 },
+  { id: 'mat', ad: 'Matematik', soru: 20, katsayi: 4 },
+  { id: 'fen', ad: 'Fen Bilimleri', soru: 20, katsayi: 4 },
+  { id: 'ink', ad: 'T.C. İnkılap Tarihi ve Atatürkçülük', soru: 10, katsayi: 1 },
+  { id: 'din', ad: 'Din Kültürü ve Ahlak Bilgisi', soru: 10, katsayi: 1 },
+  { id: 'dil', ad: 'Yabancı Dil', soru: 10, katsayi: 1 },
+];
+
+const faq = [
+  {
+    question: "LGS puanı nasıl hesaplanır?",
+    answer: "Önce her testte net bulunur: Net = Doğru − Yanlış / 3. Netler standart puana çevrilir ve Türkçe, Matematik, Fen Bilimleri için 4, İnkılap Tarihi, Din Kültürü ve Yabancı Dil için 1 katsayısıyla çarpılarak toplam ağırlıklı standart puan bulunur. Bu toplam, en düşük 100 ve en yüksek 500 olacak şekilde ölçeklenerek Merkezi Sınav Puanı elde edilir."
+  },
+  {
+    question: "LGS'de 3 yanlış 1 doğruyu götürür mü?",
+    answer: "Evet. MEB kılavuzuna göre her testin ham puanı, doğru sayısından yanlış sayısının üçte biri çıkarılarak hesaplanır. Yani 3 yanlış 1 doğruyu götürür. Boş bırakılan sorular neti etkilemez. Örneğin Matematikte 15 doğru 6 yanlış yapan öğrencinin neti 15 − 2 = 13 olur."
+  },
+  {
+    question: "LGS'de tam puan kaçtır?",
+    answer: "LGS Merkezi Sınav Puanı 100 ile 500 arasında hesaplanır. Tüm soruları doğru cevaplayan öğrenciler 500 tam puan alır. Sınavda toplam 90 soru bulunur: sözel bölümde Türkçe 20, İnkılap Tarihi 10, Din Kültürü 10, Yabancı Dil 10; sayısal bölümde Matematik 20 ve Fen Bilimleri 20 soru yer alır."
+  },
+  {
+    question: "Bu hesaplayıcının sonucu kesin mi?",
+    answer: "Hayır, sonuç yaklaşık bir tahmindir. Gerçek LGS puanı, o yıl sınava giren tüm öğrencilerin test ortalamaları ve standart sapmalarıyla hesaplanan standart puanlara dayanır; bu değerler sınav sonrasında belli olur. Hesaplayıcı ağırlıklı neti doğrusal olarak 100-500 aralığına ölçekler. Özellikle orta net aralıklarında gerçek puan birkaç puan ile birkaç on puan arasında farklılık gösterebilir."
+  },
+  {
+    question: "LGS'de hangi ders daha çok puan kazandırır?",
+    answer: "Türkçe, Matematik ve Fen Bilimleri 4 katsayılıdır; bu derslerdeki bir net, İnkılap Tarihi, Din Kültürü veya Yabancı Dildeki bir netin yaklaşık dört katı etkiye sahiptir. Ayrıca Matematik ve Fen testlerinde ortalama netler düşük olduğundan standart puan etkisi daha büyüktür. Bu yüzden Matematik netini artırmak genellikle en çok puan kazandıran stratejidir."
+  },
+  {
+    question: "LGS sonuçları ne zaman açıklanır?",
+    answer: "2026 LGS merkezi sınavı 14 Haziran 2026'da yapıldı ve sonuçlar kılavuza göre 10 Temmuz 2026'da açıklandı. 2027 sınav takvimi ve başvuru tarihleri, MEB tarafından yayımlanacak yeni başvuru ve uygulama kılavuzunda duyurulacaktır. Güncel tarihleri meb.gov.tr üzerinden takip etmeniz önerilir."
+  }
+];
+
+const meta = {
+  title: "LGS Puan Hesaplama",
+  seoTitle: "LGS Puan Hesaplama 2026 - Net ve Tahmini Puan",
+  description: "LGS doğru ve yanlış sayılarınızla netlerinizi ve tahmini LGS puanınızı hesaplayın. MEB katsayıları (4 ve 1) ve 3 yanlış 1 doğru kuralıyla anında sonuç.",
+  summary: "LGS'de her testin neti Doğru − Yanlış / 3 ile bulunur. Türkçe, Matematik ve Fen netleri 4, İnkılap, Din ve Yabancı Dil netleri 1 katsayısıyla çarpılır; en fazla 270 olan ağırlıklı net 100-500 arasına ölçeklenir. Bu araç yaklaşık puan verir: Puan ≈ 100 + Ağırlıklı Net × 400 / 270.",
+  howTo: [
+    "Her ders için doğru ve yanlış sayınızı girin; boşları yazmanıza gerek yok.",
+    "Hesaplayıcı her dersin netini 3 yanlış 1 doğruyu götürür kuralıyla bulur.",
+    "Netler MEB katsayılarıyla (4 ve 1) ağırlıklandırılır.",
+    "Tahmini LGS puanınızı ve ders bazında netlerinizi inceleyin."
+  ],
+  sources: [
+    { name: "MEB - 2026 LGS Başvuru ve Uygulama Kılavuzu Duyurusu", url: "https://www.meb.gov.tr/2026-lgs-kapsamindaki-merkezi-sinav-icin-basvuru-ve-uygulama-kilavuzu-yayimlandi/haber/40200/tr" },
+    { name: "MEB - 2026 LGS Merkezi Sınav Raporu", url: "https://www.meb.gov.tr/2026-lgs-kapsaminda-merkezi-sinav-raporu-yayimlandi/haber/41333/tr" }
+  ],
+  category: "egitim",
+  slug: "lgs-puan-hesaplama",
+  keywords: ["lgs puan hesaplama", "lgs net hesaplama", "lgs puanı nasıl hesaplanır", "lgs katsayı", "lgs 2027", "liselere geçiş puan hesaplama"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["egitim/yks-puan-hesaplama", "egitim/not-ortalamasi-hesaplama", "egitim/vize-final-ortalama-hesaplama", "gunluk/kac-gun-kaldi-hesaplama"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" class="calc-inputs">
+    {dersler.map(d => (
+      <fieldset class="calc-fieldset">
+        <legend class="calc-label">{d.ad} ({d.soru} soru)</legend>
+        <CalcInput id={`${d.id}D`} label="Doğru" type="number" placeholder="0" step={1} min={0} max={d.soru} required={false} />
+        <CalcInput id={`${d.id}Y`} label="Yanlış" type="number" placeholder="0" step={1} min={0} max={d.soru} required={false} />
+      </fieldset>
+    ))}
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">Tahmini LGS Puanı</p>
+      <p class="calc-result-value" id="puan">—</p>
+    </div>
+    <div slot="details">
+      {dersler.map(d => (
+        <div class="calc-detail-row">
+          <span class="calc-detail-label">{d.ad} Net</span>
+          <span class="calc-detail-value" id={`${d.id}-net`}>—</span>
+        </div>
+      ))}
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Toplam Net (90 soru)</span>
+        <span class="calc-detail-value" id="toplam-net">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Ağırlıklı Net (en fazla 270)</span>
+        <span class="calc-detail-value" id="agirlikli-net">—</span>
+      </div>
+      <p class="calc-note" id="uyari" hidden></p>
+    </div>
+  </CalcResult>
+
+  <script>
+    const DERSLER = [
+      { id: 'tr', soru: 20, katsayi: 4 },
+      { id: 'mat', soru: 20, katsayi: 4 },
+      { id: 'fen', soru: 20, katsayi: 4 },
+      { id: 'ink', soru: 10, katsayi: 1 },
+      { id: 'din', soru: 10, katsayi: 1 },
+      { id: 'dil', soru: 10, katsayi: 1 },
+    ];
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('calc-form');
+      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const resultArea = document.getElementById('calc-result');
+
+      function debounce(fn: () => void, delay = 150) {
+        let timer: ReturnType<typeof setTimeout>;
+        return () => { clearTimeout(timer); timer = setTimeout(fn, delay); };
+      }
+      const num = (id: string) => { const v = parseInt((document.getElementById(id) as HTMLInputElement).value, 10); return isNaN(v) || v < 0 ? 0 : v; };
+      const setText = (id: string, t: string) => { (document.getElementById(id) as HTMLElement).textContent = t; };
+      const fmt = (n: number) => new Intl.NumberFormat('tr-TR', { maximumFractionDigits: 2 }).format(n);
+
+      form?.addEventListener('submit', (e) => e.preventDefault());
+      const debouncedCalc = debounce(calculate);
+      inputs.forEach(input => {
+        input.addEventListener('input', debouncedCalc);
+        input.addEventListener('change', debouncedCalc);
+      });
+
+      function calculate() {
+        let toplamNet = 0;
+        let agirlikli = 0;
+        let girildi = false;
+        const hatalar: string[] = [];
+        for (const d of DERSLER) {
+          const dogru = num(`${d.id}D`);
+          const yanlis = num(`${d.id}Y`);
+          if (dogru || yanlis) girildi = true;
+          if (dogru + yanlis > d.soru) hatalar.push(`${d.id}`);
+          const net = Math.max(0, dogru - yanlis / 3);
+          toplamNet += net;
+          agirlikli += net * d.katsayi;
+          setText(`${d.id}-net`, fmt(net));
+        }
+        if (!girildi) return;
+        const puan = 100 + agirlikli * 400 / 270;
+        setText('puan', fmt(Math.min(500, puan)));
+        setText('toplam-net', fmt(toplamNet));
+        setText('agirlikli-net', fmt(agirlikli));
+        const uyari = document.getElementById('uyari') as HTMLElement;
+        if (hatalar.length) {
+          uyari.hidden = false;
+          uyari.textContent = 'Uyarı: Bazı derslerde doğru ve yanlış toplamı soru sayısını aşıyor. Lütfen değerleri kontrol edin.';
+        } else {
+          uyari.hidden = true;
+        }
+        if (resultArea) resultArea.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const params = new URLSearchParams();
+        inputs.forEach(input => {
+          const el = input as HTMLInputElement;
+          if (el.value && el.id) params.set(el.id, el.value);
+        });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+      }
+
+      function loadFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        let hasParams = false;
+        inputs.forEach(input => {
+          const el = input as HTMLInputElement;
+          if (el.id && params.has(el.id)) { el.value = params.get(el.id)!; hasParams = true; }
+        });
+        if (hasParams) calculate();
+      }
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>LGS Puan Hesaplama Nasıl Yapılır?</h2>
+    <p>
+      Liselere Geçiş Sistemi (LGS) kapsamındaki merkezi sınav, 8. sınıf öğrencilerinin nitelikli liselere yerleşmesinde kullanılan Merkezi Sınav Puanını (MSP) belirler. Sınav sözel ve sayısal olmak üzere iki oturumda yapılır ve toplam 90 sorudan oluşur. Puan hesabı üç temel adımdan geçer: net hesaplama, standart puan ile ağırlıklandırma ve 100-500 aralığına ölçekleme.
+    </p>
+
+    <h3>1. Adım: Net Hesaplama</h3>
+    <p>
+      MEB kılavuzuna göre her testin ham puanı, doğru cevap sayısından yanlış cevap sayısının üçte biri çıkarılarak bulunur: <strong>Net = Doğru − (Yanlış / 3)</strong>. Boş bırakılan sorular nete etki etmez.
+    </p>
+
+    <h3>2. Adım: Katsayılar ile Ağırlıklandırma</h3>
+    <table>
+      <thead>
+        <tr><th>Test</th><th>Soru Sayısı</th><th>Katsayı</th><th>En Yüksek Ağırlıklı Net</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Türkçe</td><td>20</td><td>4</td><td>80</td></tr>
+        <tr><td>Matematik</td><td>20</td><td>4</td><td>80</td></tr>
+        <tr><td>Fen Bilimleri</td><td>20</td><td>4</td><td>80</td></tr>
+        <tr><td>T.C. İnkılap Tarihi ve Atatürkçülük</td><td>10</td><td>1</td><td>10</td></tr>
+        <tr><td>Din Kültürü ve Ahlak Bilgisi</td><td>10</td><td>1</td><td>10</td></tr>
+        <tr><td>Yabancı Dil</td><td>10</td><td>1</td><td>10</td></tr>
+        <tr><td><strong>Toplam</strong></td><td>90</td><td>-</td><td>270</td></tr>
+      </tbody>
+    </table>
+    <p>
+      Resmi hesaplamada netler doğrudan değil, her testin o yılki ortalaması ve standart sapmasıyla standart puana çevrildikten sonra bu katsayılarla çarpılır. Standart puanların toplamı "Toplam Ağırlıklı Standart Puan" (TASP) olarak adlandırılır.
+    </p>
+
+    <h3>3. Adım: 100-500 Aralığına Ölçekleme</h3>
+    <p>
+      TASP değerleri, sınava giren öğrenciler arasında en düşük değer 100, en yüksek değer 500 olacak şekilde ölçeklenir. Tüm soruları doğru yanıtlayan öğrenciler 500 tam puan alır. Bu hesaplayıcı, standart sapma verileri sınavdan önce bilinmediği için ağırlıklı neti doğrusal olarak ölçekler: <strong>Tahmini Puan = 100 + Ağırlıklı Net × 400 / 270</strong>.
+    </p>
+
+    <h2>Örnek Hesaplama</h2>
+    <p>Bir öğrencinin sonuçları şöyle olsun:</p>
+    <ul>
+      <li>Türkçe: 18 doğru, 3 yanlış → 17 net</li>
+      <li>Matematik: 14 doğru, 6 yanlış → 12 net</li>
+      <li>Fen Bilimleri: 17 doğru, 3 yanlış → 16 net</li>
+      <li>İnkılap Tarihi: 9 doğru, 0 yanlış → 9 net</li>
+      <li>Din Kültürü: 10 doğru, 0 yanlış → 10 net</li>
+      <li>Yabancı Dil: 8 doğru, 3 yanlış → 7 net</li>
+    </ul>
+    <p>
+      Ağırlıklı net: (17 + 12 + 16) × 4 + (9 + 10 + 7) × 1 = 180 + 26 = 206. Tahmini puan: 100 + 206 × 400 / 270 ≈ 405,19. Toplam net ise 71'dir.
+    </p>
+
+    <h2>LGS Puanını Yükseltmek İçin İpuçları</h2>
+    <ul>
+      <li><strong>4 katsayılı derslere öncelik verin:</strong> Türkçe, Matematik ve Fen'deki bir net, diğer derslerdeki bir netin yaklaşık dört katı etki eder.</li>
+      <li><strong>Emin olmadığınız soruları boş bırakmayı düşünün:</strong> Üç yanlış bir doğruyu götürdüğü için rastgele işaretleme neti düşürebilir.</li>
+      <li><strong>Deneme sınavlarında neti takip edin:</strong> Her denemeden sonra netlerinizi bu araca girerek gelişiminizi izleyebilirsiniz.</li>
+      <li><strong>Yüzdelik dilime de bakın:</strong> Lise tercihlerinde puan kadar yüzdelik dilim de belirleyicidir; bu bilgi MEB sonuç belgesinde yer alır.</li>
+    </ul>
+    <p class="calc-note">
+      Önemli: Bu hesaplayıcının verdiği puan yaklaşıktır. Resmi LGS puanı, sınava giren tüm öğrencilerin verilerine göre MEB tarafından hesaplanır ve sonuç belgesiyle açıklanır. Katsayılar ve sınav yapısı değişebileceğinden güncel başvuru kılavuzunu kontrol edin.
+    </p>
+  </section>
+</CalcLayout>

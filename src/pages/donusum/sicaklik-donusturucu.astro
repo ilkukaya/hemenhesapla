@@ -4,177 +4,295 @@ import CalcInput from '../../components/calculator/CalcInput.astro';
 import CalcSelect from '../../components/calculator/CalcSelect.astro';
 import CalcResult from '../../components/calculator/CalcResult.astro';
 
-const birimOptions = [
+const units = [
   { value: "celsius", label: "Celsius (°C)" },
   { value: "fahrenheit", label: "Fahrenheit (°F)" },
   { value: "kelvin", label: "Kelvin (K)" },
+  { value: "rankine", label: "Rankine (°R)" },
 ];
 
 const faq = [
   {
-    question: "Celsius ile Fahrenheit arasındaki dönüşüm formülü nedir?",
-    answer: "Celsius'tan Fahrenheit'a: °F = °C × 9/5 + 32. Fahrenheit'tan Celsius'a: °C = (°F − 32) × 5/9. Pratik referans noktaları: 0°C = 32°F (suyun donma noktası), 100°C = 212°F (suyun kaynama noktası), 37°C = 98.6°F (insan vücut sıcaklığı), -40°C = -40°F (iki skalanın kesiştiği nokta)."
+    question: "Fahrenheit Celsius'a nasıl çevrilir?",
+    answer: "Fahrenheit değerinden 32 çıkarılır ve sonuç 5/9 ile çarpılır: °C = (°F − 32) × 5/9. Örneğin 350 °F fırın sıcaklığı (350 − 32) × 5/9 ≈ 176,7 °C eder. Zihinden kaba tahmin için 30 çıkarıp ikiye bölebilirsiniz; 80 °F için (80 − 30) ÷ 2 = 25 °C bulunur, gerçek değer 26,7 °C'dir."
   },
   {
-    question: "Kelvin nedir ve neden kullanılır?",
-    answer: "Kelvin (K), mutlak sıcaklık birimidir ve SI birim sisteminin temel birimlerinden biridir. 0 K (mutlak sıfır), maddenin teorik olarak mümkün olan en düşük sıcaklığıdır (−273.15°C). Kelvin bilimsel hesaplamalarda, gaz yasalarında ve astronomi alanında tercih edilir çünkü negatif değer almaz ve matematiksel işlemleri basitleştirir."
+    question: "Celsius Fahrenheit'a nasıl çevrilir?",
+    answer: "Celsius değeri 9/5 (1,8) ile çarpılır ve 32 eklenir: °F = °C × 1,8 + 32. Örneğin 25 °C = 25 × 1,8 + 32 = 77 °F'tir. Suyun donma noktası 0 °C = 32 °F, kaynama noktası (deniz seviyesinde) 100 °C = 212 °F'tir. −40 derecede iki ölçek aynı değeri gösterir."
   },
   {
-    question: "Hangi ülkeler Fahrenheit kullanıyor?",
-    answer: "Fahrenheit skalası başta ABD olmak üzere Bahama Adaları, Belize, Cayman Adaları ve Palau gibi birkaç ülkede resmi olarak kullanılmaktadır. Türkiye dahil dünyanın büyük çoğunluğu Celsius skalasını kullanır. İngiltere gibi bazı ülkelerde ise her iki birim de günlük hayatta görülmektedir. Bilim dünyasında ise Kelvin ve Celsius evrensel olarak tercih edilmektedir."
+    question: "Kelvin nasıl hesaplanır?",
+    answer: "Celsius değerine 273,15 eklenir: K = °C + 273,15. 25 °C = 298,15 K'dir. Kelvin mutlak sıcaklık ölçeğidir; 0 K mutlak sıfırdır ve daha düşük bir sıcaklık yoktur. Kelvin değerleri derece işareti olmadan yazılır: '300 derece Kelvin' değil '300 kelvin (300 K)' doğru kullanımdır."
+  },
+  {
+    question: "Vücut sıcaklığı 38 derece kaç Fahrenheit?",
+    answer: "38 °C × 1,8 + 32 = 100,4 °F'tir. Normal vücut sıcaklığı genellikle 36,5–37,2 °C (97,7–99 °F) aralığında kabul edilir ve ölçüm yerine göre değişir. 38 °C ve üzeri çoğu kaynakta ateş olarak değerlendirilir. Yabancı kaynaklardaki 100,4 °F eşiği bu dönüşümden gelir."
+  },
+  {
+    question: "Rankine ölçeği nedir?",
+    answer: "Rankine (°R), Fahrenheit büyüklüğünde derecelere sahip mutlak bir sıcaklık ölçeğidir; 0 °R mutlak sıfırdır. °R = °F + 459,67 ya da °R = K × 1,8 formülüyle hesaplanır. Bugün çoğunlukla ABD'deki mühendislik ve termodinamik hesaplarında kullanılır; 20 °C yaklaşık 527,67 °R'dir."
+  },
+  {
+    question: "Sıcaklık farkı dönüştürülürken neden 32 eklenmez?",
+    answer: "32 ve 273,15 ölçeklerin sıfır noktaları arasındaki kaymadır ve yalnızca belirli bir sıcaklık dönüştürülürken kullanılır. Sıcaklık farkında (ΔT) sadece derece büyüklükleri önemlidir: 1 °C'lik fark 1,8 °F ve 1 K'lik farka eşittir. Hava 10 °C ısındıysa bu 18 °F'lik artıştır, 50 °F değil."
   }
 ];
 
 const meta = {
   title: "Sıcaklık Dönüştürücü",
-  description: "Celsius, Fahrenheit ve Kelvin arasında sıcaklık dönüşümü yapın. Anlık sıcaklık birimi çevirici hesaplayıcı.",
+  seoTitle: "Sıcaklık Dönüştürücü: Celsius, Fahrenheit, Kelvin",
+  description: "Celsius, Fahrenheit, Kelvin ve Rankine arasında anında sıcaklık dönüşümü yapın. Formüller, fırın ve vücut sıcaklığı tabloları, mutlak sıfır kontrolüyle.",
+  summary: "Celsius'u Fahrenheit'a çevirmek için °F = °C × 1,8 + 32, tersi için °C = (°F − 32) ÷ 1,8 kullanılır. Kelvin, Celsius'a 273,15 eklenerek (K = °C + 273,15), Rankine ise °R = °F + 459,67 ile bulunur; örneğin 25 °C = 77 °F = 298,15 K'dir.",
+  howTo: [
+    "Dönüştürmek istediğiniz sıcaklığı girin; eksi değerler kabul edilir.",
+    "Kaynak birimi ve hedef birimi seçin.",
+    "Ana sonuç hedef birimde, dört ölçekteki karşılıklar ayrıntılarda görünür.",
+    "Mutlak sıfırın (−273,15 °C) altındaki değerler için uyarı gösterilir."
+  ],
+  sources: [
+    { name: "BIPM: The International System of Units (SI Brochure)", url: "https://www.bipm.org/en/publications/si-brochure" },
+    { name: "NIST Special Publication 811: Guide for the Use of the SI", url: "https://www.nist.gov/pml/special-publication-811" }
+  ],
   category: "donusum",
   slug: "sicaklik-donusturucu",
-  keywords: ["sıcaklık dönüştürücü", "celsius fahrenheit çevirme", "kelvin dönüşümü", "derece çevirici", "sıcaklık hesaplayıcı"],
-  dateModified: "2026-04-01",
-  relatedCalcs: ["uzunluk-donusturucu", "agirlik-donusturucu"],
+  keywords: ["sıcaklık dönüştürücü", "fahrenheit celsius çevirme", "celsius fahrenheit", "kelvin hesaplama", "rankine", "derece çevirme"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["donusum/uzunluk-donusturucu", "donusum/agirlik-donusturucu", "matematik/oran-hesaplama"],
   faq
 };
 ---
 
 <CalcLayout meta={meta}>
-  <form id="calc-form" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
-    <div class="calc-inputs">
-      <CalcInput
-        id="deger"
-        label="Sıcaklık Değeri"
-        type="number"
-        placeholder="Örn: 100"
-        step="any"
-        helpText="Dönüştürmek istediğiniz sıcaklık değerini girin"
-      />
-      <CalcSelect
-        id="birim"
-        label="Kaynak Birim"
-        options={birimOptions}
-        value="celsius"
-        helpText="Girilen değerin birimini seçin"
-      />
-    </div>
+  <form id="calc-form" class="calc-inputs" novalidate>
+    <CalcInput
+      id="deger"
+      label="Sıcaklık"
+      type="number"
+      placeholder="Örn: 350"
+    />
+    <CalcSelect id="birim" label="Kaynak Birim" options={units} value="fahrenheit" />
+    <CalcSelect id="hedef" label="Hedef Birim" options={units} value="celsius" />
   </form>
+  <p id="calc-error" class="calc-error" role="alert" hidden></p>
 
   <CalcResult>
     <div slot="main">
-      <p class="calc-result-label" id="main-label">Girilen Değer</p>
+      <p class="calc-result-label" id="sonuc-etiket">Sonuç</p>
       <p class="calc-result-value" id="sonuc-ana">—</p>
     </div>
     <div slot="details">
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Celsius (°C)</span>
-        <span class="calc-detail-value" id="detail-celsius">—</span>
+        <span class="calc-detail-label">Formül</span>
+        <span class="calc-detail-value" id="d-formul">—</span>
       </div>
-      <div class="calc-detail-row">
-        <span class="calc-detail-label">Fahrenheit (°F)</span>
-        <span class="calc-detail-value" id="detail-fahrenheit">—</span>
-      </div>
-      <div class="calc-detail-row">
-        <span class="calc-detail-label">Kelvin (K)</span>
-        <span class="calc-detail-value" id="detail-kelvin">—</span>
-      </div>
+      {units.map(u => (
+        <div class="calc-detail-row">
+          <span class="calc-detail-label">{u.label}</span>
+          <span class="calc-detail-value" id={`detail-${u.value}`}>—</span>
+        </div>
+      ))}
     </div>
   </CalcResult>
 
-  <section class="calc-content">
-    <h2>Sıcaklık Dönüştürücü Nasıl Kullanılır?</h2>
-    <p>
-      Sıcaklık ölçümünde dünya genelinde farklı birimler kullanılmakta olup bu durum zaman zaman karışıklıklara yol açmaktadır. Türkiye ve Avrupa'da standart olan Celsius (°C) ölçeği, ABD'de hava durumu tahminlerinden yemek tariflerine kadar pek çok alanda kullanılan Fahrenheit (°F) ile düzenli olarak karıştırılmaktadır. Bilimsel çalışmalarda ise mutlak sıcaklık birimi olan Kelvin (K) tercih edilmektedir.
-    </p>
-    <p>
-      Bu araç, üç temel sıcaklık birimi olan Celsius, Fahrenheit ve Kelvin arasında anlık dönüşüm yapmanızı sağlar. Değerinizi girin ve kaynak birimi seçin; diğer iki birimdeki karşılıklar otomatik olarak hesaplanır. Yemek pişirme sıcaklıkları, hava durumu, vücut sıcaklığı veya bilimsel hesaplamalar için kullanabilirsiniz.
-    </p>
-    <p>
-      Günlük hayatta sıcaklık dönüşümüne en çok ihtiyaç duyulan senaryolar arasında yurt dışı seyahat sırasında hava durumu bilgilerini anlamlandırmak, amerikan yemek kitaplarındaki fırın sıcaklıklarını Celsius'a çevirmek ve tıbbi bağlamlarda vücut sıcaklığı referanslarını yorumlamak sayılabilir. Örneğin bir amerikan tarifindeki 350°F fırın sıcaklığı 177°C'ye karşılık gelir.
-    </p>
-    <p>
-      Kelvin skalası, mutlak sıfır noktasını (0 K = −273.15°C) referans alır ve negatif değer almaz. Bu özelliği sayesinde termodinamik hesaplamalarda, gaz yasası denklemlerinde ve astrofizik çalışmalarında vazgeçilmez bir araç olmaktadır. Günlük hayatta ise sıfır altı Kelvin değeri yoktur; bu nedenle pratik kullanımda Celsius veya Fahrenheit daha sık tercih edilir.
-    </p>
+  <script>
+    type Unit = 'celsius' | 'fahrenheit' | 'kelvin' | 'rankine';
+    const SYM: Record<Unit, string> = { celsius: '°C', fahrenheit: '°F', kelvin: 'K', rankine: '°R' };
 
-    <h3>Formüller</h3>
-    <p>
-      Celsius → Fahrenheit: °F = °C × 9/5 + 32. Celsius → Kelvin: K = °C + 273.15. Fahrenheit → Celsius: °C = (°F − 32) × 5/9. Fahrenheit → Kelvin: K = (°F − 32) × 5/9 + 273.15. Kelvin → Celsius: °C = K − 273.15. Kelvin → Fahrenheit: °F = (K − 273.15) × 9/5 + 32.
-    </p>
+    // Tüm dönüşümler Kelvin üzerinden yapılır (tam tanımlar: 0 °C = 273,15 K, 1 °F = 5/9 K, 0 °F = 459,67 °R)
+    const toK: Record<Unit, (v: number) => number> = {
+      celsius: v => v + 273.15,
+      fahrenheit: v => ((v + 459.67) * 5) / 9,
+      kelvin: v => v,
+      rankine: v => (v * 5) / 9,
+    };
+    const fromK: Record<Unit, (k: number) => number> = {
+      celsius: k => k - 273.15,
+      fahrenheit: k => (k * 9) / 5 - 459.67,
+      kelvin: k => k,
+      rankine: k => (k * 9) / 5,
+    };
 
-    <h3>Dikkat Edilmesi Gerekenler</h3>
-    <p>
-      Kelvin değeri −273.15°C (mutlak sıfır) altına inemez; bu değerin altındaki girişler fiziksel olarak anlamsızdır. Fahrenheit değeri ise −459.67°F'nin altına inemez. Bu araç bu sınırların altındaki değerleri hatalı olarak işaretleyebilir. Ondalık girişlerde nokta veya virgül kullanılabilir. Çok yüksek veya çok düşük sıcaklıklar yalnızca bilimsel bağlamlarda anlam ifade etmektedir.
-    </p>
+    // Doğrudan formüller (gösterim için)
+    const FORMULA: Record<string, string> = {
+      'celsius>fahrenheit': '°F = °C × 9/5 + 32',
+      'celsius>kelvin': 'K = °C + 273,15',
+      'celsius>rankine': '°R = (°C + 273,15) × 9/5',
+      'fahrenheit>celsius': '°C = (°F − 32) × 5/9',
+      'fahrenheit>kelvin': 'K = (°F + 459,67) × 5/9',
+      'fahrenheit>rankine': '°R = °F + 459,67',
+      'kelvin>celsius': '°C = K − 273,15',
+      'kelvin>fahrenheit': '°F = K × 9/5 − 459,67',
+      'kelvin>rankine': '°R = K × 9/5',
+      'rankine>celsius': '°C = (°R − 491,67) × 5/9',
+      'rankine>fahrenheit': '°F = °R − 459,67',
+      'rankine>kelvin': 'K = °R × 5/9',
+    };
 
-    <h3>Sıkça Sorulan Sorular</h3>
-    {faq.map((item) => (
-      <div class="faq-item">
-        <h4>{item.question}</h4>
-        <p>{item.answer}</p>
-      </div>
-    ))}
-  </section>
-</CalcLayout>
-
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
-    const resultArea = document.getElementById('calc-result');
-
-    function debounce(fn, d = 150) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), d); }; }
-    function formatNumber(n, d = 2) {
-      return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 0, maximumFractionDigits: d }).format(n);
+    function parseNum(raw: string): number {
+      let s = raw.trim().replace(/\s+/g, '').replace(/[−–]/g, '-');
+      if (!s) return NaN;
+      s = s.replace(',', '.');
+      if (!/^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/i.test(s)) return NaN;
+      return Number(s);
     }
 
-    const dc = debounce(calculate);
-    inputs.forEach(i => { i.addEventListener('input', dc); i.addEventListener('change', dc); });
-
-    function toCelsius(val, unit) {
-      if (unit === 'celsius') return val;
-      if (unit === 'fahrenheit') return (val - 32) * 5 / 9;
-      if (unit === 'kelvin') return val - 273.15;
-      return val;
+    function fmt(n: number): string {
+      if (!Number.isFinite(n)) return '—';
+      // 1e-9 altı kayan nokta artıklarını temizle (ör. 212,00000000000003)
+      const clean = Math.abs(n) < 1e-9 ? 0 : Number(n.toPrecision(12));
+      return new Intl.NumberFormat('tr-TR', { maximumFractionDigits: 4 }).format(clean);
     }
 
-    function calculate() {
-      const deger = parseFloat((document.getElementById('deger')).value);
-      const birim = (document.getElementById('birim')).value;
+    const isUnit = (v: string): v is Unit => v in SYM;
 
-      if (isNaN(deger)) {
-        if (resultArea) resultArea.classList.add('hidden');
-        return;
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('calc-form') as HTMLFormElement;
+      const inputs = form.querySelectorAll<HTMLInputElement | HTMLSelectElement>('input, select');
+      const resultArea = document.getElementById('calc-result');
+      const errorEl = document.getElementById('calc-error') as HTMLElement;
+      const degerEl = document.getElementById('deger') as HTMLInputElement;
+      const birimEl = document.getElementById('birim') as HTMLSelectElement;
+      const hedefEl = document.getElementById('hedef') as HTMLSelectElement;
+
+      const setText = (id: string, text: string) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = text;
+      };
+
+      function debounce<T extends (...args: never[]) => void>(fn: T, delay = 150) {
+        let timer: ReturnType<typeof setTimeout>;
+        return (...args: Parameters<T>) => {
+          clearTimeout(timer);
+          timer = setTimeout(() => fn(...args), delay);
+        };
       }
 
-      const celsius = toCelsius(deger, birim);
-      const fahrenheit = celsius * 9 / 5 + 32;
-      const kelvin = celsius + 273.15;
+      function hide(msg = '') {
+        errorEl.textContent = msg;
+        errorEl.hidden = !msg;
+        resultArea?.classList.add('hidden');
+      }
 
-      const unitLabels = { celsius: 'Celsius (°C)', fahrenheit: 'Fahrenheit (°F)', kelvin: 'Kelvin (K)' };
-      const unitSymbols = { celsius: '°C', fahrenheit: '°F', kelvin: 'K' };
+      function calculate() {
+        const deger = parseNum(degerEl.value);
+        const from = birimEl.value;
+        const to = hedefEl.value;
+        if (Number.isNaN(deger) || !isUnit(from) || !isUnit(to)) return hide();
 
-      const mainLabelEl = document.getElementById('main-label');
-      if (mainLabelEl) mainLabelEl.textContent = unitLabels[birim] || birim;
-      document.getElementById('sonuc-ana').textContent = `${formatNumber(deger)} ${unitSymbols[birim] || ''}`;
+        const k = toK[from](deger);
+        if (k < -1e-9) {
+          return hide(`${fmt(deger)} ${SYM[from]} mutlak sıfırın (0 K = −273,15 °C = −459,67 °F) altındadır; fiziksel olarak mümkün değildir.`);
+        }
 
-      document.getElementById('detail-celsius').textContent = `${formatNumber(celsius)} °C`;
-      document.getElementById('detail-fahrenheit').textContent = `${formatNumber(fahrenheit)} °F`;
-      document.getElementById('detail-kelvin').textContent = `${formatNumber(kelvin)} K`;
+        const result = fromK[to](k);
+        errorEl.hidden = true;
+        setText('sonuc-etiket', `${fmt(deger)} ${SYM[from]} =`);
+        setText('sonuc-ana', `${fmt(result)} ${SYM[to]}`);
+        setText('d-formul', from === to ? 'Aynı birim' : FORMULA[`${from}>${to}`] ?? '—');
+        (Object.keys(SYM) as Unit[]).forEach(u => setText(`detail-${u}`, `${fmt(fromK[u](k))} ${SYM[u]}`));
 
-      if (resultArea) resultArea.classList.remove('hidden');
-      updateURL();
-    }
+        resultArea?.classList.remove('hidden');
+        updateURL();
+      }
 
-    function updateURL() {
-      const p = new URLSearchParams();
-      inputs.forEach(i => { if (i.value && i.id) p.set(i.id, i.value); });
-      history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
-    }
+      function updateURL() {
+        const params = new URLSearchParams();
+        inputs.forEach(el => {
+          if (el.id && el.value !== '') params.set(el.id, el.value);
+        });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+      }
 
-    function loadFromURL() {
-      const p = new URLSearchParams(window.location.search);
-      let h = false;
-      inputs.forEach(i => { if (i.id && p.has(i.id)) { i.value = p.get(i.id); h = true; } });
-      if (h) calculate();
-    }
+      function loadFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        let hasParams = false;
+        inputs.forEach(el => {
+          if (el.id && params.has(el.id)) {
+            const v = params.get(el.id)!;
+            if (el instanceof HTMLSelectElement) {
+              if (Array.from(el.options).some(o => o.value === v)) el.value = v;
+            } else {
+              const n = parseNum(v);
+              if (!Number.isNaN(n)) el.value = String(n);
+            }
+            hasParams = true;
+          }
+        });
+        // Eski linklerde hedef birim yoktu; kaynakla aynı kalırsa anlamlı bir hedef seç
+        if (!params.has('hedef') && hedefEl.value === birimEl.value) {
+          hedefEl.value = birimEl.value === 'celsius' ? 'fahrenheit' : 'celsius';
+        }
+        if (hasParams) calculate();
+      }
 
-    loadFromURL();
-  });
-</script>
+      const debouncedCalc = debounce(calculate);
+      inputs.forEach(el => {
+        el.addEventListener('input', debouncedCalc);
+        el.addEventListener('change', debouncedCalc);
+      });
+      form.addEventListener('submit', e => { e.preventDefault(); calculate(); });
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>Sıcaklık Ölçekleri</h2>
+    <p>
+      Uzunluk ve ağırlık dönüşümlerinden farklı olarak sıcaklık ölçeklerinin sıfır noktaları farklıdır. Bu yüzden dönüşüm yalnızca çarpma değil, bir kaydırma (ekleme ya da çıkarma) da içerir. Celsius ve Kelvin'de bir derecenin büyüklüğü aynıdır; Fahrenheit ve Rankine'de bir derece, Celsius derecesinin 5/9'u kadardır.
+    </p>
+    <table>
+      <thead>
+        <tr><th>Referans noktası</th><th>°C</th><th>°F</th><th>K</th><th>°R</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Mutlak sıfır</td><td>−273,15</td><td>−459,67</td><td>0</td><td>0</td></tr>
+        <tr><td>İki ölçeğin eşitlendiği nokta</td><td>−40</td><td>−40</td><td>233,15</td><td>419,67</td></tr>
+        <tr><td>Suyun donma noktası</td><td>0</td><td>32</td><td>273,15</td><td>491,67</td></tr>
+        <tr><td>Oda sıcaklığı</td><td>20</td><td>68</td><td>293,15</td><td>527,67</td></tr>
+        <tr><td>Vücut sıcaklığı</td><td>37</td><td>98,6</td><td>310,15</td><td>558,27</td></tr>
+        <tr><td>Suyun kaynama noktası (1 atm)</td><td>100</td><td>212</td><td>373,15</td><td>671,67</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Dönüşüm Formülleri</h2>
+    <ul>
+      <li><strong>Celsius → Fahrenheit:</strong> °F = °C × 9/5 + 32</li>
+      <li><strong>Fahrenheit → Celsius:</strong> °C = (°F − 32) × 5/9</li>
+      <li><strong>Celsius → Kelvin:</strong> K = °C + 273,15</li>
+      <li><strong>Fahrenheit → Kelvin:</strong> K = (°F + 459,67) × 5/9</li>
+      <li><strong>Fahrenheit → Rankine:</strong> °R = °F + 459,67</li>
+      <li><strong>Kelvin → Rankine:</strong> °R = K × 9/5</li>
+    </ul>
+
+    <h2>Örnek Hesaplama</h2>
+    <h3>Amerikan tarifindeki fırın sıcaklığı</h3>
+    <p>
+      Tarif 350 °F diyorsa: 350 − 32 = 318; 318 × 5/9 = 176,67 °C. Türk fırınlarında bu genellikle 175–180 °C olarak ayarlanır. Aynı değer Kelvin olarak 449,82 K'dir.
+    </p>
+    <h3>Hava durumu</h3>
+    <p>
+      New York için 41 °F tahmin edildiyse: (41 − 32) × 5/9 = 5 °C. Yani mont gerektiren serin bir gündür.
+    </p>
+
+    <h2>Fırın Sıcaklıkları Tablosu</h2>
+    <table>
+      <thead>
+        <tr><th>°F</th><th>°C (yaklaşık)</th><th>Tarif dilinde</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>300 °F</td><td>149 °C</td><td>Kısık / yavaş pişirme</td></tr>
+        <tr><td>325 °F</td><td>163 °C</td><td>Orta-kısık</td></tr>
+        <tr><td>350 °F</td><td>177 °C</td><td>Orta (kek, kurabiye)</td></tr>
+        <tr><td>375 °F</td><td>191 °C</td><td>Orta-yüksek</td></tr>
+        <tr><td>400 °F</td><td>204 °C</td><td>Yüksek (kızartma)</td></tr>
+        <tr><td>450 °F</td><td>232 °C</td><td>Çok yüksek (pizza, ekmek)</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Mutlak Sıfır ve Sınırlar</h2>
+    <p>
+      0 K (−273,15 °C, −459,67 °F) termodinamiğe göre ulaşılabilecek en düşük sıcaklıktır; hesaplayıcı bunun altındaki girişleri geçersiz sayar. Kelvin 2019'dan beri Boltzmann sabitine dayanarak tanımlanır ve SI'daki sıcaklık birimidir; Celsius ise tanım gereği Kelvin'den 273,15 kaydırılmış ölçektir.
+    </p>
+  </section>
+</CalcLayout>

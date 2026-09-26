@@ -1,18 +1,30 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import Breadcrumb from '../components/layout/Breadcrumb.astro';
-import Sidebar from '../components/layout/Sidebar.astro';
-import SchemaMarkup from '../components/seo/SchemaMarkup.astro';
+import AdBanner from '../components/ads/AdBanner.astro';
+import AffiliateBox from '../components/ads/AffiliateBox.astro';
+import Icon from '../components/ui/Icon.astro';
 import type { FAQItem } from '../utils/seo';
-import categoriesData from '../data/categories.json';
+import { getCategory, findCalc, type CalcEntry } from '../utils/catalog';
+import { SITE, absoluteUrl } from '../config/site';
+
+interface Source {
+  name: string;
+  url: string;
+}
 
 interface Props {
   meta: {
     title: string;
+    seoTitle?: string;
     description: string;
+    summary?: string;
+    howTo?: string[];
+    sources?: Source[];
     category: string;
     slug: string;
     keywords?: string[];
+    datePublished?: string;
     dateModified?: string;
     relatedCalcs?: string[];
     faq?: FAQItem[];
@@ -21,71 +33,298 @@ interface Props {
 
 const { meta } = Astro.props;
 
-const category = categoriesData.categories.find(c => c.slug === meta.category);
+const category = getCategory(meta.category);
 const categoryName = category?.name || meta.category;
+const catColor = category?.color || 'var(--color-text)';
+const h1 = meta.title.split('|')[0].trim();
+const path = `/${meta.category}/${meta.slug}/`;
+const url = absoluteUrl(path);
+const dateModified = meta.dateModified || '2026-09-26';
+const datePublished = meta.datePublished || '2026-04-01';
+const faq = meta.faq || [];
+const sources = meta.sources || [];
+const howTo = meta.howTo || [];
 
-const categoryAppMap: Record<string, string> = {
-  finans: 'FinanceApplication',
-  saglik: 'HealthApplication',
-  gunluk: 'UtilitiesApplication',
-  insaat: 'UtilitiesApplication',
-  matematik: 'EducationalApplication',
-  egitim: 'EducationalApplication',
-  donusum: 'UtilitiesApplication',
-};
+const brand = ' | Hemen Hesapla';
+const baseTitle = meta.seoTitle || `${h1} (2026 Güncel)`;
+const pageTitle = baseTitle.length + brand.length <= 68 ? baseTitle + brand : baseTitle;
+
+const fmtDate = (d: string) =>
+  new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(d + 'T12:00:00'));
+
+// İlgili hesaplayıcılar: önce sayfanın önerdikleri, sonra aynı kategoriden tamamla
+const related: CalcEntry[] = [];
+const seen = new Set([`${meta.category}/${meta.slug}`]);
+for (const ref of meta.relatedCalcs || []) {
+  const c = findCalc(ref, meta.category);
+  if (c && !seen.has(`${c.category}/${c.slug}`)) {
+    related.push(c);
+    seen.add(`${c.category}/${c.slug}`);
+  }
+}
+for (const c of category?.calculators || []) {
+  if (related.length >= 6) break;
+  if (!seen.has(`${c.category}/${c.slug}`)) {
+    related.push(c);
+    seen.add(`${c.category}/${c.slug}`);
+  }
+}
+const moreInCategory = (category?.calculators || []).filter((c) => c.slug !== meta.slug).slice(0, 10);
+
+// Slot içeriğini "araç" ve "makale" olarak ikiye ayır
+const slotHtml = await Astro.slots.render('default');
+const splitAt = slotHtml.search(/<section[^>]*class="[^"]*\bcalc-content\b/);
+const toolHtml = splitAt >= 0 ? slotHtml.slice(0, splitAt) : slotHtml;
+const articleHtml = splitAt >= 0 ? slotHtml.slice(splitAt) : '';
 
 const breadcrumbItems = [
   { label: 'Ana Sayfa', href: '/' },
   { label: categoryName, href: `/${meta.category}/` },
-  { label: meta.title.split('|')[0].trim(), href: `/${meta.category}/${meta.slug}/` },
+  { label: h1, href: path },
 ];
 
-const pageTitle = `${meta.title} | Hemen Hesapla`;
+const appCategory: Record<string, string> = {
+  finans: 'FinanceApplication',
+  saglik: 'HealthApplication',
+  egitim: 'EducationalApplication',
+  matematik: 'EducationalApplication',
+};
+
+const schema: Record<string, unknown>[] = [
+  {
+    '@type': 'WebPage',
+    '@id': `${url}#webpage`,
+    url,
+    name: pageTitle,
+    headline: h1,
+    description: meta.description,
+    inLanguage: 'tr-TR',
+    isPartOf: { '@id': `${SITE.url}/#website` },
+    breadcrumb: { '@id': `${url}#breadcrumb` },
+    primaryImageOfPage: { '@type': 'ImageObject', url: absoluteUrl(`/og/${meta.category}/${meta.slug}.png`) },
+    datePublished,
+    dateModified,
+    author: { '@id': `${SITE.url}/#organization` },
+    publisher: { '@id': `${SITE.url}/#organization` },
+    ...(meta.keywords?.length ? { keywords: meta.keywords.join(', ') } : {}),
+    ...(meta.summary ? { abstract: meta.summary } : {}),
+    ...(sources.length ? { citation: sources.map((s) => ({ '@type': 'CreativeWork', name: s.name, url: s.url })) } : {}),
+    speakable: { '@type': 'SpeakableSpecification', cssSelector: ['h1', '.answer-box'] },
+    mainEntity: { '@id': `${url}#app` },
+  },
+  {
+    '@type': 'BreadcrumbList',
+    '@id': `${url}#breadcrumb`,
+    itemListElement: breadcrumbItems.map((b, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: b.label,
+      item: absoluteUrl(b.href),
+    })),
+  },
+  {
+    '@type': 'WebApplication',
+    '@id': `${url}#app`,
+    name: h1,
+    url,
+    description: meta.description,
+    applicationCategory: appCategory[meta.category] || 'UtilitiesApplication',
+    operatingSystem: 'Any',
+    browserRequirements: 'Requires JavaScript',
+    inLanguage: 'tr-TR',
+    isAccessibleForFree: true,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'TRY' },
+    publisher: { '@id': `${SITE.url}/#organization` },
+  },
+];
+
+if (faq.length) {
+  schema.push({
+    '@type': 'FAQPage',
+    '@id': `${url}#faq`,
+    mainEntity: faq.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: { '@type': 'Answer', text: f.answer },
+    })),
+  });
+}
+
+if (howTo.length) {
+  schema.push({
+    '@type': 'HowTo',
+    '@id': `${url}#howto`,
+    name: `${h1} nasıl yapılır?`,
+    step: howTo.map((s, i) => ({ '@type': 'HowToStep', position: i + 1, text: s })),
+  });
+}
 ---
 
-<BaseLayout title={pageTitle} description={meta.description}>
-  <Fragment slot="head">
-    <SchemaMarkup
-      type="WebApplication"
-      name={meta.title}
-      description={meta.description}
-      category={categoryAppMap[meta.category] || 'UtilitiesApplication'}
-      url={`https://hemenhesapla.net/${meta.category}/${meta.slug}/`}
-    />
-    {meta.faq && meta.faq.length > 0 && (
-      <SchemaMarkup type="FAQPage" faqs={meta.faq} />
-    )}
-  </Fragment>
-
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+<BaseLayout
+  title={pageTitle}
+  description={meta.description}
+  canonicalURL={url}
+  ogImage={`/og/${meta.category}/${meta.slug}.png`}
+  ogType="article"
+  schema={schema}
+  datePublished={datePublished}
+  dateModified={dateModified}
+>
+  <div class="container-page pt-5 pb-8" style={`--cat:${catColor}`} data-calc={`${meta.category}/${meta.slug}`}>
     <Breadcrumb items={breadcrumbItems} />
 
-    <div class="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-8">
-      <!-- Main Content -->
-      <div>
-        <h1 class="text-2xl sm:text-3xl font-[var(--font-heading)] font-extrabold text-[var(--color-text)] mb-2">
-          {meta.title.split('|')[0].trim()}
-        </h1>
-        <p class="text-[var(--color-text-secondary)] mb-6">{meta.description}</p>
+    <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_300px] gap-8 xl:gap-12">
+      <article class="min-w-0">
+        <header class="mb-5 sm:mb-6">
+          <a href={`/${meta.category}/`} class="cat-badge mb-3">
+            <Icon name={category?.icon} size={14} /> {categoryName}
+          </a>
+          <h1 class="text-[1.875rem] sm:text-[2.375rem] font-extrabold tracking-[-0.025em]">{h1}</h1>
+          <p class="mt-2 text-[1.0625rem] text-[var(--color-text-secondary)] max-w-2xl">{meta.description}</p>
+          <p class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[0.8125rem] text-[var(--color-text-muted)]">
+            <span class="inline-flex items-center gap-1.5">
+              <Icon name="history" size={14} />
+              Güncellendi: <time datetime={dateModified}>{fmtDate(dateModified)}</time>
+            </span>
+            {sources.length > 0 && (
+              <a href="#kaynaklar" class="inline-flex items-center gap-1.5 hover:text-[var(--color-text)]">
+                <Icon name="badge-check" size={14} /> Resmî kaynaklarla doğrulandı
+              </a>
+            )}
+          </p>
+        </header>
 
-        <slot />
+        <section class="calc-shell" aria-label={`${h1} aracı`}>
+          <Fragment set:html={toolHtml} />
+          <noscript>
+            <div class="noscript-warning">Bu hesaplayıcı JavaScript gerektirir. Lütfen tarayıcınızda JavaScript'i etkinleştirin.</div>
+          </noscript>
+        </section>
 
-        <noscript>
-          <div class="noscript-warning">
-            <p>Bu hesaplayıcı JavaScript gerektirir. Lütfen tarayıcınızda JavaScript'i etkinleştirin.</p>
-          </div>
-        </noscript>
-      </div>
+        <AdBanner variant="after-result" />
 
-      <!-- Sidebar -->
-      <div class="hidden lg:block">
-        <Sidebar categorySlug={meta.category} currentSlug={meta.slug} />
-      </div>
-    </div>
+        {meta.summary && (
+          <section class="answer-box mt-8 rounded-[var(--radius)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5 sm:p-6" aria-labelledby="kisaca">
+            <h2 id="kisaca" class="eyebrow !font-semibold mb-2 flex items-center gap-1.5 !text-[var(--color-accent-ink)]">
+              <Icon name="info" size={15} /> Kısaca
+            </h2>
+            <p class="text-[1.0625rem] leading-relaxed text-[var(--color-text)]">{meta.summary}</p>
+          </section>
+        )}
 
-    <!-- Mobile Sidebar -->
-    <div class="lg:hidden mt-8">
-      <Sidebar categorySlug={meta.category} currentSlug={meta.slug} />
+        {howTo.length > 0 && (
+          <section class="mt-8" aria-labelledby="nasil">
+            <h2 id="nasil" class="text-xl sm:text-[1.375rem] mb-4">{h1} nasıl kullanılır?</h2>
+            <ol class="grid gap-3 sm:grid-cols-2">
+              {howTo.map((step, i) => (
+                <li class="flex gap-3 p-4 rounded-[var(--radius-sm)] bg-[var(--color-surface-2)]">
+                  <span class="grid place-items-center w-7 h-7 shrink-0 rounded-full bg-[var(--color-text)] text-[var(--color-bg)] text-sm font-bold num">{i + 1}</span>
+                  <span class="text-[0.9375rem] text-[var(--color-text-secondary)] leading-relaxed">{step}</span>
+                </li>
+              ))}
+            </ol>
+          </section>
+        )}
+
+        <AffiliateBox category={meta.category} slug={meta.slug} />
+
+        {articleHtml && <Fragment set:html={articleHtml} />}
+
+        {faq.length > 0 && (
+          <section class="mt-12" aria-labelledby="sss">
+            <h2 id="sss" class="text-xl sm:text-[1.625rem] mb-4">Sık sorulan sorular</h2>
+            <AdBanner variant="in-content" />
+            <div class="faq-list">
+              {faq.map((f, i) => (
+                <details open={i === 0}>
+                  <summary>{f.question}</summary>
+                  <div><p>{f.answer}</p></div>
+                </details>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {sources.length > 0 && (
+          <section id="kaynaklar" class="mt-10 rounded-[var(--radius)] bg-[var(--color-surface-2)] p-5 sm:p-6" aria-labelledby="kaynaklar-baslik">
+            <h2 id="kaynaklar-baslik" class="text-base mb-3 flex items-center gap-2"><Icon name="badge-check" size={18} /> Kaynaklar ve dayanak</h2>
+            <ul class="space-y-2 text-[0.9375rem]">
+              {sources.map((s) => (
+                <li>
+                  <a href={s.url} target="_blank" rel="noopener" class="link inline-flex items-center gap-1">
+                    {s.name} <Icon name="external-link" size={13} />
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <p class="mt-4 text-[0.8125rem] text-[var(--color-text-muted)]">
+              Hesaplamalar bilgilendirme amaçlıdır ve resmî belge yerine geçmez. Yöntemimizi <a href="/metodoloji/" class="link">hesaplama yöntemi</a> sayfasında açıklıyoruz. Bir hata fark ederseniz <a href="/iletisim/" class="link">bize bildirin</a>.
+            </p>
+          </section>
+        )}
+
+        {!sources.length && (
+          <p class="mt-10 text-[0.8125rem] text-[var(--color-text-muted)]">
+            Hesaplamalar bilgilendirme amaçlıdır. Yöntemimizi <a href="/metodoloji/" class="link">hesaplama yöntemi</a> sayfasında açıklıyoruz; bir hata fark ederseniz <a href="/iletisim/" class="link">bize bildirin</a>.
+          </p>
+        )}
+
+        {related.length > 0 && (
+          <section class="mt-12" aria-labelledby="ilgili">
+            <h2 id="ilgili" class="text-xl sm:text-[1.375rem] mb-4">Bunlar da işinize yarayabilir</h2>
+            <ul class="grid gap-2 sm:grid-cols-2">
+              {related.map((c) => (
+                <li>
+                  <a href={c.href} class="tool-link card !rounded-[var(--radius-sm)]" style={`--cat:${getCategory(c.category)?.color}`}>
+                    <span class="tool-icon"><Icon name={c.icon} size={18} /></span>
+                    <span class="min-w-0">
+                      <span class="block font-semibold text-[var(--color-text)] leading-snug">{c.title}</span>
+                      <span class="block text-[0.8125rem] text-[var(--color-text-muted)] truncate">{c.description}</span>
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+      </article>
+
+      <aside class="hidden lg:block" aria-label="Kenar çubuğu">
+        <div class="sticky top-[calc(var(--header-h)+20px)] space-y-6">
+          <AdBanner variant="sidebar" />
+          {moreInCategory.length > 0 && (
+            <nav aria-label={`${categoryName} hesaplayıcıları`} class="card p-3">
+              <p class="eyebrow px-2 pt-1 pb-2">{categoryName}</p>
+              <ul>
+                {moreInCategory.map((c) => (
+                  <li>
+                    <a href={c.href} class="flex items-center gap-2.5 px-2 py-2 rounded-lg text-[0.9rem] text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-2)] hover:text-[var(--color-text)]">
+                      <Icon name={c.icon} size={16} class="text-[var(--cat)]" />
+                      <span class="truncate">{c.title}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+              <a href={`/${meta.category}/`} class="flex items-center gap-1 px-2 pt-2 pb-1 text-[0.875rem] font-semibold text-[var(--color-text)]">
+                Tümünü gör <Icon name="arrow-right" size={15} />
+              </a>
+            </nav>
+          )}
+        </div>
+      </aside>
     </div>
   </div>
+
+  <button type="button" class="result-peek" id="result-peek" aria-label="Sonuca git" tabindex="-1">
+    <span class="min-w-0">
+      <span class="result-peek__label" id="result-peek-label">Sonuç</span>
+      <span class="result-peek__value block truncate" id="result-peek-value">—</span>
+    </span>
+    <Icon name="arrow-down" size={20} />
+  </button>
 </BaseLayout>
+
+<script>
+  import { initCalcEnhancements } from '../utils/calc-enhance';
+  initCalcEnhancements();
+</script>

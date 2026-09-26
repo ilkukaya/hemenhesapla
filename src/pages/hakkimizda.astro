@@ -1,42 +1,38 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import PageLayout from '../layouts/PageLayout.astro';
+import { allCalcs, categories } from '../utils/catalog';
 ---
 
-<BaseLayout title="Hakkımızda | Hemen Hesapla" description="hemenhesapla.net hakkında bilgi. Türkiye'nin en kapsamlı online hesaplayıcı platformu.">
-  <div class="max-w-3xl mx-auto px-4 sm:px-6 py-12">
-    <h1 class="text-2xl sm:text-3xl font-[var(--font-heading)] font-extrabold text-[var(--color-text)] mb-8">Hakkımızda</h1>
+<PageLayout
+  title="Hakkımızda | Hemen Hesapla"
+  h1="Hakkımızda"
+  description="Hemen Hesapla; kredi, maaş, vergi, sağlık ve eğitim hesaplamalarını güncel mevzuata göre, ücretsiz ve şeffaf biçimde sunan bağımsız bir Türk hesaplama platformudur."
+  lede="Günlük hayatta karşılaştığımız hesapların çoğu aslında basit formüllerdir; zor olan doğru ve güncel değeri bulmaktır. Hemen Hesapla bu işi sizin yerinize yapar."
+  updated="2026-09-26"
+>
+  <h2>Ne yapıyoruz?</h2>
+  <p>
+    Hemen Hesapla, {categories.length} kategoride {allCalcs.length} ücretsiz hesaplayıcı sunan bağımsız bir platformdur. Kredi taksiti, net maaş,
+    gelir vergisi, kıdem tazminatı, kira artışı, vücut kitle indeksi, gebelik haftası, not ortalaması ve daha pek çok hesabı saniyeler içinde yapabilirsiniz.
+  </p>
 
-    <div class="space-y-6 text-[var(--color-text-secondary)] leading-relaxed">
-      <p>
-        <strong class="text-[var(--color-text)]">hemenhesapla.net</strong>, Türkiye'nin en kapsamlı online hesaplayıcı platformudur.
-        Amacımız, günlük hayatta ihtiyaç duyduğunuz her türlü hesaplamayı hızlı, güvenilir ve ücretsiz olarak sunmaktır.
-      </p>
+  <h2>İlkelerimiz</h2>
+  <ul>
+    <li><strong>Doğruluk:</strong> Yasal parametreleri (vergi dilimleri, asgari ücret, SGK oranları, tavanlar) Resmî Gazete, Gelir İdaresi Başkanlığı, SGK ve Çalışma ve Sosyal Güvenlik Bakanlığı gibi birincil kaynaklardan alırız.</li>
+    <li><strong>Şeffaflık:</strong> Her hesaplayıcıda kullanılan formülü, örnek bir hesapla birlikte açıklar ve dayanak kaynakları listeleriz.</li>
+    <li><strong>Güncellik:</strong> Mevzuat değiştiğinde ilgili sayfaları günceller, son güncelleme tarihini sayfanın başında gösteririz.</li>
+    <li><strong>Gizlilik:</strong> Hesaplamalar tarayıcınızda yapılır; girdiğiniz değerleri saklamayız.</li>
+  </ul>
 
-      <h2 class="text-lg font-[var(--font-heading)] font-bold text-[var(--color-text)] mt-8">Misyonumuz</h2>
-      <p>
-        Karmaşık hesaplamaları herkes için erişilebilir ve anlaşılır kılmak.
-        Kredi taksitinden kalori ihtiyacına, vergi hesaplamasından boya miktarına kadar
-        hayatınızı kolaylaştıracak hesaplama araçlarını tek bir çatı altında topladık.
-      </p>
+  <h2>Nasıl ayakta kalıyoruz?</h2>
+  <p>
+    Hemen Hesapla ücretsizdir. Giderlerimizi sayfalarda açıkça "Reklam" veya "Sponsorlu" olarak işaretlenen reklamlar ve satış ortaklıkları ile karşılarız.
+    Reklam verenler hesaplama sonuçlarını veya içeriklerimizi etkilemez.
+  </p>
 
-      <h2 class="text-lg font-[var(--font-heading)] font-bold text-[var(--color-text)] mt-8">Neden Hemen Hesapla?</h2>
-      <ul class="list-disc pl-6 space-y-2">
-        <li><strong>Hızlı:</strong> Sonuçlar anında hesaplanır. Butona basmaya bile gerek yok — veri girdikçe sonuç güncellenir.</li>
-        <li><strong>Güvenilir:</strong> Hesaplayıcılarımız güncel veriler ve doğru formüllerle çalışır.</li>
-        <li><strong>Ücretsiz:</strong> Tüm hesaplayıcılar tamamen ücretsizdir, kayıt gerekmez.</li>
-        <li><strong>Gizlilik:</strong> Girdiğiniz veriler sunucularımıza gönderilmez, tamamen tarayıcınızda işlenir.</li>
-        <li><strong>Mobil uyumlu:</strong> Her cihazdan rahatça kullanabilirsiniz.</li>
-        <li><strong>Paylaşılabilir:</strong> Her hesaplama sonucu benzersiz bir URL ile paylaşılabilir.</li>
-      </ul>
-
-      <h2 class="text-lg font-[var(--font-heading)] font-bold text-[var(--color-text)] mt-8">Kategorilerimiz</h2>
-      <p>Finans, sağlık, günlük yaşam, inşaat, matematik, eğitim ve birim dönüşüm kategorilerinde yüzlerce hesaplayıcı sunuyoruz.</p>
-
-      <h2 class="text-lg font-[var(--font-heading)] font-bold text-[var(--color-text)] mt-8">İletişim</h2>
-      <p>
-        Sorularınız, önerileriniz veya hata bildirimleriniz için
-        <a href="/iletisim/" class="text-[var(--color-primary)] hover:underline">iletişim sayfamızı</a> ziyaret edebilirsiniz.
-      </p>
-    </div>
-  </div>
-</BaseLayout>
+  <h2>Bize ulaşın</h2>
+  <p>
+    Bir hata fark ettiyseniz ya da yeni bir hesaplayıcı önermek istiyorsanız <a href="/iletisim/">iletişim sayfamızdan</a> bize yazabilirsiniz.
+    Hesaplama yöntemimizle ilgili ayrıntılar için <a href="/metodoloji/">hesaplama yöntemi</a> sayfasına göz atın.
+  </p>
+</PageLayout>

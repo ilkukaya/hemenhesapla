@@ -1,175 +1,284 @@
 ---
 import CalcLayout from '../../layouts/CalcLayout.astro';
 import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcSelect from '../../components/calculator/CalcSelect.astro';
 import CalcResult from '../../components/calculator/CalcResult.astro';
 
 const faq = [
   {
-    question: "Askerlik terhis tarihi nasıl hesaplanır?",
-    answer: "Türkiye'de zorunlu askerlik süresi erbaş ve erler için 12 aydır. Bedelli askerlik seçeneğiyle 21 gün fiili askerlik yapılabilmektedir. Terhis tarihi, askere alınma tarihine hizmet süresi eklenerek hesaplanır. Bu hesap makinesi ise terhis tarihine kalan gün, hafta ve ay sayısını hesaplamaktadır."
+    question: "Askerlik süresi 2026'da kaç ay?",
+    answer: "7179 sayılı Askeralma Kanunu'na göre er ve erbaşlar ile yedek subay ve yedek astsubaylar 12 ay askerlik yapar. Yükseköğrenim mezunu olup yedek subay veya astsubay olarak ayrılmayanlar 6 ay kısa dönem er olarak görev yapar. Bedelli askerlikte ise bedelin ödenmesinin ardından bir aylık (uygulamada 28 gün) temel askerlik eğitimi alınır."
   },
   {
-    question: "Türkiye'de askerlik süresi ne kadardır?",
-    answer: "Türkiye'de zorunlu askerlik hizmet süresi 2019 yılından itibaren 12 ay olarak uygulanmaktadır (erbaş ve erler için). Daha önce bu süre 15 aydı. Bedelli askerlik seçeneğinde ise 21 gün fiili hizmet yapılmakta, belirli bir ücret ödenmektedir. Subay ve astsubaylar için hizmet süreleri farklı kurallara tabidir."
+    question: "Terhis tarihi nasıl hesaplanır?",
+    answer: "Terhis tarihi, birliğe katılış tarihine hizmet süresi eklenerek bulunur. 5 Kasım 2025'te katılan 12 aylık bir erin terhisi 5 Kasım 2026'dır. Firar veya hizmetten sayılmayan disiplin cezası gibi durumlar süreyi uzatabilir; kesin tarih birliğiniz tarafından bildirilir. Hesaplayıcıda bu gibi uzamaları \"Ek gün\" alanına yazabilirsiniz."
   },
   {
-    question: "Askerlik tecili nasıl alınır?",
-    answer: "Askerlik tecili (erteleme) çeşitli nedenlerle talep edilebilir: yükseköğrenim, lisansüstü eğitim, yurt dışı eğitim, sağlık durumu ve bazı mesleki sebepler bunların başında gelir. Tecil başvuruları Milli Savunma Bakanlığı'na bağlı askerlik şubeleri aracılığıyla yapılmaktadır. Tecil süresi dolduğunda askerlik görevi yerine getirilir. E-Devlet üzerinden askerlik erteleme işlemleri yapılabilmektedir."
+    question: "Bedelli askerlik ücreti 2026'da ne kadar?",
+    answer: "Bedelli askerlik bedeli 300.000 gösterge rakamının memur aylık katsayısıyla çarpılmasıyla bulunur. 1 Temmuz – 31 Aralık 2026 döneminde katsayı 1,575512 olduğundan bedel 472.653,60 TL'dir. Ödeme, ödemenin yapıldığı gün geçerli katsayıya göre hesaplanır; Ocak 2027'de katsayı değişince tutar da güncellenecektir."
+  },
+  {
+    question: "Şafak ne demek, kaç gün kaldığını nasıl sayarım?",
+    answer: "Asker arasında \"şafak\", terhise kalan gün sayısını ifade eder. Terhis tarihinden bugünün tarihi çıkarılarak bulunur; terhis günü şafak 0 kabul edilir. Hesaplayıcı katılış tarihiniz ve hizmet türünüze göre terhis tarihini bulur, kalan günü ve hizmetin yüzde kaçının tamamlandığını gösterir."
+  },
+  {
+    question: "Yıllık izin kullanmak terhis tarihini değiştirir mi?",
+    answer: "Hayır. Kanuni izinler askerlik süresinden sayılır; izin kullanmak terhisi öne ya da arkaya almaz. Buna karşılık firar ve izin tecavüzünde geçen süreler, disiplin veya mahkûmiyet nedeniyle hizmetten sayılmayan günler terhisi geciktirir. Hesaplayıcıdaki \"Ek gün\" alanı bu gecikmeleri eklemek içindir."
+  },
+  {
+    question: "Dövizle askerlik nasıl yapılır?",
+    answer: "Yurt dışında çalışma veya oturma izniyle en az 3 yıl (1.095 gün) bulunmuş yükümlüler dövizle askerlikten yararlanabilir. Temmuz–Aralık 2026 döneminde bedel 472.653,60 TL karşılığı avro olarak ödenir. Fiziki temel eğitim şartı kaldırılmış olup çevrim içi eğitim uygulanır. Başvurular dış temsilcilikler veya e-Devlet üzerinden yapılır."
   }
 ];
 
 const meta = {
-  title: "Askerlik Terhis Tarihi Hesaplama",
-  description: "Terhis tarihinize göre askerliğe kalan gün, hafta ve ay sayısını hesaplayın. Askerlik geri sayım hesaplayıcısı.",
+  title: "Askerlik Hesaplama",
+  seoTitle: "Askerlik Hesaplama 2026 – Terhis Tarihi ve Şafak Sayacı",
+  description: "Katılış tarihinizi ve hizmet türünüzü girin; terhis tarihini, kalan gün (şafak) sayısını ve askerliğin yüzde kaçını tamamladığınızı hemen görün.",
+  summary: "Terhis tarihi, birliğe katılış tarihine hizmet süresi eklenerek bulunur: er ve yedek subaylar için 12 ay, kısa dönem için 6 ay, bedelli askerlikte 28 günlük temel eğitim. Kalan gün (şafak) = terhis tarihi − bugünün tarihi. 2026'nın ikinci yarısında bedelli askerlik ücreti 472.653,60 TL'dir.",
+  howTo: [
+    "Birliğe katılış (sevk) tarihinizi seçin.",
+    "Hizmet türünüzü seçin: 12 ay er, 12 ay yedek subay/astsubay, 6 ay kısa dönem veya bedelli.",
+    "Firar, ceza gibi nedenlerle uzama varsa gün sayısını \"Ek gün\" alanına yazın.",
+    "Terhis tarihi, kalan gün, geçen gün ve tamamlanma yüzdesini sonuçta görün; linki paylaşarak ailenize geri sayımı gönderebilirsiniz."
+  ],
+  sources: [
+    { name: "7179 sayılı Askeralma Kanunu – Mevzuat Bilgi Sistemi", url: "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=7179&MevzuatTur=1&MevzuatTertip=5" },
+    { name: "Askeralma Kanunu metni – Millî Savunma Bakanlığı", url: "https://www.msb.gov.tr/Content/Upload/Docs/asal/7179_19072022.pdf" },
+    { name: "Dövizle askerlik bedeli (Temmuz–Aralık 2026) – T.C. Strazburg Başkonsolosluğu", url: "https://strazburg-bk.mfa.gov.tr/Mission/ShowInfoNote/418676" }
+  ],
   category: "gunluk",
   slug: "askerlik-hesaplama",
-  keywords: ["askerlik hesaplama", "terhis tarihi hesaplama", "askerliğe kalan gün", "askerlik geri sayım", "terhis kaç gün kaldı"],
-  dateModified: "2026-04-01",
-  relatedCalcs: ["gun-hesaplama", "emeklilik-hesaplama"],
+  keywords: ["askerlik hesaplama", "terhis tarihi hesaplama", "şafak hesaplama", "askerliğe kalan gün", "bedelli askerlik ücreti 2026", "askerlik geri sayım"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["gunluk/gun-hesaplama", "gunluk/yas-hesaplama", "gunluk/emeklilik-hesaplama", "gunluk/tasarruf-hesaplama"],
   faq
 };
 ---
 
 <CalcLayout meta={meta}>
-  <form id="calc-form">
+  <form id="calc-form" class="calc-inputs" novalidate>
     <CalcInput
-      id="terhisTarihi"
-      label="Terhis Tarihi"
+      id="katilisTarihi"
+      label="Katılış (Sevk) Tarihi"
       type="date"
-      helpText="Askerlik bitiş tarihinizi girin"
+      helpText="Birliğe katıldığınız gün"
+    />
+    <CalcSelect
+      id="hizmetTuru"
+      label="Hizmet Türü"
+      options={[
+        { value: "er12", label: "Er / erbaş – 12 ay" },
+        { value: "ys12", label: "Yedek subay / yedek astsubay – 12 ay" },
+        { value: "kd6", label: "Kısa dönem er – 6 ay" },
+        { value: "bedelli", label: "Bedelli – 28 gün temel eğitim" }
+      ]}
+      value="er12"
+    />
+    <CalcInput
+      id="ekGun"
+      label="Ek Gün (uzama)"
+      type="number"
+      suffix="gün"
+      placeholder="0"
+      min={0}
+      max={3650}
+      step={1}
+      required={false}
+      helpText="Firar, ceza vb. hizmetten sayılmayan günler"
     />
   </form>
 
   <CalcResult>
     <div slot="main">
-      <p class="calc-result-label">Terhise Kalan Gün</p>
+      <p class="calc-result-label" id="ana-etiket">Terhise Kalan (Şafak)</p>
       <p class="calc-result-value" id="kalan-gun">—</p>
+      <p class="calc-result-sub" id="kalan-alt"></p>
     </div>
     <div slot="details">
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Kalan Hafta</span>
-        <span class="calc-detail-value" id="d-hafta">—</span>
-      </div>
-      <div class="calc-detail-row">
-        <span class="calc-detail-label">Kalan Ay (yaklaşık)</span>
-        <span class="calc-detail-value" id="d-ay">—</span>
-      </div>
-      <div class="calc-detail-row">
-        <span class="calc-detail-label">Terhis Tarihi</span>
+        <span class="calc-detail-label">Terhis tarihi</span>
         <span class="calc-detail-value" id="d-tarih">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Toplam hizmet süresi</span>
+        <span class="calc-detail-value" id="d-toplam">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Geçen süre</span>
+        <span class="calc-detail-value" id="d-gecen">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Tamamlanan</span>
+        <span class="calc-detail-value" id="d-yuzde">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Kalan hafta</span>
+        <span class="calc-detail-value" id="d-hafta">—</span>
       </div>
     </div>
   </CalcResult>
 
+  <p class="calc-note">Sonuç bilgilendirme amaçlıdır. Kesin terhis tarihi birliğiniz ve MSB tarafından bildirilir.</p>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const inputs = document.querySelectorAll<HTMLInputElement | HTMLSelectElement>('#calc-form input, #calc-form select');
       const resultArea = document.getElementById('calc-result');
+      const $ = (id: string) => document.getElementById(id) as HTMLElement;
 
-      function debounce(fn, delay = 150) {
-        let t;
-        return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), delay); };
+      function debounce(fn: () => void, delay = 150) {
+        let timer: ReturnType<typeof setTimeout>;
+        return () => { clearTimeout(timer); timer = setTimeout(fn, delay); };
       }
 
-      function formatNumber(n, d = 0) {
-        return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: d, maximumFractionDigits: d }).format(n);
+      const fmt = (n: number, d = 0) => new Intl.NumberFormat('tr-TR', { minimumFractionDigits: d, maximumFractionDigits: d }).format(n);
+      const fmtDate = (d: Date) => new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'long', year: 'numeric', weekday: 'long' }).format(d);
+
+      function parseDate(s: string): Date | null {
+        const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
+        if (!m) return null;
+        const d = new Date(2000, 0, 1);
+        d.setFullYear(+m[1], +m[2] - 1, +m[3]);
+        return d.getMonth() === +m[2] - 1 ? d : null;
+      }
+      const dayNum = (d: Date) => Math.round(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5);
+      const daysInMonth = (y: number, m: number) => new Date(y, m + 1, 0).getDate();
+      function addMonths(d: Date, n: number): Date {
+        const r = new Date(2000, 0, 1);
+        const y = d.getFullYear() + Math.floor((d.getMonth() + n) / 12);
+        const mo = ((d.getMonth() + n) % 12 + 12) % 12;
+        r.setFullYear(y, mo, Math.min(d.getDate(), daysInMonth(y, mo)));
+        return r;
+      }
+      function addDays(d: Date, n: number): Date {
+        const r = new Date(2000, 0, 1);
+        r.setFullYear(d.getFullYear(), d.getMonth(), d.getDate() + n);
+        return r;
       }
 
-      function formatDate(date) {
-        return new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' }).format(date);
-      }
-
-      const dc = debounce(calculate);
-      inputs.forEach(i => { i.addEventListener('input', dc); i.addEventListener('change', dc); });
+      const SURE: Record<string, { ay?: number; gun?: number }> = {
+        er12: { ay: 12 },
+        ys12: { ay: 12 },
+        kd6: { ay: 6 },
+        bedelli: { gun: 28 },
+      };
 
       function calculate() {
-        const terhisVal = document.getElementById('terhisTarihi').value;
-        if (!terhisVal) {
-          if (resultArea) resultArea.classList.add('hidden');
+        const katilis = parseDate((document.getElementById('katilisTarihi') as HTMLInputElement).value);
+        const tur = (document.getElementById('hizmetTuru') as HTMLSelectElement).value;
+        const ekRaw = (document.getElementById('ekGun') as HTMLInputElement).value.trim();
+        const ek = ekRaw === '' ? 0 : Math.floor(Number(ekRaw));
+        const sure = SURE[tur];
+
+        if (!katilis || !sure || !isFinite(ek) || ek < 0) {
+          resultArea?.classList.add('hidden');
           return;
         }
 
-        const terhis = new Date(terhisVal);
-        if (isNaN(terhis.getTime())) {
-          if (resultArea) resultArea.classList.add('hidden');
-          return;
-        }
+        const esas = sure.ay ? addMonths(katilis, sure.ay) : addDays(katilis, sure.gun ?? 0);
+        const terhis = addDays(esas, ek);
+        const now = new Date();
+        const bugun = dayNum(new Date(now.getFullYear(), now.getMonth(), now.getDate()));
+        const toplam = dayNum(terhis) - dayNum(katilis);
+        const kalan = dayNum(terhis) - bugun;
+        const gecen = Math.min(Math.max(bugun - dayNum(katilis), 0), toplam);
 
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        terhis.setHours(0, 0, 0, 0);
-
-        const diffMs = terhis.getTime() - today.getTime();
-        const diffGun = Math.ceil(diffMs / (24 * 60 * 60 * 1000));
-
-        let gunMetin = '';
-        if (diffGun < 0) {
-          gunMetin = 'Terhis olundu!';
-        } else if (diffGun === 0) {
-          gunMetin = 'Bugün terhis!';
+        if (bugun < dayNum(katilis)) {
+          $('ana-etiket').textContent = 'Katılışa Kalan';
+          $('kalan-gun').textContent = `${fmt(dayNum(katilis) - bugun)} gün`;
+          $('kalan-alt').textContent = `Terhise ${fmt(kalan)} gün var`;
+        } else if (kalan > 0) {
+          $('ana-etiket').textContent = 'Terhise Kalan (Şafak)';
+          $('kalan-gun').textContent = `${fmt(kalan)} gün`;
+          $('kalan-alt').textContent = kalan > 31 ? `Yaklaşık ${fmt(kalan / 30.44, 1)} ay` : 'Son ay';
+        } else if (kalan === 0) {
+          $('ana-etiket').textContent = 'Terhise Kalan (Şafak)';
+          $('kalan-gun').textContent = 'Bugün terhis';
+          $('kalan-alt').textContent = 'Hayırlı teskereler';
         } else {
-          gunMetin = formatNumber(diffGun) + ' gün';
+          $('ana-etiket').textContent = 'Durum';
+          $('kalan-gun').textContent = 'Terhis oldunuz';
+          $('kalan-alt').textContent = `${fmt(-kalan)} gün önce`;
         }
 
-        const kalanHafta = diffGun > 0 ? Math.floor(diffGun / 7) : 0;
-        const kalanAy = diffGun > 0 ? (diffGun / 30.44).toFixed(1) : 0;
+        $('d-tarih').textContent = fmtDate(terhis);
+        $('d-toplam').textContent = `${fmt(toplam)} gün`;
+        $('d-gecen').textContent = `${fmt(gecen)} gün`;
+        $('d-yuzde').textContent = `%${fmt(toplam > 0 ? (gecen / toplam) * 100 : 100, 1)}`;
+        $('d-hafta').textContent = kalan > 0 ? `${fmt(Math.floor(kalan / 7))} hafta ${kalan % 7} gün` : '—';
 
-        document.getElementById('kalan-gun').textContent = gunMetin;
-        document.getElementById('d-hafta').textContent = diffGun > 0 ? formatNumber(kalanHafta) + ' hafta' : '—';
-        document.getElementById('d-ay').textContent = diffGun > 0 ? new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(kalanAy) + ' ay' : '—';
-        document.getElementById('d-tarih').textContent = formatDate(terhis);
-
-        if (resultArea) resultArea.classList.remove('hidden');
+        resultArea?.classList.remove('hidden');
         updateURL();
       }
 
       function updateURL() {
-        const p = new URLSearchParams();
-        inputs.forEach(i => { if (i.value && i.id) p.set(i.id, i.value); });
-        history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
+        const params = new URLSearchParams();
+        inputs.forEach(el => { if (el.id && el.value !== '') params.set(el.id, el.value); });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
       }
 
       function loadFromURL() {
-        const p = new URLSearchParams(window.location.search);
-        let h = false;
-        inputs.forEach(i => { if (i.id && p.has(i.id)) { i.value = p.get(i.id); h = true; } });
-        if (h) calculate();
+        const params = new URLSearchParams(window.location.search);
+        let has = false;
+        inputs.forEach(el => {
+          if (el.id && params.has(el.id)) { el.value = params.get(el.id) ?? ''; has = true; }
+        });
+        if (has) calculate();
       }
+
+      const debounced = debounce(calculate);
+      inputs.forEach(el => {
+        el.addEventListener('input', debounced);
+        el.addEventListener('change', debounced);
+      });
 
       loadFromURL();
     });
   </script>
 
   <section class="calc-content">
-    <h2>Askerlik Terhis Tarihi Hesaplama Nasıl Yapılır?</h2>
+    <h2>Askerlik süresi ve terhis tarihi nasıl hesaplanır?</h2>
     <p>
-      Türkiye'de zorunlu askerlik hizmeti, vatandaşlık görevlerinin en önemlilerinden biri olarak kabul edilmektedir. Askerliğe başlayan ya da yaklaşan bireyler için terhis tarihine kalan süreyi bilmek; hem kişisel planlama hem de ailelerin takibi açısından büyük önem taşır. Bu askerlik hesap makinesi, terhis tarihinizi girerek kalan gün, hafta ve ay sayısını anında hesaplamanıza olanak tanır.
-    </p>
-    <p>
-      Askerlikte geçen her gün sayılır; özellikle askerlik süresinin sonlarına doğru geri sayım manevi açıdan büyük bir önem kazanır. Hem askerdekiler hem de sevdiklerini bekleyenler için bu araç, o büyülü terhis gününe ne kadar kaldığını net olarak görmeyi sağlar.
+      Terhis tarihi, birliğe katılış tarihinize kanuni hizmet sürenizin eklenmesiyle bulunur. Hesaplayıcı ay bazlı sürelerde takvim ayını esas alır: 5 Kasım'da katılan 12 aylık bir er, ertesi yılın 5 Kasım'ında terhis edilir. Kısa aylara denk gelen tarihlerde (örneğin 31 Ağustos + 6 ay) ayın son günü esas alınır. Hizmetten sayılmayan günler varsa bunlar terhis tarihine eklenir.
     </p>
 
-    <h3>Hesaplama Formülü</h3>
+    <h2>2026 askerlik süreleri</h2>
+    <table>
+      <thead>
+        <tr><th>Hizmet türü</th><th>Süre</th><th>Kimler için?</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Er / erbaş</td><td>12 ay</td><td>Lise ve altı mezunlar ile tercihine göre diğer yükümlüler</td></tr>
+        <tr><td>Yedek subay / yedek astsubay</td><td>12 ay</td><td>Yükseköğrenim mezunlarından ihtiyaca göre seçilenler</td></tr>
+        <tr><td>Kısa dönem er</td><td>6 ay</td><td>Yedek subay/astsubay olarak ayrılmayan yükseköğrenim mezunları</td></tr>
+        <tr><td>Bedelli askerlik</td><td>1 ay temel eğitim (uygulamada 28 gün)</td><td>Bedeli ödeyen ve celp edilen yükümlüler</td></tr>
+        <tr><td>Dövizle askerlik</td><td>Çevrim içi eğitim</td><td>Yurt dışında en az 3 yıl çalışma/oturma izniyle bulunanlar</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Örnek hesaplama</h2>
     <p>
-      <strong>Kalan Gün = Terhis Tarihi − Bugünün Tarihi</strong><br />
-      <strong>Kalan Hafta = Kalan Gün ÷ 7</strong><br />
-      <strong>Kalan Ay = Kalan Gün ÷ 30,44 (ortalama ay uzunluğu)</strong>
+      5 Kasım 2025'te birliğine katılan 12 aylık bir erin terhis tarihi 5 Kasım 2026 perşembedir. Toplam hizmet süresi 365 gündür. 26 Eylül 2026 itibarıyla 325 gün geride kalmış, askerliğin %89,0'u tamamlanmıştır. Şafak 40'tır, yani terhise 5 hafta 5 gün kalmıştır.
     </p>
     <p>
-      Hesaplama bugünün tarihiyle terhis tarihi arasındaki farka dayanmaktadır. Hafta sayısı tam olarak gösterilirken ay sayısı ondalıklı bir yaklaşım olarak verilmektedir.
+      Aynı er, disiplin cezası nedeniyle 10 gün hizmetten sayılmayan süre geçirmişse "Ek gün" alanına 10 yazılır ve terhis tarihi 15 Kasım 2026'ya kayar.
     </p>
 
-    <h3>Dikkat Edilmesi Gerekenler</h3>
+    <h2>Bedelli askerlik ücreti 2026</h2>
     <p>
-      Terhis tarihi izin günlerine, tatillere ve olası görev değişikliklerine bağlı olarak öne ya da arkaya alınabilir. Bu hesaplama yalnızca matematiksel bir geri sayım sunmakta olup resmi terhis bilgisi için bağlı olunan askeri birimin ilgili personeline veya Milli Savunma Bakanlığı'na başvurulması gerekmektedir. Bedelli askerlik yaptıysanız süre 21 gün olduğundan hesaplama oldukça kısa bir geri sayım gösterecektir.
+      Askeralma Kanunu'na göre bedel, <strong>300.000 × memur aylık katsayısı</strong> formülüyle hesaplanır ve ödemenin yapıldığı gün geçerli katsayı esas alınır. 1 Temmuz – 31 Aralık 2026 döneminde katsayı 1,575512'dir:
+    </p>
+    <p><strong>300.000 × 1,575512 = 472.653,60 TL</strong></p>
+    <p>
+      Katsayı her yıl Ocak ve Temmuz'da yenilendiği için 2027'nin ilk yarısında bedel de değişecektir. Bedelli askerlik yapacak yükümlüler, bedeli ödedikten sonra MSB'nin belirlediği celp döneminde bir aylık temel askerlik eğitimine katılır; eğitimi tamamlayanlar askerlik hizmetini yapmış sayılır.
     </p>
 
-    <h3>Sıkça Sorulan Sorular</h3>
-    {faq.map(item => (
-      <details>
-        <summary><strong>{item.question}</strong></summary>
-        <p>{item.answer}</p>
-      </details>
-    ))}
+    <h3>Terhisi etkileyen durumlar</h3>
+    <ul>
+      <li><strong>Etkilemeyenler:</strong> Kanuni yıllık izin ve mazeret izni; bu süreler hizmetten sayılır.</li>
+      <li><strong>Uzatanlar:</strong> Firar ve izin tecavüzü süreleri, hizmetten sayılmayan disiplin ve mahkûmiyet süreleri.</li>
+      <li><strong>Seferberlik ve savaş hali:</strong> Kanun gereği terhisler ertelenebilir.</li>
+    </ul>
   </section>
 </CalcLayout>

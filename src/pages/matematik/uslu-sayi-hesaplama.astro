@@ -6,158 +6,366 @@ import CalcResult from '../../components/calculator/CalcResult.astro';
 const faq = [
   {
     question: "Üslü sayı nasıl hesaplanır?",
-    answer: "Üslü sayı, bir tabanın belirtilen kez kendisiyle çarpılması işlemidir. aⁿ ifadesinde 'a' taban, 'n' ise üs olarak adlandırılır. Örneğin 2⁵ = 2 × 2 × 2 × 2 × 2 = 32 eder. Üs 0 olduğunda sıfırdan farklı her sayının sonucu 1'dir (a⁰ = 1). Üs negatif olduğunda ise 1/aⁿ hesaplanır."
+    answer: "aⁿ ifadesinde a taban, n üstür ve n pozitif bir tam sayıysa taban kendisiyle n kez çarpılır: 3⁴ = 3 × 3 × 3 × 3 = 81. Üs 0 ise sonuç 1'dir (a ≠ 0), üs 1 ise sayının kendisidir. Büyük üslerde sonuç çok hızlı büyür: 2¹⁰ = 1.024 iken 2²⁰ = 1.048.576'dır."
   },
   {
     question: "Negatif üs ne anlama gelir?",
-    answer: "Negatif üs, sayının tersinin pozitif üssünü almak anlamına gelir. Yani a⁻ⁿ = 1/aⁿ formülüyle ifade edilir. Örneğin 2⁻³ = 1/2³ = 1/8 = 0,125 olur. Negatif üsler özellikle bilimsel gösterimde çok küçük sayıları ifade etmek için kullanılır."
+    answer: "Negatif üs, tabanın tersinin pozitif üssü demektir: a⁻ⁿ = 1 ÷ aⁿ. Örneğin 2⁻³ = 1 ÷ 2³ = 1/8 = 0,125 ve 10⁻² = 0,01'dir. Negatif üs sonucu negatif yapmaz; yalnızca sayıyı küçültür. Bilimsel gösterimde çok küçük değerler bu yolla yazılır: 0,000004 = 4 × 10⁻⁶."
   },
   {
-    question: "Üslü sayılarla çarpma işlemi nasıl yapılır?",
-    answer: "Aynı tabana sahip üslü sayıları çarparken üsler toplanır: aᵐ × aⁿ = aᵐ⁺ⁿ. Örneğin 2³ × 2⁴ = 2⁷ = 128 eder. Bölmede ise üsler çıkarılır: aᵐ ÷ aⁿ = aᵐ⁻ⁿ. Farklı tabanlı üslü sayılarda bu kısaltma uygulanamaz; her biri ayrı hesaplanmalıdır."
+    question: "Kesirli üs nasıl hesaplanır?",
+    answer: "Kesirli üs kök anlamına gelir: a^(p/q) = (q√a)^p. 8^(2/3) = (³√8)² = 2² = 4 ve 16^(0,5) = √16 = 4'tür. Hesaplayıcıya üssü '2/3' biçiminde kesir olarak ya da '0,5' gibi ondalık olarak girebilirsiniz. Kesir girmek, 1/3 gibi sonsuz ondalıklı üslerde tam doğru sonuç almanızı sağlar."
+  },
+  {
+    question: "Negatif bir sayının kesirli üssü alınabilir mi?",
+    answer: "Üs sadeleştirilmiş p/q kesri olarak yazıldığında paydası tek ise gerçek sonuç vardır: (−8)^(1/3) = −2. Payda çift ise sonuç gerçek sayı değildir, çünkü negatif sayının karekökü gibi çift dereceli bir kök gerekir: (−4)^(1/2) = 2i. Birçok hesap makinesi bu durumda hata verir; bu araç gerçek sonucu ya da karmaşık asıl değeri gösterir."
+  },
+  {
+    question: "Sıfırın sıfırıncı kuvveti (0⁰) kaçtır?",
+    answer: "0⁰ matematikte bağlama göre tartışmalı bir ifadedir. Cebir, kombinatorik ve programlama dillerinin çoğunda 1 kabul edilir; binom açılımı ve polinomlar bu tanımla tutarlı çalışır. Limit hesabında ise belirsiz form olarak ele alınır. Sıfırın negatif kuvveti (0⁻¹ gibi) ise sıfıra bölme olduğundan tanımsızdır."
+  },
+  {
+    question: "Üslü sayılarda çarpma ve bölme nasıl yapılır?",
+    answer: "Tabanlar aynıysa çarpmada üsler toplanır, bölmede çıkarılır: aᵐ × aⁿ = aᵐ⁺ⁿ, aᵐ ÷ aⁿ = aᵐ⁻ⁿ. Üssün üssü alınırken üsler çarpılır: (aᵐ)ⁿ = aᵐˣⁿ. Üsler aynı, tabanlar farklıysa tabanlar çarpılır: aⁿ × bⁿ = (a × b)ⁿ. Örneğin 2³ × 2⁴ = 2⁷ = 128."
   }
 ];
 
 const meta = {
   title: "Üslü Sayı Hesaplama",
-  description: "Üslü sayı hesaplama aracı ile herhangi bir tabanın istediğiniz üssünü anında hesaplayın. aⁿ formülü ile kuvvet hesaplama, negatif ve ondalıklı üsler dahil.",
+  seoTitle: "Üslü Sayı Hesaplama: Negatif ve Kesirli Üs",
+  description: "Herhangi bir sayının kuvvetini hesaplayın: negatif, ondalıklı ve 2/3 gibi kesirli üsler dahil. Büyük sonuçlar için tam değer ve bilimsel gösterim, adım adım.",
+  summary: "Üslü sayı aⁿ, a tabanının n kez kendisiyle çarpılmasıdır: 2⁵ = 32. Negatif üs tersini verir (a⁻ⁿ = 1 ÷ aⁿ, 2⁻³ = 0,125), kesirli üs kök alır (a^(p/q) = (q√a)^p, 8^(2/3) = 4); sıfırdan farklı her sayının sıfırıncı kuvveti 1'dir.",
+  howTo: [
+    "Taban (a) alanına sayınızı girin; negatif ve ondalıklı değerler kabul edilir.",
+    "Üs (n) alanına tam sayı, ondalık (0,5) veya kesir (2/3) yazın.",
+    "Sonuç, bilimsel gösterim ve büyük tam sayılar için tam değer anında görünür.",
+    "Negatif tabanlı kesirli üslerde gerçek sonuç yoksa karmaşık asıl değer gösterilir."
+  ],
+  sources: [
+    { name: "Wolfram MathWorld: Power", url: "https://mathworld.wolfram.com/Power.html" }
+  ],
   category: "matematik",
   slug: "uslu-sayi-hesaplama",
-  keywords: ["üslü sayı hesaplama", "kuvvet hesaplama", "taban üs hesaplama", "üs alma", "matematiksel kuvvet"],
-  dateModified: "2026-04-01",
-  relatedCalcs: ["karekok-hesaplama", "ortalama-hesaplama"],
+  keywords: ["üslü sayı hesaplama", "kuvvet hesaplama", "üs alma", "negatif üs", "kesirli üs", "üslü sayılar", "bilimsel gösterim"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["matematik/karekok-hesaplama", "finans/bilesik-faiz-hesaplama", "matematik/hacim-hesaplama"],
   faq
 };
 ---
 
 <CalcLayout meta={meta}>
-  <form id="calc-form" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
-    <div class="calc-inputs">
-      <CalcInput
-        id="taban"
-        label="Taban (a)"
-        type="number"
-        placeholder="Örn: 5"
-        step="any"
-        helpText="Üssünü almak istediğiniz tabanı girin"
-      />
-      <CalcInput
-        id="us"
-        label="Üs (n)"
-        type="number"
-        placeholder="Örn: 4"
-        step={1}
-        helpText="Kaçıncı kuvveti alınacağını girin (negatif değer de girebilirsiniz)"
-      />
-    </div>
+  <form id="calc-form" class="calc-inputs" novalidate>
+    <CalcInput
+      id="taban"
+      label="Taban (a)"
+      type="number"
+      placeholder="Örn: 2"
+      helpText="Negatif ve ondalıklı sayılar girilebilir"
+    />
+    <CalcInput
+      id="us"
+      label="Üs (n)"
+      type="text"
+      placeholder="Örn: 10, -3, 0,5 veya 2/3"
+      helpText="Tam sayı, ondalık (0,5) veya kesir (2/3) yazabilirsiniz"
+    />
   </form>
+  <p id="calc-error" class="calc-error" role="alert" hidden></p>
 
   <CalcResult>
     <div slot="main">
-      <p class="calc-result-label">Sonuç (aⁿ)</p>
+      <p class="calc-result-label" id="sonuc-etiket">Sonuç (aⁿ)</p>
       <p class="calc-result-value" id="sonuc-ana">—</p>
     </div>
     <div slot="details">
       <div class="calc-detail-row">
-        <span class="calc-detail-label">İfade</span>
-        <span class="calc-detail-value" id="detail-ifade">—</span>
+        <span class="calc-detail-label">İşlem</span>
+        <span class="calc-detail-value" id="d-ifade">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Sonuç</span>
-        <span class="calc-detail-value" id="detail-sonuc">—</span>
+        <span class="calc-detail-label">Bilimsel gösterim</span>
+        <span class="calc-detail-value" id="d-bilimsel">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Logaritma (log₁₀)</span>
-        <span class="calc-detail-value" id="detail-log">—</span>
+        <span class="calc-detail-label" id="d-tam-label">Tam değer</span>
+        <span class="calc-detail-value" id="d-tam">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Logaritma (log₁₀ |aⁿ|)</span>
+        <span class="calc-detail-value" id="d-log">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Not</span>
+        <span class="calc-detail-value" id="d-not">—</span>
       </div>
     </div>
   </CalcResult>
 
-  <section class="calc-content">
-    <h2>Üslü Sayı Hesaplama Nedir?</h2>
-    <p>
-      Üslü sayı (kuvvet alma), bir sayının belirli sayıda kendisiyle çarpılması işlemidir. Matematiksel notasyonda aⁿ biçiminde yazılır; burada "a" taban, "n" ise üs adını alır. Örneğin 3⁴ ifadesi, 3 sayısının 4 kez kendisiyle çarpılması anlamına gelir: 3 × 3 × 3 × 3 = 81. Üslü sayılar matematik, fizik, kimya, bilgisayar bilimi ve ekonomide son derece yaygın kullanıma sahiptir.
-    </p>
-    <p>
-      Bilimsel hesaplamalarda çok büyük ya da çok küçük sayıları ifade etmek için 10'un kuvvetleri kullanılır. Örneğin ışık hızı yaklaşık 3 × 10⁸ m/s, bir elektronun kütlesi ise yaklaşık 9,1 × 10⁻³¹ kg olarak ifade edilir. Bu tür notasyonlar üslü sayı kavramının ne denli merkezi bir öneme sahip olduğunu göstermektedir.
-    </p>
-    <p>
-      Finans alanında da bileşik faiz hesaplamalarında üslü sayılar kullanılır. A = P × (1 + r)ⁿ formülündeki (1 + r)ⁿ terimi, yatırımın n yıl sonundaki büyüme faktörünü verir. Bu nedenle üslü sayıları doğru hesaplayabilmek yatırım planlaması açısından büyük önem taşır.
-    </p>
+  <script>
+    const SUP: Record<string, string> = { '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹', '-': '⁻' };
+    const sup = (s: string | number) => String(s).split('').map(c => SUP[c] ?? c).join('');
 
-    <h3>Formül</h3>
-    <p>
-      Temel formül: aⁿ = a × a × a × … × a (n kez). Özel durumlar: a⁰ = 1 (a ≠ 0), a¹ = a, a⁻ⁿ = 1/aⁿ. Ondalıklı üsler için: aˣ = e^(x × ln a) biçiminde hesaplanır. Bu araç Math.pow(taban, us) fonksiyonunu kullanarak tüm gerçek üs değerleri için hesaplama yapar.
-    </p>
-
-    <h3>Dikkat Edilmesi Gerekenler</h3>
-    <p>
-      Üs hesaplamasında bazı özel durumlar vardır: 0⁰ matematiksel olarak tartışmalıdır ve çoğu uygulamada 1 olarak kabul edilir. Negatif bir tabanın ondalıklı üssü karmaşık sayı sonucu verebilir ve bu araçta NaN olarak görünebilir. Çok büyük sayılarda JavaScript'in kayan nokta sınırları nedeniyle Infinity (sonsuz) sonucu görülebilir. Pratik hesaplamalar için makul büyüklükte taban ve üs değerleri kullanınız.
-    </p>
-
-    <h3>Sıkça Sorulan Sorular</h3>
-    {faq.map((item) => (
-      <div class="faq-item">
-        <h4>{item.question}</h4>
-        <p>{item.answer}</p>
-      </div>
-    ))}
-  </section>
-</CalcLayout>
-
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
-    const resultArea = document.getElementById('calc-result');
-
-    function debounce(fn, d = 150) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), d); }; }
-    function formatNumber(n, d = 6) {
-      if (!isFinite(n)) return String(n);
-      return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 0, maximumFractionDigits: d }).format(n);
+    function parseNum(raw: string): number {
+      let s = raw.trim().replace(/\s+/g, '').replace(/[−–]/g, '-');
+      if (!s) return NaN;
+      s = s.replace(',', '.');
+      if (!/^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/i.test(s)) return NaN;
+      return Number(s);
     }
 
-    const dc = debounce(calculate);
-    inputs.forEach(i => { i.addEventListener('input', dc); i.addEventListener('change', dc); });
+    const gcd = (a: number, b: number): number => (b === 0 ? Math.abs(a) : gcd(b, a % b));
 
-    function superscript(n) {
-      const map = { '0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','-':'⁻','.':'·' };
-      return String(n).split('').map(c => map[c] || c).join('');
+    /** Üssü değer ve (mümkünse) sadeleştirilmiş p/q kesri olarak ayrıştırır. */
+    function parseExponent(raw: string): { value: number; p: number; q: number; text: string } | null {
+      const s = raw.trim().replace(/\s+/g, '').replace(/[−–]/g, '-');
+      if (!s) return null;
+      const frac = s.match(/^([-+]?\d+)\/([-+]?\d+)$/);
+      if (frac) {
+        let p = Number(frac[1]);
+        let q = Number(frac[2]);
+        if (q === 0) return { value: NaN, p: 0, q: 0, text: s };
+        if (q < 0) { p = -p; q = -q; }
+        const g = gcd(p, q) || 1;
+        return { value: p / q, p: p / g, q: q / g, text: `${p / g}/${q / g}` };
+      }
+      const v = parseNum(s);
+      if (Number.isNaN(v)) return null;
+      // Ondalık üssü kesre çevir (ör. 0,2 → 1/5); çok uzun ondalıklarda q = 0 (irrasyonel kabul)
+      const dec = (s.replace(',', '.').split('.')[1] ?? '').replace(/e.*$/i, '');
+      if (!/e/i.test(s) && dec.length <= 9) {
+        const q0 = 10 ** dec.length;
+        const p0 = Math.round(v * q0);
+        const g = gcd(p0, q0) || 1;
+        return { value: v, p: p0 / g, q: q0 / g, text: s.replace('.', ',') };
+      }
+      return { value: v, p: NaN, q: 0, text: s.replace('.', ',') };
     }
 
-    function calculate() {
-      const taban = parseFloat(document.getElementById('taban').value);
-      const us = parseFloat(document.getElementById('us').value);
+    function fmt(n: number, maxFrac = 8): string {
+      if (Number.isNaN(n)) return 'Tanımsız';
+      if (!Number.isFinite(n)) return n > 0 ? '∞' : '−∞';
+      if (n === 0) return '0';
+      const abs = Math.abs(n);
+      if (abs >= 1e15 || abs < 1e-6) return sci(Math.sign(n), Math.log10(abs));
+      const clean = Number(n.toPrecision(14));
+      const extra = abs < 1 ? Math.ceil(-Math.log10(abs)) : 0;
+      return new Intl.NumberFormat('tr-TR', { maximumFractionDigits: Math.min(20, maxFrac + extra) }).format(clean);
+    }
 
-      if (isNaN(taban) || isNaN(us)) {
-        if (resultArea) resultArea.classList.add('hidden');
-        return;
+    /** İşaret ve log10|x| değerinden bilimsel gösterim (taşma olmadan). */
+    function sci(sign: number, log: number): string {
+      let e = Math.floor(log);
+      let m = 10 ** (log - e);
+      m = Number(m.toFixed(8));
+      if (m >= 10) { m /= 10; e += 1; }
+      const mant = new Intl.NumberFormat('tr-TR', { maximumFractionDigits: 8 }).format(sign * m);
+      return `${mant} × 10${sup(e)}`;
+    }
+
+    function groupDigits(s: string): string {
+      const neg = s.startsWith('-');
+      const d = neg ? s.slice(1) : s;
+      return (neg ? '−' : '') + d.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('calc-form') as HTMLFormElement;
+      const inputs = form.querySelectorAll<HTMLInputElement>('input');
+      const resultArea = document.getElementById('calc-result');
+      const errorEl = document.getElementById('calc-error') as HTMLElement;
+      const tabanEl = document.getElementById('taban') as HTMLInputElement;
+      const usEl = document.getElementById('us') as HTMLInputElement;
+
+      const setText = (id: string, text: string) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = text;
+      };
+
+      function debounce<T extends (...args: never[]) => void>(fn: T, delay = 150) {
+        let timer: ReturnType<typeof setTimeout>;
+        return (...args: Parameters<T>) => {
+          clearTimeout(timer);
+          timer = setTimeout(() => fn(...args), delay);
+        };
       }
 
-      const sonuc = Math.pow(taban, us);
-      const logVal = sonuc > 0 ? Math.log10(sonuc) : NaN;
+      function hide(msg = '') {
+        errorEl.textContent = msg;
+        errorEl.hidden = !msg;
+        resultArea?.classList.add('hidden');
+      }
 
-      document.getElementById('sonuc-ana').textContent = formatNumber(sonuc);
-      document.getElementById('detail-ifade').textContent = `${taban}${superscript(us)}`;
-      document.getElementById('detail-sonuc').textContent = `${taban}${superscript(us)} = ${formatNumber(sonuc)}`;
-      document.getElementById('detail-log').textContent = isNaN(logVal) ? 'Tanımsız' : formatNumber(logVal);
+      function show(r: { main: string; ifade: string; bilimsel: string; tamLabel?: string; tam?: string; log: string; not: string }) {
+        errorEl.hidden = true;
+        setText('sonuc-ana', r.main);
+        setText('d-ifade', r.ifade);
+        setText('d-bilimsel', r.bilimsel);
+        setText('d-tam-label', r.tamLabel ?? 'Tam değer');
+        setText('d-tam', r.tam ?? '—');
+        setText('d-log', r.log);
+        setText('d-not', r.not);
+        resultArea?.classList.remove('hidden');
+        updateURL();
+      }
 
-      if (resultArea) resultArea.classList.remove('hidden');
-      updateURL();
-    }
+      function calculate() {
+        const a = parseNum(tabanEl.value);
+        const ex = parseExponent(usEl.value);
+        if (Number.isNaN(a) || !ex) return hide(usEl.value.trim() && !ex ? 'Üs anlaşılamadı. Örnek: 3, -2, 0,5 veya 2/3' : '');
+        if (Number.isNaN(ex.value)) return hide('Kesirli üste payda sıfır olamaz.');
 
-    function updateURL() {
-      const p = new URLSearchParams();
-      inputs.forEach(i => { if (i.value && i.id) p.set(i.id, i.value); });
-      history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
-    }
+        const n = ex.value;
+        const base = a < 0 ? `(${fmt(a)})` : fmt(a);
+        const expText = ex.q > 1 ? `(${ex.text})` : ex.text;
+        const ifade = Number.isInteger(n) && Math.abs(n) < 1e6 ? `${base}${sup(n)}` : `${base}^${expText}`;
 
-    function loadFromURL() {
-      const p = new URLSearchParams(window.location.search);
-      let h = false;
-      inputs.forEach(i => { if (i.id && p.has(i.id)) { i.value = p.get(i.id); h = true; } });
-      if (h) calculate();
-    }
+        // Sıfır tabanı
+        if (a === 0) {
+          if (n > 0) return show({ main: '0', ifade: `${ifade} = 0`, bilimsel: '0', log: 'Tanımsız', not: 'Sıfırın pozitif kuvveti sıfırdır.' });
+          if (n === 0) return show({ main: '1', ifade: `${ifade} = 1`, bilimsel: '1', log: '0', not: '0⁰ cebirde ve programlamada genellikle 1 kabul edilir; limitlerde belirsizdir.' });
+          return hide('Sıfırın negatif kuvveti tanımsızdır (sıfıra bölme).');
+        }
 
-    loadFromURL();
-  });
-</script>
+        const abs = Math.abs(a);
+        const logAbs = n * Math.log10(abs);
+        let sign = 1;
+        let not = '';
+
+        if (a < 0) {
+          if (Number.isInteger(n)) {
+            sign = Math.abs(n) % 2 === 1 ? -1 : 1;
+            not = sign < 0 ? 'Negatif taban tek üs: sonuç negatif.' : 'Negatif taban çift üs: sonuç pozitif.';
+          } else if (ex.q > 0 && ex.q % 2 === 1) {
+            sign = Math.abs(ex.p) % 2 === 1 ? -1 : 1;
+            not = `Üs ${ex.text} = ${ex.p}/${ex.q}; payda tek olduğu için gerçek kök vardır.`;
+          } else {
+            // Gerçek sonuç yok: karmaşık asıl değer |a|^n × (cos πn + i sin πn)
+            const mod = Math.pow(abs, n);
+            const re = mod * Math.cos(Math.PI * n);
+            const im = mod * Math.sin(Math.PI * n);
+            const cleanRe = Math.abs(re) < Math.abs(mod) * 1e-12 ? 0 : re;
+            const main = `${cleanRe !== 0 ? fmt(cleanRe) + (im >= 0 ? ' + ' : ' − ') : im < 0 ? '−' : ''}${fmt(Math.abs(im))}i`;
+            return show({
+              main,
+              ifade: `${ifade} gerçek sayı değil`,
+              bilimsel: '—',
+              log: '—',
+              not: ex.q > 0
+                ? `Üs ${ex.p}/${ex.q}, payda çift: negatif sayının çift dereceli kökü gerçek değildir. Gösterilen, karmaşık asıl değerdir.`
+                : 'Negatif tabanın irrasyonel üssü gerçek sayı vermez. Gösterilen, karmaşık asıl değerdir.',
+            });
+          }
+        }
+
+        let value = sign * Math.pow(abs, n);
+        // Tam sayı sonuçlarda kayan nokta gürültüsünü temizle (ör. 8^(1/3))
+        const rounded = Math.round(value);
+        if (Number.isFinite(value) && Math.abs(value - rounded) < 1e-9 * Math.max(1, Math.abs(rounded))) value = rounded;
+
+        // a ≠ 0 olduğundan 0 sonucu yalnızca alt taşmada (çok küçük değer) oluşur
+        const overflow = !Number.isFinite(value) || value === 0;
+        const bilimsel = sci(sign, logAbs);
+        const main = Number.isFinite(value) && value !== 0 ? fmt(value) : bilimsel;
+
+        let tamLabel = 'Tam değer';
+        let tam = '—';
+        if (Number.isInteger(a) && Number.isInteger(n) && n >= 0 && n <= 100000) {
+          const digits = Math.floor(logAbs) + 1;
+          if (digits <= 60) {
+            tam = groupDigits((BigInt(a) ** BigInt(n)).toString());
+          } else {
+            tamLabel = 'Basamak sayısı';
+            tam = `${new Intl.NumberFormat('tr-TR').format(digits)} basamak`;
+          }
+        } else if (Number.isInteger(n) && n < 0 && Number.isInteger(a) && Math.abs(n) <= 60) {
+          tamLabel = 'Kesir olarak';
+          const den = BigInt(abs) ** BigInt(-n);
+          tam = `${sign < 0 ? '−' : ''}1/${groupDigits(den.toString())}`;
+        }
+
+        if (!not) not = n === 0 ? 'Sıfırdan farklı her sayının sıfırıncı kuvveti 1\'dir.' : n < 0 ? `a⁻ⁿ = 1 ÷ aⁿ kuralı uygulandı.` : ex.q > 1 ? `a^(p/q) = (q√a)^p kuralı uygulandı.` : '—';
+        if (overflow) not = 'Sonuç çok büyük veya çok küçük olduğu için logaritmayla bilimsel gösterimde verildi.';
+
+        show({ main, ifade: `${ifade} = ${main}`, bilimsel, tamLabel, tam, log: fmt(logAbs, 8), not });
+      }
+
+      function updateURL() {
+        const params = new URLSearchParams();
+        inputs.forEach(el => {
+          if (el.id && el.value !== '') params.set(el.id, el.value);
+        });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+      }
+
+      function loadFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        let hasParams = false;
+        inputs.forEach(el => {
+          if (el.id && params.has(el.id)) {
+            const v = params.get(el.id)!;
+            if (el.type === 'number') {
+              const n = parseNum(v);
+              if (!Number.isNaN(n)) el.value = String(n);
+            } else {
+              el.value = v.slice(0, 40);
+            }
+            hasParams = true;
+          }
+        });
+        if (hasParams) calculate();
+      }
+
+      const debouncedCalc = debounce(calculate);
+      inputs.forEach(el => {
+        el.addEventListener('input', debouncedCalc);
+        el.addEventListener('change', debouncedCalc);
+      });
+      form.addEventListener('submit', e => { e.preventDefault(); calculate(); });
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>Üslü Sayı Nedir?</h2>
+    <p>
+      Üslü sayı, aynı sayının tekrar tekrar çarpılmasının kısa yazılışıdır. aⁿ ifadesinde a taban, n üstür; 5³ "5'in küpü" ya da "5 üssü 3" diye okunur ve 5 × 5 × 5 = 125'e eşittir. Bileşik faiz, nüfus artışı, bilgisayar belleği (2¹⁰ = 1.024) ve bilimsel gösterim gibi pek çok alan üslü sayılara dayanır.
+    </p>
+
+    <h2>Üslü Sayı Kuralları</h2>
+    <table>
+      <thead>
+        <tr><th>Kural</th><th>Örnek</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>a⁰ = 1 (a ≠ 0)</td><td>7⁰ = 1</td></tr>
+        <tr><td>a⁻ⁿ = 1 ÷ aⁿ</td><td>5⁻² = 1/25 = 0,04</td></tr>
+        <tr><td>aᵐ × aⁿ = aᵐ⁺ⁿ</td><td>2³ × 2⁴ = 2⁷ = 128</td></tr>
+        <tr><td>aᵐ ÷ aⁿ = aᵐ⁻ⁿ</td><td>3⁵ ÷ 3² = 3³ = 27</td></tr>
+        <tr><td>(aᵐ)ⁿ = aᵐˣⁿ</td><td>(2³)² = 2⁶ = 64</td></tr>
+        <tr><td>(a × b)ⁿ = aⁿ × bⁿ</td><td>(2 × 5)³ = 8 × 125 = 1.000</td></tr>
+        <tr><td>a^(p/q) = (q√a)^p</td><td>27^(2/3) = (³√27)² = 9</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Örnek Hesaplama</h2>
+    <h3>Bileşik büyüme</h3>
+    <p>
+      Yılda %8 değer kazanan bir birikimin 15 yıldaki büyüme çarpanı 1,08¹⁵'tir. Taban alanına 1,08, üs alanına 15 yazdığınızda sonuç yaklaşık 3,1722 çıkar; yani 10.000 TL yaklaşık 31.722 TL'ye ulaşır.
+    </p>
+    <h3>Negatif tabanda kesirli üs</h3>
+    <p>
+      (−8)^(2/3) hesaplanırken önce küp kök alınır: ³√(−8) = −2; sonra karesi: (−2)² = 4. Payda (3) tek olduğu için sonuç gerçektir. Buna karşılık (−8)^(1/2) için payda çifttir; negatif sayının karekökü gerçek olmadığından sonuç 2,8284i şeklinde karmaşık sayıdır. Birçok hesap makinesi ve programlama dili bu iki durumu ayırt edemeyip ikisinde de hata (NaN) verir.
+    </p>
+
+    <h2>Ondalık Üs Girerken Dikkat</h2>
+    <p>
+      0,333 ile 1/3 aynı sayı değildir. 0,333 = 333/1000 kesrinin paydası çift olduğundan (−8)^0,333 gerçek sayı vermez; 1/3 yazarsanız sonuç tam olarak −2 çıkar. Kök anlamı taşıyan üsleri mümkünse kesir olarak girin.
+    </p>
+
+    <h2>Çok Büyük ve Çok Küçük Sonuçlar</h2>
+    <p>
+      Hesap makineleri yaklaşık 1,8 × 10³⁰⁸'den büyük sayıları gösteremez. Bu araç sonucu logaritma yardımıyla hesapladığı için 2¹⁰⁰⁰⁰ gibi devasa kuvvetleri de bilimsel gösterimde verir; tam sayı taban ve üslerde 60 basamağa kadar tam değeri, daha büyüklerinde basamak sayısını gösterir.
+    </p>
+  </section>
+</CalcLayout>

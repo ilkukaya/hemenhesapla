@@ -1,188 +1,297 @@
 ---
 import CalcLayout from '../../layouts/CalcLayout.astro';
 import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcSelect from '../../components/calculator/CalcSelect.astro';
 import CalcResult from '../../components/calculator/CalcResult.astro';
 
 const faq = [
   {
-    question: "1 m³ beton için ne kadar malzeme gerekir?",
-    answer: "Standart C20/C25 beton karışımı için 1 m³ betona yaklaşık 350 kg çimento, 700 kg kum, 1100 kg çakıl ve 175 litre su gerekmektedir. Bu oranlar su/çimento oranı 0,5 olan bir karışıma aittir. Daha yüksek dayanım gerektiren betonlarda çimento miktarı artırılırken su/çimento oranı düşürülür."
+    question: "Kaç m³ beton lazım, nasıl hesaplanır?",
+    answer: "Beton hacmi uzunluk × genişlik × kalınlık ile bulunur; tüm ölçüler metre cinsinden olmalıdır. 5 m × 4 m'lik bir alana 12 cm kalınlıkta döşeme için 5 × 4 × 0,12 = 2,4 m³ beton gerekir. Kalıp esnemesi, zemin düzensizliği ve pompada kalan beton için %5–10 fire eklenir ve sipariş 0,5 m³'e yuvarlanır: bu örnekte 3 m³."
   },
   {
-    question: "Hazır beton mu, şantiye betonu mu tercih edilmelidir?",
-    answer: "Büyük hacimli dökümlerde (10 m³ üzeri) hazır beton tercih edilmesi genellikle hem maliyet hem de kalite açısından avantajlıdır. Hazır beton kalite kontrollü koşullarda üretilir ve homojen karışım sağlar. Küçük tamiratlarda veya erişim güçlüğü olan alanlarda ise şantiye betonu daha pratik olabilir. Her iki durumda da doğru su/çimento oranına dikkat edilmelidir."
+    question: "1 m³ beton için kaç torba çimento gerekir?",
+    answer: "Beton sınıfına göre değişir. Yaklaşık olarak C20 için 300 kg (6 torba), C25 için 350 kg (7 torba), C30 için 400 kg (8 torba) çimento kullanılır; torbalar 50 kg'dır. Bu değerler tipik reçetelerdir. Gerçek karışım oranı agrega türüne, çimento sınıfına ve istenen kıvama göre laboratuvarda belirlenir."
   },
   {
-    question: "Beton dökümünde hangi sınıf çimento kullanılmalıdır?",
-    answer: "Genel yapı betonları için CEM I 42.5 N veya CEM I 42.5 R sınıfı Portland çimentosu yaygın olarak kullanılır. Agresif toprak veya su ortamlarında sülfata dayanıklı çimento (SD çimento) tercih edilmelidir. Hızlı priz alan uygulamalarda ise CEM I 52.5 R gibi yüksek erken dayanımlı çimentolar seçilebilir. Projenizin gereksinimlerine göre bir inşaat mühendisine danışmanız tavsiye edilir."
+    question: "Hangi beton sınıfını seçmeliyim?",
+    answer: "Türkiye Bina Deprem Yönetmeliği'ne göre betonarme taşıyıcı elemanlarda en az C25 kullanılmalıdır; bu nedenle temel, kolon, kiriş ve döşemelerde C25 veya C30 tercih edilir. Taşıyıcı olmayan bahçe yolu, grobeton veya şap altı dolgularda C16–C20 yeterlidir. Taşıyıcı sistemde sınıfı proje müellifi belirler."
+  },
+  {
+    question: "Hazır beton mu, elde karıştırma mı?",
+    answer: "Yapı ruhsatı gerektiren işlerde taşıyıcı elemanlar için hazır beton kullanılması zorunludur ve kalite, TS EN 206 standardına göre belgelenir. Birkaç yüz litrelik küçük tamirat, direk dibi veya bahçe işleri için torba çimento ile elde veya betoniyerde karışım pratiktir. Elde karışımda fazla su eklemek dayanımı ciddi düşürür."
+  },
+  {
+    question: "Beton kaç günde kurur, ne zaman üzerine basılır?",
+    answer: "Beton birkaç saatte priz alır ama dayanım kazanması haftalar sürer. Normal hava koşullarında 24–48 saat sonra dikkatli yürünebilir, 7 günde tasarım dayanımının yaklaşık %65–70'ine, 28 günde tamamına ulaşılır. İlk 7 gün boyunca yüzeyin nemli tutulması (kür) çatlakları önler; sıcak havada bu daha da önemlidir."
+  },
+  {
+    question: "Kolon veya silindir kalıp için hacim nasıl hesaplanır?",
+    answer: "Dikdörtgen kolonlarda en × boy × yükseklik kullanılır: 30 × 50 cm kesitli 3 m'lik kolon 0,3 × 0,5 × 3 = 0,45 m³'tür. Hesaplayıcıda uzunluk ve genişlik alanlarına kesiti, kalınlık alanına yüksekliği (cm) girip adet ile çarpabilirsiniz. Silindirde hacim π × yarıçap² × yükseklik formülüyle bulunur."
   }
 ];
 
 const meta = {
   title: "Beton Hesaplama",
-  description: "Beton dökümü için gereken hacim, çimento, kum, çakıl ve su miktarlarını hesaplayın. Temel, plak ve kolon için beton malzeme hesaplayıcı.",
+  seoTitle: "Beton Hesaplama – Kaç m³ Beton, Kaç Torba Çimento?",
+  description: "Döşeme, temel veya kolon ölçülerini girin; fire dahil beton hacmini, sipariş miktarını ve C20, C25, C30 için çimento, kum, çakıl ve su ihtiyacını hesaplayın.",
+  summary: "Beton hacmi (m³) = uzunluk (m) × genişlik (m) × kalınlık (m). Buna %5–10 fire eklenir ve sipariş 0,5 m³'e yukarı yuvarlanır. Örneğin 5 m × 4 m × 12 cm döşeme 2,4 m³ tutar; %5 fireyle 2,52 m³, sipariş 3 m³'tür. C25 beton için m³ başına yaklaşık 350 kg (7 torba) çimento gerekir.",
+  howTo: [
+    "Dökülecek alanın uzunluk ve genişliğini metre olarak girin.",
+    "Kalınlığı veya derinliği santimetre olarak yazın.",
+    "Aynı ölçüde birden fazla eleman varsa (ör. 6 kolon) adet girin.",
+    "Beton sınıfını ve fire oranını seçin.",
+    "Sipariş edilecek hacmi ve elde karışım için malzeme miktarlarını sonuçta görün."
+  ],
+  sources: [],
   category: "insaat",
   slug: "beton-hesaplama",
-  keywords: ["beton hesaplama", "beton malzeme hesaplama", "kaç m3 beton", "çimento kum çakıl hesaplama", "beton hesaplayıcı"],
-  dateModified: "2026-04-01",
-  relatedCalcs: ["fayans-hesaplama", "boya-hesaplama"],
+  keywords: ["beton hesaplama", "kaç m3 beton", "beton metreküp hesaplama", "1 m3 beton kaç torba çimento", "çimento kum çakıl hesaplama", "hazır beton hesaplama"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["insaat/fayans-hesaplama", "insaat/boya-hesaplama", "insaat/parke-hesaplama", "matematik/hacim-hesaplama", "matematik/alan-hesaplama"],
   faq
 };
 ---
 
 <CalcLayout meta={meta}>
-  <form id="calc-form" class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
-    <div class="calc-inputs">
-      <CalcInput
-        id="uzunluk"
-        label="Uzunluk"
-        type="number"
-        placeholder="Örn: 5"
-        suffix="m"
-        min={0.01}
-        step={0.1}
-        helpText="Beton dökülecek alanın uzunluğu (metre)"
-      />
-      <CalcInput
-        id="genislik"
-        label="Genişlik"
-        type="number"
-        placeholder="Örn: 3"
-        suffix="m"
-        min={0.01}
-        step={0.1}
-        helpText="Beton dökülecek alanın genişliği (metre)"
-      />
-      <CalcInput
-        id="derinlik"
-        label="Derinlik / Kalınlık"
-        type="number"
-        placeholder="Örn: 0.20"
-        suffix="m"
-        min={0.01}
-        step={0.01}
-        helpText="Beton kalınlığı veya derinliği (metre, örn: 20 cm = 0.20)"
-      />
-    </div>
+  <form id="calc-form" class="calc-inputs" novalidate>
+    <CalcInput
+      id="uzunluk"
+      label="Uzunluk"
+      type="number"
+      suffix="m"
+      placeholder="5"
+      min={0}
+      step={0.01}
+    />
+    <CalcInput
+      id="genislik"
+      label="Genişlik"
+      type="number"
+      suffix="m"
+      placeholder="4"
+      min={0}
+      step={0.01}
+    />
+    <CalcInput
+      id="kalinlik"
+      label="Kalınlık / Derinlik"
+      type="number"
+      suffix="cm"
+      placeholder="12"
+      min={0}
+      step={0.5}
+      helpText="Döşemede tipik 12–15 cm"
+    />
+    <CalcInput
+      id="adet"
+      label="Adet"
+      type="number"
+      suffix="adet"
+      placeholder="1"
+      value={1}
+      min={1}
+      step={1}
+      required={false}
+    />
+    <CalcSelect
+      id="sinif"
+      label="Beton Sınıfı"
+      options={[
+        { value: "C20", label: "C20 – taşıyıcı olmayan işler" },
+        { value: "C25", label: "C25 – betonarme (asgari)" },
+        { value: "C30", label: "C30 – betonarme" }
+      ]}
+      value="C25"
+    />
+    <CalcInput
+      id="fire"
+      label="Fire Payı"
+      type="number"
+      suffix="%"
+      placeholder="5"
+      value={5}
+      min={0}
+      max={30}
+      step={1}
+      required={false}
+      helpText="Genellikle %5–10"
+    />
   </form>
 
   <CalcResult>
     <div slot="main">
-      <p class="calc-result-label">Beton Hacmi</p>
+      <p class="calc-result-label">Sipariş Edilecek Beton</p>
       <p class="calc-result-value" id="sonuc-hacim">—</p>
+      <p class="calc-result-sub" id="sonuc-alt"></p>
     </div>
     <div slot="details">
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Beton Hacmi</span>
-        <span class="calc-detail-value" id="detail-hacim">—</span>
+        <span class="calc-detail-label">Net hacim</span>
+        <span class="calc-detail-value" id="detail-net">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Çimento (~350 kg/m³)</span>
+        <span class="calc-detail-label">Fire dahil hacim</span>
+        <span class="calc-detail-value" id="detail-fire">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Çimento</span>
         <span class="calc-detail-value" id="detail-cimento">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Kum (~700 kg/m³)</span>
+        <span class="calc-detail-label">Kum (0–4 mm)</span>
         <span class="calc-detail-value" id="detail-kum">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Çakıl (~1100 kg/m³)</span>
+        <span class="calc-detail-label">Çakıl / mıcır (4–22 mm)</span>
         <span class="calc-detail-value" id="detail-cakil">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Su (~175 lt/m³)</span>
+        <span class="calc-detail-label">Su</span>
         <span class="calc-detail-value" id="detail-su">—</span>
       </div>
     </div>
   </CalcResult>
 
-  <section class="calc-content">
-    <h2>Beton Hesaplama Nasıl Yapılır?</h2>
-    <p>
-      Beton dökümü öncesinde gerekli malzeme miktarlarını hesaplamak, inşaat projelerinin planlanmasında kritik bir adımdır. İster bir temel döküyü, ister bir bahçe yolu veya garaj zemini olsun, doğru beton hesabı hem maliyet tasarrufu hem de yapı güvenliği açısından büyük önem taşır. Bu araç, girdiğiniz boyutlara göre gereken beton hacmini ve içine girmesi gereken çimento, kum, çakıl ile su miktarlarını otomatik olarak hesaplar.
-    </p>
-    <p>
-      Beton, temel olarak çimento, agrega (kum ve çakıl) ve suyun belirli oranlarda karıştırılmasıyla elde edilen kompozit bir yapı malzemesidir. Karışım oranları betonun istenen dayanım sınıfına (C16, C20, C25 gibi) göre değişir. Bu hesaplayıcı, orta dayanımlı C20-C25 beton için standart kabul edilen 1:2:3 (çimento:kum:çakıl) oranlarını esas almaktadır.
-    </p>
-    <p>
-      Beton hacminin hesaplanması oldukça basittir: Uzunluk × Genişlik × Derinlik = Hacim (m³). Örneğin 5m uzunluğunda, 3m genişliğinde ve 20 cm (0.20 m) kalınlığında bir zemin plağı için gereken beton: 5 × 3 × 0.20 = 3 m³'tür. Bu hacim için yaklaşık 1050 kg çimento, 2100 kg kum, 3300 kg çakıl ve 525 litre su gerekmektedir.
-    </p>
-    <p>
-      Büyük projelerde beton, hazır beton santrallerinden hazır olarak sipariş edilebilir ve m³ bazında fiyatlandırılır. Küçük işlerde ise şantiyede hazırlanır. Her iki durumda da bu araçla hesaplanan miktarlar, alınacak hazır beton miktarının veya satın alınacak torba çimento sayısının belirlenmesinde yol gösterici olmaktadır.
-    </p>
+  <p class="calc-note">Malzeme miktarları elde veya betoniyerde karışım için tipik reçetelere dayalı yaklaşık değerlerdir. Taşıyıcı elemanlarda hazır beton kullanın ve proje değerlerine uyun.</p>
 
-    <h3>Formül</h3>
-    <p>
-      Hacim (m³) = Uzunluk × Genişlik × Derinlik. Çimento (kg) = Hacim × 350. Kum (kg) = Hacim × 700. Çakıl (kg) = Hacim × 1100. Su (lt) = Hacim × 175. Bu değerler C20 beton sınıfı için geçerli yaklaşık değerlerdir.
-    </p>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const inputs = document.querySelectorAll<HTMLInputElement | HTMLSelectElement>('#calc-form input, #calc-form select');
+      const resultArea = document.getElementById('calc-result');
+      const $ = (id: string) => document.getElementById(id) as HTMLElement;
 
-    <h3>Dikkat Edilmesi Gerekenler</h3>
-    <p>
-      Verilen malzeme miktarları standart C20 karışımı için teorik değerlerdir. Gerçek şantiye koşullarında agrega nem içeriği, çimento markası ve işlenebilirlik (slump) gereksinimlerine göre oranlar değişebilir. Yüksek dayanımlı (C30+) beton için çimento miktarı artırılmalı, su/çimento oranı düşürülmelidir. Hesaplanan miktarlara %5-10 ek pay bırakmanız, taşıma ve döküm sırasındaki kayıpları karşılar.
-    </p>
-
-    <h3>Sıkça Sorulan Sorular</h3>
-    {faq.map((item) => (
-      <div class="faq-item">
-        <h4>{item.question}</h4>
-        <p>{item.answer}</p>
-      </div>
-    ))}
-  </section>
-</CalcLayout>
-
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
-    const resultArea = document.getElementById('calc-result');
-
-    function debounce(fn, d = 150) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), d); }; }
-    function formatNumber(n, d = 2) {
-      return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 0, maximumFractionDigits: d }).format(n);
-    }
-
-    const dc = debounce(calculate);
-    inputs.forEach(i => { i.addEventListener('input', dc); i.addEventListener('change', dc); });
-
-    function calculate() {
-      const uzunluk = parseFloat((document.getElementById('uzunluk')).value);
-      const genislik = parseFloat((document.getElementById('genislik')).value);
-      const derinlik = parseFloat((document.getElementById('derinlik')).value);
-
-      if (isNaN(uzunluk) || isNaN(genislik) || isNaN(derinlik) || uzunluk <= 0 || genislik <= 0 || derinlik <= 0) {
-        if (resultArea) resultArea.classList.add('hidden');
-        return;
+      function debounce(fn: () => void, delay = 150) {
+        let timer: ReturnType<typeof setTimeout>;
+        return () => { clearTimeout(timer); timer = setTimeout(fn, delay); };
       }
 
-      const hacim = uzunluk * genislik * derinlik;
-      const cimento = hacim * 350;
-      const kum = hacim * 700;
-      const cakil = hacim * 1100;
-      const su = hacim * 175;
+      function num(id: string) {
+        const raw = (document.getElementById(id) as HTMLInputElement).value.replace(',', '.').trim();
+        return raw === '' ? NaN : Number(raw);
+      }
 
-      document.getElementById('sonuc-hacim').textContent = `${formatNumber(hacim, 3)} m³`;
-      document.getElementById('detail-hacim').textContent = `${formatNumber(hacim, 3)} m³`;
-      document.getElementById('detail-cimento').textContent = `${formatNumber(cimento)} kg`;
-      document.getElementById('detail-kum').textContent = `${formatNumber(kum)} kg`;
-      document.getElementById('detail-cakil').textContent = `${formatNumber(cakil)} kg`;
-      document.getElementById('detail-su').textContent = `${formatNumber(su)} lt`;
+      const fmt = (n: number, d = 2) => new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 0, maximumFractionDigits: d }).format(n);
 
-      if (resultArea) resultArea.classList.remove('hidden');
-      updateURL();
-    }
+      // m³ başına tipik karışım (kg; su litre)
+      const RECETE: Record<string, { cimento: number; kum: number; cakil: number; su: number }> = {
+        C20: { cimento: 300, kum: 850, cakil: 1050, su: 180 },
+        C25: { cimento: 350, kum: 800, cakil: 1050, su: 180 },
+        C30: { cimento: 400, kum: 760, cakil: 1040, su: 180 },
+      };
 
-    function updateURL() {
-      const p = new URLSearchParams();
-      inputs.forEach(i => { if (i.value && i.id) p.set(i.id, i.value); });
-      history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
-    }
+      function calculate() {
+        const u = num('uzunluk');
+        const g = num('genislik');
+        const k = num('kalinlik');
+        const adetRaw = num('adet');
+        const adet = isNaN(adetRaw) ? 1 : Math.floor(adetRaw);
+        const fireRaw = num('fire');
+        const fire = isNaN(fireRaw) ? 0 : fireRaw;
+        const recete = RECETE[(document.getElementById('sinif') as HTMLSelectElement).value] ?? RECETE.C25;
 
-    function loadFromURL() {
-      const p = new URLSearchParams(window.location.search);
-      let h = false;
-      inputs.forEach(i => { if (i.id && p.has(i.id)) { i.value = p.get(i.id); h = true; } });
-      if (h) calculate();
-    }
+        if (![u, g, k].every(v => isFinite(v) && v > 0) || adet < 1 || fire < 0) {
+          resultArea?.classList.add('hidden');
+          return;
+        }
 
-    loadFromURL();
-  });
-</script>
+        const net = u * g * (k / 100) * adet;
+        const fireli = net * (1 + fire / 100);
+        const siparis = Math.ceil(fireli * 2 - 1e-9) / 2; // 0,5 m³ adımlarla yukarı
+        const cimentoKg = fireli * recete.cimento;
+
+        $('sonuc-hacim').textContent = `${fmt(siparis, 1)} m³`;
+        $('sonuc-alt').textContent = 'Hazır beton siparişi, 0,5 m³ adımlarla yukarı yuvarlanmış';
+        $('detail-net').textContent = `${fmt(net, 3)} m³`;
+        $('detail-fire').textContent = `${fmt(fireli, 3)} m³`;
+        $('detail-cimento').textContent = `${fmt(cimentoKg, 0)} kg (${Math.ceil(cimentoKg / 50 - 1e-9)} torba × 50 kg)`;
+        $('detail-kum').textContent = `${fmt(fireli * recete.kum, 0)} kg`;
+        $('detail-cakil').textContent = `${fmt(fireli * recete.cakil, 0)} kg`;
+        $('detail-su').textContent = `${fmt(fireli * recete.su, 0)} lt`;
+
+        resultArea?.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const params = new URLSearchParams();
+        inputs.forEach(el => { if (el.id && el.value !== '') params.set(el.id, el.value); });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+      }
+
+      function loadFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        let has = false;
+        inputs.forEach(el => {
+          if (el.id && params.has(el.id)) { el.value = params.get(el.id) ?? ''; has = true; }
+        });
+        if (has) calculate();
+      }
+
+      const debounced = debounce(calculate);
+      inputs.forEach(el => {
+        el.addEventListener('input', debounced);
+        el.addEventListener('change', debounced);
+      });
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>Beton miktarı nasıl hesaplanır?</h2>
+    <p>
+      Beton, dökülecek hacim kadar sipariş edilir. Dikdörtgen bir döşeme, temel ya da perde için hacim <strong>uzunluk × genişlik × kalınlık</strong> formülüyle bulunur. Ölçülerin hepsinin metre cinsinden olması gerekir; bu yüzden kalınlık santimetre ise 100'e bölünür (12 cm = 0,12 m). Aynı ölçüde birden fazla eleman varsa sonuç adetle çarpılır.
+    </p>
+    <p>
+      Hesaplanan net hacme mutlaka fire eklenir. Kalıbın basınçla esnemesi, zeminin düz olmaması, pompa hortumunda ve mikserde kalan beton nedeniyle gerçek ihtiyaç net hacmin %5–10 üzerindedir. Eksik gelen betonun ikinci bir araçla tamamlanması hem pahalıdır hem de soğuk derz oluşturur; bu nedenle sipariş yukarı yuvarlanır.
+    </p>
+
+    <h2>Örnek hesaplama</h2>
+    <p>
+      5 m × 4 m ölçülerinde, 12 cm kalınlığında C25 bir döşeme dökülecek.
+    </p>
+    <ul>
+      <li>Net hacim: 5 × 4 × 0,12 = 2,4 m³</li>
+      <li>%5 fire ile: 2,4 × 1,05 = 2,52 m³</li>
+      <li>Sipariş: <strong>3 m³</strong> hazır beton</li>
+      <li>Elde karışım yapılacak olsaydı: 882 kg çimento (18 torba), yaklaşık 2.016 kg kum, 2.646 kg çakıl ve 454 litre su</li>
+    </ul>
+
+    <h2>1 m³ beton için tipik malzeme miktarları</h2>
+    <table>
+      <thead>
+        <tr><th>Sınıf</th><th>Çimento</th><th>Kum (0–4 mm)</th><th>Çakıl (4–22 mm)</th><th>Su</th><th>Kullanım</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>C20</td><td>300 kg (6 torba)</td><td>850 kg</td><td>1.050 kg</td><td>180 lt</td><td>Grobeton, bahçe yolu, taşıyıcı olmayan döşeme</td></tr>
+        <tr><td>C25</td><td>350 kg (7 torba)</td><td>800 kg</td><td>1.050 kg</td><td>180 lt</td><td>Konut temel, kolon, kiriş, döşeme (asgari)</td></tr>
+        <tr><td>C30</td><td>400 kg (8 torba)</td><td>760 kg</td><td>1.040 kg</td><td>180 lt</td><td>Çok katlı yapılar, yüksek dayanım</td></tr>
+      </tbody>
+    </table>
+    <p>
+      Sınıftaki sayı, 28 günlük silindir numune basınç dayanımını (MPa) gösterir: C25, 25 MPa demektir. Tablo kuru agrega ve CEM I 42,5 çimento için tipik değerlerdir; ıslak kumda su miktarı azaltılmalıdır.
+    </p>
+
+    <h2>Yaygın elemanlar için hacim örnekleri</h2>
+    <table>
+      <thead>
+        <tr><th>Eleman</th><th>Ölçü</th><th>Net hacim</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Bahçe yolu</td><td>10 m × 1,2 m × 10 cm</td><td>1,2 m³</td></tr>
+        <tr><td>Garaj zemini</td><td>6 m × 3,5 m × 15 cm</td><td>3,15 m³</td></tr>
+        <tr><td>Kolon (6 adet)</td><td>30 cm × 50 cm × 300 cm</td><td>2,7 m³</td></tr>
+        <tr><td>Sürekli temel</td><td>40 m × 0,6 m × 50 cm</td><td>12 m³</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Döküm sırasında dikkat edilecekler</h3>
+    <ul>
+      <li>Betona şantiyede su eklemeyin; her fazladan 10 litre su dayanımı belirgin düşürür.</li>
+      <li>Betonu vibratörle sıkıştırarak boşlukları giderin.</li>
+      <li>İlk 7 gün yüzeyi nemli tutun veya örtün; sıcak ve rüzgârlı havada kür daha kritiktir.</li>
+      <li>Hazır beton irsaliyesindeki sınıf ve kıvam bilgisini sipariş ile karşılaştırın.</li>
+    </ul>
+  </section>
+</CalcLayout>

@@ -6,33 +6,64 @@ import CalcResult from '../../components/calculator/CalcResult.astro';
 
 const faq = [
   {
-    question: "Türkiye'de emeklilik yaşı kaçtır?",
-    answer: "Türkiye'de emeklilik yaşı sigortalının cinsiyetine ve işe giriş tarihine göre değişmektedir. 5510 sayılı Sosyal Sigortalar Kanunu çerçevesinde yapılan düzenlemelerle emeklilik yaşı kademeli olarak artırılmıştır. Genel kural olarak erkeklerde 60, kadınlarda 58 yaş ile birlikte 7.200 SGK prim günü şartı aranmaktadır. Ancak EYT (Emeklilikte Yaşa Takılanlar) düzenlemesiyle belirli koşulları sağlayanlar yaşa bakılmaksızın emekli olabilmiştir."
+    question: "Ne zaman emekli olurum?",
+    answer: "Emeklilik tarihiniz ilk sigorta giriş tarihinize bağlıdır. 8 Eylül 1999 ve öncesinde girenler (EYT) yaş şartı olmadan 5000–5975 prim günü ve kadında 20, erkekte 25 yıl sigortalılıkla emekli olur. 1999–2008 arası girenler kadında 58, erkekte 60 yaş ve 7000 gün; 1 Mayıs 2008 sonrası girenler 7200 gün ve kademeli artan yaş şartına tabidir."
   },
   {
-    question: "SGK prim günü nasıl hesaplanır?",
-    answer: "SGK prim günü, sigortalının işe başladığı tarihten itibaren çalıştığı her takvim günü için 1 prim günü sayılması esasına dayanır. Bir ayda 30 gün çalışıldığında 30 prim günü kazanılır. Askerlik, doğum izni ve bazı durumlarda işsizlik sigortasından prim ödenen süreler de prim gününe dahil edilebilir. E-Devlet üzerinden SGK Hizmet Dökümü sorgulanarak gerçek prim gün sayısına ulaşılabilir."
+    question: "EYT'de kaç prim günü gerekiyor?",
+    answer: "8 Eylül 1999 öncesi SSK (4/a) girişlilerde prim günü, o tarihteki sigortalılık süresine göre 5000 ile 5975 arasında değişir. Kadınlarda 17 yıl, erkeklerde 22 yıl ve üzeri sigortalılığı olanlar 5000 gün; bu süreden her bir yıl eksik için 75 gün fazla prim gerekir. Sigortalılık süresi kadınlarda 20, erkeklerde 25 yıldır. Yaş şartı 7438 sayılı Kanunla kaldırılmıştır."
   },
   {
-    question: "Erken emeklilik için ne yapılabilir?",
-    answer: "Erken emeklilik için çeşitli seçenekler mevcuttur: Bireysel Emeklilik Sistemi (BES) ile devlet katkısından yararlanarak ek emeklilik geliri oluşturabilirsiniz. Borçlanma hakkı kapsamında askerlik, yükseköğrenim ve doğum sürelerini SGK'ya borçlanarak prim gününüzü artırabilirsiniz. Bunun yanı sıra serbest meslek ya da isteğe bağlı sigorta yoluyla prim ödemeye devam ederek emeklilik hakkını erkenden kazanmak da mümkündür."
+    question: "2008 sonrası girişlilerde emeklilik yaşı kaç?",
+    answer: "1 Mayıs 2008 ve sonrasında ilk kez sigortalı olanlar 7200 prim günüyle kadında 58, erkekte 60 yaşında emekli olur. Ancak 7200 günü 1 Ocak 2036'dan sonra dolduranlar için yaş kademeli olarak artar: 2036–2037'de kadın 59/erkek 61, 2038–2039'da 60/62 ve 2048'den itibaren her ikisi için 65. Hangi yaşın uygulanacağı, prim gününün dolduğu tarihe göre belirlenir."
+  },
+  {
+    question: "Prim günümü nasıl öğrenirim?",
+    answer: "e-Devlet'te \"SGK Tescil ve Hizmet Dökümü\" hizmetinden 4/a, 4/b ve 4/c dönemlerinize ait toplam prim gün sayısını ve ilk giriş tarihinizi görebilirsiniz. Tam zamanlı ve kesintisiz çalışan biri yılda 360 prim günü kazanır. Hesaplayıcıya prim gününüzü girmezseniz, giriş tarihinizden bu yana kesintisiz çalıştığınız varsayılır."
+  },
+  {
+    question: "Askerlik ve doğum borçlanması emekliliği öne çeker mi?",
+    answer: "Evet. Askerlik süresi ile doğum sonrası iki yıla kadar olan süreler (en fazla üç çocuk için) borçlanılarak prim gününe eklenebilir. Sigorta girişinden önce yapılan askerliğin borçlanılması, 1999 öncesi ve 2008 öncesi gibi kritik tarihlerde ilk giriş tarihini de geriye çekerek sizi daha avantajlı bir döneme taşıyabilir. Borçlanma bedeli ödeme tarihinde geçerli asgari ücrete göre hesaplanır."
+  },
+  {
+    question: "Prim günüm dolmadan yaşım doldu, ne yapabilirim?",
+    answer: "4/a sigortalıları için yaştan (kısmi) emeklilik seçeneği vardır. 1999–2008 girişlilerde 25 yıl sigortalılık ve 4500 gün ile kadın 58, erkek 60 yaşında; 2008 sonrası girişlilerde 5400 gün (2008 girişlilerde 4600'den başlayıp her yıl 100 gün artar) ile yaş şartına 3 yıl eklenerek (en fazla 65) emekli olunabilir. İsteğe bağlı sigorta ile prim ödemeye devam etmek de mümkündür."
+  },
+  {
+    question: "Bağ-Kur (4/b) ve memur (4/c) için hesap farklı mı?",
+    answer: "Evet. 1 Mayıs 2008 sonrası girişli 4/b ve 4/c sigortalıları için prim gün şartı 9000 gündür; yaş şartı 4/a ile aynı kademeli tabloya tabidir. 2008 öncesi 4/b ve 4/c girişlilerde de hizmet yılı ve gün şartları farklıdır. Bu hesaplayıcı 4/a (SSK) kurallarını esas alır; birden fazla statüde çalıştıysanız son 2520 günün hangi statüde geçtiği de önemlidir."
   }
 ];
 
 const meta = {
   title: "Emeklilik Hesaplama",
-  description: "Doğum tarihinize, cinsiyetinize ve işe başlama tarihinize göre tahmini emeklilik yaşınızı ve emekliliğe kalan süreyi hesaplayın.",
+  seoTitle: "Emeklilik Hesaplama 2026 – Ne Zaman Emekli Olurum? (EYT)",
+  description: "Doğum ve ilk sigorta giriş tarihinizle prim gününüzü girin; EYT, 1999–2008 ve 2008 sonrası kurallarına göre tahmini emeklilik tarihinizi ve yaşınızı öğrenin.",
+  summary: "4/a (SSK) sigortalılarında emeklilik şartı ilk giriş tarihine göre belirlenir: 8 Eylül 1999 ve öncesi girişliler (EYT) yaş şartı olmadan 5000–5975 gün ve kadında 20, erkekte 25 yıl; 9 Eylül 1999 – 30 Nisan 2008 girişliler 7000 gün ve kadın 58/erkek 60 yaş; 1 Mayıs 2008 sonrası girişliler 7200 gün ve 2036'dan itibaren kademeli olarak 65'e çıkan yaş şartıyla emekli olur.",
+  howTo: [
+    "Doğum tarihinizi ve cinsiyetinizi girin.",
+    "İlk kez sigortalı olduğunuz tarihi e-Devlet hizmet dökümünüzden bakarak yazın.",
+    "Güncel toplam prim gün sayınızı girin; boş bırakırsanız kesintisiz çalıştığınız varsayılır.",
+    "Yılda ortalama kaç gün prim ödeneceğini girin (tam zamanlı çalışmada 360).",
+    "Tahmini emeklilik tarihinizi, uygulanan şartı ve varsa alternatif emeklilik yolunu sonuçta inceleyin."
+  ],
+  sources: [
+    { name: "5510 sayılı Sosyal Sigortalar ve Genel Sağlık Sigortası Kanunu – Mevzuat Bilgi Sistemi", url: "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=5510&MevzuatTur=1&MevzuatTertip=5" },
+    { name: "SGK – 4/a Hizmet Akdi ile Çalışanlar", url: "https://www.sgk.gov.tr/Content/Post/785eac3b-d260-47b5-8103-ae591b2ac320/4a-Hizmet-Akdi-ile-Calisanlar-2024-01-11-02-39-38" },
+    { name: "SGK – 4/a Emeklilik Hesabı", url: "https://uyg.sgk.gov.tr/nezaman/" },
+    { name: "e-Devlet – SGK Tescil ve Hizmet Dökümü", url: "https://www.turkiye.gov.tr/sgk-tescil-ve-hizmet-dokumu" }
+  ],
   category: "gunluk",
   slug: "emeklilik-hesaplama",
-  keywords: ["emeklilik hesaplama", "emeklilik yaşı", "SGK prim günü", "emeklilik tarihi", "ne zaman emekli olurum", "emeklilik süresi"],
-  dateModified: "2026-04-01",
-  relatedCalcs: ["tasarruf-hesaplama", "askerlik-hesaplama"],
+  keywords: ["emeklilik hesaplama", "ne zaman emekli olurum", "emeklilik yaşı", "EYT hesaplama", "SGK prim günü", "kademeli emeklilik tablosu"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["finans/kidem-tazminati-hesaplama", "finans/net-brut-maas-hesaplama", "gunluk/tasarruf-hesaplama", "gunluk/yas-hesaplama", "gunluk/askerlik-hesaplama"],
   faq
 };
 ---
 
 <CalcLayout meta={meta}>
-  <form id="calc-form">
+  <form id="calc-form" class="calc-inputs" novalidate>
     <CalcInput
       id="dogumTarihi"
       label="Doğum Tarihi"
@@ -42,167 +73,309 @@ const meta = {
       id="cinsiyet"
       label="Cinsiyet"
       options={[
-        { value: "erkek", label: "Erkek" },
-        { value: "kadin", label: "Kadın" }
+        { value: "kadin", label: "Kadın" },
+        { value: "erkek", label: "Erkek" }
       ]}
-      value="erkek"
+      value="kadin"
     />
     <CalcInput
-      id="iseBaslamaTarihi"
-      label="İşe Başlama Tarihi (İlk SGK)"
+      id="girisTarihi"
+      label="İlk Sigorta Giriş Tarihi"
       type="date"
-      helpText="İlk kez SGK'ya kayıt yaptırdığınız tarih"
+      helpText="Hizmet dökümünüzdeki ilk işe giriş tarihi"
+    />
+    <CalcInput
+      id="primGunu"
+      label="Mevcut Prim Günü"
+      type="number"
+      suffix="gün"
+      placeholder="5100"
+      min={0}
+      max={20000}
+      step={1}
+      required={false}
+      helpText="Boş bırakılırsa kesintisiz çalışma varsayılır"
+    />
+    <CalcInput
+      id="yillikPrim"
+      label="Yıllık Prim Günü"
+      type="number"
+      suffix="gün/yıl"
+      placeholder="360"
+      value={360}
+      min={1}
+      max={360}
+      step={1}
+      helpText="Tam zamanlı çalışmada yılda 360 gün"
     />
   </form>
 
   <CalcResult>
     <div slot="main">
-      <p class="calc-result-label">Tahmini Emeklilik Yaşı</p>
-      <p class="calc-result-value" id="emeklilik-yasi">—</p>
+      <p class="calc-result-label">Tahmini Emeklilik Tarihi</p>
+      <p class="calc-result-value" id="emeklilik-tarihi">—</p>
+      <p class="calc-result-sub" id="emeklilik-alt"></p>
     </div>
     <div slot="details">
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Tahmini Emeklilik Tarihi</span>
-        <span class="calc-detail-value" id="d-tarih">—</span>
+        <span class="calc-detail-label">Tabi olduğunuz dönem</span>
+        <span class="calc-detail-value" id="d-donem">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Emekliliğe Kalan Süre</span>
-        <span class="calc-detail-value" id="d-kalan">—</span>
+        <span class="calc-detail-label">Uygulanan şart</span>
+        <span class="calc-detail-value" id="d-sart">—</span>
       </div>
       <div class="calc-detail-row">
-        <span class="calc-detail-label">Tahmini SGK Günü (Şimdiye)</span>
-        <span class="calc-detail-value" id="d-sgk">—</span>
+        <span class="calc-detail-label">Emeklilik yaşınız</span>
+        <span class="calc-detail-value" id="d-yas">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Prim günü (mevcut / gereken)</span>
+        <span class="calc-detail-value" id="d-prim">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Prim gününün dolacağı tarih</span>
+        <span class="calc-detail-value" id="d-prim-tarih">—</span>
+      </div>
+      <div class="calc-detail-row">
+        <span class="calc-detail-label">Alternatif yol</span>
+        <span class="calc-detail-value" id="d-alternatif">—</span>
       </div>
     </div>
   </CalcResult>
 
+  <p class="calc-note">Hesaplama 4/a (SSK) kurallarına göre tahmindir. Borçlanma, yıpranma payı, engellilik ve farklı statülerde geçen hizmetler sonucu değiştirir; kesin bilgi için SGK'ya başvurun.</p>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const inputs = document.querySelectorAll<HTMLInputElement | HTMLSelectElement>('#calc-form input, #calc-form select');
       const resultArea = document.getElementById('calc-result');
+      const $ = (id: string) => document.getElementById(id) as HTMLElement;
 
-      function debounce(fn, delay = 150) {
-        let t;
-        return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), delay); };
+      function debounce(fn: () => void, delay = 150) {
+        let timer: ReturnType<typeof setTimeout>;
+        return () => { clearTimeout(timer); timer = setTimeout(fn, delay); };
       }
 
-      function formatNumber(n, d = 0) {
-        return new Intl.NumberFormat('tr-TR', { minimumFractionDigits: d, maximumFractionDigits: d }).format(n);
+      const fmt = (n: number) => new Intl.NumberFormat('tr-TR').format(n);
+      const fmtDate = (d: Date) => new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' }).format(d);
+
+      function mk(y: number, m: number, d: number): Date {
+        const r = new Date(2000, 0, 1);
+        r.setFullYear(y, m, d);
+        return r;
+      }
+      function parseDate(s: string): Date | null {
+        const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
+        if (!m) return null;
+        const d = mk(+m[1], +m[2] - 1, +m[3]);
+        return d.getMonth() === +m[2] - 1 ? d : null;
+      }
+      const dayNum = (d: Date) => Math.round(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5);
+      const daysInMonth = (y: number, m: number) => new Date(y, m + 1, 0).getDate();
+      function addMonths(d: Date, n: number): Date {
+        const y = d.getFullYear() + Math.floor((d.getMonth() + n) / 12);
+        const mo = ((d.getMonth() + n) % 12 + 12) % 12;
+        return mk(y, mo, Math.min(d.getDate(), daysInMonth(y, mo)));
+      }
+      const addDays = (d: Date, n: number) => mk(d.getFullYear(), d.getMonth(), d.getDate() + n);
+      const maxDate = (...ds: Date[]) => ds.reduce((a, b) => (dayNum(b) > dayNum(a) ? b : a));
+      function fullMonths(a: Date, b: Date): number {
+        let m = (b.getFullYear() - a.getFullYear()) * 12 + (b.getMonth() - a.getMonth());
+        if (dayNum(addMonths(a, m)) > dayNum(b)) m--;
+        return m;
       }
 
-      function formatDate(date) {
-        return new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' }).format(date);
+      // 5510 md. 28: 7200 günün (veya 5400 günün) dolduğu tarihe göre yaş haddi
+      function yasHaddi(d: Date, kadin: boolean): number {
+        const y = d.getFullYear();
+        const tablo: [number, number, number][] = [
+          [2036, 59, 61], [2038, 60, 62], [2040, 61, 63], [2042, 62, 64],
+          [2044, 63, 65], [2046, 64, 65], [2048, 65, 65],
+        ];
+        let k = 58, e = 60;
+        for (const [yil, kk, ee] of tablo) if (y >= yil) { k = kk; e = ee; }
+        return kadin ? k : e;
       }
 
-      const dc = debounce(calculate);
-      inputs.forEach(i => { i.addEventListener('input', dc); i.addEventListener('change', dc); });
+      interface Yol { ad: string; tarih: Date; gun: number; primTarih: Date; }
 
       function calculate() {
-        const dogumVal = document.getElementById('dogumTarihi').value;
-        const cinsiyet = document.getElementById('cinsiyet').value;
-        const iseVal = document.getElementById('iseBaslamaTarihi').value;
+        const dogum = parseDate((document.getElementById('dogumTarihi') as HTMLInputElement).value);
+        const giris = parseDate((document.getElementById('girisTarihi') as HTMLInputElement).value);
+        const kadin = (document.getElementById('cinsiyet') as HTMLSelectElement).value === 'kadin';
+        const primRaw = (document.getElementById('primGunu') as HTMLInputElement).value.trim();
+        const yillikRaw = (document.getElementById('yillikPrim') as HTMLInputElement).value.trim();
+        const yillik = yillikRaw === '' ? 360 : Number(yillikRaw);
 
-        if (!dogumVal) {
-          if (resultArea) resultArea.classList.add('hidden');
+        const now = new Date();
+        const bugun = mk(now.getFullYear(), now.getMonth(), now.getDate());
+
+        if (!dogum || !giris || dayNum(giris) <= dayNum(dogum) || dayNum(giris) > dayNum(bugun) || !isFinite(yillik) || yillik <= 0 || yillik > 360) {
+          resultArea?.classList.add('hidden');
           return;
         }
 
-        const dogum = new Date(dogumVal);
-        if (isNaN(dogum.getTime())) {
-          if (resultArea) resultArea.classList.add('hidden');
+        const tahmini = primRaw === '';
+        const P = tahmini
+          ? Math.max(0, Math.floor((dayNum(bugun) - dayNum(giris)) * 360 / 365))
+          : Math.floor(Number(primRaw));
+        if (!isFinite(P) || P < 0) {
+          resultArea?.classList.add('hidden');
           return;
         }
 
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        // Hedef prim gününe ulaşılacak tarih
+        const primTarihi = (hedef: number) => (P >= hedef ? bugun : addDays(bugun, Math.ceil(((hedef - P) / yillik) * 365)));
 
-        // Emeklilik yaşı: erkek 60, kadın 58
-        const emeklilikYasi = cinsiyet === 'erkek' ? 60 : 58;
+        const yollar: Yol[] = [];
+        let donem = '';
 
-        // Tahmini emeklilik tarihi (yaş bazlı)
-        const emeklilikTarihi = new Date(dogum);
-        emeklilikTarihi.setFullYear(dogum.getFullYear() + emeklilikYasi);
-
-        // Kalan süre
-        const kalanMs = emeklilikTarihi.getTime() - today.getTime();
-        const kalanGun = Math.ceil(kalanMs / (24 * 60 * 60 * 1000));
-        const kalanYil = Math.floor(kalanGun / 365);
-        const kalanAyKalan = Math.floor((kalanGun % 365) / 30);
-
-        let kalanMetin = '';
-        if (kalanGun <= 0) {
-          kalanMetin = 'Emeklilik yaşına ulaşıldı';
-        } else if (kalanYil > 0) {
-          kalanMetin = kalanYil + ' yıl ' + kalanAyKalan + ' ay';
+        if (dayNum(giris) <= dayNum(mk(1999, 8, 8))) {
+          donem = '8 Eylül 1999 ve öncesi (EYT)';
+          const yil1999 = Math.floor(fullMonths(giris, mk(1999, 8, 8)) / 12);
+          const gun = Math.min(5975, 5000 + 75 * Math.max(0, (kadin ? 17 : 22) - yil1999));
+          const sure = kadin ? 20 : 25;
+          const pt = primTarihi(gun);
+          yollar.push({ ad: `${fmt(gun)} gün + ${sure} yıl sigortalılık (yaş şartı yok)`, tarih: maxDate(pt, addMonths(giris, sure * 12)), gun, primTarih: pt });
+        } else if (dayNum(giris) <= dayNum(mk(2008, 3, 30))) {
+          donem = '9 Eylül 1999 – 30 Nisan 2008';
+          const yas = kadin ? 58 : 60;
+          const yasTarihi = addMonths(dogum, yas * 12);
+          const pt1 = primTarihi(7000);
+          yollar.push({ ad: `7.000 gün + ${yas} yaş`, tarih: maxDate(pt1, yasTarihi), gun: 7000, primTarih: pt1 });
+          const pt2 = primTarihi(4500);
+          yollar.push({ ad: `4.500 gün + 25 yıl sigortalılık + ${yas} yaş`, tarih: maxDate(pt2, yasTarihi, addMonths(giris, 300)), gun: 4500, primTarih: pt2 });
         } else {
-          kalanMetin = kalanAyKalan + ' ay';
+          donem = '1 Mayıs 2008 ve sonrası (5510)';
+          const pt1 = primTarihi(7200);
+          const yas1 = yasHaddi(pt1, kadin);
+          yollar.push({ ad: `7.200 gün + ${yas1} yaş`, tarih: maxDate(pt1, addMonths(dogum, yas1 * 12)), gun: 7200, primTarih: pt1 });
+          const gun2 = Math.min(5400, 4600 + 100 * Math.max(0, giris.getFullYear() - 2008));
+          const pt2 = primTarihi(gun2);
+          const yas2 = Math.min(65, yasHaddi(pt2, kadin) + 3);
+          yollar.push({ ad: `Yaştan emeklilik: ${fmt(gun2)} gün + ${yas2} yaş`, tarih: maxDate(pt2, addMonths(dogum, yas2 * 12)), gun: gun2, primTarih: pt2 });
         }
 
-        document.getElementById('emeklilik-yasi').textContent = emeklilikYasi + ' yaş';
-        document.getElementById('d-tarih').textContent = formatDate(emeklilikTarihi);
-        document.getElementById('d-kalan').textContent = kalanMetin;
+        yollar.sort((a, b) => dayNum(a.tarih) - dayNum(b.tarih));
+        const en = yollar[0];
+        const alt = yollar[1];
+        const kalanAy = fullMonths(bugun, en.tarih);
+        const emeklilikYasi = Math.floor(fullMonths(dogum, en.tarih) / 12);
 
-        // SGK gün tahmini
-        if (iseVal) {
-          const ise = new Date(iseVal);
-          if (!isNaN(ise.getTime())) {
-            const calismaMs = today.getTime() - ise.getTime();
-            const calismGun = Math.max(0, Math.floor(calismaMs / (24 * 60 * 60 * 1000)));
-            const sgkGun = Math.floor(calismGun * (30 / 30)); // month approx
-            document.getElementById('d-sgk').textContent = formatNumber(calismGun) + ' gün (~' + formatNumber(Math.floor(calismGun / 30)) + ' ay)';
-          } else {
-            document.getElementById('d-sgk').textContent = '—';
-          }
-        } else {
-          document.getElementById('d-sgk').textContent = '—';
-        }
+        $('emeklilik-tarihi').textContent = dayNum(en.tarih) <= dayNum(bugun) ? 'Şartlar sağlanmış' : fmtDate(en.tarih);
+        $('emeklilik-alt').textContent = dayNum(en.tarih) <= dayNum(bugun)
+          ? 'Hesaba göre emeklilik başvurusu yapabilirsiniz'
+          : `${Math.floor(kalanAy / 12)} yıl ${kalanAy % 12} ay sonra`;
+        $('d-donem').textContent = donem;
+        $('d-sart').textContent = en.ad;
+        $('d-yas').textContent = `${emeklilikYasi} yaş`;
+        $('d-prim').textContent = `${fmt(P)}${tahmini ? ' (tahmini)' : ''} / ${fmt(en.gun)} gün`;
+        $('d-prim-tarih').textContent = P >= en.gun ? 'Dolmuş' : fmtDate(en.primTarih);
+        $('d-alternatif').textContent = alt ? `${alt.ad}: ${dayNum(alt.tarih) <= dayNum(bugun) ? 'şartlar sağlanmış' : fmtDate(alt.tarih)}` : '—';
 
-        if (resultArea) resultArea.classList.remove('hidden');
+        resultArea?.classList.remove('hidden');
         updateURL();
       }
 
       function updateURL() {
-        const p = new URLSearchParams();
-        inputs.forEach(i => { if (i.value && i.id) p.set(i.id, i.value); });
-        history.replaceState(null, '', `${window.location.pathname}?${p.toString()}`);
+        const params = new URLSearchParams();
+        inputs.forEach(el => { if (el.id && el.value !== '') params.set(el.id, el.value); });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
       }
 
       function loadFromURL() {
-        const p = new URLSearchParams(window.location.search);
-        let h = false;
-        inputs.forEach(i => { if (i.id && p.has(i.id)) { i.value = p.get(i.id); h = true; } });
-        if (h) calculate();
+        const params = new URLSearchParams(window.location.search);
+        let has = false;
+        inputs.forEach(el => {
+          if (el.id && params.has(el.id)) { el.value = params.get(el.id) ?? ''; has = true; }
+        });
+        if (has) calculate();
       }
+
+      const debounced = debounce(calculate);
+      inputs.forEach(el => {
+        el.addEventListener('input', debounced);
+        el.addEventListener('change', debounced);
+      });
 
       loadFromURL();
     });
   </script>
 
   <section class="calc-content">
-    <h2>Emeklilik Hesaplama Nasıl Yapılır?</h2>
+    <h2>Emeklilik şartları neye göre belirlenir?</h2>
     <p>
-      Emeklilik, çalışma hayatının en önemli dönüm noktalarından biridir ve bu süreci önceden planlamak finansal güvenlik açısından büyük önem taşır. Türkiye'de emeklilik sistemi 5510 sayılı Sosyal Sigortalar ve Genel Sağlık Sigortası Kanunu çerçevesinde düzenlenmekte olup yaş, prim gün sayısı ve sigortalılık süresi gibi farklı kriterlere dayanan koşullar söz konusudur.
-    </p>
-    <p>
-      Bu hesap makinesi, doğum tarihinizi, cinsiyetinizi ve işe başlama tarihinizi baz alarak tahmini emeklilik yaşınızı ve emekliliğe kalan süreyi hızlıca hesaplamanızı sağlar. Sonuçlar bilgilendirme amaçlıdır; kesin emeklilik hesabı için SGK'ya başvurmanız ya da e-Devlet üzerinden "SGK Hizmet Dökümü" sorgulaması yapmanız önerilir.
+      Türkiye'de emeklilik yaşı ve prim günü herkes için aynı değildir; belirleyici olan <strong>ilk kez sigortalı olduğunuz tarihtir</strong>. Kanun değişiklikleri geçmişe dönük uygulanmadığı için 8 Eylül 1999 ve 30 Nisan 2008 tarihleri üç ayrı kuşak oluşturur. Hesaplayıcı giriş tarihinize göre doğru dönemi seçer, prim gününüzü bugünkü tempoyla ileriye taşır ve şartların tamamının sağlandığı en erken tarihi bulur.
     </p>
 
-    <h3>Türkiye'de Emeklilik Koşulları (Basitleştirilmiş)</h3>
+    <h2>4/a (SSK) emeklilik şartları tablosu</h2>
+    <table>
+      <thead>
+        <tr><th>İlk giriş tarihi</th><th>Kadın</th><th>Erkek</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>8 Eylül 1999 ve öncesi (EYT)</td><td>20 yıl sigortalılık + 5000–5975 gün, yaş şartı yok</td><td>25 yıl sigortalılık + 5000–5975 gün, yaş şartı yok</td></tr>
+        <tr><td>9 Eylül 1999 – 30 Nisan 2008</td><td>58 yaş + 7000 gün veya 58 yaş + 25 yıl + 4500 gün</td><td>60 yaş + 7000 gün veya 60 yaş + 25 yıl + 4500 gün</td></tr>
+        <tr><td>1 Mayıs 2008 ve sonrası</td><td>58 yaş (2036'dan itibaren kademeli) + 7200 gün</td><td>60 yaş (2036'dan itibaren kademeli) + 7200 gün</td></tr>
+      </tbody>
+    </table>
+
+    <h3>EYT prim günü tablosu (8 Eylül 1999 itibarıyla sigortalılık süresi)</h3>
+    <table>
+      <thead>
+        <tr><th>Kadın sigortalılık süresi</th><th>Erkek sigortalılık süresi</th><th>Gereken prim günü</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>17 yıl ve üzeri</td><td>22 yıl ve üzeri</td><td>5000</td></tr>
+        <tr><td>16 – 17 yıl</td><td>21 – 22 yıl</td><td>5075</td></tr>
+        <tr><td>15 – 16 yıl</td><td>20 – 21 yıl</td><td>5150</td></tr>
+        <tr><td>14 – 15 yıl</td><td>19 – 20 yıl</td><td>5225</td></tr>
+        <tr><td>13 – 14 yıl</td><td>18 – 19 yıl</td><td>5300</td></tr>
+        <tr><td>12 – 13 yıl</td><td>17 – 18 yıl</td><td>5375</td></tr>
+        <tr><td>11 – 12 yıl</td><td>16 – 17 yıl</td><td>5450</td></tr>
+        <tr><td>10 – 11 yıl</td><td>15 – 16 yıl</td><td>5525</td></tr>
+        <tr><td>9 – 10 yıl</td><td>14 – 15 yıl</td><td>5600</td></tr>
+        <tr><td>8 – 9 yıl</td><td>13 – 14 yıl</td><td>5675</td></tr>
+        <tr><td>7 – 8 yıl</td><td>12 – 13 yıl</td><td>5750</td></tr>
+        <tr><td>6 – 7 yıl</td><td>11 – 12 yıl</td><td>5825</td></tr>
+        <tr><td>5 – 6 yıl</td><td>10 – 11 yıl</td><td>5900</td></tr>
+        <tr><td>5 yıldan az</td><td>10 yıldan az</td><td>5975</td></tr>
+      </tbody>
+    </table>
+
+    <h3>2008 sonrası girişliler için kademeli yaş tablosu</h3>
+    <p>Yaş şartı, 7200 prim gününün doldurulduğu tarihe göre belirlenir.</p>
+    <table>
+      <thead>
+        <tr><th>Prim gününün dolduğu dönem</th><th>Kadın</th><th>Erkek</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>31 Aralık 2035'e kadar</td><td>58</td><td>60</td></tr>
+        <tr><td>2036 – 2037</td><td>59</td><td>61</td></tr>
+        <tr><td>2038 – 2039</td><td>60</td><td>62</td></tr>
+        <tr><td>2040 – 2041</td><td>61</td><td>63</td></tr>
+        <tr><td>2042 – 2043</td><td>62</td><td>64</td></tr>
+        <tr><td>2044 – 2045</td><td>63</td><td>65</td></tr>
+        <tr><td>2046 – 2047</td><td>64</td><td>65</td></tr>
+        <tr><td>2048 ve sonrası</td><td>65</td><td>65</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Örnek hesaplama</h2>
     <p>
-      Genel tabloya göre: Erkekler 60 yaşında ve 7.200 SGK prim günü dolduğunda, kadınlar ise 58 yaşında ve 7.200 prim günü tamamlandığında yaşlılık aylığına hak kazanabilmektedir. Emeklilik koşulları işe giriş tarihine ve farklı sigortalılık türüne göre (4/a, 4/b, 4/c) değişebilmektedir.
+      <strong>1999–2008 girişli kadın:</strong> 20 Şubat 1978 doğumlu, ilk kez 15 Haziran 2003'te sigortalı olmuş ve 26 Eylül 2026 itibarıyla 5.100 prim gününe sahip. Kesintisiz çalışırsa yılda 360 gün kazanır; kalan 1.900 gün yaklaşık 5,3 yıl sürer ve 7000 gün Ocak 2032'de dolar. Ancak 58 yaşını 20 Şubat 2036'da tamamlayacağı için emeklilik tarihi <strong>20 Şubat 2036</strong> olur. 25 yıl + 4500 gün yolu da aynı yaş şartına takıldığından tarihi öne çekmez.
+    </p>
+    <p>
+      <strong>2008 sonrası girişli erkek:</strong> 1 Haziran 1990 doğumlu, 1 Eylül 2012'de işe başlamış, 4.300 prim günü var. 7200 gün Ekim 2034'te dolar. Bu tarih 2036'dan önce olduğu için yaş şartı 60'tır ve emeklilik tarihi <strong>1 Haziran 2050</strong> olur. Prim günü 2036'dan sonra dolsaydı yaş şartı 61'e yükselecekti.
     </p>
 
-    <h3>Dikkat Edilmesi Gerekenler</h3>
-    <p>
-      Emeklilik mevzuatı zaman içinde değişebilmekte ve bireysel koşullar (borçlanma, askerlik süresi, eksik gün telafisi vb.) sonuçları etkileyebilmektedir. Hesaplama yalnızca genel bir tahmin sunmaktadır. Gerçek emeklilik hakkınızı öğrenmek için SGK'nın resmi web sitesi veya e-Devlet portalı üzerinden SGK Hizmet Dökümünüzü ve Emeklilik Sorgulama aracını kullanmanızı tavsiye ederiz.
-    </p>
-
-    <h3>Sıkça Sorulan Sorular</h3>
-    {faq.map(item => (
-      <details>
-        <summary><strong>{item.question}</strong></summary>
-        <p>{item.answer}</p>
-      </details>
-    ))}
+    <h2>Emeklilik tarihini öne çekebilecek durumlar</h2>
+    <ul>
+      <li><strong>Askerlik borçlanması:</strong> Sigorta girişinden önceki askerlik borçlanıldığında ilk giriş tarihi, askerlik süresi kadar geriye gider. 1999 veya 2008 sınırına yakın olanlar için dönem değişebilir.</li>
+      <li><strong>Doğum borçlanması:</strong> Sigortalı kadınlar, doğumdan sonraki iki yıla kadar olan süreyi en fazla üç çocuk için borçlanabilir.</li>
+      <li><strong>Yurt dışı borçlanması:</strong> Yurt dışında geçen çalışma süreleri borçlanılarak prim gününe eklenebilir.</li>
+      <li><strong>Stajyer ve çıraklık girişleri:</strong> Kısa vadeli sigorta kolları kapsamındaki stajlar prim günü kazandırmaz ve kural olarak ilk giriş tarihi sayılmaz; çıraklık süreleri ise dönemine göre farklı değerlendirilir.</li>
+    </ul>
   </section>
 </CalcLayout>

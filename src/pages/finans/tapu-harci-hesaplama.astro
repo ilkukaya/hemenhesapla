@@ -1,0 +1,219 @@
+---
+import CalcLayout from '../../layouts/CalcLayout.astro';
+import CalcInput from '../../components/calculator/CalcInput.astro';
+import CalcSelect from '../../components/calculator/CalcSelect.astro';
+import CalcResult from '../../components/calculator/CalcResult.astro';
+
+const faq = [
+  {
+    question: "Tapu harcı nasıl hesaplanır?",
+    answer: "Tapu harcı, 492 sayılı Harçlar Kanunu'na göre satış bedeli üzerinden alıcı için binde 20 (%2), satıcı için binde 20 (%2) olmak üzere toplam %4 oranında alınır. Beyan edilen satış bedeli emlak vergisi değerinden düşük olamaz. Örneğin 3.000.000 TL'lik bir konutta alıcı 60.000 TL, satıcı 60.000 TL, toplamda 120.000 TL tapu harcı öder."
+  },
+  {
+    question: "Tapu harcını kim öder, alıcı mı satıcı mı?",
+    answer: "Kanuna göre tapu harcı alıcı ve satıcı arasında eşit paylaşılır; her iki taraf da satış bedelinin %2'si oranında harç öder. Ancak uygulamada taraflar anlaşarak harcın tamamını alıcının ödemesine karar verebilir. Bu durumda alıcı %4 öder. Tarafların anlaşması tapu idaresine karşı ortak sorumluluğu ortadan kaldırmaz."
+  },
+  {
+    question: "2026 döner sermaye ücreti ne kadar?",
+    answer: "Tapu ve Kadastro Genel Müdürlüğü'nün 2026 tarifesinde döner sermaye temel gösterge bedeli 2.227 TL, ilave hizmet bedeli 307 TL'dir. Tutar, işlemin yapıldığı yerin yöresel katsayısıyla çarpılır; büyükşehirlerde katsayı 3'e kadar çıktığı için normal bir satış işleminde döner sermaye ücreti yaklaşık 6.681 TL ile 6.988 TL arasında olur."
+  },
+  {
+    question: "Tapu harcı gerçek değerden düşük gösterilirse ne olur?",
+    answer: "Satış bedelini gerçek değerin altında beyan etmek vergi ziyaı sayılır. Tespit edilmesi halinde eksik ödenen harç, gecikme faizi ve vergi ziyaı cezasıyla birlikte tahsil edilir. Ayrıca konut kredisi kullanıldığında banka ekspertiz değeri, bedel tespitinde dikkate alınabilir. Harç tasarrufu için düşük bedel göstermek yasal ve finansal risk doğurur."
+  },
+  {
+    question: "Tapu harcı ne zaman ve nereye ödenir?",
+    answer: "Tapu harcı, tapu devir işlemi öncesinde Web Tapu veya e-Devlet üzerinden başvuru yapıldıktan sonra hesaplanır ve randevu tarihinden önce anlaşmalı bankalar veya internet bankacılığı aracılığıyla ödenir. Harç ve döner sermaye ödemeleri yapılmadan tapu devir işlemi tamamlanmaz. Ödeme dekontlarını imza günü yanınızda bulundurmanız önerilir."
+  },
+  {
+    question: "Tapu harcı dışında hangi masraflar var?",
+    answer: "Tapu harcı ve döner sermaye ücretine ek olarak zorunlu deprem sigortası (DASK) poliçesi, varsa emlakçı komisyonu, konut kredisinde ekspertiz ücreti ve ipotek tesis harcı ile tercüman veya vekaletname masrafları çıkabilir. Satıcı açısından ise mülk 5 yıldan önce satılıyorsa değer artış kazancı vergisi doğabilir."
+  }
+];
+
+const meta = {
+  title: "Tapu Harcı Hesaplama",
+  seoTitle: "Tapu Harcı Hesaplama 2026 - Alıcı, Satıcı ve Döner Sermaye",
+  description: "Tapu harcı hesaplama 2026: satış bedeline göre alıcı %2, satıcı %2 harcı ve döner sermaye ücretini hesaplayın. Toplam tapu masrafını anında görün.",
+  summary: "Tapu harcı, satış bedelinin alıcı için %2'si, satıcı için %2'si olmak üzere toplam %4'üdür. Matrah, beyan edilen bedel ile emlak vergisi değerinden yüksek olanıdır. 3.000.000 TL'lik bir satışta toplam harç 120.000 TL olur; buna 2026'da büyükşehirlerde yaklaşık 6.681 TL döner sermaye ücreti eklenir.",
+  howTo: [
+    "Tapuda beyan edilecek satış bedelini girin.",
+    "Biliyorsanız emlak vergisi değerini yazın; harç yüksek olan tutar üzerinden hesaplanır.",
+    "Harcı kimin ödeyeceğini seçin: ayrı ayrı veya tamamı alıcı.",
+    "Döner sermaye ücretini kontrol edin ve toplam tapu masrafını görün."
+  ],
+  sources: [
+    { name: "492 sayılı Harçlar Kanunu (Mevzuat Bilgi Sistemi)", url: "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=492&MevzuatTur=1&MevzuatTertip=5" },
+    { name: "Tapu ve Kadastro Genel Müdürlüğü", url: "https://www.tkgm.gov.tr/" }
+  ],
+  category: "finans",
+  slug: "tapu-harci-hesaplama",
+  keywords: ["tapu harcı hesaplama", "tapu harcı 2026", "tapu masrafı", "döner sermaye ücreti", "tapu harcı kim öder", "ev alırken tapu masrafı"],
+  dateModified: "2026-09-26",
+  relatedCalcs: ["finans/konut-kredisi-hesaplama", "finans/kira-artis-hesaplama", "finans/kredi-hesaplama", "donusum/alan-donusturucu"],
+  faq
+};
+---
+
+<CalcLayout meta={meta}>
+  <form id="calc-form" class="calc-inputs">
+    <CalcInput id="bedel" label="Satış Bedeli" type="number" suffix="₺" placeholder="3000000" step={1000} min={0} />
+    <CalcInput id="rayic" label="Emlak Vergisi Değeri (isteğe bağlı)" type="number" suffix="₺" placeholder="0" step={1000} min={0} required={false} helpText="Belediyeden öğrenilir. Satış bedeli bundan düşükse harç bu değer üzerinden alınır." />
+    <CalcSelect
+      id="odeyen"
+      label="Harcı Kim Ödeyecek?"
+      options={[
+        { value: "ayri", label: "Alıcı %2 + Satıcı %2 (yasal)" },
+        { value: "alici", label: "Tamamını alıcı öder (%4)" }
+      ]}
+      value="ayri"
+    />
+    <CalcInput id="doner" label="Döner Sermaye Ücreti" type="number" suffix="₺" placeholder="6681" value="6681" step={1} min={0} helpText="2026: 2.227 TL × yöresel katsayı. Büyükşehirlerde yaklaşık 6.681 TL; tapu müdürlüğüne göre değişir." />
+  </form>
+
+  <CalcResult>
+    <div slot="main">
+      <p class="calc-result-label">Alıcının Ödeyeceği Toplam</p>
+      <p class="calc-result-value" id="alici-toplam">—</p>
+    </div>
+    <div slot="details">
+      <div class="calc-detail-row"><span class="calc-detail-label">Harç Matrahı</span><span class="calc-detail-value" id="matrah">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Alıcı Tapu Harcı</span><span class="calc-detail-value" id="alici-harc">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Satıcı Tapu Harcı</span><span class="calc-detail-value" id="satici-harc">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Toplam Tapu Harcı (%4)</span><span class="calc-detail-value" id="toplam-harc">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Döner Sermaye Ücreti</span><span class="calc-detail-value" id="doner-sonuc">—</span></div>
+      <div class="calc-detail-row"><span class="calc-detail-label">Toplam Tapu Masrafı</span><span class="calc-detail-value" id="genel-toplam">—</span></div>
+    </div>
+  </CalcResult>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('calc-form');
+      const inputs = document.querySelectorAll('#calc-form input, #calc-form select');
+      const resultArea = document.getElementById('calc-result');
+
+      function debounce(fn: () => void, delay = 150) {
+        let timer: ReturnType<typeof setTimeout>;
+        return () => { clearTimeout(timer); timer = setTimeout(fn, delay); };
+      }
+      const val = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
+      const setText = (id: string, t: string) => { (document.getElementById(id) as HTMLElement).textContent = t; };
+      const tl = (n: number) => new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+
+      form?.addEventListener('submit', (e) => e.preventDefault());
+      const debouncedCalc = debounce(calculate);
+      inputs.forEach(input => {
+        input.addEventListener('input', debouncedCalc);
+        input.addEventListener('change', debouncedCalc);
+      });
+
+      function calculate() {
+        const bedel = parseFloat(val('bedel'));
+        const rayic = parseFloat(val('rayic')) || 0;
+        const doner = parseFloat(val('doner')) || 0;
+        const odeyen = val('odeyen');
+        if (!bedel || bedel <= 0) return;
+
+        const matrah = Math.max(bedel, rayic);
+        const tekTaraf = matrah * 0.02;
+        const toplamHarc = tekTaraf * 2;
+        const aliciHarc = odeyen === 'alici' ? toplamHarc : tekTaraf;
+        const saticiHarc = odeyen === 'alici' ? 0 : tekTaraf;
+
+        setText('matrah', tl(matrah));
+        setText('alici-harc', tl(aliciHarc));
+        setText('satici-harc', tl(saticiHarc));
+        setText('toplam-harc', tl(toplamHarc));
+        setText('doner-sonuc', tl(doner));
+        setText('alici-toplam', tl(aliciHarc + doner));
+        setText('genel-toplam', tl(toplamHarc + doner));
+
+        if (resultArea) resultArea.classList.remove('hidden');
+        updateURL();
+      }
+
+      function updateURL() {
+        const params = new URLSearchParams();
+        inputs.forEach(input => {
+          const el = input as HTMLInputElement;
+          if (el.value && el.id) params.set(el.id, el.value);
+        });
+        history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
+      }
+
+      function loadFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        let hasParams = false;
+        inputs.forEach(input => {
+          const el = input as HTMLInputElement;
+          if (el.id && params.has(el.id)) { el.value = params.get(el.id)!; hasParams = true; }
+        });
+        if (hasParams) calculate();
+      }
+
+      loadFromURL();
+    });
+  </script>
+
+  <section class="calc-content">
+    <h2>Tapu Harcı Nedir?</h2>
+    <p>
+      Tapu harcı, bir gayrimenkulün mülkiyeti el değiştirirken devlete ödenen yasal bir harçtır. 492 sayılı Harçlar Kanunu'na bağlı (4) sayılı tarifeye göre alım satım işlemlerinde hem alıcıdan hem satıcıdan ayrı ayrı <strong>binde 20</strong> oranında harç alınır. Konut, işyeri, arsa ve tarla satışlarında aynı oran geçerlidir. Tapu harcı hesaplama aracı, harç matrahını belirleyip alıcı ve satıcı paylarını ve toplam tapu masrafını hesaplar.
+    </p>
+
+    <h2>Tapu Harcı Formülü</h2>
+    <ul>
+      <li><strong>Harç matrahı:</strong> Beyan edilen satış bedeli ile emlak vergisi değerinden yüksek olanı</li>
+      <li><strong>Alıcı harcı:</strong> Matrah × %2</li>
+      <li><strong>Satıcı harcı:</strong> Matrah × %2</li>
+      <li><strong>Toplam harç:</strong> Matrah × %4</li>
+      <li><strong>Toplam tapu masrafı:</strong> Toplam harç + döner sermaye ücreti</li>
+    </ul>
+
+    <h2>Örnek Hesaplama</h2>
+    <p>
+      İstanbul'da 3.000.000 TL'ye satılan ve emlak vergisi değeri 1.800.000 TL olan bir daire için tapu masrafı şöyle hesaplanır:
+    </p>
+    <ul>
+      <li>Matrah: 3.000.000 TL (satış bedeli emlak vergisi değerinden yüksek)</li>
+      <li>Alıcı harcı: 3.000.000 × %2 = 60.000 TL</li>
+      <li>Satıcı harcı: 3.000.000 × %2 = 60.000 TL</li>
+      <li>Döner sermaye ücreti: yaklaşık 6.681 TL</li>
+      <li>Alıcının toplam ödemesi: 66.681 TL; toplam tapu masrafı: 126.681 TL</li>
+    </ul>
+    <p>Taraflar harcın tamamını alıcının ödemesi konusunda anlaşırsa alıcı 126.681 TL öder.</p>
+
+    <h2>Satış Bedeline Göre Tapu Harcı Tablosu</h2>
+    <table>
+      <thead>
+        <tr><th>Satış Bedeli</th><th>Alıcı Harcı (%2)</th><th>Satıcı Harcı (%2)</th><th>Toplam Harç (%4)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1.000.000 TL</td><td>20.000 TL</td><td>20.000 TL</td><td>40.000 TL</td></tr>
+        <tr><td>2.000.000 TL</td><td>40.000 TL</td><td>40.000 TL</td><td>80.000 TL</td></tr>
+        <tr><td>3.000.000 TL</td><td>60.000 TL</td><td>60.000 TL</td><td>120.000 TL</td></tr>
+        <tr><td>5.000.000 TL</td><td>100.000 TL</td><td>100.000 TL</td><td>200.000 TL</td></tr>
+        <tr><td>7.500.000 TL</td><td>150.000 TL</td><td>150.000 TL</td><td>300.000 TL</td></tr>
+        <tr><td>10.000.000 TL</td><td>200.000 TL</td><td>200.000 TL</td><td>400.000 TL</td></tr>
+      </tbody>
+    </table>
+
+    <h2>2026 Döner Sermaye Ücreti</h2>
+    <p>
+      Tapu harcına ek olarak, Tapu ve Kadastro Genel Müdürlüğü tarafından işlem başına döner sermaye ücreti alınır. 2026 tarifesinde temel gösterge bedeli <strong>2.227 TL</strong>, ilave hizmet bedeli <strong>307 TL</strong>'dir. Temel tutar, tapu müdürlüğünün bulunduğu yerin yöresel katsayısıyla (1 ile 3 arasında) çarpılır. Bu nedenle döner sermaye ücreti Anadolu'daki küçük ilçelerde birkaç bin lira iken İstanbul, Ankara ve İzmir gibi büyükşehirlerde 6.681 TL ile 6.988 TL arasına çıkar. Hesaplayıcıdaki varsayılan değeri kendi tapu müdürlüğünüzün tutarıyla değiştirebilirsiniz.
+    </p>
+
+    <h2>Emlak Vergisi Değeri Neden Önemli?</h2>
+    <p>
+      Tapuda beyan edilen satış bedeli, belediyenin belirlediği emlak vergisi değerinden (rayiç bedel) düşük olamaz. Beyan edilen bedel daha düşükse tapu harcı emlak vergisi değeri üzerinden hesaplanır. Gerçek satış bedelinin altında beyan yapılması ise vergi ziyaı cezasına ve gecikme faizine yol açabilir. Ayrıca düşük beyan, ileride mülkü satarken değer artış kazancı vergisi hesabında satıcının aleyhine sonuç doğurabilir.
+    </p>
+
+    <h2>Tapu Masraflarını Azaltmak Mümkün mü?</h2>
+    <p>
+      Harç oranı kanunla belirlendiği için pazarlık konusu değildir. Ancak tarafların harcı nasıl paylaşacakları serbestçe kararlaştırılabilir. Satış sözleşmesi aşamasında harç paylaşımını yazılı hale getirmek, tapu günü yaşanabilecek anlaşmazlıkları önler. Yeni konutlarda bazı müteahhitler kampanya kapsamında tapu masraflarını üstlenebilir.
+    </p>
+    <p class="calc-note">
+      Not: Hesaplama 2026 yılı Harçlar Kanunu oranları ve TKGM döner sermaye tarifesine göre bilgilendirme amaçlıdır. Kesin tutar, Web Tapu başvurusunda tapu müdürlüğü tarafından hesaplanır.
+    </p>
+  </section>
+</CalcLayout>
